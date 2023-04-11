@@ -29,7 +29,7 @@ const DeviceWifiModel = require("../../services/device_wifis");
 const Transactions = require("../../services/transactions");
 const DeviceDiagnosticsModel = require("../../services/device_diagnostics");
 
-const influxSchemaDeviceStatus = require("../../digital-fairways-commons/influxSchemas/device-status.json");
+const influxSchemaDeviceStatus = require("../../df-commons/influxSchemas/device-status.json");
 
 // Variables Global to this File
 const status_timeout = [];

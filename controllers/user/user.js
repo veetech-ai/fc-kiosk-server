@@ -28,7 +28,7 @@ const upload_file = require("../../common/upload");
 const config = require("../../config/config");
 
 // IOT Core Imports
-const rolesSchema = require("../../digital-fairways-commons/data/roles.json");
+const rolesSchema = require("../../df-commons/data/roles.json");
 const UsersStatus = UserModel.UsersStatus;
 
 const {

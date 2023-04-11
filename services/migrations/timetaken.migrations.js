@@ -1,5 +1,5 @@
 const { queryData } = require("../../common/influxHelper");
-const influxSchemaFactoryFloor = require("../../digital-fairways-commons/influxSchemas/factory-floor.json");
+const influxSchemaFactoryFloor = require("../../df-commons/influxSchemas/factory-floor.json");
 const moment = require("moment");
 const influxHelper = require("../../common/influxHelper");
 

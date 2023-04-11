@@ -6,7 +6,7 @@ const config = require("../../config/config");
 
 // Influx Schema Imports
 const userRFIDLoginSchema = require("../../common/influxSchemas/userRFIDLogin.schema.json");
-const userLoginInfluxSchema = require("../../digital-fairways-commons/influxSchemas/userRFIDLogin.schema.json");
+const userLoginInfluxSchema = require("../../df-commons/influxSchemas/userRFIDLogin.schema.json");
 
 // Query Imports
 const {
