@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "measurement": {
+      "const": "diagnostic_data",
+      "type": "string"
+    },
+    "tags": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "type": "string"
+        },
+        "opsStatus": {
+          "type": "string",
+          "enum": ["error", "rejected", "cancelled", "completed"]
+        }
+      }
+    },
+    "fields": {
+      "type": "object",
+      "properties": {
+        "machineTime": {
+          "type": "number"
+        },
+        "operatorTime": {
+          "type": "number"
+        }
+      }
+    },
+    "timestamp": {
+      "type": "number"
+    }
+  }
+}

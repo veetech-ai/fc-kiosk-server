@@ -1,0 +1,6 @@
+node_modules
+*.md
+mochawesome-report
+viaphoton-commons
+views
+coverage

@@ -1,0 +1,992 @@
+[
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639696534
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639668919
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639769254
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639682780
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639676059
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639681371
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639763623
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639777223
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639676923
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639794713
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639760315
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639709631
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639680578
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639755051
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639782966
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639798088
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639762337
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639689396
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639666902
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639799058
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639716816
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639725255
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639727570
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639777411
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639707208
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639667335
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639685493
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639705530
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639789169
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639763737
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639691650
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639789379
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639666836
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639780758
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639734284
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639752599
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639748577
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639744163
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639771566
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639805893
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639676574
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639663068
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639697237
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639683551
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639667323
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639778813
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639788238
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639759199
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639670869
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639750946
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639797247
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639800138
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639716461
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639732105
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639665436
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639710467
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639688191
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639740543
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639746619
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639795835
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639701546
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639685585
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639727212
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639807223
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639739471
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639673828
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639721579
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639798677
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639696463
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639727391
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639702751
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639688658
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639779808
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639683908
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639765385
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639680650
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639811294
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639685304
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639737540
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639766155
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639683970
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639747610
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639782358
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639781020
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639762069
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639662497
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639799327
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639668461
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639756851
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639704941
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639662860
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639716495
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639760120
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639725206
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639686473
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639771810
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639678132
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639786850
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "flags": 1
+    },
+    "timestamp": 1639724534
+  }
+]

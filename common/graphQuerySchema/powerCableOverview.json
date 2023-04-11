@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "avgFailedRecordsPercentage": {
+      "type": "number",
+      "default": 0
+    },
+    "avgSuccessfullRecordsPercentage": {
+      "type": "number",
+      "default": 0
+    },
+    "totalFailedRecords": {
+      "type": "number",
+      "default": 0
+    },
+    "totalSuccessfullRecords": {
+      "type": "number",
+      "default": 0
+    },
+    "totalRecords": {
+      "type": "number",
+      "default": 0
+    },
+    "tph": {
+      "type": "number",
+      "default": 0
+    },
+    "pph": {
+      "type": "number",
+      "default": 0
+    }
+  }
+}

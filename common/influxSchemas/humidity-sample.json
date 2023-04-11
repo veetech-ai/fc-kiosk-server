@@ -1,0 +1,952 @@
+[
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 61
+    },
+    "timestamp": 1639805734
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 34
+    },
+    "timestamp": 1639682797
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 47
+    },
+    "timestamp": 1639785220
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 49
+    },
+    "timestamp": 1639709529
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 56
+    },
+    "timestamp": 1639675894
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 52
+    },
+    "timestamp": 1639699815
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 37
+    },
+    "timestamp": 1639679643
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 65
+    },
+    "timestamp": 1639729120
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 54
+    },
+    "timestamp": 1639714219
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 38
+    },
+    "timestamp": 1639680060
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 58
+    },
+    "timestamp": 1639675029
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 69
+    },
+    "timestamp": 1639704449
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 45
+    },
+    "timestamp": 1639812321
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 61
+    },
+    "timestamp": 1639688904
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 48
+    },
+    "timestamp": 1639811169
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 38
+    },
+    "timestamp": 1639790828
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 38
+    },
+    "timestamp": 1639803870
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 65
+    },
+    "timestamp": 1639720752
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 78
+    },
+    "timestamp": 1639669611
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 40
+    },
+    "timestamp": 1639791088
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 55
+    },
+    "timestamp": 1639727262
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 45
+    },
+    "timestamp": 1639661516
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 80
+    },
+    "timestamp": 1639663894
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 54
+    },
+    "timestamp": 1639710810
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 32
+    },
+    "timestamp": 1639797045
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 49
+    },
+    "timestamp": 1639793167
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 69
+    },
+    "timestamp": 1639790425
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 52
+    },
+    "timestamp": 1639797866
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 38
+    },
+    "timestamp": 1639749159
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 69
+    },
+    "timestamp": 1639750828
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 57
+    },
+    "timestamp": 1639713514
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 37
+    },
+    "timestamp": 1639767395
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 45
+    },
+    "timestamp": 1639749084
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 45
+    },
+    "timestamp": 1639801668
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 59
+    },
+    "timestamp": 1639750723
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 67
+    },
+    "timestamp": 1639758045
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 36
+    },
+    "timestamp": 1639789654
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 36
+    },
+    "timestamp": 1639735359
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 32
+    },
+    "timestamp": 1639733524
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 41
+    },
+    "timestamp": 1639802314
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 58
+    },
+    "timestamp": 1639756018
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 49
+    },
+    "timestamp": 1639698329
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 43
+    },
+    "timestamp": 1639668351
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 62
+    },
+    "timestamp": 1639749802
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 54
+    },
+    "timestamp": 1639741199
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 42
+    },
+    "timestamp": 1639695129
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 36
+    },
+    "timestamp": 1639727579
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 58
+    },
+    "timestamp": 1639710650
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 35
+    },
+    "timestamp": 1639678589
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 30
+    },
+    "timestamp": 1639749584
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 65
+    },
+    "timestamp": 1639666063
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 31
+    },
+    "timestamp": 1639693567
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 79
+    },
+    "timestamp": 1639761076
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 35
+    },
+    "timestamp": 1639768776
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 53
+    },
+    "timestamp": 1639714546
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 73
+    },
+    "timestamp": 1639721060
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 76
+    },
+    "timestamp": 1639677289
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 47
+    },
+    "timestamp": 1639752108
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 78
+    },
+    "timestamp": 1639723509
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 47
+    },
+    "timestamp": 1639740203
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 50
+    },
+    "timestamp": 1639722355
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 62
+    },
+    "timestamp": 1639695220
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 64
+    },
+    "timestamp": 1639736442
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 41
+    },
+    "timestamp": 1639720829
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 63
+    },
+    "timestamp": 1639703717
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 64
+    },
+    "timestamp": 1639720307
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 75
+    },
+    "timestamp": 1639771743
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 47
+    },
+    "timestamp": 1639795456
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 32
+    },
+    "timestamp": 1639670800
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 53
+    },
+    "timestamp": 1639770297
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 59
+    },
+    "timestamp": 1639674084
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 43
+    },
+    "timestamp": 1639802416
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 53
+    },
+    "timestamp": 1639751312
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 48
+    },
+    "timestamp": 1639688959
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 66
+    },
+    "timestamp": 1639700164
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 72
+    },
+    "timestamp": 1639771016
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 49
+    },
+    "timestamp": 1639786568
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 67
+    },
+    "timestamp": 1639801173
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 47
+    },
+    "timestamp": 1639727547
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 78
+    },
+    "timestamp": 1639782640
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 39
+    },
+    "timestamp": 1639789149
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 59
+    },
+    "timestamp": 1639675820
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 41
+    },
+    "timestamp": 1639736574
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 57
+    },
+    "timestamp": 1639703748
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 74
+    },
+    "timestamp": 1639716033
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 79
+    },
+    "timestamp": 1639785459
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 32
+    },
+    "timestamp": 1639806588
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 53
+    },
+    "timestamp": 1639801836
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 72
+    },
+    "timestamp": 1639692728
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 56
+    },
+    "timestamp": 1639799605
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 47
+    },
+    "timestamp": 1639661257
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 37
+    },
+    "timestamp": 1639738077
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 70
+    },
+    "timestamp": 1639694359
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 54
+    },
+    "timestamp": 1639673062
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "humidity": 51
+    },
+    "timestamp": 1639745333
+  }
+]

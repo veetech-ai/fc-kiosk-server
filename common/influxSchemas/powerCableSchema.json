@@ -1,0 +1,56 @@
+{
+  "type": "object",
+  "properties": {
+    "measurement": {
+      "const": "power_cable_tester_data",
+      "type": "string"
+    },
+    "tags": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        }
+      },
+      "required": ["deviceId", "userId"]
+    },
+    "fields": {
+      "type": "object",
+      "properties": {
+        "secondCableResult": {
+          "type": "number",
+          "enum": [0, 1, 2, 3]
+        },
+        "firstCableResult": {
+          "type": "number",
+          "enum": [0, 1, 2, 3]
+        },
+        "thirdCableResult": {
+          "type": "number",
+          "enum": [0, 1, 2, 3]
+        },
+        "finalResult": {
+          "type": "number",
+          "enum": [0, 1]
+        },
+        "cableSerial": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "secondCableResult",
+        "firstCableResult",
+        "thirdCableResult",
+        "finalResult",
+        "cableSerial"
+      ]
+    },
+    "timestamp": {
+      "type": "number"
+    }
+  },
+  "required": ["measurement", "tags", "fields"]
+}

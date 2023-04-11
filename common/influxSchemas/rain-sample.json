@@ -1,0 +1,862 @@
+[
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639770882
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639690422
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639813529
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639702505
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639784167
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639671007
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639791337
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639813480
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639721121
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639703150
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639686915
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639731610
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639674349
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639674672
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639688384
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639704016
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639670461
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639728278
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639814744
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639779566
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639744479
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639774283
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639796511
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639681359
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639786820
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639770849
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639742776
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639812392
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639678526
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639786411
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639765878
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639741050
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639753201
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639671747
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639765945
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639750315
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639751833
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639712927
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639763515
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639801029
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639796259
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639719351
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639798734
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639706325
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639678427
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639759536
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639716000
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639754791
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639813618
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639756435
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639776508
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639803339
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639745445
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639705386
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639717128
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639804802
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639766238
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639783799
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639723344
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639806937
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639702402
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639691368
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639772740
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639699460
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639758329
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639720518
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639795308
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639807714
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639749191
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639769996
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639680818
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639803838
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639751883
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639700725
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639702525
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639760869
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639747301
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639670353
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639801357
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639794820
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639669657
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639793609
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639717273
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639687382
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639800844
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "rain": 1
+    },
+    "timestamp": 1639784424
+  }
+]

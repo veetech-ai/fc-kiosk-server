@@ -1,0 +1,552 @@
+[
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 27
+    },
+    "timestamp": 1639790968
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 43
+    },
+    "timestamp": 1639812195
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 47
+    },
+    "timestamp": 1639707040
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 47
+    },
+    "timestamp": 1639726415
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 28
+    },
+    "timestamp": 1639753158
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 25
+    },
+    "timestamp": 1639682949
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 48
+    },
+    "timestamp": 1639679752
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 26
+    },
+    "timestamp": 1639720500
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 44
+    },
+    "timestamp": 1639811431
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 35
+    },
+    "timestamp": 1639663888
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 48
+    },
+    "timestamp": 1639712444
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 44
+    },
+    "timestamp": 1639665744
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 34
+    },
+    "timestamp": 1639664256
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 32
+    },
+    "timestamp": 1639733483
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 33
+    },
+    "timestamp": 1639786401
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 46
+    },
+    "timestamp": 1639785350
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 39
+    },
+    "timestamp": 1639721782
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 34
+    },
+    "timestamp": 1639702005
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 27
+    },
+    "timestamp": 1639728357
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 43
+    },
+    "timestamp": 1639738993
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 42
+    },
+    "timestamp": 1639785995
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 37
+    },
+    "timestamp": 1639770863
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 49
+    },
+    "timestamp": 1639768194
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 47
+    },
+    "timestamp": 1639712813
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 43
+    },
+    "timestamp": 1639680288
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 42
+    },
+    "timestamp": 1639671940
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 30
+    },
+    "timestamp": 1639680901
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 32
+    },
+    "timestamp": 1639758594
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 50
+    },
+    "timestamp": 1639684937
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 49
+    },
+    "timestamp": 1639679208
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 48
+    },
+    "timestamp": 1639756966
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 39
+    },
+    "timestamp": 1639670920
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 32
+    },
+    "timestamp": 1639702916
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 45
+    },
+    "timestamp": 1639692069
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 40
+    },
+    "timestamp": 1639681839
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 34
+    },
+    "timestamp": 1639705800
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 46
+    },
+    "timestamp": 1639781761
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 22
+    },
+    "timestamp": 1639792717
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 40
+    },
+    "timestamp": 1639805144
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 46
+    },
+    "timestamp": 1639725903
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 21
+    },
+    "timestamp": 1639701701
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 49
+    },
+    "timestamp": 1639731041
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 36
+    },
+    "timestamp": 1639805667
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 41
+    },
+    "timestamp": 1639724423
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 26
+    },
+    "timestamp": 1639730018
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 33
+    },
+    "timestamp": 1639753968
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 27
+    },
+    "timestamp": 1639762073
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 23
+    },
+    "timestamp": 1639713882
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 45
+    },
+    "timestamp": 1639708161
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 41
+    },
+    "timestamp": 1639736517
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 29
+    },
+    "timestamp": 1639714690
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 45
+    },
+    "timestamp": 1639723767
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 43
+    },
+    "timestamp": 1639705167
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 22
+    },
+    "timestamp": 1639808711
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": "20"
+    },
+    "fields": {
+      "temperature": 46
+    },
+    "timestamp": 1639661415
+  }
+]

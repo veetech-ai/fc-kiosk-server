@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "measurement": {
+      "const": "fiber_aligner_image_data",
+      "type": "string"
+    },
+    "tags": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "type": "string"
+        },
+        "cycleId": {
+          "type": "string"
+        },
+        "imageTag": {
+          "type": "string"
+        }
+      },
+      "required": ["deviceId", "cycleId", "imageTag"]
+    },
+    "fields": {
+      "type": "object",
+      "properties": {
+        "orderByCv": {
+          "type": "string"
+        }
+      },
+      "required": ["orderByCv"]
+    },
+    "timestamp": {
+      "type": "number"
+    }
+  }
+}

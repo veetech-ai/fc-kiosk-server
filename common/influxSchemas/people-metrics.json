@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "properties": {
+    "measurement": {
+      "const": "people_metrics_data",
+      "type": "string"
+    },
+    "tags": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        }
+      },
+      "required": ["userId"]
+    },
+    "fields": {
+      "type": "object",
+      "properties": {
+        "drowsiness": {
+          "type": "number"
+        },
+        "distraction": {
+          "type": "number"
+        },
+        "presence": {
+          "type": "number"
+        },
+        "userIdentification": {
+          "type": "string",
+          "enum": ["away", "present", "unknown"]
+        },
+        "deviceId": {
+          "type": "number"
+        },
+        "mouseActivityStatus": {
+          "type": "number"
+        },
+        "keyboardActivityStatus": {
+          "type": "number"
+        },
+        "storageDeviceDetection": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "drowsiness",
+        "distraction",
+        "presence",
+        "userIdentification"
+      ]
+    },
+    "timestamp": {
+      "type": "number"
+    }
+  },
+  "required": ["measurement", "tags", "fields", "timestamp"]
+}

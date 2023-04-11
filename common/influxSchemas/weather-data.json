@@ -1,0 +1,56 @@
+{
+  "type": "object",
+  "properties": {
+    "measurement": {
+      "const": "weather_data_history",
+      "type": "string"
+    },
+    "tags": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "type": "string"
+        }
+      },
+      "required": ["deviceId"]
+    },
+    "fields": {
+      "type": "object",
+      "properties": {
+        "t": {
+          "type": "number",
+          "description": "temperature"
+        },
+        "ws": {
+          "type": "number",
+          "description": "wind speed"
+        },
+        "h": {
+          "type": "number",
+          "description": "humidity"
+        },
+        "wg": {
+          "type": "number",
+          "description": "wind gust"
+        },
+        "wd": {
+          "type": "number",
+          "description": "wind direction"
+        },
+        "tr": {
+          "type": "number",
+          "description": "total rain"
+        },
+        "f": {
+          "type": "number",
+          "description": "wind speed"
+        }
+      },
+      "required": ["t", "ws", "h", "wg", "wd", "tr", "f"]
+    },
+    "timestamp": {
+      "type": "number"
+    }
+  },
+  "required": ["measurement", "tags", "fields", "timestamp"]
+}

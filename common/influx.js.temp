@@ -1,0 +1,101 @@
+const Influx = require("influx");
+const config = require("../config/config");
+
+const history_fields = {
+  t: Influx.FieldType.INTEGER,
+};
+exports.history_fields = history_fields;
+const status_data_fields = {
+  status: Influx.FieldType.INTEGER,
+};
+exports.status_data_fields = status_data_fields;
+
+const battery_data_fields = {
+  bss: Influx.FieldType.FLOAT,
+};
+exports.battery_data_fields = battery_data_fields;
+
+const diagnostic_data_fields = {
+  t: Influx.FieldType.FLOAT,
+  um: Influx.FieldType.FLOAT,
+  stock: Influx.FieldType.FLOAT,
+  bss: Influx.FieldType.FLOAT,
+};
+exports.diagnostic_data_fields = diagnostic_data_fields;
+
+const tank_data_fields = {
+  level_liters: Influx.FieldType.FLOAT,
+  level_percent: Influx.FieldType.FLOAT,
+  level_alerts_data: Influx.FieldType.FLOAT,
+  remaining_height: Influx.FieldType.FLOAT,
+  liter_per_min: Influx.FieldType.FLOAT,
+  error_code: Influx.FieldType.FLOAT,
+  updt_intr: Influx.FieldType.FLOAT,
+};
+exports.tank_data_fields = tank_data_fields;
+
+const energy_data_fields = {
+  energy: Influx.FieldType.FLOAT,
+  pulse: Influx.FieldType.FLOAT,
+  energy_kvarh: Influx.FieldType.FLOAT,
+  pulses_kvarh: Influx.FieldType.FLOAT,
+  kwh_cons_1d: Influx.FieldType.FLOAT,
+  kwh_cons_1m: Influx.FieldType.FLOAT,
+  kwh_cons: Influx.FieldType.FLOAT,
+  kvarh_cons_1d: Influx.FieldType.FLOAT,
+  kvarh_cons_1m: Influx.FieldType.FLOAT,
+  kvarh_cons: Influx.FieldType.FLOAT,
+};
+exports.energy_data_fields = energy_data_fields;
+
+const tracker_data_fields = {
+  lat: Influx.FieldType.FLOAT,
+  lng: Influx.FieldType.FLOAT,
+  sp: Influx.FieldType.FLOAT,
+};
+exports.tracker_data_fields = tracker_data_fields;
+
+exports.connection = () => {
+  global.global_influx = new Influx.InfluxDB({
+    host: config.influx.host,
+    port: config.influx.port,
+    database: config.influx.name,
+    schema: [
+      {
+        measurement: "history",
+        fields: history_fields,
+        tags: ["device_id"],
+      },
+      {
+        measurement: "tank_data",
+        fields: tank_data_fields,
+        tags: ["device_id"],
+      },
+      {
+        measurement: "energy_data",
+        fields: energy_data_fields,
+        tags: ["device_id"],
+      },
+      {
+        measurement: "tracker_data",
+        fields: tracker_data_fields,
+        tags: ["device_id"],
+      },
+      {
+        measurement: "status_data",
+        fields: status_data_fields,
+        tags: ["device_id"],
+      },
+      {
+        measurement: "battery_data",
+        fields: battery_data_fields,
+        tags: ["device_id"],
+      },
+      {
+        measurement: "diagnostic_data",
+        fields: diagnostic_data_fields,
+        tags: ["device_id"],
+      },
+    ],
+  });
+};

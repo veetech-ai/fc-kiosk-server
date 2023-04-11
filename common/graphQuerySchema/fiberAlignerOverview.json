@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "avgFailedRecordsPercentage": {
+      "type": "number",
+      "default": 0
+    },
+    "avgSuccessfullRecordsPercentage": {
+      "type": "number",
+      "default": 0
+    },
+    "avgRejectedRecordsPercentage": {
+      "type": "number",
+      "default": 0
+    },
+    "totalFailedRecords": {
+      "type": "number",
+      "default": 0
+    },
+    "totalSuccessfullRecords": {
+      "type": "number",
+      "default": 0
+    },
+    "totalRejectedRecords": {
+      "type": "number",
+      "default": 0
+    }
+  }
+}

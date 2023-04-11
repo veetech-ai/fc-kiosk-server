@@ -1,0 +1,19 @@
+{
+  "title": "People Metrics Kpis",
+  "description": "People metrics kpis schema",
+  "type": "object",
+  "properties": {
+    "distraction": {
+      "type": "number"
+    },
+    "drowsiness": {
+      "type": "number"
+    },
+    "presence": {
+      "type": "number"
+    },
+    "userIdentification": {
+      "type": "string"
+    }
+  }
+}

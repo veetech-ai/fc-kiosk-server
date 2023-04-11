@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "title": "Inspection",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "serialNo": {
+      "type": "string"
+    },
+    "stationSerialNo": {
+      "type": "string"
+    },
+    "globalPass": {
+      "type": "integer",
+      "$ref": "#/$defs/pass"
+    },
+    "sampleName": {
+      "type": "string"
+    },
+    "operator": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "Profile": { "type": "string" },
+        "ZoneAscratches": { "type": "string" },
+        "ZoneAscratchesPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneAscratchesPassMax": { "type": "string" },
+        "ZoneAdefects": { "type": "string" },
+        "ZoneAdefectsPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneAdefectsPassMax": { "type": "string" },
+        "ZoneBscratches<3?m": { "type": "string" },
+        "ZoneBscratches<3?mPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneBscratches<3?mPassMax": { "type": "string" },
+        "ZoneBscratches>3?m": { "type": "string" },
+        "ZoneBscratches>3?mPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneBscratches>3?mPassMax": { "type": "string" },
+        "ZoneBdefects<2?m": { "type": "string" },
+        "ZoneBdefects<2?mPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneBdefects<2?mPassMax": { "type": "string" },
+        "ZoneBdefects2To5?m": { "type": "string" },
+        "ZoneBdefects2To5?mPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneBdefects2To5?mPassMax": { "type": "string" },
+        "ZoneBdefects>5?m": { "type": "string" },
+        "ZoneBdefects>5?mPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneBdefects>5?mPassMax": { "type": "string" },
+        "ZoneCdefects": { "type": "string" },
+        "ZoneCdefectsPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneCdefectsPassMax": { "type": "string" },
+        "ZoneDdefects<10?m": { "type": "string" },
+        "ZoneDdefects<10?mPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneDdefects<10?mPass max": { "type": "string" },
+        "ZoneDdefects>10?m": { "type": "string" },
+        "ZoneDdefects>10?mPass": { "type": "integer", "$ref": "#/$defs/pass" },
+        "ZoneDdefects>10?mPassMax": { "type": "string" }
+      }
+    }
+  },
+  "required": [],
+  "$defs": {
+    "pass": { "enum": [0, 1, 2] }
+  }
+}

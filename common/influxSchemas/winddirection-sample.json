@@ -1,0 +1,312 @@
+[
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 17
+    },
+    "timestamp": 1639702931
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 66
+    },
+    "timestamp": 1639677393
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 50
+    },
+    "timestamp": 1639711633
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 89
+    },
+    "timestamp": 1639698830
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 58
+    },
+    "timestamp": 1639673132
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 83
+    },
+    "timestamp": 1639737332
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 40
+    },
+    "timestamp": 1639718634
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 73
+    },
+    "timestamp": 1639791509
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 57
+    },
+    "timestamp": 1639669060
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 69
+    },
+    "timestamp": 1639780094
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 68
+    },
+    "timestamp": 1639795314
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 46
+    },
+    "timestamp": 1639787061
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 24
+    },
+    "timestamp": 1639761694
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 67
+    },
+    "timestamp": 1639692177
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 19
+    },
+    "timestamp": 1639728471
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 64
+    },
+    "timestamp": 1639674680
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 55
+    },
+    "timestamp": 1639693699
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 60
+    },
+    "timestamp": 1639740553
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 83
+    },
+    "timestamp": 1639754534
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 17
+    },
+    "timestamp": 1639804394
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 27
+    },
+    "timestamp": 1639811377
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 89
+    },
+    "timestamp": 1639779380
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 21
+    },
+    "timestamp": 1639724496
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 55
+    },
+    "timestamp": 1639768992
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 30
+    },
+    "timestamp": 1639789304
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 61
+    },
+    "timestamp": 1639792550
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 55
+    },
+    "timestamp": 1639750102
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 58
+    },
+    "timestamp": 1639666769
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 72
+    },
+    "timestamp": 1639792677
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 38
+    },
+    "timestamp": 1639739729
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "winddirection": 44
+    },
+    "timestamp": 1639751431
+  }
+]

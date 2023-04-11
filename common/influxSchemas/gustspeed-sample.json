@@ -1,0 +1,132 @@
+[
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.38
+    },
+    "timestamp": 1639762986
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.37
+    },
+    "timestamp": 1639716561
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.36
+    },
+    "timestamp": 1639695208
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.37
+    },
+    "timestamp": 1639681670
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.42
+    },
+    "timestamp": 1639809860
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.47
+    },
+    "timestamp": 1639743584
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.38
+    },
+    "timestamp": 1639695912
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.52
+    },
+    "timestamp": 1639747390
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.45
+    },
+    "timestamp": 1639814680
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.41
+    },
+    "timestamp": 1639754161
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.67
+    },
+    "timestamp": 1639668680
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.63
+    },
+    "timestamp": 1639718472
+  },
+  {
+    "measurement": "history",
+    "tags": {
+      "device_id": 20
+    },
+    "fields": {
+      "gustspeed": 0.61
+    },
+    "timestamp": 1639789164
+  }
+]

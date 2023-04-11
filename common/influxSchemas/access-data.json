@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "measurement": {
+      "const": "access_data_history",
+      "type": "string"
+    },
+    "tags": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "type": "string"
+        },
+        "deviceUserId": {
+          "type": "string"
+        }
+      },
+      "required": ["deviceId", "deviceUserId"]
+    },
+    "fields": {
+      "type": "object",
+      "properties": {
+        "access": {
+          "type": "number"
+        }
+      },
+      "required": ["access"]
+    },
+    "timestamp": {
+      "type": "number"
+    }
+  },
+  "required": ["measurement", "tags", "fields", "timestamp"]
+}
