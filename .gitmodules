@@ -1,4 +1,4 @@
-[submodule "digital-fairways-commons"]
-	path = digital-fairways-commons
-	url = ../digital-fairways-commons.git
+[submodule "df-commons"]
+	path = df-commons
+	url = ../df-commons.git
 
