@@ -1,5 +1,7 @@
 // External Modules
 const jwt = require("jsonwebtoken");
+const { SignatureV4 } = require("@aws-sdk/signature-v4");
+const { Sha256 } = require("@aws-crypto/sha256-js");
 const bcrypt = require("bcryptjs");
 const randtoken = require("rand-token");
 const axios = require("axios");
@@ -89,6 +91,44 @@ const Faults = Object.freeze({
   cardDispenserStockEnd: 13,
   fingerPrintError: 14,
 });
+
+exports.get_aws_signature = async (api_url, queryParams, method) => {
+  const apiUrl = new URL(api_url);
+  const sigv4 = new SignatureV4({
+    service: "execute-api",
+    region: "us-east-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+    sha256: Sha256,
+  });
+
+  const signed = await sigv4.sign({
+    method: method,
+    hostname: apiUrl.host,
+    path: apiUrl.pathname,
+    protocol: apiUrl.protocol,
+    headers: {
+      "Content-Type": "application/json",
+      "X-Api-Key": process.env.X_API_KEY,
+      host: apiUrl.hostname,
+    },
+    query: queryParams,
+  });
+  return signed;
+};
+
+exports.call_golfbert_api = async (apiUrl, queryParams, method = "GET") => {
+  const signed = await this.get_aws_signature(apiUrl, queryParams, method);
+  const response = await axios({
+    ...signed,
+    authorization: signed.authorization,
+    url: apiUrl,
+    params: queryParams,
+  });
+  return response;
+};
 
 exports.get_device_type_id_by_type = (type) => {
   //  1=autma, 2=geyser, 3=solar, 4=motor, 5=tank, 6=motor and tank, 7=enery audit

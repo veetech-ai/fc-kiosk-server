@@ -21,6 +21,7 @@ const options = {
     security: [{ auth: [] }],
   },
   apis: [
+    "./controllers/golfbert/golfbert.js",
     "./controllers/authorization/authorization.js",
     "./controllers/user/user.js",
     "./controllers/user_2fa.js",
