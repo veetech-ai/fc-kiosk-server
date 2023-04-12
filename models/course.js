@@ -3,11 +3,15 @@ module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
     "Courses",
     {
-
       name: DataTypes.STRING,
-      address: DataTypes.JSON,
       phone: DataTypes.STRING,
-      coordinates: DataTypes.JSON,
+      country: DataTypes.STRING,
+      street: DataTypes.STRING,
+      city: DataTypes.STRING,
+      state: DataTypes.STRING,
+      zip: DataTypes.STRING,
+      lat: DataTypes.DOUBLE,
+      long: DataTypes.DOUBLE,
     },
     {},
   );

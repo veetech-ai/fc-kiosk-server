@@ -7,7 +7,6 @@ module.exports = {
       id: {
         allowNull: false,
         primaryKey: true,
-        autoIncrement: false,
         type: Sequelize.INTEGER,
       },
       name: {
@@ -15,18 +14,45 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
       },
-      address: {
-        type: Sequelize.JSON,
-        defaultValue: [],
-      },
       phone: {
         type: Sequelize.STRING,
         allowNull: true,
         defaultValue: null,
       },
-      coordinates: {
-        type: Sequelize.JSON,
-        defaultValue: [],
+      country: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      street: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      city: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      state: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      zip: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      lat: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+        defaultValue: 0,
+      },
+      long: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+        defaultValue: 0,
       },
     });
   },
