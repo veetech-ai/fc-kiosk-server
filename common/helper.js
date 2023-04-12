@@ -24,11 +24,11 @@ const { roleWithAuthorities } = getRolesWithAuthorities();
 const { insertInfluxData } = require("./influxHelper");
 
 // MySQL Schema Imports
-const automaAlertsSchema = require("./../df-commons/schemas/automa-alerts-names.json");
+const automaAlertsSchema = require("./../iotcore-commons/schemas/automa-alerts-names.json");
 // Alerts Data Imports
-const automaAlertsData = require("./../df-commons/data/automa-alerts.json");
+const automaAlertsData = require("./../iotcore-commons/data/automa-alerts.json");
 // Influx Schema Imports
-const automaAlertsInfluxSchema = require("./../df-commons/influxSchemas/automa-alerts.json");
+const automaAlertsInfluxSchema = require("./../iotcore-commons/influxSchemas/automa-alerts.json");
 
 // Query Imports
 const MQTTLogsModel = require("../services/mqtt_logs");
@@ -46,10 +46,10 @@ const { getRoleByTitle } = require("../services/role");
 const settings = require("../config/settings");
 const config = require("../config/config");
 
-const alertsCategories = require("./../df-commons/data/alerts-categories.json");
+const alertsCategories = require("./../iotcore-commons/data/alerts-categories.json");
 
 // Definitions Imports
-const definitionsValidations = require("./../df-commons/definitions/validations.json");
+const definitionsValidations = require("./../iotcore-commons/definitions/validations.json");
 const { globalMQTT } = require("./mqtt-init");
 
 // Setting Up Ajv
