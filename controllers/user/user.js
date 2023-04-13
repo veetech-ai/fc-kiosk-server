@@ -1765,6 +1765,11 @@ exports.verify_phone_verification_code = (req, res) => {
    *     produces:
    *       - application/json
    *     parameters:
+   *       - name: phone
+   *         description: Phone Number
+   *         in: formData
+   *         required: true
+   *         type: string
    *       - name: code
    *         description: Verification Code
    *         in: formData
@@ -1775,8 +1780,11 @@ exports.verify_phone_verification_code = (req, res) => {
    *         description: success
    */
   try {
+
+    console.log(req.body)
+
     const validation = new Validator(req.body, {
-      code: "required",
+      phone: "required",
     });
 
     validation.fails(function () {
@@ -1785,14 +1793,17 @@ exports.verify_phone_verification_code = (req, res) => {
 
     validation.passes(async function () {
       try {
-        const user = await UserModel.find_by_where({
-          id: req.user.id,
-          phone_code: req.body.code,
+        const user = await OtpModel.getByPhone({
+          phone: req.body.phone,
         });
 
-        if (!user) return apiResponse.fail(res, "Invalid Code");
+        console.log(user.dataValues.code)
 
-        await UserModel.update_where({ phone_verified: true }, { id: user.id });
+        const verified = OtpModel.verifyCode(user.dataValues.code,req.body.code)
+
+        if (!verified) return apiResponse.fail(res, "Not Verified");
+
+        await UserModel.create_user({email:"danishbutt"});
 
         return apiResponse.success(res, req, "Phone number verified");
       } catch (err) {

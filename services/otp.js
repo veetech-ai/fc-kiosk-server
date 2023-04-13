@@ -23,3 +23,7 @@ exports.getByPhone = async ({ phone }) => {
 exports.updateUsedStatus = async ({ phone, otp_used }) => {
   return OTP.update({ otp_used }, { where: { phone } });
 };
+
+exports.verifyCode = async ( server_code , user_entered_code   ) => {
+    return server_code === user_entered_code;
+  };
