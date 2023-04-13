@@ -1800,6 +1800,7 @@ exports.verify_phone_verification_code = (req, res) => {
 
         await UserModel.create_user({
           email: `${req.body.phone}@phonenumber.com`,
+          role_id: 4,
         });
 
         return apiResponse.success(res, req, "Phone number verified");
