@@ -1730,7 +1730,6 @@ exports.send_phone_verification_code = (req, res) => {
 
       try {
     
-        console.log("SSS")
       //  await helper.send_sms(req.body.phone, message);
 
         await OtpModel.create({
