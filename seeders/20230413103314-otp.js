@@ -6,9 +6,9 @@ module.exports = {
       "OTPs",
       [
         {
-          phone: "1234567890",
+          phone: "12345867867890",
           code: "1234",
-          otpCreatedAt: new Date(),
+          otp_createdAt: new Date(),
           createdAt: new Date(),
           updatedAt: new Date(),
         },

@@ -15,10 +15,10 @@ module.exports = {
       code: {
         type: Sequelize.STRING,
       },
-      otpCreatedAt: {
+      otp_createdAt: {
         type: Sequelize.DATE,
       },
-      otpUsed: {
+      otp_used: {
         type: Sequelize.TINYINT,
         defaultValue: 0,
       },

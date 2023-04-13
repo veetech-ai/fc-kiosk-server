@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       code: DataTypes.STRING,
-      otpCreatedAt: DataTypes.DATE,
-      otpUsed: DataTypes.BOOLEAN,
+      otp_createdAt: DataTypes.DATE,
+      otp_used: DataTypes.BOOLEAN,
     },
     {
       sequelize,
