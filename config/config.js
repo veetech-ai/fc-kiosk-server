@@ -86,6 +86,11 @@ module.exports = {
     storageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
     storageURL: process.env.AZURE_STORAGE_URL,
   },
+  golfbert: {
+    accessKeyId: process.env.GOLFBERT_AWS_ACCESS_KEY_ID,
+    accessKey: process.env.GOLFBERT_AWS_SECRET_ACCESS_KEY,
+    apiKey: process.env.GOLFBERT_X_API_KEY,
+  },
   aws: {
     upload: process.env.UPLOAD_ON_AWS === "true",
     accessKey: process.env.AWS_ACCESS_KEY_ID,
