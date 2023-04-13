@@ -1,20 +1,16 @@
-"use strict";
+'use strict';
 
-const { getGolfCourses } = require("../common/golf_courses");
+const { getGolfCourses } = require('../common/golf_courses');
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    const data_arr = getGolfCourses();
-    return queryInterface.bulkInsert("Courses", data_arr , { ignoreDuplicates: true }, );
+  up: async (queryInterface, Sequelize) => {
+    const dataArr = getGolfCourses();
+    await queryInterface.bulkInsert('Courses', dataArr, {
+      updateOnDuplicate: ['lat', 'long'],
+    });
   },
 
-  down: (queryInterface, Sequelize) => {
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.bulkDelete('People', null, {});
-    */
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.bulkDelete('Courses', null, {});
   },
 };
