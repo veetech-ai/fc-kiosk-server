@@ -5,7 +5,7 @@ exports.create = async ({ phone, code }) => {
   let otp = await OTP.findOne({ where: { phone } });
   if (!otp) {
     // Create a new OTP record if it does not exist
-    const otpData = { phone, code, otp_createdAt: new Date(), otp_used: false };
+    const otpData = { phone, code, otp_createdAt: new Date() };
     otp = await OTP.create(otpData);
   } else {
     // Update the code if the OTP record already exists
@@ -20,10 +20,16 @@ exports.getByPhone = async ({ phone }) => {
   return OTP.findOne({ where: { phone } });
 };
 
-exports.updateUsedStatus = async ({ phone, otp_used }) => {
-  return OTP.update({ otp_used }, { where: { phone } });
-};
+exports.verifyCode = async (user, user_entered_code) => {
+  const otpExpirationTimeMs = 1 * 60 * 1000;
+  const otpAgeMs = new Date() - user.otp_createdAt;
+  if (otpAgeMs > otpExpirationTimeMs) {
+    return { id: 1, reason: "Expiry date exceeded" };
+  }
 
-exports.verifyCode = async ( server_code , user_entered_code   ) => {
-    return server_code === user_entered_code;
-  };
+  if (user.code != user_entered_code) {
+    return { id: 2, reason: "Invalid Code" };
+  }
+
+  return { id: 3, reason: "Valid Code" };
+};

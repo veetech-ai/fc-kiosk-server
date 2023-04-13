@@ -1730,14 +1730,13 @@ exports.send_phone_verification_code = (req, res) => {
 
       try {
     
-      //  await helper.send_sms(req.body.phone, message);
+        //  await helper.send_sms(req.body.phone, message);
 
         await OtpModel.create({
           phone: req.body.phone.toString(),
           code: phone_code,
           otp_createdAt: new Date(),
-          otp_used: false,
-        });    
+        });
 
 
         return apiResponse.success(res, req, "Verification code sent");
@@ -1780,8 +1779,7 @@ exports.verify_phone_verification_code = (req, res) => {
    *         description: success
    */
   try {
-
-    console.log(req.body)
+    console.log(req.body);
     const validation = new Validator(req.body, {
       phone: "required",
     });
@@ -1798,11 +1796,18 @@ exports.verify_phone_verification_code = (req, res) => {
 
         if (!user) return apiResponse.fail(res, "User has not got OTP yet");
 
-        const verified = OtpModel.verifyCode(user.dataValues.code,req.body.code)
+        const verified = await OtpModel.verifyCode(
+          user.dataValues,
+          req.body.code,
+        );
+        if (verified.id == 1)
+          return apiResponse.fail(res, "Expiry date exceeded");
+        if (verified.id == 2)
+          return apiResponse.fail(res, "Not Verified, Invalid Code");
 
-        if (!verified) return apiResponse.fail(res, "Not Verified");
-
-        await UserModel.create_user({email: `${req.body.phone}@phonenumber.com` });
+        await UserModel.create_user({
+          email: `${req.body.phone}@phonenumber.com`,
+        });
 
         return apiResponse.success(res, req, "Phone number verified");
       } catch (err) {

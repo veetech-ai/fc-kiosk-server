@@ -18,10 +18,7 @@ module.exports = {
       otp_createdAt: {
         type: Sequelize.DATE,
       },
-      otp_used: {
-        type: Sequelize.TINYINT,
-        defaultValue: 0,
-      },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

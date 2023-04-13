@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       code: DataTypes.STRING,
       otp_createdAt: DataTypes.DATE,
-      otp_used: DataTypes.BOOLEAN,
+
     },
     {
       sequelize,
