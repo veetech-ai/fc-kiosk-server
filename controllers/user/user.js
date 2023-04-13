@@ -15,6 +15,7 @@ const UserSettings = require("../../services/user_settings");
 const UserLoginInfoModel = require("../../services/user_login_info");
 const PushNotificationsSubscriptionsModel = require("../../services/push_notifications_subscriptions");
 const UserSQAnswerModel = require("../../services/user_sq_answers");
+const OtpModel = require("../../services/otp");
 
 const { calculateTimeBounds } = require("../../services/devices");
 
@@ -1728,13 +1729,15 @@ exports.send_phone_verification_code = (req, res) => {
       
 
       try {
-        await helper.send_sms(req.body.phone, message);
+    
+        console.log("SSS")
+      //  await helper.send_sms(req.body.phone, message);
 
-        await OTP.create({
-          phone: req.body.phone,
+        await OtpModel.create({
+          phone: req.body.phone.toString(),
           code: phone_code,
-          otpCreatedAt: new Date(),
-          otpUsed: false,
+          otp_createdAt: new Date(),
+          otp_used: false,
         });    
 
 
