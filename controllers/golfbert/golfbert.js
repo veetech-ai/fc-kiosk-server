@@ -145,7 +145,10 @@ exports.get_courses_by_courseId = async (req, res) => {
     const API_URL = `${BASE_URL}/courses/${courseId}`;
 
     const queryParams = {};
-    const response = await golfbertService.get_course_by_id(queryParams, API_URL);
+    const response = await golfbertService.get_course_by_id(
+      queryParams,
+      API_URL,
+    );
 
     return apiResponse.success(res, req, response);
   } catch (error) {

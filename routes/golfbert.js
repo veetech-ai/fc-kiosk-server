@@ -59,6 +59,4 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     GolfController.get_teeboxtypes,
   ]);
-
-  
 };
