@@ -364,11 +364,11 @@ exports.get_holes_by_holeId = async (req, res) => {
       return apiResponse.fail(res, "Hole Id not found in params", 404);
     }
     const API_URL = BASE_URL + `/holes/${holeId}`;
-
     const response = await golfbertService.get_holes_by_holeId(
       queryParams,
       API_URL,
     );
+
     return apiResponse.success(res, req, response);
   } catch (error) {
     return apiResponse.fail(res, error, 500);
