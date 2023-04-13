@@ -1730,16 +1730,12 @@ exports.send_phone_verification_code = (req, res) => {
       try {
         await helper.send_sms(req.body.phone, message);
 
-        await UserModel.update_where(
-          {
-            phone_code: phone_code,
-            phone: req.body.phone,
-            phone_verified: false,
-          },
-          { id: req.user.id },
-        );
-
-        
+        await OTP.create({
+          phone: req.body.phone,
+          code: phone_code,
+          otpCreatedAt: new Date(),
+          otpUsed: false,
+        });    
 
 
         return apiResponse.success(res, req, "Verification code sent");
