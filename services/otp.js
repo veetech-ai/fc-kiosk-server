@@ -31,5 +31,7 @@ exports.verifyCode = async (user, user_entered_code) => {
     return { id: 2, reason: "Invalid Code" };
   }
 
+  await OTP.destroy({ where: { phone : user.phone } });
+
   return { id: 3, reason: "Valid Code" };
 };
