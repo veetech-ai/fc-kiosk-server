@@ -1,5 +1,5 @@
-'use strict';
-const { Model } = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class OTP extends Model {
     static associate(models) {
@@ -14,12 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       code: DataTypes.STRING,
       otp_createdAt: DataTypes.DATE,
-
     },
     {
       sequelize,
-      modelName: 'OTP',
-    }
+      modelName: "OTP",
+    },
   );
   return OTP;
 };

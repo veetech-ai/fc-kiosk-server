@@ -1705,7 +1705,6 @@ exports.send_phone_verification_code = (req, res) => {
    *         description: success
    */
   try {
-   
     const validation = new Validator(req.body, {
       phone: "required",
     });
@@ -1722,14 +1721,9 @@ exports.send_phone_verification_code = (req, res) => {
         type: "numeric",
       });
 
-
-
       const message = `Your ${code_length} digit verification code is ${phone_code}`;
 
-      
-
       try {
-    
         //  await helper.send_sms(req.body.phone, message);
 
         await OtpModel.create({
@@ -1737,7 +1731,6 @@ exports.send_phone_verification_code = (req, res) => {
           code: phone_code,
           otp_createdAt: new Date(),
         });
-
 
         return apiResponse.success(res, req, "Verification code sent");
       } catch (err) {

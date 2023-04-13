@@ -118,7 +118,7 @@ exports.create_user = async (params) => {
   const isExists = await phoneExists(params.email);
 
   if (isExists) {
-    return
+    return;
   }
 
   // Create new user
