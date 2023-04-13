@@ -147,7 +147,7 @@ exports.register = (req, res) => {
 
         return apiResponse.success(res, req, created_user);
       } catch (err) {
-        if (err.message == "emailExists")
+        if (err.message == "phoneExists")
           return apiResponse.fail(res, "Email already exists", 422);
         else return apiResponse.fail(res, err.message, 500);
       }
@@ -1782,7 +1782,6 @@ exports.verify_phone_verification_code = (req, res) => {
   try {
 
     console.log(req.body)
-
     const validation = new Validator(req.body, {
       phone: "required",
     });
@@ -1797,13 +1796,13 @@ exports.verify_phone_verification_code = (req, res) => {
           phone: req.body.phone,
         });
 
-        console.log(user.dataValues.code)
+        if (!user) return apiResponse.fail(res, "User has not got OTP yet");
 
         const verified = OtpModel.verifyCode(user.dataValues.code,req.body.code)
 
         if (!verified) return apiResponse.fail(res, "Not Verified");
 
-        await UserModel.create_user({email:"danishbutt"});
+        await UserModel.create_user({email: `${req.body.phone}@phonenumber.com` });
 
         return apiResponse.success(res, req, "Phone number verified");
       } catch (err) {
@@ -2153,7 +2152,7 @@ exports.inviteUser = (req, res) => {
             "Can not add user to test organization",
             403,
           );
-        } else if (error.message === "emailExists") {
+        } else if (error.message === "phoneExists") {
           return apiResponse.fail(res, "Email already exists", 422);
         } else if (error.message === "Invitation already sent") {
           return apiResponse.fail(res, "Invitation already sent", 422);
