@@ -1787,8 +1787,7 @@ exports.verify_phone_verification_code = (req, res) => {
           phone: req.body.phone,
         });
 
-        if (!user) return apiResponse.fail(res, "User has not got OTP yet");
-
+        if (!user) return apiResponse.fail(res, "OTP not verified");
         const verified = await OtpModel.verifyCode(
           user.dataValues,
           req.body.code,
