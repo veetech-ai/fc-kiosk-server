@@ -13,8 +13,8 @@ module.exports = {
           description: "Test organization for testing ",
         },
         {
-          name: "viaPhoton",
-          description: "viaPhoton Aurora ",
+          name: "digitalfairqays",
+          description: "digitalfairqays for testing ",
         },
       ],
       {
