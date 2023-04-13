@@ -1704,6 +1704,7 @@ exports.send_phone_verification_code = (req, res) => {
    *         description: success
    */
   try {
+   
     const validation = new Validator(req.body, {
       phone: "required",
     });
@@ -1720,10 +1721,15 @@ exports.send_phone_verification_code = (req, res) => {
         type: "numeric",
       });
 
+
+
       const message = `Your ${code_length} digit verification code is ${phone_code}`;
+
+      
 
       try {
         await helper.send_sms(req.body.phone, message);
+
         await UserModel.update_where(
           {
             phone_code: phone_code,
@@ -1732,6 +1738,9 @@ exports.send_phone_verification_code = (req, res) => {
           },
           { id: req.user.id },
         );
+
+        
+
 
         return apiResponse.success(res, req, "Verification code sent");
       } catch (err) {
