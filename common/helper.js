@@ -24,11 +24,11 @@ const { roleWithAuthorities } = getRolesWithAuthorities();
 const { insertInfluxData } = require("./influxHelper");
 
 // MySQL Schema Imports
-const automaAlertsSchema = require("./../iotcore-commons/schemas/automa-alerts-names.json");
+const automaAlertsSchema = require("./../df-commons/schemas/automa-alerts-names.json");
 // Alerts Data Imports
-const automaAlertsData = require("./../iotcore-commons/data/automa-alerts.json");
+const automaAlertsData = require("./../df-commons/data/automa-alerts.json");
 // Influx Schema Imports
-const automaAlertsInfluxSchema = require("./../iotcore-commons/influxSchemas/automa-alerts.json");
+const automaAlertsInfluxSchema = require("./../df-commons/influxSchemas/automa-alerts.json");
 
 // Query Imports
 const MQTTLogsModel = require("../services/mqtt_logs");
@@ -46,10 +46,10 @@ const { getRoleByTitle } = require("../services/role");
 const settings = require("../config/settings");
 const config = require("../config/config");
 
-const alertsCategories = require("./../iotcore-commons/data/alerts-categories.json");
+const alertsCategories = require("./../df-commons/data/alerts-categories.json");
 
 // Definitions Imports
-const definitionsValidations = require("./../iotcore-commons/definitions/validations.json");
+const definitionsValidations = require("./../df-commons/definitions/validations.json");
 const { globalMQTT } = require("./mqtt-init");
 
 // Setting Up Ajv
@@ -98,8 +98,8 @@ exports.get_aws_signature = async (api_url, queryParams, method) => {
     service: "execute-api",
     region: "us-east-1",
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: config.golfbert.accessKeyId,
+      secretAccessKey: config.golfbert.accessKey,
     },
     sha256: Sha256,
   });
@@ -111,7 +111,7 @@ exports.get_aws_signature = async (api_url, queryParams, method) => {
     protocol: apiUrl.protocol,
     headers: {
       "Content-Type": "application/json",
-      "X-Api-Key": process.env.X_API_KEY,
+      "X-Api-Key": config.golfbert.apiKey,
       host: apiUrl.hostname,
     },
     query: queryParams,
