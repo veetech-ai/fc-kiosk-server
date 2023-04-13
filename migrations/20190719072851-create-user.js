@@ -16,6 +16,21 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+
+      handicap_index: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+
+      gender: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      dateOfBirth: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
+
       phone: {
         type: Sequelize.STRING,
         defaultValue: null,
