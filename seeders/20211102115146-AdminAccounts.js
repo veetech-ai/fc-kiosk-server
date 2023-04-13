@@ -157,6 +157,21 @@ module.exports = {
           role_id: roles.manager.id,
           report_to: testCustomer.id,
         },
+        {
+          id: 12,
+          name: "Golfer",
+          email: "golfer@cowlar.com",
+          orgId: TestOrg.id,
+          status: 1,
+          dateOfBirth: new Date(),
+          gender: "Male",
+          handicap_index: "1",
+          password:
+            "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
+          mqtt_token: randtoken.generate(10),
+          role_id: roles.manager.id,
+          report_to: testCustomer.id,
+        },
       ],
       { ignoreDuplicates: true, updateOnDuplicate: ["role_id"] },
     );
