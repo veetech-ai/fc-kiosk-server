@@ -232,6 +232,26 @@ exports.routesConfig = function (app, router) {
     ]),
     UsersController.verify_phone_verification_code,
   ]);
+  router.post(group + "/send-phone-verification-code-for-app", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess([
+      "super",
+      "admin",
+      "getUsers",
+      "manageUsers",
+    ]),
+    UsersController.send_phone_verification_code_for_app,
+  ]);
+  router.post(group + "/verify-phone-verification-code-for-app", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess([
+      "super",
+      "admin",
+      "getUsers",
+      "manageUsers",
+    ]),
+    UsersController.verify_phone_verification_code_for_app,
+  ]);
 
   router.get(group + "/last-login-info", [
     validation_middleware.validJWTNeeded,

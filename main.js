@@ -103,7 +103,8 @@ const NetworksController = require("./routes/networks");
 const BillingController = require("./routes/billing");
 const StripeController = require("./routes/stripe");
 const JazzCashController = require("./routes/jazzcash");
-const GolfBertController = require("./routes/golfbert");
+const GolfBertRouter = require("./routes/golfbert");
+const AppOTPVerificationRouter = require("./routes/golfbert");
 
 const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
@@ -177,7 +178,7 @@ BillingController.routesConfig(app, router);
 StripeController.routesConfig(app, router);
 JazzCashController.routesConfig(app, router);
 Roles.routesConfig(app, router);
-GolfBertController.routesConfig(app, router);
+GolfBertRouter.routesConfig(app, router);
 
 if (config.env === "test") {
   // for test case server

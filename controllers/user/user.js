@@ -1724,6 +1724,125 @@ exports.send_phone_verification_code = (req, res) => {
       const message = `Your ${code_length} digit verification code is ${phone_code}`;
 
       try {
+        await helper.send_sms(req.body.phone, message);
+        await UserModel.update_where(
+          {
+            phone_code: phone_code,
+            phone: req.body.phone,
+            phone_verified: false,
+          },
+          { id: req.user.id },
+        );
+
+        return apiResponse.success(res, req, "Verification code sent");
+      } catch (err) {
+        return apiResponse.fail(res, err.message, 500);
+      }
+    });
+  } catch (err) {
+    return apiResponse.fail(res, err.message, 500);
+  }
+};
+
+
+exports.verify_phone_verification_code = (req, res) => {
+  /**
+   * @swagger
+   *
+   * /user/verify-phone-verification-code:
+   *   post:
+   *     security:
+   *      - auth: []
+   *     description: Verify phone verification code
+   *     tags: [User]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: code
+   *         description: Verification Code
+   *         in: formData
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const validation = new Validator(req.body, {
+      code: "required",
+    });
+
+    validation.fails(function () {
+      return apiResponse.fail(res, validation.errors);
+    });
+
+    validation.passes(async function () {
+      try {
+        const user = await UserModel.find_by_where({
+          id: req.user.id,
+          phone_code: req.body.code,
+        });
+
+        if (!user) return apiResponse.fail(res, "Invalid Code");
+
+        await UserModel.update_where({ phone_verified: true }, { id: user.id });
+
+        return apiResponse.success(res, req, "Phone number verified");
+      } catch (err) {
+        return apiResponse.fail(res, err.message, 500);
+      }
+    });
+  } catch (err) {
+    return apiResponse.fail(res, err.message, 500);
+  }
+};
+
+exports.send_phone_verification_code_for_app = (req, res) => {
+  /**
+   * @swagger
+   *
+   * /user/send-phone-verification-code-for-app:
+   *   post:
+   *     security:
+   *      - auth: []
+   *     description: Send code to provided phone number.
+   *     tags: [User]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: phone
+   *         description: User Phone number
+   *         in: formData
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const validation = new Validator(req.body, {
+      phone: "required",
+    });
+
+    validation.fails(function () {
+      return apiResponse.fail(res, validation.errors);
+    });
+
+    validation.passes(async function () {
+      const code_length = 6;
+
+      const phone_code = helper.generate_random_string({
+        length: code_length,
+        type: "numeric",
+      });
+
+      const message = `Your ${code_length} digit verification code is ${phone_code}`;
+
+      try {
         //  await helper.send_sms(req.body.phone, message);
 
         await OtpModel.create({
@@ -1742,11 +1861,12 @@ exports.send_phone_verification_code = (req, res) => {
   }
 };
 
-exports.verify_phone_verification_code = (req, res) => {
+
+exports.verify_phone_verification_code_for_app = (req, res) => {
   /**
    * @swagger
    *
-   * /user/verify-phone-verification-code:
+   * /user/verify-phone-verification-code-for-app:
    *   post:
    *     security:
    *      - auth: []
