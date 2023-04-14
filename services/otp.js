@@ -1,3 +1,4 @@
+const { async } = require("crypto-random-string");
 const models = require("../models");
 const OTP = models.OTP;
 
@@ -35,3 +36,7 @@ exports.verifyCode = async (user, user_entered_code) => {
 
   return { id: 3, reason: "Valid Code" };
 };
+
+exports.destroyOTP = async (phone) => {
+  await OTP.destroy({ where: { phone : phone } });
+}

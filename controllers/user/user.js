@@ -1909,8 +1909,10 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
           userOTP.dataValues,
           req.body.code,
         );
-        if (verified.id == 1)
+        if (verified.id == 1) {
+          OtpModel.destroyOTP(req.body.phone);
           return apiResponse.fail(res, "Expiry date exceeded");
+        }
         if (verified.id == 2)
           return apiResponse.fail(res, "Not Verified, Invalid Code");
 
@@ -1951,7 +1953,6 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
           accessToken: token,
           refreshToken: refresh_token,
         });
-
       } catch (err) {
         return apiResponse.fail(res, err.message, 500);
       }
