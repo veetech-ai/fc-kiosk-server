@@ -7,6 +7,7 @@ const { logger } = require("../logger");
 // Models Imports
 const models = require("../models");
 const User = models.User;
+const Role = models.Role;
 
 // Configuration Imports
 const config = require("../config/config");
@@ -38,6 +39,10 @@ exports.UsersStatus = UsersStatus;
 
 const EmailExists = async (email) => {
   return await User.count({ where: { email: email } });
+};
+
+const PhoneExists = async (phone) => {
+  return await User.count({ where: { phone: phone } });
 };
 
 exports.list = async (paginationParams = false) => {
@@ -115,14 +120,27 @@ exports.list_selective_users = async (perPage, page, ids) => {
 };
 
 exports.create_user = async (params) => {
+  const isPhone = await PhoneExists(params.phone);
+  if (isPhone) {
+    return;
+  }
   const isExists = await EmailExists(params.email);
-
   if (isExists) {
     return;
   }
+  const golferRole = await Role.findOne({
+    where: {
+      title: "golfer",
+    },
+    attributes: ["id"],
+  });
 
-  // Create new user
-  return await User.create(params);
+  const golfer_role_id = golferRole.id;
+  // Add roleId to params object
+  const paramsWithRole = { ...params, role_id: golfer_role_id };
+  console.log(paramsWithRole);
+  // Create new user with roleId assigned
+  return await User.create(paramsWithRole);
 };
 
 exports.update_user = async (id, user) => {

@@ -1772,7 +1772,6 @@ exports.verify_phone_verification_code = (req, res) => {
    *         description: success
    */
   try {
-    console.log(req.body);
     const validation = new Validator(req.body, {
       phone: "required",
     });
@@ -1800,6 +1799,7 @@ exports.verify_phone_verification_code = (req, res) => {
         await UserModel.create_user({
           email: `${req.body.phone}@phonenumber.com`,
           role_id: 3,
+          phone: req.body.phone,
         });
 
         return apiResponse.success(res, req, "Phone number verified");
