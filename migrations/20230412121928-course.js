@@ -6,6 +6,7 @@ module.exports = {
     return queryInterface.createTable("Courses", {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
@@ -47,12 +48,10 @@ module.exports = {
       lat: {
         type: Sequelize.DOUBLE,
         allowNull: true,
-        defaultValue: 0,
       },
       long: {
         type: Sequelize.DOUBLE,
         allowNull: true,
-        defaultValue: 0,
       },
     });
   },
