@@ -46,8 +46,10 @@ module.exports = (sequelize, DataTypes) => {
       handicap_index: DataTypes.STRING,
       profile_image: DataTypes.STRING,
       gender: DataTypes.STRING,
-      dateOfBirth: DataTypes.DATEONLY,
-
+      date_of_birth: {
+        type: DataTypes.DATEONLY,
+        field: "date_of_birth",
+      },
       phone: DataTypes.STRING,
       password: DataTypes.STRING,
       password_token: DataTypes.STRING,

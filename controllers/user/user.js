@@ -1729,7 +1729,7 @@ exports.send_phone_verification_code = (req, res) => {
         await OtpModel.create({
           phone: req.body.phone.toString(),
           code: phone_code,
-          otp_createdAt: new Date(),
+          otp_created_at: new Date(),
         });
 
         return apiResponse.success(res, req, "Verification code sent");

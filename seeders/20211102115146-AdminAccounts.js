@@ -163,8 +163,8 @@ module.exports = {
           email: "golfer@cowlar.com",
           orgId: TestOrg.id,
           status: 1,
-          dateOfBirth: new Date(),
-          gender: "Male",
+          date_of_birth: new Date(),
+          gender: "male",
           handicap_index: "1",
           password:
             "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456

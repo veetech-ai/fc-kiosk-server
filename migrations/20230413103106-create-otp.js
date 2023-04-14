@@ -15,7 +15,7 @@ module.exports = {
       code: {
         type: Sequelize.STRING,
       },
-      otp_createdAt: {
+      otp_created_at: {
         type: Sequelize.DATE,
       },
 

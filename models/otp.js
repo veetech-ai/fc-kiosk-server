@@ -13,7 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       code: DataTypes.STRING,
-      otp_createdAt: DataTypes.DATE,
+      otp_created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: "otp_created_at",
+      }
     },
     {
       sequelize,
