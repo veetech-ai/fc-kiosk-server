@@ -34,7 +34,7 @@ module.exports = {
         {
           id: 2,
           name: "Admin",
-          email: "admin.viaphoton@cowlar.com",
+          email: "admin.df@cowlar.com",
           is_admin: true,
           super_admin: false,
           status: 1,
@@ -46,7 +46,7 @@ module.exports = {
         {
           id: 3,
           name: "Device Account",
-          email: "device.viaphoton@cowlar.com",
+          email: "device.df@cowlar.com",
           is_admin: true,
           super_admin: false,
           status: 1,
@@ -58,7 +58,7 @@ module.exports = {
         {
           id: 4,
           name: "Super Admin",
-          email: "superadmin.viaphoton@cowlar.com",
+          email: "superadmin.df@cowlar.com",
           is_admin: true,
           super_admin: true,
           status: 1,
@@ -70,7 +70,7 @@ module.exports = {
         {
           id: 5,
           name: "Test Super Admin",
-          email: "testsuperadmin.viaphoton@cowlar.com",
+          email: "testsuperadmin.df@cowlar.com",
           is_admin: true,
           super_admin: true,
           status: 1,
@@ -82,7 +82,7 @@ module.exports = {
         {
           id: 6,
           name: "Test Organization Operator account",
-          email: "testorgoperator.viaphoton@cowlar.com",
+          email: "testorgoperator.df@cowlar.com",
           is_admin: false,
           super_admin: false,
           orgId: TestOrg.id,
@@ -96,7 +96,7 @@ module.exports = {
         {
           id: 7,
           name: "operator account",
-          email: "testoperator.viaphoton@cowlar.com",
+          email: "testoperator.df@cowlar.com",
           is_admin: false,
           super_admin: false,
           orgId: TestOrg.id,
@@ -110,7 +110,7 @@ module.exports = {
         {
           id: 8,
           name: "Test Organization Device Account",
-          email: "testorgdevice.viaphoton@cowlar.com",
+          email: "testorgdevice.df@cowlar.com",
           is_admin: false,
           super_admin: false,
           orgId: TestOrg.id,
@@ -136,7 +136,7 @@ module.exports = {
         {
           id: 10,
           name: "Admin D",
-          email: "admind.viaphoton@cowlar.com",
+          email: "admind.df@cowlar.com",
           is_admin: true,
           super_admin: false,
           status: 1,
@@ -148,7 +148,7 @@ module.exports = {
         {
           id: 11,
           name: "Test Organization Manager account",
-          email: "testorgmanager.viaphoton@cowlar.com",
+          email: "testorgmanager.df@cowlar.com",
           orgId: TestOrg.id,
           status: 1,
           password:
