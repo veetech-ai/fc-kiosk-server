@@ -67,7 +67,7 @@ module.exports = {
       allowNull: false,
     });
 
-    await queryInterface.addColumn("Courses", "tabs_visibility", {
+    await queryInterface.addColumn("Courses", "kisok_options", {
       type: Sequelize.JSON,
       allowNull: false,
     });
@@ -90,6 +90,6 @@ module.exports = {
     await queryInterface.removeColumn("Courses", "fairways");
     await queryInterface.removeColumn("Courses", "members");
     await queryInterface.removeColumn("Courses", "season");
-    await queryInterface.removeColumn("Courses", "tabs_visibility");
+    await queryInterface.removeColumn("Courses", "kisok_options");
   },
 };
