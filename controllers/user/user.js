@@ -1744,7 +1744,6 @@ exports.send_phone_verification_code = (req, res) => {
   }
 };
 
-
 exports.verify_phone_verification_code = (req, res) => {
   /**
    * @swagger
@@ -1861,7 +1860,6 @@ exports.send_phone_verification_code_for_app = (req, res) => {
   }
 };
 
-
 exports.verify_phone_verification_code_for_app = (req, res) => {
   /**
    * @swagger
@@ -1902,13 +1900,13 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
 
     validation.passes(async function () {
       try {
-        const user = await OtpModel.getByPhone({
+        const userOTP = await OtpModel.getByPhone({
           phone: req.body.phone,
         });
 
-        if (!user) return apiResponse.fail(res, "OTP not verified");
+        if (!userOTP) return apiResponse.fail(res, "OTP not verified");
         const verified = await OtpModel.verifyCode(
-          user.dataValues,
+          userOTP.dataValues,
           req.body.code,
         );
         if (verified.id == 1)
@@ -1916,13 +1914,44 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
         if (verified.id == 2)
           return apiResponse.fail(res, "Not Verified, Invalid Code");
 
-        await UserModel.create_user({
+        const user = await UserModel.create_user({
           email: `${req.body.phone}@phonenumber.com`,
           role_id: 3,
           phone: req.body.phone,
         });
 
-        return apiResponse.success(res, req, "Phone number verified");
+        // Generating Token
+        const user_obj = JSON.parse(JSON.stringify(user));
+
+        const expire_time =
+          req.body.remember && req.body.remember == "true"
+            ? config.jwt.expirationLongInSeconds
+            : config.jwt.expirationShortInSeconds;
+        user_obj.expire_time = parseInt(expire_time);
+
+        //Not removed this code as it might be used in future
+        // user_obj.admin = !!helper.hasProvidedRoleRights(user.Role, ["admin"])
+        //   .success;
+        // user_obj.super_admin = !!helper.hasProvidedRoleRights(user.Role, [
+        //   "super",
+        // ]).success;
+        // user_obj.lb_sa = req.user;
+
+        const token = helper.createJwtToken({
+          user: user_obj,
+          expire_time: user_obj.expire_time,
+        });
+
+        const refresh_token = helper.createJwtToken({
+          user: user_obj,
+          expire_time: config.jwt.refreshExpirationInSeconds,
+        });
+
+        return apiResponse.success(res, req, {
+          accessToken: token,
+          refreshToken: refresh_token,
+        });
+
       } catch (err) {
         return apiResponse.fail(res, err.message, 500);
       }

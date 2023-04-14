@@ -122,7 +122,7 @@ exports.list_selective_users = async (perPage, page, ids) => {
 exports.create_user = async (params) => {
   const isPhone = await PhoneExists(params.phone);
   if (isPhone) {
-    return;
+    return await User.findOne({ where: { phone: params.phone } });
   }
   const isExists = await EmailExists(params.email);
   if (isExists) {
@@ -138,9 +138,10 @@ exports.create_user = async (params) => {
   const golfer_role_id = golferRole.id;
   // Add roleId to params object
   const paramsWithRole = { ...params, role_id: golfer_role_id };
-  console.log(paramsWithRole);
+
   // Create new user with roleId assigned
-  return await User.create(paramsWithRole);
+  const user = await User.create(paramsWithRole);
+  return user;
 };
 
 exports.update_user = async (id, user) => {
