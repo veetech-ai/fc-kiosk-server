@@ -36,7 +36,7 @@ const UsersStatus = {
 
 exports.UsersStatus = UsersStatus;
 
-const phoneExists = async (email) => {
+const EmailExists = async (email) => {
   return await User.count({ where: { email: email } });
 };
 
@@ -115,7 +115,7 @@ exports.list_selective_users = async (perPage, page, ids) => {
 };
 
 exports.create_user = async (params) => {
-  const isExists = await phoneExists(params.email);
+  const isExists = await EmailExists(params.email);
 
   if (isExists) {
     return;
