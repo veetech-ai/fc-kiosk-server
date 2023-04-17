@@ -100,7 +100,7 @@ module.exports = {
       await queryInterface.changeColumn('Courses', 'images', {
         type: Sequelize.JSON,
         allowNull: false,
-        defaultValue: "[]",
+        defaultValue: 0,
       }),
       await queryInterface.changeColumn('Courses', 'year_built', {
         type: Sequelize.INTEGER,
