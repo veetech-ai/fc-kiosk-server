@@ -130,9 +130,9 @@ module.exports = {
           onDelete: "CASCADE",
         },
       }),
-      queryInterface.addIndex("Courses", ["lat"]),
-      queryInterface.addIndex("Courses", ["long"]),
-      queryInterface.addIndex("Courses", ["name"]),
+      await queryInterface.addIndex("Courses", ["lat"]),
+      await queryInterface.addIndex("Courses", ["long"]),
+      await queryInterface.addIndex("Courses", ["name"]),
     ]);
   },
 
