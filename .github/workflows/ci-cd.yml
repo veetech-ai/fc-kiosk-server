@@ -16,7 +16,7 @@ jobs:
     uses: "./.github/workflows/ci.yml"
     secrets: inherit
   deployment:
-    # if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request' }}
     needs: integration
     name: "Continuous Deployment"
     uses: "./.github/workflows/cd.yml"
