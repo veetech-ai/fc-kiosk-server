@@ -22,7 +22,7 @@ jobs:
     uses: "./.github/workflows/cd.yml"
     with:
       IMAGE_TAG: ${{ (github.ref == 'refs/heads/main' && 'latest') || github.ref_name }}
-      DOCKER_FILE: Dockerfile
+      DOCKER_FILE: "Dockerfile"
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

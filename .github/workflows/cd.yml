@@ -36,12 +36,11 @@ jobs:
         run: echo "Trying to deploy"
 
       - name: Configure AWS credentials
-        id: login-step
-        uses: "./.github/actions/aws-login-setup"
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          awsRegion: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
