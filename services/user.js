@@ -15,7 +15,7 @@ const config = require("../config/config");
 // Common Imports
 const helper = require("../common/helper");
 const email = require("../common/email");
-const { reportToUserDictionary } = require("../common/roles_with_authorities");
+const { reportToUserDictionary, roleWithAuthorities } = require("../common/roles_with_authorities");
 
 // Services Imports
 const OrganizationModel = require("./organization");
@@ -120,28 +120,31 @@ exports.list_selective_users = async (perPage, page, ids) => {
 };
 
 exports.create_user = async (params) => {
-  const isPhone = await PhoneExists(params.phone);
-  if (isPhone) {
-    return await User.findOne({ where: { phone: params.phone } });
-  }
-  const isExists = await emailExists(params.email);
-  if (isExists) {
-    return;
-  }
-  const golferRole = await Role.findOne({
-    where: {
-      title: "golfer",
-    },
-    attributes: ["id"],
-  });
+  const isGolferWithPhoneLogin = params?.role_id === roleWithAuthorities.golfer.id
+  
+  if(isGolferWithPhoneLogin) {
+    const isPhone = await PhoneExists(params.phone);
+    
+    if (isPhone) {
+      return await User.findOne({ where: { phone: params.phone } });
+    }
 
-  const golfer_role_id = golferRole.id;
-  // Add roleId to params object
-  const paramsWithRole = { ...params, role_id: golfer_role_id };
+    // Add roleId to params object
+    const paramsWithRole = { ...params, role_id: params.role_id };
+  
+    // Create new user with roleId assigned
+    const user = await User.create(paramsWithRole);
+    return user;
+  } else {
+    const isExists = await emailExists(params.email);
+    if (isExists) {
+      throw new Error("emailExists");
+    }
+  
+    // Create new user
+    return await User.create(params);
+  }
 
-  // Create new user with roleId assigned
-  const user = await User.create(paramsWithRole);
-  return user;
 };
 
 exports.update_user = async (id, user) => {
