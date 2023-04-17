@@ -1,0 +1,38 @@
+name: 'Task Definition Update'
+description: 'Download the task definition, update it with the docker image and push it'
+inputs:
+  ecsTaskDefinition:
+    required: true
+  ecsContainerName:
+    required: true
+  image:
+    required: true
+  ecsService:
+    required: true
+  ecsCluster:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download task definition to update
+      shell: bash
+      env:
+        ECS_TASK_DEFINITION: ${{ inputs.ecsTaskDefinition }}
+      run: |
+        aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --query taskDefinition > task-definition.json
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: task-definition.json
+        container-name: ${{ inputs.ecsContainerName }}
+        image: ${{ inputs.image}}
+      
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ inputs.ecsService }}
+        cluster: ${{ inputs.ecsCluster }}
+        wait-for-service-stability: true
