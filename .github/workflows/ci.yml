@@ -1,4 +1,4 @@
-name: CI/CD
+name: linting and testing
 on:
   pull_request:
     branches:
