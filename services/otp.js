@@ -1,3 +1,4 @@
+const config = require("../config/config");
 const models = require("../models");
 const OTP = models.OTP;
 
@@ -16,17 +17,16 @@ exports.create = async ({ phone, code }) => {
   return otp;
 };
 
-exports.getByPhone = async ({ phone }) => {
-  return OTP.findOne({ where: { phone } });
+exports.getByPhone = async ({ phone, code }) => {
+  return OTP.findOne({ where: { phone, code } });
 };
 
-exports.verifyCode = async (user, phoneNumber, user_entered_code) => {
-  const otpExpirationTimeMs = 1 * 60 * 1000;
-  const otpAgeMs = new Date() - user.otp_created_at;
+exports.verifyCode = async (user, phoneNumber) => {
+  const otpExpirationTimeMs = config.auth.mobileAuth.otpExpirationInSeconds * 1000;
+  const currentTimeMs = new Date(Date.now()).getTime();
+  const otpAgeMs = new Date(user.createdAt).getTime() + otpExpirationTimeMs;
   
-  if (user.code != user_entered_code) throw new Error("Invalid Code");
-  
-  if (otpAgeMs > otpExpirationTimeMs) {
+  if (otpAgeMs < currentTimeMs) {
     await this.destroyOTP(phoneNumber);
     throw new Error("Expiry date exceeded");
   }

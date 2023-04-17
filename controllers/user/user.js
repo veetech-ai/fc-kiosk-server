@@ -1902,14 +1902,14 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
 
         const userOTP = await OtpModel.getByPhone({
           phone: phoneNumber,
+          code: receivedOtp,
         });
 
-        if (!userOTP) return apiResponse.fail(res, "OTP not verified");
+        if (!userOTP) return apiResponse.fail(res, "OTP not valid");
 
         await OtpModel.verifyCode(
           userOTP.dataValues,
           phoneNumber,
-          receivedOtp,
         );
         
         const user = await UserModel.create_user({
