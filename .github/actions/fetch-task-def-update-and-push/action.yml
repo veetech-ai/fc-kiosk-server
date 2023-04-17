@@ -1,5 +1,5 @@
-name: 'Task Definition Update'
-description: 'Download the task definition, update it with the docker image and push it'
+name: "Task Definition Update"
+description: "Download the task definition, update it with the docker image and push it"
 inputs:
   ecsTaskDefinition:
     required: true
@@ -28,7 +28,7 @@ runs:
         task-definition: task-definition.json
         container-name: ${{ inputs.ecsContainerName }}
         image: ${{ inputs.image}}
-      
+
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:

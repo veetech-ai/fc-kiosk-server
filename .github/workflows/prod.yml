@@ -1,8 +1,8 @@
-# on: 
+# on:
 #   workflow_dispatch:
 #     inputs:
 #       tag:
-#         description: 'Tag to push'     
+#         description: 'Tag to push'
 #         required: false
 # jobs:
 #   production-deployment:
@@ -20,7 +20,7 @@
 #       - name: tag existence
 #         id: tag-existence
 #         if: ${{ github.event.inputs.tag != '' }}
-#         env: 
+#         env:
 #           ECR_REGISTRY: ${{ steps.login-step.outputs.registry }}
 #           AWS_REGION: ${{ secrets.AWS_REGION }}
 #           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
@@ -28,7 +28,7 @@
 #         run: |
 #           aws ecr describe-images --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG
 #           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      
+
 #       - name: Download staging task definition
 #         id: staging-task-def
 #         if: ${{ github.event.inputs.tag == '' }}
@@ -45,6 +45,6 @@
 #         with:
 #           ecsTaskDefinition: ${{ secrets.ECS_TASK_DEFINITION_PROD}}
 #           ecsContainerName: ${{ secrets.ECS_CONTAINER_NAME_PROD }}
-#           image: ${{ steps.tag-existence.outputs.image || fromJSON(steps.staging-task-def.outputs.latestRevision).containerDefinitions[0].image }} 
+#           image: ${{ steps.tag-existence.outputs.image || fromJSON(steps.staging-task-def.outputs.latestRevision).containerDefinitions[0].image }}
 #           ecsService: ${{ secrets.ECS_SERVICE_PROD }}
 #           ecsCluster: ${{ secrets.ECS_CLUSTER }}

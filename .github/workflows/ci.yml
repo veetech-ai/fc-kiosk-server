@@ -3,7 +3,7 @@ on:
   pull_request:
     branches:
       - main
-env: 
+env:
   GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
 
 jobs:
@@ -97,7 +97,6 @@ jobs:
       - run: |
           chmod -R 777 ./badges/
       - run: npx jest-coverage-badges --output ./badges
-
       - name: Git Auto Commit
         if: ${{ github.event_name == 'pull_request' }}
         uses: stefanzweifel/git-auto-commit-action@v4.14.1
