@@ -31,13 +31,13 @@ exports.routesConfig = function (app, router) {
     AuthorizationController.checkToken,
   ]);
 
-  router.get(`${config.app.apiPath}twitter/call`, [
-    AuthorizationController.twitter,
-  ]);
+  // router.get(`${config.app.apiPath}twitter/call`, [
+  //   AuthorizationController.twitter,
+  // ]);
 
-  router.get(`${config.app.apiPath}twitter/callback`, [
-    AuthorizationController.twitter_callback,
-  ]);
+  // router.get(`${config.app.apiPath}twitter/callback`, [
+  //   AuthorizationController.twitter_callback,
+  // ]);
 
   router.get(`${config.app.apiPath}get-social-email/:socialType/:socialId`, [
     AuthorizationController.get_social_email,

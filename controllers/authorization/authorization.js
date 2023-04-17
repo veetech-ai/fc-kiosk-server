@@ -1,6 +1,6 @@
 // External Imports
 const Validator = require("validatorjs");
-const LoginWithTwitter = require("login-with-twitter");
+// const LoginWithTwitter = require("login-with-twitter");
 
 // Logger Imports
 const { logger } = require("../../logger");
@@ -23,11 +23,11 @@ const {
   get_app_title_slug,
 } = require("./helpers");
 
-const tw = new LoginWithTwitter({
-  consumerKey: config.twitter.key,
-  consumerSecret: config.twitter.secret,
-  callbackUrl: `${config.twitter.callbackURL}`,
-});
+// const tw = new LoginWithTwitter({
+//   consumerKey: config.twitter.key,
+//   consumerSecret: config.twitter.secret,
+//   callbackUrl: `${config.twitter.callbackURL}`,
+// });
 
 const UsersStatus = UserModel.UsersStatus;
 /**
@@ -443,78 +443,78 @@ exports.login_as = (req, res) => {
   }
 };
 
-exports.twitter = (req, res) => {
-  /**
-   * /twitter/call:
-   *   get:
-   *     security: []
-   *     description: Twitter Login to the application
-   *     tags: [Account]
-   *     consumes:
-   *       - application/x-www-form-urlencoded
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       200:
-   *         description: Facebook Login
-   */
-  try {
-    // Verify Email address
-    tw.login((err, tokenSecret, url) => {
-      if (err) apiResponse.fail(res, { err: err.message }, 500);
-      else {
-        // Save the OAuth token secret for use in your /twitter/callback route
-        req.session.tokenSecret = tokenSecret;
-        // apiResponse.success(res, req, {url: url});
-        res.redirect(`${url}`);
-      }
-    });
-  } catch (err) {
-    apiResponse.fail(res, err.message, 500);
-  }
-};
+// exports.twitter = (req, res) => {
+//   /**
+//    * /twitter/call:
+//    *   get:
+//    *     security: []
+//    *     description: Twitter Login to the application
+//    *     tags: [Account]
+//    *     consumes:
+//    *       - application/x-www-form-urlencoded
+//    *     produces:
+//    *       - application/json
+//    *     responses:
+//    *       200:
+//    *         description: Facebook Login
+//    */
+//   try {
+//     // Verify Email address
+//     tw.login((err, tokenSecret, url) => {
+//       if (err) apiResponse.fail(res, { err: err.message }, 500);
+//       else {
+//         // Save the OAuth token secret for use in your /twitter/callback route
+//         req.session.tokenSecret = tokenSecret;
+//         // apiResponse.success(res, req, {url: url});
+//         res.redirect(`${url}`);
+//       }
+//     });
+//   } catch (err) {
+//     apiResponse.fail(res, err.message, 500);
+//   }
+// };
 
-exports.twitter_callback = (req, res) => {
-  /**
-   * /twitter/callback:
-   *   get:
-   *     security: []
-   *     description: Twitter Login Callback
-   *     tags: [Account]
-   *     consumes:
-   *       - application/x-www-form-urlencoded
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       200:
-   *         description: Facebook Login
-   */
+// exports.twitter_callback = (req, res) => {
+//   /**
+//    * /twitter/callback:
+//    *   get:
+//    *     security: []
+//    *     description: Twitter Login Callback
+//    *     tags: [Account]
+//    *     consumes:
+//    *       - application/x-www-form-urlencoded
+//    *     produces:
+//    *       - application/json
+//    *     responses:
+//    *       200:
+//    *         description: Facebook Login
+//    */
 
-  try {
-    tw.callback(
-      {
-        oauth_token: req.query.oauth_token,
-        oauth_verifier: req.query.oauth_verifier,
-      },
-      req.session.tokenSecret,
-      async (err, twt_user) => {
-        if (err) {
-          logger.error(err);
-          res.redirect(`${config.app.frontendURL}login?twitter_login=failed`);
-        } else {
-          // Delete the tokenSecret securely
-          delete req.session.tokenSecret;
-          res.redirect(
-            `${config.app.frontendURL}login?twitter_login=success&id=${twt_user.userId}&name=${twt_user.userName}`,
-          );
-        }
-      },
-    );
-  } catch (err) {
-    logger.error(err.message);
-    res.redirect(`${config.app.frontendURL}login?twitter_login=failed`);
-  }
-};
+//   try {
+//     tw.callback(
+//       {
+//         oauth_token: req.query.oauth_token,
+//         oauth_verifier: req.query.oauth_verifier,
+//       },
+//       req.session.tokenSecret,
+//       async (err, twt_user) => {
+//         if (err) {
+//           logger.error(err);
+//           res.redirect(`${config.app.frontendURL}login?twitter_login=failed`);
+//         } else {
+//           // Delete the tokenSecret securely
+//           delete req.session.tokenSecret;
+//           res.redirect(
+//             `${config.app.frontendURL}login?twitter_login=success&id=${twt_user.userId}&name=${twt_user.userName}`,
+//           );
+//         }
+//       },
+//     );
+//   } catch (err) {
+//     logger.error(err.message);
+//     res.redirect(`${config.app.frontendURL}login?twitter_login=failed`);
+//   }
+// };
 
 exports.get_social_email = async (req, res) => {
   /**
