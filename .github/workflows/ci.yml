@@ -67,33 +67,10 @@ jobs:
           fetch-depth: 0
           node-version: 16
 
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
-
-      - name: Run test cases
-        run: docker --version
-        run: docker ps
-
-        run: npm ci
-        run: npm test
-
-
-      # - run: npm ci
-      # - run: |
-      #     chmod 777 ./report.json
+      - run: npm ci
+      - run: docker --version
+      - run: docker ps
+      - run: npm run test
 
       # - name: Jest coverage report
       #   uses: ArtiomTr/jest-coverage-report-action@v2.0.9
