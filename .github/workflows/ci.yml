@@ -1,8 +1,7 @@
 name: linting and testing
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_call:
+
 env:
   GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
 
