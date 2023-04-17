@@ -1802,10 +1802,9 @@ exports.send_phone_verification_code_for_app = (req, res) => {
   /**
    * @swagger
    *
-   * /user/send-phone-verification-code-for-app:
+   * /user/login/otp:
    *   post:
-   *     security:
-   *      - auth: []
+   *     security: []
    *     description: Send code to provided phone number.
    *     tags: [User]
    *     consumes:
@@ -1864,10 +1863,9 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
   /**
    * @swagger
    *
-   * /user/verify-phone-verification-code-for-app:
+   * /user/login/otp:
    *   post:
-   *     security:
-   *      - auth: []
+   *     security: []
    *     description: Verify phone verification code
    *     tags: [User]
    *     consumes:
