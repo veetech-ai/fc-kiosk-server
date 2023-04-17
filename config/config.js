@@ -174,6 +174,11 @@ module.exports = {
     token: process.env.TWILIO_ACCOUNT_AUTH_TOKEN,
     number: process.env.TWILIO_ACCOUNT_NUMBER,
   },
+  auth: {
+    mobileAuth: {
+      otpLength: process.env.MOBILE_AUTH_OTP_LENGTH || 4,
+    }
+  },
   slack: {
     active: process.env.SLACK_ACTIVE === "enable",
     channel: process.env.SLACK_CHANNEL,

@@ -1831,8 +1831,7 @@ exports.send_phone_verification_code_for_app = (req, res) => {
     });
 
     validation.passes(async function () {
-      const code_length = 4;
-
+      const code_length = config.auth.mobileAuth.otpLength;
       const phone_code = helper.generate_random_string({
         length: code_length,
         type: "numeric",
