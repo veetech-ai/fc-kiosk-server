@@ -1863,7 +1863,7 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
   /**
    * @swagger
    *
-   * /user/login/otp:
+   * /user/login/otp/verify:
    *   post:
    *     security: []
    *     description: Verify phone verification code
