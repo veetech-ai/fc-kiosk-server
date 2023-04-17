@@ -24,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
       as: "Courses",
       foreignKey: "orgId",
     });
-
   };
   return Organization;
 };
