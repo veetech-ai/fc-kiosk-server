@@ -40,6 +40,8 @@ module.exports = (sequelize, DataTypes) => {
   );
   Feedback.associate = function (models) {
     // associations can be defined here
+    Feedback.belongsTo(models.Organization, { foreignKey: "orgId" });
+    Feedback.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
   return Feedback;
 };
