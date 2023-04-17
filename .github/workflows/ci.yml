@@ -84,10 +84,12 @@ jobs:
         run: npm list
 
       - name: Run test cases
-        run: |
-          /usr/bin/docker ps
-          npm ci
-          npm run test
+        run: docker --version
+        run: docker ps
+
+        run: npm ci
+        run: npm test
+
 
       # - run: npm ci
       # - run: |
