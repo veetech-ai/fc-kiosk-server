@@ -26,6 +26,8 @@ name: "workflow"
         required: true
       ECS_CONTAINER_NAME:
         required: true
+      GITLAB_AUTH_TOKEN:
+        required: true
 jobs:
   cd:
     name: "Deployment"
@@ -53,8 +55,9 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
           DOCKER_FILE: ${{ inputs.DOCKER_FILE }}
+          GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKER_FILE .
+          docker build --build-arg GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN-t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKER_FILE .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Download task definition

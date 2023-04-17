@@ -32,3 +32,4 @@ jobs:
       ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
       ECS_TASK_DEFINITION: ${{ ((github.ref == 'refs/heads/main') && secrets.ECS_TASK_DEFINITION_DEVELOPMENT )  || (startsWith(github.ref, 'refs/tags') && secrets.ECS_TASK_DEFINITION_STAGING) }}
       ECS_CONTAINER_NAME: ${{ ((github.ref == 'refs/heads/main') && secrets.ECS_CONTAINER_NAME_DEVELOPMENT )  || (startsWith(github.ref, 'refs/tags') && secrets.ECS_CONTAINER_NAME_STAGING) }}
+      GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
