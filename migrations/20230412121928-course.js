@@ -87,7 +87,7 @@ module.exports = {
         images: {
           type: Sequelize.JSON,
           allowNull: false,
-          defaultValue: 0,
+          defaultValue: "[]",
         },
         year_built: {
           type: Sequelize.INTEGER,

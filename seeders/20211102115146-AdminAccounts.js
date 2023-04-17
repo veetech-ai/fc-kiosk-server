@@ -34,7 +34,7 @@ module.exports = {
         {
           id: 2,
           name: "Admin",
-          email: "admin.df@cowlar.com",
+          email: "admin.viaphoton@cowlar.com",
           is_admin: true,
           super_admin: false,
           status: 1,
@@ -158,7 +158,7 @@ module.exports = {
           report_to: testCustomer.id,
         },
       ],
-      { ignoreDuplicates: true, updateOnDuplicate: ["role_id"] },
+      { ignoreDuplicates: true, updateOnDuplicate: ["role_id", "email"] },
     );
     return result;
   },
