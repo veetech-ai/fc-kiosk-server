@@ -55,6 +55,7 @@ jobs:
       database:
         image: mysql
         env:
+          MYSQL_USER: mysql
           MYSQL_ROOT_PASSWORD: testPass
           MYSQL_PASSWORD: testPass
           MYSQL_DATABASE: df-test
