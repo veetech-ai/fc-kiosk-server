@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "Schedules",
       foreignKey: "orgId",
     });
+    models.Organization.hasMany(models.Courses, {
+      as: "Courses",
+      foreignKey: "orgId",
+    });
   };
   return Organization;
 };
