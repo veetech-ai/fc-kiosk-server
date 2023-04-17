@@ -85,6 +85,7 @@ jobs:
 
       - name: Run test cases
         run: |
+          docker ps
           npm ci
           npm run test
 
