@@ -57,7 +57,7 @@ jobs:
           DOCKER_FILE: ${{ inputs.DOCKER_FILE }}
           GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
         run: |
-          docker build --build-arg GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN-t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKER_FILE .
+          docker build --build-arg GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKER_FILE .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Download task definition
