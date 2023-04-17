@@ -147,7 +147,7 @@ exports.register = (req, res) => {
 
         return apiResponse.success(res, req, created_user);
       } catch (err) {
-        if (err.message == "EmailExists")
+        if (err.message == "emailExists")
           return apiResponse.fail(res, "Email already exists", 422);
         else return apiResponse.fail(res, err.message, 500);
       }
@@ -2300,7 +2300,7 @@ exports.inviteUser = (req, res) => {
             "Can not add user to test organization",
             403,
           );
-        } else if (error.message === "EmailExists") {
+        } else if (error.message === "emailExists") {
           return apiResponse.fail(res, "Email already exists", 422);
         } else if (error.message === "Invitation already sent") {
           return apiResponse.fail(res, "Invitation already sent", 422);
