@@ -24,6 +24,7 @@ const apiResponse = require("../../common/api.response");
 const helper = require("../../common/helper");
 const email = require("../../common/email");
 const upload_file = require("../../common/upload");
+const { roleWithAuthorities } = require("../../common/roles_with_authorities");
 
 // Configuration Imports
 const config = require("../../config/config");
@@ -1914,7 +1915,7 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
         
         const user = await UserModel.create_user({
           email: `${phoneNumber}@phonenumber.com`,
-          role_id: 3,
+          role_id: roleWithAuthorities.golfer.id,
           phone: phoneNumber,
         });
 
