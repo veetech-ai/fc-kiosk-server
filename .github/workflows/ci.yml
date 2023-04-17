@@ -38,7 +38,7 @@ jobs:
     env:
       TEST_DB_HOST: database
       TEST_DB_PORT: 3306
-      TEST_DB_USERNAME: root
+      TEST_DB_USERNAME: mysql
       TEST_DB_PASSWORD: testPass
       TEST_DB_DATABASE: df-test
       cache-name: cache-node-modules
