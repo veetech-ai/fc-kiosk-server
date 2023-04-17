@@ -4,8 +4,8 @@ on:
     branches:
       - main
 env: 
-  GITLAB_AUTH_TOKEN=${{ secrets.GITLAB_AUTH_TOKEN }}
-  
+  GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
+
 jobs:
   linting:
     runs-on: ubuntu-latest
