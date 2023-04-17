@@ -4,7 +4,7 @@ const { uuid } = require("uuidv4");
 const config = require("./../config/config");
 const settings = require("../config/settings");
 const server_upload = require("../common/server_upload");
-const azureUpload = require("./external_services/azure-blob-service");
+// const azureUpload = require("./external_services/azure-blob-service");
 const awsS3 = require("./external_services/aws-s3");
 const uploadPath = "./public/uploads/";
 const publicPath = "./public/";
@@ -62,11 +62,11 @@ exports.uploadProfileImage = async (
     switch (uploadOn) {
       case 1:
         return await server_upload.upload(imageFile, `${newpath}/${fileName}`);
-      case 2:
-        return await azureUpload.upload(
-          imageFile,
-          `users-profile-images/${userId}/${fileName}`,
-        );
+      // case 2:
+      //   return await azureUpload.upload(
+      //     imageFile,
+      //     `users-profile-images/${userId}/${fileName}`,
+      //   );
       case 3:
         return await awsS3.uploadFile(imageFile.path, uuid());
       default:
@@ -90,8 +90,8 @@ exports.upload_binary = async (file, uploadOn = defaultUploadOn) => {
     switch (uploadOn) {
       case 1:
         return await server_upload.upload(file, `${newPath}/${fileName}`);
-      case 2:
-        return await azureUpload.upload(file, `fw/${fileName}`);
+      // case 2:
+      //   return await azureUpload.upload(file, `fw/${fileName}`);
       case 3:
         return await awsS3.uploadFile(file.path, uuid());
       default:
@@ -120,8 +120,8 @@ exports.upload_file = async (
     switch (defaultUploadOn) {
       case 1:
         return await server_upload.upload(file, `${newpath}/${fileName}`);
-      case 2:
-        return await azureUpload.upload(file, `${path}/${fileName}`);
+      // case 2:
+      //   return await azureUpload.upload(file, `${path}/${fileName}`);
       case 3:
         return await awsS3.uploadFile(file.path, uuid());
       default:
@@ -157,8 +157,8 @@ exports.getFileURL = (key) => {
   switch (defaultUploadOn) {
     case 1:
       return `${config.app.backendURL}${key}`.replace("./public/", "files/");
-    case 2:
-      return azureUpload.getFileUrl(key);
+    // case 2:
+    //   return azureUpload.getFileUrl(key);
     case 3:
       return awsS3.getObjectUrl(key);
     default:

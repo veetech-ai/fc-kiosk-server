@@ -158,7 +158,7 @@ module.exports = {
           report_to: testCustomer.id,
         },
       ],
-      { ignoreDuplicates: true, updateOnDuplicate: ["role_id"] },
+      { ignoreDuplicates: true, updateOnDuplicate: ["role_id", "email"] },
     );
     return result;
   },
