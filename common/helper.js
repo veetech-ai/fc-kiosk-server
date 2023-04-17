@@ -978,7 +978,7 @@ exports.generate_random_string = (params) => {
    * Type:
    * Type can be, base64, url-safe, numeric, distinguishable,
    */
-  const length = 4;
+  const length = params.length || 10;
   const data = {
     length: length,
   };
