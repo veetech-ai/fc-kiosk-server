@@ -36,7 +36,7 @@ jobs:
 
   testing:
     env:
-      TEST_DB_HOST: mysql
+      TEST_DB_HOST: database
       TEST_DB_PORT: 3306
       TEST_DB_USERNAME: root
       TEST_DB_PASSWORD: testPass
@@ -52,11 +52,11 @@ jobs:
     container: node:16-bullseye
 
     services:
-      mysql:
+      database:
         image: mysql
         env:
           MYSQL_USER: root
-          MYSQL_ROOT_PASSWORD: testPass
+          MYSQL_ROOT_PASSWORD: tastPass
           MYSQL_PASSWORD: testPass
           MYSQL_DATABASE: df-test
         ports:
@@ -67,15 +67,32 @@ jobs:
           fetch-depth: 0
           node-version: 16
 
-      - run: cd /usr/bin
-      - run: ls
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
-      # - name: Jest coverage report
-      #   uses: ArtiomTr/jest-coverage-report-action@v2.0.9
-      #   with:
-      #     test-script: npm run test:ci
-      #     branch-coverage-report-path: ./coverage/coverage-final.json
-      #     base-coverage-report-path: ./coverage/coverage-final.json
+      - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: npm list
+
+      - run: npm ci
+      # - run: |
+      #     chmod 777 ./report.json
+
+      - name: Jest coverage report
+        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        with:
+          test-script: npm run test
+          branch-coverage-report-path: ./coverage/coverage-final.json
+          base-coverage-report-path: ./coverage/coverage-final.json
 
       # - run: |
       #     chmod -R 777 ./badges/
