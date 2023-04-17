@@ -1,0 +1,101 @@
+name: linting and testing
+on:
+  workflow_call:
+
+env:
+  GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    container: node:16-bullseye
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          node-version: 16
+
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: npm list
+
+      - run: npm ci
+      - run: npm run lint
+
+  # testing:
+  #   env:
+  #     TEST_DB_HOST: database
+  #     TEST_DB_PORT: 3306
+  #     TEST_DB_USERNAME: mysql
+  #     TEST_DB_PASSWORD: testPass
+  #     TEST_DB_DATABASE: df-test
+  #     cache-name: cache-node-modules
+
+  #   permissions:
+  #     checks: write
+  #     pull-requests: write
+  #     contents: write
+
+  #   runs-on: ubuntu-latest
+  #   container: node:16-bullseye
+
+  #   services:
+  #     database:
+  #       image: mysql
+  #       env:
+  #         MYSQL_USER: mysql
+  #         MYSQL_ROOT_PASSWORD: testPass
+  #         MYSQL_PASSWORD: testPass
+  #         MYSQL_DATABASE: df-test
+  #       ports:
+  #         - 3306:3306
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+  #         node-version: 16
+
+  #     - name: Cache node modules
+  #       id: cache-npm
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/.npm
+  #         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-build-${{ env.cache-name }}-
+  #           ${{ runner.os }}-build-
+  #           ${{ runner.os }}-
+
+  #     - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
+  #       name: List the state of node modules
+  #       continue-on-error: true
+  #       run: npm list
+
+  #     - run: npm ci
+  #     - run: |
+  #         chmod 777 ./report.json
+
+  #     - name: Jest coverage report
+  #       uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+  #       with:
+  #         test-script: npm run test
+  #         branch-coverage-report-path: ./coverage/coverage-final.json
+  #         base-coverage-report-path: ./coverage/coverage-final.json
+
+  #     - run: |
+  #         chmod -R 777 ./badges/
+  #     - run: npx jest-coverage-badges --output ./badges
+  #     - name: Git Auto Commit
+  #       if: ${{ github.event_name == 'pull_request' }}
+  #       uses: stefanzweifel/git-auto-commit-action@v4.14.1
