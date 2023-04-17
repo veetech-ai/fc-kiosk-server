@@ -83,20 +83,25 @@ jobs:
         continue-on-error: true
         run: npm list
 
-      - run: npm ci
-      - run: |
-          chmod 777 ./report.json
+      - name: Run test cases
+        run: |
+          npm ci
+          npm run test
 
-      - name: Jest coverage report
-        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
-        with:
-          test-script: npm run test:ci
-          branch-coverage-report-path: ./coverage/coverage-final.json
-          base-coverage-report-path: ./coverage/coverage-final.json
+      # - run: npm ci
+      # - run: |
+      #     chmod 777 ./report.json
 
-      - run: |
-          chmod -R 777 ./badges/
-      - run: npx jest-coverage-badges --output ./badges
-      - name: Git Auto Commit
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: stefanzweifel/git-auto-commit-action@v4.14.1
+      # - name: Jest coverage report
+      #   uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+      #   with:
+      #     test-script: npm run test:ci
+      #     branch-coverage-report-path: ./coverage/coverage-final.json
+      #     base-coverage-report-path: ./coverage/coverage-final.json
+
+      # - run: |
+      #     chmod -R 777 ./badges/
+      # - run: npx jest-coverage-badges --output ./badges
+      # - name: Git Auto Commit
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   uses: stefanzweifel/git-auto-commit-action@v4.14.1
