@@ -3,107 +3,107 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     return Promise.all([
-      await queryInterface.changeColumn('Courses', 'lat', {
+      await queryInterface.changeColumn("Courses", "lat", {
         type: Sequelize.DOUBLE,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'long', {
+      await queryInterface.changeColumn("Courses", "long", {
         type: Sequelize.DOUBLE,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'par', {
+      await queryInterface.changeColumn("Courses", "par", {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'yards', {
+      await queryInterface.changeColumn("Courses", "yards", {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'holes', {
+      await queryInterface.changeColumn("Courses", "holes", {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'slope', {
+      await queryInterface.changeColumn("Courses", "slope", {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'content', {
+      await queryInterface.changeColumn("Courses", "content", {
         type: Sequelize.STRING,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'images', {
+      await queryInterface.changeColumn("Courses", "images", {
         type: Sequelize.JSON,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'year_built', {
+      await queryInterface.changeColumn("Courses", "year_built", {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
       }),
-      await queryInterface.changeColumn('Courses', 'org_id', {
+      await queryInterface.changeColumn("Courses", "org_id", {
         type: Sequelize.INTEGER,
         allowNull: true,
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
-        defaultValue: null,        
+        defaultValue: null,
       }),
     ]);
   },
 
   async down(queryInterface, Sequelize) {
     return Promise.all([
-      await queryInterface.changeColumn('Courses', 'lat', {
+      await queryInterface.changeColumn("Courses", "lat", {
         type: Sequelize.DOUBLE,
         allowNull: true,
       }),
-      await queryInterface.changeColumn('Courses', 'long', {
+      await queryInterface.changeColumn("Courses", "long", {
         type: Sequelize.DOUBLE,
         allowNull: true,
       }),
-      await queryInterface.changeColumn('Courses', 'par', {
+      await queryInterface.changeColumn("Courses", "par", {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
       }),
-      await queryInterface.changeColumn('Courses', 'yards', {
+      await queryInterface.changeColumn("Courses", "yards", {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
       }),
-      await queryInterface.changeColumn('Courses', 'holes', {
+      await queryInterface.changeColumn("Courses", "holes", {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
       }),
-      await queryInterface.changeColumn('Courses', 'slope', {
+      await queryInterface.changeColumn("Courses", "slope", {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
       }),
-      await queryInterface.changeColumn('Courses', 'content', {
+      await queryInterface.changeColumn("Courses", "content", {
         type: Sequelize.STRING,
         allowNull: false,
         defaultValue: 0,
       }),
-      await queryInterface.changeColumn('Courses', 'images', {
+      await queryInterface.changeColumn("Courses", "images", {
         type: Sequelize.JSON,
         allowNull: false,
         defaultValue: 0,
       }),
-      await queryInterface.changeColumn('Courses', 'year_built', {
+      await queryInterface.changeColumn("Courses", "year_built", {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
       }),
-      await queryInterface.changeColumn('Courses', 'org_id', {
+      await queryInterface.changeColumn("Courses", "org_id", {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
@@ -111,8 +111,8 @@ module.exports = {
           key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE",    
+        onDelete: "CASCADE",
       }),
-    ])
+    ]);
   },
 };
