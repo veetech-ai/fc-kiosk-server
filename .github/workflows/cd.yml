@@ -1,0 +1,91 @@
+name: "workflow"
+
+"on":
+  workflow_call:
+    inputs:
+      IMAGE_TAG:
+        required: true
+        type: string
+      DOCKER_FILE:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      ECR_REPOSITORY:
+        required: true
+      ECS_SERVICE:
+        required: true
+      ECS_CLUSTER:
+        required: true
+      ECS_TASK_DEFINITION:
+        required: true
+      ECS_CONTAINER_NAME:
+        required: true
+      GITLAB_AUTH_TOKEN:
+        required: true
+      AUTH_TOKEN:
+        required: true
+jobs:
+  cd:
+    name: "Deployment"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          node-version: 16
+          submodules: "recursive"
+          token: ${{ secrets.AUTH_TOKEN }}
+
+      - name: "echo"
+        run: echo "Trying to deploy"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
+          DOCKER_FILE: ${{ inputs.DOCKER_FILE }}
+          GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
+        run: |
+          docker build --build-arg GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKER_FILE .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Download task definition
+        env:
+          ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION }}
+        run: |
+          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ secrets.ECS_CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.ECS_SERVICE }}
+          cluster: ${{ secrets.ECS_CLUSTER }}
+          wait-for-service-stability: true
