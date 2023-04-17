@@ -51,10 +51,6 @@ module.exports = {
       await queryInterface.changeColumn('Courses', 'org_id', {
         type: Sequelize.INTEGER,
         allowNull: true,
-        references: {
-          model: "Organizations",
-          key: "id",
-        },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
         defaultValue: null,        
