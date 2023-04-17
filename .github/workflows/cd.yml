@@ -28,6 +28,8 @@ name: "workflow"
         required: true
       GITLAB_AUTH_TOKEN:
         required: true
+      AUTH_TOKEN:
+        required: true
 jobs:
   cd:
     name: "Deployment"
