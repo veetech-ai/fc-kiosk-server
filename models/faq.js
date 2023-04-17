@@ -4,11 +4,11 @@ module.exports = (sequelize, DataTypes) => {
     "FAQ",
     {
       question: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       answer: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       gc_id: {

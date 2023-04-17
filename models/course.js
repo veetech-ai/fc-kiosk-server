@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       holes: DataTypes.STRING,
       logo: DataTypes.STRING,
       slope: DataTypes.INTEGER,
-      content: DataTypes.STRING,
+      content: DataTypes.TEXT,
       images: DataTypes.JSON,
       year_built: DataTypes.INTEGER,
       architects: DataTypes.STRING,

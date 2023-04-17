@@ -3,45 +3,59 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable("FAQs", {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
-      question: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      answer: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      gc_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Courses",
-          key: "id",
+    return Promise.all([
+      await queryInterface.createTable("FAQs", {
+        id: {
+          allowNull: false,
+          autoIncrement: true,
+          primaryKey: true,
+          type: Sequelize.INTEGER,
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      org_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Organizations",
-          key: "id",
+        question: {
+          type: Sequelize.TEXT,
+          allowNull: false,
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-    });
+        answer: {
+          type: Sequelize.TEXT,
+          allowNull: false,
+        },
+        gc_id: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Courses",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
+        },
+        org_id: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Organizations",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
+        },
+      }),
+      await queryInterface.changeColumn("Courses", "content", {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        defaultValue: null,
+      }),
+    ]);
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable("FAQ");
+    return Promise.all([
+      await queryInterface.dropTable("FAQ"),
+      await queryInterface.changeColumn("Courses", "content", {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
+      }),
+    ]);
   },
 };
