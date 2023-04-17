@@ -36,7 +36,7 @@ jobs:
 
   testing:
     env:
-      TEST_DB_HOST: database
+      TEST_DB_HOST: mysql
       TEST_DB_PORT: 3306
       TEST_DB_USERNAME: root
       TEST_DB_PASSWORD: testPass
@@ -52,9 +52,8 @@ jobs:
     container: node:16-bullseye
 
     services:
-      database:
+      mysql:
         image: mysql
-        container_name: database
         env:
           MYSQL_USER: root
           MYSQL_ROOT_PASSWORD: testPass
