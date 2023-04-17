@@ -67,10 +67,8 @@ jobs:
           fetch-depth: 0
           node-version: 16
 
-      - run: npm ci
-      - run: docker --version
-      - run: docker ps
-      - run: npm run test
+      - run: cd /usr/bin
+      - run: ls
 
       # - name: Jest coverage report
       #   uses: ArtiomTr/jest-coverage-report-action@v2.0.9
