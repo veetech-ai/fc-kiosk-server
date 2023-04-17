@@ -34,7 +34,7 @@ module.exports = {
         {
           id: 2,
           name: "Admin",
-          email: "admin.viaphoton@cowlar.com",
+          email: "admin.df@cowlar.com",
           is_admin: true,
           super_admin: false,
           status: 1,
