@@ -1,4 +1,3 @@
-const { async } = require("crypto-random-string");
 const models = require("../models");
 const OTP = models.OTP;
 
@@ -21,20 +20,18 @@ exports.getByPhone = async ({ phone }) => {
   return OTP.findOne({ where: { phone } });
 };
 
-exports.verifyCode = async (user, user_entered_code) => {
+exports.verifyCode = async (user, phoneNumber, user_entered_code) => {
   const otpExpirationTimeMs = 1 * 60 * 1000;
   const otpAgeMs = new Date() - user.otp_created_at;
+  
+  if (user.code != user_entered_code) throw new Error("Invalid Code");
+  
   if (otpAgeMs > otpExpirationTimeMs) {
-    return { id: 1, reason: "Expiry date exceeded" };
-  }
-
-  if (user.code != user_entered_code) {
-    return { id: 2, reason: "Invalid Code" };
+    await this.destroyOTP(phoneNumber);
+    throw new Error("Expiry date exceeded");
   }
 
   await OTP.destroy({ where: { phone : user.phone } });
-
-  return { id: 3, reason: "Valid Code" };
 };
 
 exports.destroyOTP = async (phone) => {

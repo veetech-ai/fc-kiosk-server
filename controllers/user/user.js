@@ -1831,20 +1831,20 @@ exports.send_phone_verification_code_for_app = (req, res) => {
     });
 
     validation.passes(async function () {
-      const code_length = config.auth.mobileAuth.otpLength;
-      const phone_code = helper.generate_random_string({
-        length: code_length,
-        type: "numeric",
-      });
-
-      const message = `Your ${code_length} digit verification code is ${phone_code}`;
-
       try {
-         await helper.send_sms(req.body.phone, message);
+        const phoneNumber = req.body.phone
+        const otpLength = config.auth.mobileAuth.otpLength;
+        const otpCode = helper.generate_random_string({
+          length: otpLength,
+          type: "numeric",
+        });
+  
+        const message = `Your ${otpLength} digit verification code is ${otpCode}`;
+        await helper.send_sms(phoneNumber, message);
 
         await OtpModel.create({
-          phone: req.body.phone.toString(),
-          code: phone_code,
+          phone: phoneNumber,
+          code: otpCode,
           otp_created_at: new Date(),
         });
 
@@ -1897,26 +1897,25 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
 
     validation.passes(async function () {
       try {
+        const phoneNumber = req.body.phone
+        const receivedOtp = req.body.code
+
         const userOTP = await OtpModel.getByPhone({
-          phone: req.body.phone,
+          phone: phoneNumber,
         });
 
         if (!userOTP) return apiResponse.fail(res, "OTP not verified");
-        const verified = await OtpModel.verifyCode(
-          userOTP.dataValues,
-          req.body.code,
-        );
-        if (verified.id == 1) {
-          OtpModel.destroyOTP(req.body.phone);
-          return apiResponse.fail(res, "Expiry date exceeded");
-        }
-        if (verified.id == 2)
-          return apiResponse.fail(res, "Not Verified, Invalid Code");
 
+        await OtpModel.verifyCode(
+          userOTP.dataValues,
+          phoneNumber,
+          receivedOtp,
+        );
+        
         const user = await UserModel.create_user({
-          email: `${req.body.phone}@phonenumber.com`,
+          email: `${phoneNumber}@phonenumber.com`,
           role_id: 3,
-          phone: req.body.phone,
+          phone: phoneNumber,
         });
 
         // Generating Token
@@ -1927,14 +1926,6 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
             ? config.jwt.expirationLongInSeconds
             : config.jwt.expirationShortInSeconds;
         user_obj.expire_time = parseInt(expire_time);
-
-        //Not removed this code as it might be used in future
-        // user_obj.admin = !!helper.hasProvidedRoleRights(user.Role, ["admin"])
-        //   .success;
-        // user_obj.super_admin = !!helper.hasProvidedRoleRights(user.Role, [
-        //   "super",
-        // ]).success;
-        // user_obj.lb_sa = req.user;
 
         const token = helper.createJwtToken({
           user: user_obj,
