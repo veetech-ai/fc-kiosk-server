@@ -1,0 +1,55 @@
+"use strict";
+module.exports = (sequelize, DataTypes) => {
+  const Shop = sequelize.define(
+    "Shop",
+    {
+      gc_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Courses",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      org_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Organizations",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      subheading: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+    },
+    {
+      timestamps: true,
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
+  );
+  Shop.associate = function (models) {
+    // associations can be defined here
+    Shop.belongsTo(models.Organization, { foreignKey: "org_id" });
+    Shop.belongsTo(models.Course, { foreignKey: "gc_id" });
+  };
+  return Shop;
+};
