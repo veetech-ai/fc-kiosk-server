@@ -31,7 +31,11 @@ module.exports = (sequelize, DataTypes) => {
         field: "org_id",
       },
     },
-    {},
+    {
+      timestamps: true,
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   );
   Course.associate = function (models) {
     // associations can be defined here

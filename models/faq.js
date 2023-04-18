@@ -32,7 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
     },
-    {},
+    {
+      timestamps: true,
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   );
   FAQ.associate = function (models) {
     // associations can be defined here
