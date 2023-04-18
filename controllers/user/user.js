@@ -1833,13 +1833,13 @@ exports.send_phone_verification_code_for_app = (req, res) => {
 
     validation.passes(async function () {
       try {
-        const phoneNumber = req.body.phone
+        const phoneNumber = req.body.phone;
         const otpLength = config.auth.mobileAuth.otpLength;
         const otpCode = helper.generate_random_string({
           length: otpLength,
           type: "numeric",
         });
-  
+
         const message = `Your ${otpLength} digit verification code is ${otpCode}`;
         await helper.send_sms(phoneNumber, message);
 
@@ -1898,8 +1898,8 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
 
     validation.passes(async function () {
       try {
-        const phoneNumber = req.body.phone
-        const receivedOtp = req.body.code
+        const phoneNumber = req.body.phone;
+        const receivedOtp = req.body.code;
 
         const userOTP = await OtpModel.getByPhone({
           phone: phoneNumber,
@@ -1908,11 +1908,8 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
 
         if (!userOTP) return apiResponse.fail(res, "OTP not valid");
 
-        await OtpModel.verifyCode(
-          userOTP.dataValues,
-          phoneNumber,
-        );
-        
+        await OtpModel.verifyCode(userOTP.dataValues, phoneNumber);
+
         const user = await UserModel.create_user({
           email: `${phoneNumber}@phonenumber.com`,
           role_id: roleWithAuthorities.golfer.id,

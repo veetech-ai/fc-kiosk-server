@@ -15,7 +15,10 @@ const config = require("../config/config");
 // Common Imports
 const helper = require("../common/helper");
 const email = require("../common/email");
-const { reportToUserDictionary, roleWithAuthorities } = require("../common/roles_with_authorities");
+const {
+  reportToUserDictionary,
+  roleWithAuthorities,
+} = require("../common/roles_with_authorities");
 
 // Services Imports
 const OrganizationModel = require("./organization");
@@ -120,18 +123,19 @@ exports.list_selective_users = async (perPage, page, ids) => {
 };
 
 exports.create_user = async (params) => {
-  const isGolferWithPhoneLogin = params?.role_id === roleWithAuthorities.golfer.id
-  
-  if(isGolferWithPhoneLogin) {
+  const isGolferWithPhoneLogin =
+    params?.role_id === roleWithAuthorities.golfer.id;
+
+  if (isGolferWithPhoneLogin) {
     const isPhone = await PhoneExists(params.phone);
-    
+
     if (isPhone) {
       return await User.findOne({ where: { phone: params.phone } });
     }
 
     // Add roleId to params object
     const paramsWithRole = { ...params, role_id: params.role_id };
-  
+
     // Create new user with roleId assigned
     const user = await User.create(paramsWithRole);
     return user;
@@ -140,11 +144,10 @@ exports.create_user = async (params) => {
     if (isExists) {
       throw new Error("emailExists");
     }
-  
+
     // Create new user
     return await User.create(params);
   }
-
 };
 
 exports.update_user = async (id, user) => {

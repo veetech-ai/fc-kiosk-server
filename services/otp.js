@@ -22,18 +22,19 @@ exports.getByPhone = async ({ phone, code }) => {
 };
 
 exports.verifyCode = async (user, phoneNumber) => {
-  const otpExpirationTimeMs = config.auth.mobileAuth.otpExpirationInSeconds * 1000;
+  const otpExpirationTimeMs =
+    config.auth.mobileAuth.otpExpirationInSeconds * 1000;
   const currentTimeMs = new Date(Date.now()).getTime();
   const otpAgeMs = new Date(user.createdAt).getTime() + otpExpirationTimeMs;
-  
+
   if (otpAgeMs < currentTimeMs) {
     await this.destroyOTP(phoneNumber);
     throw new Error("Expiry date exceeded");
   }
 
-  await OTP.destroy({ where: { phone : user.phone } });
+  await OTP.destroy({ where: { phone: user.phone } });
 };
 
 exports.destroyOTP = async (phone) => {
-  await OTP.destroy({ where: { phone : phone } });
-}
+  await OTP.destroy({ where: { phone: phone } });
+};

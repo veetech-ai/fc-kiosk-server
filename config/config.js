@@ -177,8 +177,9 @@ module.exports = {
   auth: {
     mobileAuth: {
       otpLength: process.env.MOBILE_AUTH_OTP_LENGTH || 4,
-      otpExpirationInSeconds: process.env.MOBILE_AUTH_OTP_EXPIRATION_IN_SECONDS || 60,
-    }
+      otpExpirationInSeconds:
+        process.env.MOBILE_AUTH_OTP_EXPIRATION_IN_SECONDS || 60,
+    },
   },
   slack: {
     active: process.env.SLACK_ACTIVE === "enable",

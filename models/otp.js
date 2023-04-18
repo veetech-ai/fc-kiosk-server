@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
         field: "otp_created_at",
-      }
+      },
     },
     {
       sequelize,
