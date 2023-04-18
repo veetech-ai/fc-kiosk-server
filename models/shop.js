@@ -48,11 +48,9 @@ module.exports = (sequelize, DataTypes) => {
         field: "updated_at",
         type: DataTypes.DATE,
         allowNull: false,
-      }
+      },
     },
-    {
-     
-    },
+    {},
   );
   Shop.associate = function (models) {
     // associations can be defined here
