@@ -25,17 +25,22 @@ module.exports = (sequelize, DataTypes) => {
       fairways: DataTypes.STRING,
       members: DataTypes.STRING,
       season: DataTypes.STRING,
-      orgId: {
+      org_id: {
         type: DataTypes.INTEGER,
-        defaultValue: null,
-        field: "org_id",
+        allowNull: false,
+        references: {
+          model: "Organization",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
     },
     {},
   );
   Course.associate = function (models) {
     // associations can be defined here
-    Course.belongsTo(models.Organization, { foreignKey: "orgId" });
+    Course.belongsTo(models.Organization, { foreignKey: "org_id" });
     Course.hasMany(models.FAQ, {
       as: "FAQs",
       foreignKey: "gc_id",

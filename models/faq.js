@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   FAQ.associate = function (models) {
     // associations can be defined here
-    FAQ.belongsTo(models.Organization, { foreignKey: "orgId" });
+    FAQ.belongsTo(models.Organization, { foreignKey: "org_id" });
     FAQ.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
   return FAQ;
