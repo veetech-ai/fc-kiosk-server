@@ -31,12 +31,18 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      createdAt: {
+        field: "created_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      updatedAt: {
+        field: "updated_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
     },
-    {
-      timestamps: true,
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
-    },
+    {},
   );
   FAQ.associate = function (models) {
     // associations can be defined here

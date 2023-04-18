@@ -35,12 +35,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      createdAt: {
+        field: "created_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      updatedAt: {
+        field: "updated_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
     },
-    {
-      timestamps: true,
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
-    },
+    {},
   );
   Feedback.associate = function (models) {
     // associations can be defined here
