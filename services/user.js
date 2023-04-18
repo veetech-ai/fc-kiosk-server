@@ -128,16 +128,17 @@ exports.create_user = async (params) => {
 
   if (isGolferWithPhoneLogin) {
     const isPhone = await PhoneExists(params.phone);
-
-    if (isPhone) {
-      return await User.findOne({ where: { phone: params.phone } });
+        
+    if (!isPhone) {
+      // Create new user with roleId assigned
+      const paramsWithRole = { ...params, role_id: params.role_id };
+      await User.create(paramsWithRole);
     }
 
-    // Add roleId to params object
-    const paramsWithRole = { ...params, role_id: params.role_id };
+    let user = await this.getAllDetailByWhere({
+      phone: params.phone,
+    });
 
-    // Create new user with roleId assigned
-    const user = await User.create(paramsWithRole);
     return user;
   } else {
     const isExists = await emailExists(params.email);
