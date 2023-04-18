@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Shop = sequelize.define(
     "Shop",
     {
-      gc_id: {
+      gcId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      org_id: {
+      orgId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
