@@ -1248,7 +1248,16 @@ describe("user test cases", () => {
     });
 
     it("Should not verify expired otp", async () => {
-      // WIP
+      
+      jest.spyOn(mainHelper, "generate_random_string").mockImplementation(
+        jest.fn(() => {
+          return correctOTPCodeOne;
+        }),
+      );
+      // clear the mock here
+      
+
+
     });
   });
 });

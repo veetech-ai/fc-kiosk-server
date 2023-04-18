@@ -21,10 +21,10 @@ exports.getByPhone = async ({ phone, code }) => {
   return OTP.findOne({ where: { phone, code } });
 };
 
-exports.verifyCode = async (otp) => {
+exports.verifyCode = async (otp, currentTimeMs = null) => {
   const otpExpirationTimeMs =
     config.auth.mobileAuth.otpExpirationInSeconds * 1000;
-  const currentTimeMs = new Date(Date.now()).getTime();
+  const currentTimeMs = currentTimeMs || new Date(Date.now()).getTime();
   const otpAgeMs = new Date(otp.createdAt).getTime() + otpExpirationTimeMs;
 
   if (otpAgeMs < currentTimeMs) {
