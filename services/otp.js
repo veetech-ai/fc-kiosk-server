@@ -6,12 +6,12 @@ exports.create = async ({ phone, code }) => {
   let otp = await OTP.findOne({ where: { phone } });
   if (!otp) {
     // Create a new OTP record if it does not exist
-    const otpData = { phone, code, otp_created_at: new Date() };
+    const otpData = { phone, code };
     otp = await OTP.create(otpData);
   } else {
     // Update the code if the OTP record already exists
     otp.code = code;
-    otp.otp_created_at = new Date();
+    otp.createdAt = new Date();
     await otp.save();
   }
   return otp;

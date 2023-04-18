@@ -1846,7 +1846,6 @@ exports.send_phone_verification_code_for_app = (req, res) => {
         await OtpModel.create({
           phone: phoneNumber,
           code: otpCode,
-          otp_created_at: new Date(),
         });
 
         return apiResponse.success(res, req, "Verification code sent");
