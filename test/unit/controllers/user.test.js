@@ -5,11 +5,13 @@ const models = require("../../../models");
 const User = models.User;
 
 const helper = require("../../helper");
+const mainHelper = require("../../../common/helper");
 const config = require("../../../config/config");
 const mailer = require("../../../common/email");
 
 const { logger } = require("../../../logger");
 const { products } = require("../../../common/products");
+const { getByPhone } = require("../../../services/otp");
 
 const validUserId1 = 1;
 const validUserId2 = 2;
@@ -1073,6 +1075,180 @@ describe("user test cases", () => {
       };
       const response = await helper.post_request_with_authorization(data2);
       expect(response.body.data).toEqual("User not Registered");
+    });
+  });
+
+  const phoneNumberOne = "+923175445369";
+  const correctOTPCodeOne = "7924";
+  const phoneNumberTwo = "+923175445368";
+
+  describe("/user/login/otp", () => {
+    beforeAll(() => {
+      jest.spyOn(mainHelper, "send_sms").mockImplementation(
+        jest.fn((otpCode) => {
+          return Promise.resolve(otpCode);
+        }),
+      );
+
+      jest.spyOn(mainHelper, "generate_random_string").mockImplementation(
+        jest.fn(() => {
+          return correctOTPCodeOne;
+        }),
+      );
+    });
+
+    it("Should send Otp to a user that is not registered and should save otp in the database", async () => {
+      const data = {
+        params: {
+          phone: phoneNumberOne,
+        },
+        endpoint: "user/login/otp",
+      };
+
+      const { body } = await helper.post_request(data);
+      const expectedResponse = {
+        success: true,
+        data: "Verification code sent",
+      };
+      const expectedOtpInDatabaseResponse = {
+        id: 1,
+        phone: "+923175445369",
+        code: "7924",
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+      };
+
+      const otpInDB = await getByPhone({
+        phone: phoneNumberOne,
+        code: correctOTPCodeOne,
+      });
+
+      expect(body).toEqual(expectedResponse);
+      expect(otpInDB).toEqual(
+        expect.objectContaining(expectedOtpInDatabaseResponse),
+      );
+    });
+
+    it("Should send Otp to a user that is registered", async () => {
+      const data = {
+        params: {
+          phone: phoneNumberTwo,
+        },
+        endpoint: "user/login/otp",
+      };
+
+      await helper.post_request(data);
+
+      const dataVerify = {
+        params: {
+          phone: phoneNumberTwo,
+          code: correctOTPCodeOne,
+        },
+        endpoint: "user/login/otp/verify",
+      };
+      await helper.post_request(dataVerify);
+
+      const { body } = await helper.post_request(data);
+      const expectedResponse = {
+        success: true,
+        data: "Verification code sent",
+      };
+      expect(body).toEqual(expectedResponse);
+    });
+  });
+
+  describe("/user/login/otp/verify", () => {
+    beforeAll(() => {
+      jest.spyOn(mainHelper, "send_sms").mockImplementation(
+        jest.fn((otpCode) => {
+          return Promise.resolve(otpCode);
+        }),
+      );
+
+      jest.spyOn(mainHelper, "generate_random_string").mockImplementation(
+        jest.fn(() => {
+          return correctOTPCodeOne;
+        }),
+      );
+    });
+
+    it("Should verify the sent otp and create access and refresh token", async () => {
+      const data = {
+        params: {
+          phone: phoneNumberOne,
+        },
+        endpoint: "user/login/otp",
+      };
+
+      await helper.post_request(data);
+
+      const dataVerify = {
+        params: {
+          phone: phoneNumberOne,
+          code: correctOTPCodeOne,
+        },
+        endpoint: "user/login/otp/verify",
+      };
+      const { body } = await helper.post_request(dataVerify);
+
+      const expectedResponse = {
+        success: true,
+        data: {
+          accessToken: expect.any(String),
+          refreshToken: expect.any(String),
+        },
+      };
+
+      expect(body).toEqual(expectedResponse);
+    });
+
+    it("Should not verify already verified otps", async () => {
+      const dataVerify = {
+        params: {
+          phone: phoneNumberOne,
+          code: correctOTPCodeOne,
+        },
+        endpoint: "user/login/otp/verify",
+      };
+      const { body } = await helper.post_request(dataVerify);
+
+      const expectedResponse = {
+        success: false,
+        data: "OTP not valid",
+      };
+
+      expect(body).toEqual(expectedResponse);
+    });
+
+    it("Should not verify the incorrect otp", async () => {
+      const data = {
+        params: {
+          phone: phoneNumberOne,
+        },
+        endpoint: "user/login/otp",
+      };
+
+      await helper.post_request(data);
+
+      const dataVerify = {
+        params: {
+          phone: phoneNumberOne,
+          code: correctOTPCodeOne + "1232",
+        },
+        endpoint: "user/login/otp/verify",
+      };
+      const { body } = await helper.post_request(dataVerify);
+
+      const expectedResponse = {
+        success: false,
+        data: "OTP not valid",
+      };
+
+      expect(body).toEqual(expectedResponse);
+    });
+
+    it("Should not verify expired otp", async () => {
+      // WIP
     });
   });
 });
