@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const Membership = sequelize.define(
     "Membership",
     {
-      gc_id: {
+      gcId: {
+        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -13,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      org_id: {
+      orgId: {
+        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
