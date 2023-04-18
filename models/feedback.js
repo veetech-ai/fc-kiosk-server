@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      org_id: {
+      orgId: {
+        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -34,6 +35,16 @@ module.exports = (sequelize, DataTypes) => {
       contact_medium: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      createdAt: {
+        field: "created_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      updatedAt: {
+        field: "updated_at",
+        type: DataTypes.DATE,
+        allowNull: false,
       },
     },
     {},
