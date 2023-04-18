@@ -22,15 +22,15 @@ module.exports = (sequelize, DataTypes) => {
     });
     models.Organization.hasMany(models.Course, {
       as: "Courses",
-      foreignKey: "orgId",
+      foreignKey: "org_id",
     });
     models.Organization.hasMany(models.FAQ, {
       as: "FAQs",
-      foreignKey: "orgId",
+      foreignKey: "org_id",
     });
     models.Organization.hasMany(models.Feedback, {
       as: "Feedbacks",
-      foreignKey: "orgId",
+      foreignKey: "org_id",
     });
   };
   return Organization;

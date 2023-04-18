@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      org_id: {
+      orgId: {
+        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -50,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Feedback.associate = function (models) {
     // associations can be defined here
-    Feedback.belongsTo(models.Organization, { foreignKey: "orgId" });
+    Feedback.belongsTo(models.Organization, { foreignKey: "org_id" });
     Feedback.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
   return Feedback;

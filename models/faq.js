@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      gc_id: {
+      gcId: {
+        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -21,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      org_id: {
+      orgId: {
+        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -46,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   FAQ.associate = function (models) {
     // associations can be defined here
-    FAQ.belongsTo(models.Organization, { foreignKey: "orgId" });
+    FAQ.belongsTo(models.Organization, { foreignKey: "org_id" });
     FAQ.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
   return FAQ;
