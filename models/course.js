@@ -30,12 +30,18 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: null,
         field: "org_id",
       },
+      createdAt: {
+        field: "created_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      updatedAt: {
+        field: "updated_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
     },
-    {
-      timestamps: true,
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
-    },
+    {},
   );
   Course.associate = function (models) {
     // associations can be defined here
