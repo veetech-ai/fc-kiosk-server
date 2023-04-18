@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Coach = sequelize.define(
     "Coach",
     {
-      gc_id: {
+      gcId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      org_id: {
+      orgId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -43,11 +43,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSON,
         allowNull: true,
       },
+      createdAt: {
+        field: "created_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      updatedAt: {
+        field: "updated_at",
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
     },
     {
-      timestamps: true,
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
+     
     },
   );
   Coach.associate = function (models) {
