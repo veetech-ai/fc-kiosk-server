@@ -4,7 +4,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable("Membership", {
+    return queryInterface.createTable("Memberships", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -31,15 +31,25 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      qr_link: {
+      link: {
         type: Sequelize.STRING,
+        allowNull: true,
+      },
+      createdAt: {
         allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
     });
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable("Membership");
+    return queryInterface.dropTable("Memberships");
   },
 };
 
