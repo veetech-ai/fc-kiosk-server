@@ -128,7 +128,7 @@ exports.create_user = async (params) => {
 
   if (isGolferWithPhoneLogin) {
     const isPhone = await PhoneExists(params.phone);
-        
+
     if (!isPhone) {
       // Create new user with roleId assigned
       const paramsWithRole = { ...params, role_id: params.role_id };

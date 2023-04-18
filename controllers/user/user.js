@@ -1907,7 +1907,7 @@ exports.verify_phone_verification_code_for_app = (req, res) => {
 
         if (!userOTP) return apiResponse.fail(res, "OTP not valid");
 
-        await OtpModel.verifyCode(userOTP.dataValues, phoneNumber);
+        await OtpModel.verifyCode(userOTP);
 
         const user = await UserModel.create_user({
           email: `${phoneNumber}@phonenumber.com`,
