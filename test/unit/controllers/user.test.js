@@ -1248,14 +1248,12 @@ describe("user test cases", () => {
     });
 
     it("Should not verify expired otp", async () => {
-      
       jest.spyOn(mainHelper, "verifyCode").mockImplementation(
         jest.fn(() => {
-          return new Error("Expiry date exceeded");;
+          return new Error("Expiry date exceeded");
         }),
       );
       // clear the mock here
-      
 
       jest.spyOn(mainHelper, "verifyCode").mockRestore();
     });
