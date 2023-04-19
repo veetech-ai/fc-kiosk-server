@@ -1,4 +1,4 @@
-name: "workflow"
+name: "CI/CD Development"
 
 "on":
   push:
@@ -7,7 +7,7 @@ name: "workflow"
 
 jobs:
   integration:
-    name: "Continuous Integration"
+    name: "linting and testing"
     uses: "./.github/workflows/ci-reusable.yml"
     secrets: inherit
   dev-deployment:
