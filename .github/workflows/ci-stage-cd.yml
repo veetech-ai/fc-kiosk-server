@@ -9,12 +9,12 @@ name: "workflow"
 
 jobs:
   integration:
-    if: ${{ (startsWith(github.ref, 'refs/tags') }}
+    if: startsWith(github.ref, 'refs/tags')
     name: "Continuous Integration"
     uses: "./.github/workflows/ci-reusable.yml"
     secrets: inherit
   stage-deployment:
-    if: ${{ (startsWith(github.ref, 'refs/tags') }}
+    if: startsWith(github.ref, 'refs/tags')
     name: "Stage Deployment"
     needs: integration
     uses: "./.github/workflows/cd-reusable.yml"
