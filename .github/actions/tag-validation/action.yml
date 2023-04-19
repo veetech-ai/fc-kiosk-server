@@ -12,3 +12,4 @@ runs:
         else
           echo "Tag validation passed!"
         fi
+      shell: bash
