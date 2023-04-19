@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable("Contact_Membership", {
+    return queryInterface.createTable("Contact_Memberships", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -49,13 +49,13 @@ module.exports = {
         allowNull: true,
       },
       contact_medium: {
-        type: Sequelize.ENUM("phone", "email", "qrcode"),
+        type: Sequelize.ENUM("phone", "email"),
         allowNull: true,
       },
     });
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable("Contact_Membership");
+    return queryInterface.dropTable("Contact_Memberships");
   },
 };

@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const ContactMembership = sequelize.define(
     "ContactMembership",
     {
-      gc_id: {
+      gcId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -35,16 +35,18 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      user_phone: {
+      userPhone: {
+        field:"user_phone"
         type: DataTypes.STRING,
         allowNull: true,
       },
-      user_email: {
+      userEmail: {
+        field:"user_email"
         type: DataTypes.STRING,
         allowNull: true,
       },
-      contact_medium: {
-        type: DataTypes.ENUM("phone", "email", "qrcode"),
+      contactMedium: {
+        type: DataTypes.ENUM("phone", "email"),
         allowNull: true,
       },
       createdAt: {
