@@ -1,6 +1,3 @@
-
-
-
 "use strict";
 
 /** @type {import('sequelize-cli').Migration} */
@@ -17,31 +14,31 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Memberships',
-          key: 'id'
+          model: "Memberships",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       gc_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Courses',
-          key: 'id'
+          model: "Courses",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       org_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Organizations',
-          key: 'id'
+          model: "Organizations",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       user_phone: {
         type: Sequelize.STRING,
@@ -51,8 +48,8 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      field: {
-        type: Sequelize.STRING,
+      contact_medium: {
+        type: Sequelize.ENUM("phone", "email", "qrcode"),
         allowNull: true,
       },
     });
@@ -62,5 +59,3 @@ module.exports = {
     return queryInterface.dropTable("Contact_Membership");
   },
 };
-
-
