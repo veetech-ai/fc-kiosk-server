@@ -21,13 +21,13 @@ exports.getByPhone = async ({ phone, code }) => {
   return OTP.findOne({ where: { phone, code } });
 };
 
-exports.verifyCode = async (otp, currentTimeMs = null) => {
+exports.verifyCode = async (otp, otpCreationTimeMs = null) => {
   const otpExpirationTimeMs =
     config.auth.mobileAuth.otpExpirationInSeconds * 1000;
-  const currTimeMs = currentTimeMs || new Date(Date.now()).getTime();
+  const currentTimeMs = otpCreationTimeMs || new Date(Date.now()).getTime();
   const otpAgeMs = new Date(otp.createdAt).getTime() + otpExpirationTimeMs;
 
-  if (otpAgeMs < currTimeMs) {
+  if (otpAgeMs < currentTimeMs) {
     await this.destroyOTP(otp.phone);
     throw new Error("Expiry date exceeded");
   }
