@@ -7,6 +7,7 @@ const { logger } = require("../logger");
 // Models Imports
 const models = require("../models");
 const User = models.User;
+const Role = models.Role;
 
 // Configuration Imports
 const config = require("../config/config");
@@ -14,7 +15,10 @@ const config = require("../config/config");
 // Common Imports
 const helper = require("../common/helper");
 const email = require("../common/email");
-const { reportToUserDictionary } = require("../common/roles_with_authorities");
+const {
+  reportToUserDictionary,
+  roleWithAuthorities,
+} = require("../common/roles_with_authorities");
 
 // Services Imports
 const OrganizationModel = require("./organization");
@@ -38,6 +42,10 @@ exports.UsersStatus = UsersStatus;
 
 const emailExists = async (email) => {
   return await User.count({ where: { email: email } });
+};
+
+const PhoneExists = async (phone) => {
+  return await User.count({ where: { phone: phone } });
 };
 
 exports.list = async (paginationParams = false) => {
@@ -115,14 +123,32 @@ exports.list_selective_users = async (perPage, page, ids) => {
 };
 
 exports.create_user = async (params) => {
-  const isExists = await emailExists(params.email);
+  const isGolferWithPhoneLogin =
+    params?.role_id === roleWithAuthorities.golfer.id;
 
-  if (isExists) {
-    throw new Error("emailExists");
+  if (isGolferWithPhoneLogin) {
+    const isPhone = await PhoneExists(params.phone);
+
+    if (!isPhone) {
+      // Create new user with roleId assigned
+      const paramsWithRole = { ...params, role_id: params.role_id };
+      await User.create(paramsWithRole);
+    }
+
+    let user = await this.getAllDetailByWhere({
+      phone: params.phone,
+    });
+
+    return user;
+  } else {
+    const isExists = await emailExists(params.email);
+    if (isExists) {
+      throw new Error("emailExists");
+    }
+
+    // Create new user
+    return await User.create(params);
   }
-
-  // Create new user
-  return await User.create(params);
 };
 
 exports.update_user = async (id, user) => {

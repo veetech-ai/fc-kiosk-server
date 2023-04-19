@@ -118,4 +118,3 @@ All the API documentation is maintained with swagger.
     - `AZURE_STORAGE_URL` Used to generate aURL to the file
 # Good Luck
  
- 
