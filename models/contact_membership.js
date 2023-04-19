@@ -1,9 +1,9 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Feedback = sequelize.define(
-    "Feedback",
+  const ContactMembership = sequelize.define(
+    "ContactMembership",
     {
-      gc_id: {
+      gcId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -24,16 +24,30 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      phone: {
+      mId: {
+        field: "m_id",
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Memberships",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      userPhone: {
+        field: "user_phone",
         type: DataTypes.STRING,
         allowNull: true,
       },
-      rating: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      contact_medium: {
+      userEmail: {
+        field: "user_email",
         type: DataTypes.STRING,
+        allowNull: true,
+      },
+      contactMedium: {
+        field: "contact_medium",
+        type: DataTypes.ENUM("phone", "email"),
         allowNull: true,
       },
       createdAt: {
@@ -49,10 +63,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  Feedback.associate = function (models) {
+  ContactMembership.associate = function (models) {
     // associations can be defined here
-    Feedback.belongsTo(models.Organization, { foreignKey: "org_id" });
-    Feedback.belongsTo(models.Course, { foreignKey: "gc_id" });
+    ContactMembership.belongsTo(models.Organization, { foreignKey: "org_id" });
+    ContactMembership.belongsTo(models.Course, { foreignKey: "gc_id" });
+    ContactMembership.belongsTo(models.Membership, { foreignKey: "m_id" });
   };
-  return Feedback;
+  return ContactMembership;
 };

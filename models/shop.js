@@ -1,37 +1,43 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const FAQ = sequelize.define(
-    "FAQ",
+  const Shop = sequelize.define(
+    "Shop",
     {
-      question: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      answer: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
       gcId: {
-        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Course",
+          model: "Courses",
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
       orgId: {
-        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Organization",
+          model: "Organizations",
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      subheading: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       createdAt: {
         field: "created_at",
@@ -46,10 +52,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  FAQ.associate = function (models) {
+  Shop.associate = function (models) {
     // associations can be defined here
-    FAQ.belongsTo(models.Organization, { foreignKey: "org_id" });
-    FAQ.belongsTo(models.Course, { foreignKey: "gc_id" });
+    Shop.belongsTo(models.Organization, { foreignKey: "org_id" });
+    Shop.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
-  return FAQ;
+  return Shop;
 };
