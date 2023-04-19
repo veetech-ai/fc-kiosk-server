@@ -1,6 +1,6 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Shop = sequelize.define(
+  const AdScreen = sequelize.define(
     "AdScreen",
     {
       name: {
