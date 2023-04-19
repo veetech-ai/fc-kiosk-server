@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       userPhone: {
-        field:"user_phone"
+        field:"user_phone",
         type: DataTypes.STRING,
         allowNull: true,
       },
