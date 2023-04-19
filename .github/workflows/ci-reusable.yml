@@ -1,6 +1,7 @@
 name: linting and testing - reusable
 on:
   workflow_call:
+hidden: true
 
 env:
   GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
