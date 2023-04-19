@@ -5,6 +5,8 @@ runs:
   using: "composite"
   steps:
     - name: Test the validation
+      env:
+        GITHUB_REF: ${{ github.ref }}
       run: |
         if [[ ! "${{ $GITHUB_REF }}" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$ ]]; then
           echo "Invalid tag format. Please use this format v<x>.<x>.<x>rc-<x>. Replace <x> with the numbers"
