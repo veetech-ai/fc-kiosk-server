@@ -8,12 +8,12 @@ name: "workflow"
 jobs:
   integration:
     name: "Continuous Integration"
-    uses: "./.github/workflows/ci.yml"
+    uses: "./.github/workflows/ci-reusable.yml"
     secrets: inherit
   stage-deployment:
     name: "Stage Deployment"
     needs: integration
-    uses: "./.github/workflows/cd.yml"
+    uses: "./.github/workflows/cd-reusable.yml"
     with:
       IMAGE_TAG: "latest"
       DOCKER_FILE: "Dockerfile"

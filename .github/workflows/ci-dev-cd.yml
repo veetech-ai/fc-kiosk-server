@@ -4,20 +4,16 @@ name: "workflow"
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   integration:
     name: "Continuous Integration"
-    uses: "./.github/workflows/ci.yml"
+    uses: "./.github/workflows/ci-reusable.yml"
     secrets: inherit
   dev-deployment:
     name: "Dev Deployment"
-    if: ${{ github.event_name != 'pull_request' }}
     needs: integration
-    uses: "./.github/workflows/cd.yml"
+    uses: "./.github/workflows/cd-reusable.yml"
     with:
       IMAGE_TAG: "latest"
       DOCKER_FILE: "Dockerfile"
