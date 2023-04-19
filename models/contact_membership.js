@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       contactMedium: {
+        field:"contact_medium"
         type: DataTypes.ENUM("phone", "email"),
         allowNull: true,
       },
