@@ -1,0 +1,20 @@
+name: "Checkout"
+description: "Checkout the repo"
+
+inputs:
+  token:
+    description: "The GitHub token to use for authentication"
+  node-version:
+    description: "Node version e.g., 16"
+  submodules:
+    description: "To checkout the submodules e.g., recursive. You need to specify the token for this option to work"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+        submodules: ${{ inputs.submodules }}
+        token: ${{ inputs.token }}
