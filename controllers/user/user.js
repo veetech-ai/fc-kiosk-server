@@ -15,6 +15,7 @@ const UserSettings = require("../../services/user_settings");
 const UserLoginInfoModel = require("../../services/user_login_info");
 const PushNotificationsSubscriptionsModel = require("../../services/push_notifications_subscriptions");
 const UserSQAnswerModel = require("../../services/user_sq_answers");
+const OtpModel = require("../../services/otp");
 
 const { calculateTimeBounds } = require("../../services/devices");
 
@@ -23,6 +24,7 @@ const apiResponse = require("../../common/api.response");
 const helper = require("../../common/helper");
 const email = require("../../common/email");
 const upload_file = require("../../common/upload");
+const { roleWithAuthorities } = require("../../common/roles_with_authorities");
 
 // Configuration Imports
 const config = require("../../config/config");
@@ -1788,6 +1790,154 @@ exports.verify_phone_verification_code = (req, res) => {
         await UserModel.update_where({ phone_verified: true }, { id: user.id });
 
         return apiResponse.success(res, req, "Phone number verified");
+      } catch (err) {
+        return apiResponse.fail(res, err.message, 500);
+      }
+    });
+  } catch (err) {
+    return apiResponse.fail(res, err.message, 500);
+  }
+};
+
+exports.send_phone_verification_code_for_app = (req, res) => {
+  /**
+   * @swagger
+   *
+   * /user/login/otp:
+   *   post:
+   *     security: []
+   *     description: Send code to provided phone number.
+   *     tags: [User]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: phone
+   *         description: User Phone number
+   *         in: formData
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const validation = new Validator(req.body, {
+      phone: "required",
+    });
+
+    validation.fails(function () {
+      return apiResponse.fail(res, validation.errors);
+    });
+
+    validation.passes(async function () {
+      try {
+        const phoneNumber = req.body.phone;
+        const otpLength = config.auth.mobileAuth.otpLength;
+        const otpCode = helper.generate_random_string({
+          length: otpLength,
+          type: "numeric",
+        });
+
+        const message = `Your ${otpLength} digit verification code is ${otpCode}`;
+        await helper.send_sms(phoneNumber, message);
+
+        await OtpModel.create({
+          phone: phoneNumber,
+          code: otpCode,
+        });
+
+        return apiResponse.success(res, req, "Verification code sent");
+      } catch (err) {
+        return apiResponse.fail(res, err.message, 500);
+      }
+    });
+  } catch (err) {
+    return apiResponse.fail(res, err.message, 500);
+  }
+};
+
+exports.verify_phone_verification_code_for_app = (req, res) => {
+  /**
+   * @swagger
+   *
+   * /user/login/otp/verify:
+   *   post:
+   *     security: []
+   *     description: Verify phone verification code
+   *     tags: [User]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: phone
+   *         description: Phone Number
+   *         in: formData
+   *         required: true
+   *         type: string
+   *       - name: code
+   *         description: Verification Code
+   *         in: formData
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const validation = new Validator(req.body, {
+      phone: "required",
+    });
+
+    validation.fails(function () {
+      return apiResponse.fail(res, validation.errors);
+    });
+
+    validation.passes(async function () {
+      try {
+        const phoneNumber = req.body.phone;
+        const receivedOtp = req.body.code;
+
+        const userOTP = await OtpModel.getByPhone({
+          phone: phoneNumber,
+          code: receivedOtp,
+        });
+
+        if (!userOTP) return apiResponse.fail(res, "OTP not valid");
+
+        await OtpModel.verifyCode(userOTP);
+
+        const user = await UserModel.create_user({
+          email: `${phoneNumber}@phonenumber.com`,
+          role_id: roleWithAuthorities.golfer.id,
+          phone: phoneNumber,
+        });
+
+        // Generating Token
+        const user_obj = JSON.parse(JSON.stringify(user));
+
+        const expire_time =
+          req.body.remember && req.body.remember == "true"
+            ? config.jwt.expirationLongInSeconds
+            : config.jwt.expirationShortInSeconds;
+        user_obj.expire_time = parseInt(expire_time);
+
+        const token = helper.createJwtToken({
+          user: user_obj,
+          expire_time: user_obj.expire_time,
+        });
+
+        const refresh_token = helper.createJwtToken({
+          user: user_obj,
+          expire_time: config.jwt.refreshExpirationInSeconds,
+        });
+
+        return apiResponse.success(res, req, {
+          accessToken: token,
+          refreshToken: refresh_token,
+        });
       } catch (err) {
         return apiResponse.fail(res, err.message, 500);
       }
