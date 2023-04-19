@@ -1,13 +1,21 @@
-name: "workflow"
+name: "CI/CD Staging"
 
 "on":
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+(-rc[0-9]+)?"
+      - "*"
 
 jobs:
+  tag-validation:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Tag validation
+        uses: "./.github/actions/tag-validation"
   integration:
-    name: "Continuous Integration"
+    needs: tag-validation
+    name: linting and testing
     uses: "./.github/workflows/ci-reusable.yml"
     secrets: inherit
   stage-deployment:
@@ -15,7 +23,7 @@ jobs:
     needs: integration
     uses: "./.github/workflows/cd-reusable.yml"
     with:
-      IMAGE_TAG: "latest"
+      IMAGE_TAG: ${{ github.ref_name }}
       DOCKER_FILE: "Dockerfile"
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

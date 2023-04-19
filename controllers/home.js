@@ -3,7 +3,7 @@ const config = require("../config/config");
 
 exports.index = (req, res) => {
   try {
-    const data = `Welcome to ${config.app.title} 1`;
+    const data = `Welcome to ${config.app.title}`;
     // res.json(data);
     res.writeHead(200, {
       "Content-Type": "text/html",
