@@ -4,7 +4,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     return Promise.all([
-      await queryInterface.createTable("ScreenConfigs", {
+      await queryInterface.createTable("Screen_Configs", {
         id: {
           allowNull: false,
           autoIncrement: true,
@@ -68,6 +68,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable("ScreenConfigs");
+    return queryInterface.dropTable("Screen_Configs");
   },
 };
