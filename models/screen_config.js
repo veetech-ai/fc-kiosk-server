@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       courseInfo: {
-        field:'course_info'
+        field: "course_info",
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
