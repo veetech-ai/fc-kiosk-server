@@ -54,9 +54,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {
-     
-    },
+    {},
   );
   Coach.associate = function (models) {
     // associations can be defined here
