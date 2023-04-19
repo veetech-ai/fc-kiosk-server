@@ -36,6 +36,14 @@ module.exports = (sequelize, DataTypes) => {
       as: "Memberships",
       foreignKey: "org_id",
     });
+    models.Organization.hasMany(models.ContactMembership, {
+      as: "ContactMemberships",
+      foreignKey: "org_id",
+    });
+    models.Organization.hasMany(models.Shop, {
+      as: "Shops",
+      foreignKey: "org_id",
+    });
   };
   return Organization;
 };

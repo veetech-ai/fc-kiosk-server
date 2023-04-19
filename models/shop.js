@@ -1,10 +1,9 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Membership = sequelize.define(
-    "Membership",
+  const Shop = sequelize.define(
+    "Shop",
     {
       gcId: {
-        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -15,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       orgId: {
-        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -25,7 +23,19 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      link: {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      subheading: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      image: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -33,25 +43,19 @@ module.exports = (sequelize, DataTypes) => {
         field: "created_at",
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: sequelize.literal("NOW()"),
       },
       updatedAt: {
         field: "updated_at",
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: sequelize.literal("NOW()"),
       },
     },
     {},
   );
-  Membership.associate = function (models) {
+  Shop.associate = function (models) {
     // associations can be defined here
-    Membership.belongsTo(models.Course, { foreignKey: "gc_id" });
-    Membership.belongsTo(models.Organization, { foreignKey: "org_id" });
-    Membership.hasMany(models.ContactMembership, {
-      as: "ContactMemberships",
-      foreignKey: "m_id",
-    });
+    Shop.belongsTo(models.Organization, { foreignKey: "org_id" });
+    Shop.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
-  return Membership;
+  return Shop;
 };
