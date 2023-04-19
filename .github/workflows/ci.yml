@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     container: node:16-bullseye
     steps:
-      - uses: actions/checkout@v3
+      - uses: ./.github/actions/checkout
         with:
           node-version: 16
           submodules: "recursive"
