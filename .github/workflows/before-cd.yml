@@ -1,0 +1,12 @@
+name: "workflow"
+
+"on":
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  integration:
+    name: "Continuous Integration"
+    uses: "./.github/workflows/ci-reusable.yml"
+    secrets: inherit

@@ -1,22 +1,14 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const FAQ = sequelize.define(
-    "FAQ",
+  const Membership = sequelize.define(
+    "Membership",
     {
-      question: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      answer: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
       gcId: {
         field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Course",
+          model: "Courses",
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -27,29 +19,35 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Organization",
+          model: "Organizations",
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      link: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       createdAt: {
         field: "created_at",
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: sequelize.literal("NOW()"),
       },
       updatedAt: {
         field: "updated_at",
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: sequelize.literal("NOW()"),
       },
     },
     {},
   );
-  FAQ.associate = function (models) {
+  Membership.associate = function (models) {
     // associations can be defined here
-    FAQ.belongsTo(models.Organization, { foreignKey: "org_id" });
-    FAQ.belongsTo(models.Course, { foreignKey: "gc_id" });
+    Membership.belongsTo(models.Course, { foreignKey: "gc_id" });
+    Membership.belongsTo(models.Organization, { foreignKey: "org_id" });
   };
-  return FAQ;
+  return Membership;
 };
