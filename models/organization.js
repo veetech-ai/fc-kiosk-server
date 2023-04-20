@@ -52,6 +52,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "Coaches",
       foreignKey: "org_id",
     });
+    models.Organization.hasMany(models.ScreenConfig, {
+      as: "ScreenConfigs",
+      foreignKey: "org_id",
+    });
   };
   return Organization;
 };
