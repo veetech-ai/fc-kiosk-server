@@ -50,6 +50,9 @@ jobs:
 
     runs-on: ubuntu-latest
     container: node:16-bullseye
+    resources:
+      limits:
+        memory: 16GB
 
     services:
       database:
