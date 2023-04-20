@@ -70,6 +70,10 @@ module.exports = (sequelize, DataTypes) => {
     Game.belongsTo(models.Course, { foreignKey: "gc_id" });
     Game.belongsTo(models.User, { foreignKey: "owner_id" });
     Game.belongsTo(models.User, { foreignKey: "participant_id" });
+    Game.hasMany(models.Hole, {
+      as: "Holes",
+      foreignKey: "g_id",
+    });
   };
   return Game;
 };
