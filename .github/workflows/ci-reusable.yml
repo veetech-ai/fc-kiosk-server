@@ -4,7 +4,6 @@ on:
 
 env:
   GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
-  AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
 
 jobs:
   linting:
@@ -43,7 +42,7 @@ jobs:
       TEST_DB_USERNAME: mysql
       TEST_DB_PASSWORD: testPass
       TEST_DB_DATABASE: df-test
-      cache-name: cache-node-modules
+      # cache-name: cache-node-modules
 
     # permissions:
     #   checks: write
@@ -51,7 +50,7 @@ jobs:
     #   contents: write
 
     runs-on: ubuntu-latest
-    container: node:16-bullseye
+    # container: node:16-bullseye
 
     services:
       database:
@@ -78,9 +77,9 @@ jobs:
       - name: checkout the code
         uses: actions/checkout@v3
         with:
-          token: $AUTH_TOKEN
           node-version: 16
-          sub-modules: recursive
+          submodules: "recursive"
+          token: ${{ secrets.AUTH_TOKEN }}
       - name: testing
         run: |
           npm ci
