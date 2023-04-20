@@ -35,7 +35,7 @@ jobs:
       - run: npm run lint
 
   testing:
-    runs-on: ubuntu-latest-large
+    runs-on: ubuntu-latest
     container:
       image: node:16
     strategy:
