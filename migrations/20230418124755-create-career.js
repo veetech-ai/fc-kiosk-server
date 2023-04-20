@@ -43,7 +43,7 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: true,
         },
-        timmings: {
+        timings: {
           type: Sequelize.JSON,
           allowNull: true,
         },
