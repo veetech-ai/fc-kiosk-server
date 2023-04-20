@@ -85,7 +85,7 @@ module.exports = {
           type: Sequelize.DATE,
           defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
           onUpdate: Sequelize.literal("CURRENT_TIMESTAMP"),
-        }
+        },
       }),
       queryInterface.addIndex("Games", ["gc_name"]),
       queryInterface.addIndex("Games", ["total_shots_taken"]),
