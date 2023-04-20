@@ -43,42 +43,49 @@ module.exports = {
         },
         participant_id: {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: true,
+          references: {
+            model: "Users",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
         },
         participant_name: {
           type: Sequelize.STRING,
           allowNull: true,
         },
         start_time: {
-          type: Sequelize.STRING,
+          type: Sequelize.DATE,
           allowNull: true,
         },
         end_time: {
-          type: Sequelize.STRING,
+          type: Sequelize.DATE,
           allowNull: true,
         },
-        gc_name: {
-          type: Sequelize.STRING,
-          allowNull: false,
-          references: {
-            model: "Courses",
-            key: "name",
-          },
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE",
-        },
         total_shots_taken: {
-          type: Sequelize.STRING,
+          type: Sequelize.INTEGER,
           allowNull: true,
         },
         total_ideal_shots: {
-          type: Sequelize.STRING,
+          type: Sequelize.INTEGER,
           allowNull: true,
         },
         invite_id: {
           type: Sequelize.STRING,
           allowNull: true,
         },
+        createdAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        },
+        updatedAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+          onUpdate: Sequelize.literal("CURRENT_TIMESTAMP"),
+        }
       }),
       queryInterface.addIndex("Games", ["gc_name"]),
       queryInterface.addIndex("Games", ["total_shots_taken"]),
