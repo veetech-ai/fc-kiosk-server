@@ -33,35 +33,35 @@ module.exports = {
         },
         course_info: {
           type: Sequelize.BOOLEAN,
-          allowNull: true,
+          defaultValue: true,
         },
         coupons: {
           type: Sequelize.BOOLEAN,
-          allowNull: true,
+          defaultValue: true,
         },
         lessons: {
           type: Sequelize.BOOLEAN,
-          allowNull: true,
+          defaultValue: true,
         },
         statistics: {
           type: Sequelize.BOOLEAN,
-          allowNull: true,
+          defaultValue: true,
         },
         memberships: {
           type: Sequelize.BOOLEAN,
-          allowNull: true,
+          defaultValue: true,
         },
         feedback: {
           type: Sequelize.BOOLEAN,
-          allowNull: true,
+          defaultValue: true,
         },
         careers: {
           type: Sequelize.BOOLEAN,
-          allowNull: true,
+          defaultValue: true,
         },
         shop: {
           type: Sequelize.BOOLEAN,
-          allowNull: true,
+          defaultValue: true,
         },
       }),
     ]);

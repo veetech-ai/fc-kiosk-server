@@ -26,35 +26,35 @@ module.exports = (sequelize, DataTypes) => {
       courseInfo: {
         field: "course_info",
         type: DataTypes.BOOLEAN,
-        allowNull: true,
+        defaultValue: true,
       },
       coupons: {
         type: DataTypes.BOOLEAN,
-        allowNull: true,
+        defaultValue: true,
       },
       lessons: {
         type: DataTypes.BOOLEAN,
-        allowNull: true,
+        defaultValue: true,
       },
       statistics: {
         type: DataTypes.BOOLEAN,
-        allowNull: true,
+        defaultValue: true,
       },
       memberships: {
         type: DataTypes.BOOLEAN,
-        allowNull: true,
+        defaultValue: true,
       },
       feedback: {
         type: DataTypes.BOOLEAN,
-        allowNull: true,
+        defaultValue: true,
       },
       careers: {
         type: DataTypes.BOOLEAN,
-        allowNull: true,
+        defaultValue: true,
       },
       shop: {
         type: DataTypes.BOOLEAN,
-        allowNull: true,
+        defaultValue: true,
       },
       createdAt: {
         field: "created_at",
