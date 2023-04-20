@@ -58,8 +58,12 @@ module.exports = (sequelize, DataTypes) => {
   );
   Career.associate = function (models) {
     // associations can be defined here
-    Career.belongsTo(models.Organization, { foreignKey: "org_id" });
-    Career.belongsTo(models.Course, { foreignKey: "gc_id" });
+    models.Career.belongsTo(models.Organization, { foreignKey: "org_id" });
+    models.Career.belongsTo(models.Course, { foreignKey: "gc_id" });
+    models.Career.hasMany(models.ContactCareer, {
+      as: "ContactCareers",
+      foreignKey: "career_id",
+    });
   };
   return Career;
 };

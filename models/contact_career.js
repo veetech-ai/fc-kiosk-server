@@ -24,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      mId: {
-        field: "m_id",
+      careerId: {
+        field: "career_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Memberships",
+          model: "Careers",
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     models.ContactCareer.belongsTo(models.Organization, { foreignKey: "org_id" });
     models.ContactCareer.belongsTo(models.Course, { foreignKey: "gc_id" });
-    models.ContactCareer.belongsTo(models.Membership, { foreignKey: "career_id" });
+    models.ContactCareer.belongsTo(models.Career, { foreignKey: "career_id" });
   };
   return ContactMembership;
 };
