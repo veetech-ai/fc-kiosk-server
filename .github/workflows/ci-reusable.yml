@@ -48,12 +48,9 @@ jobs:
     #   pull-requests: write
     #   contents: write
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-large
     container:
       image: node:16
-    strategy:
-      matrix:
-        runner-size: [large]
 
     services:
       database:
