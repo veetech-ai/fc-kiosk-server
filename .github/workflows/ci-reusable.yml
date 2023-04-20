@@ -35,23 +35,25 @@ jobs:
       - run: npm run lint
 
   testing:
+    runs-on: ubuntu-latest-large
+    container:
+      image: node:16
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_index: [0, 1, 2, 3, 4, 5]
+        ci_total: [6]
     env:
+      CI_NODE_TOTAL: ${{ matrix.ci_total }}
+      CI_NODE_INDEX: ${{ matrix.ci_index }}
       TEST_DB_HOST: database
       TEST_DB_PORT: 3306
       TEST_DB_USERNAME: mysql
       TEST_DB_PASSWORD: testPass
       TEST_DB_DATABASE: df-test
-      # cache-name: cache-node-modules
-
-    # permissions:
-    #   checks: write
-    #   pull-requests: write
-    #   contents: write
-
-    runs-on: ubuntu-latest-large
-    container:
-      image: node:16
-
+      TEST_DB_DIALECT: mysql
+      TEST_DB_CONSOLE_LOGGING: 0
+      TEST_ORGANIZATION_NAME: Test
     services:
       database:
         image: mysql
@@ -73,6 +75,7 @@ jobs:
           DOCKER_INFLUXDB_INIT_MODE: setup
         ports:
           - 8086:8086
+
     steps:
       - name: checkout the code
         uses: actions/checkout@v3
@@ -82,7 +85,12 @@ jobs:
           token: ${{ secrets.AUTH_TOKEN }}
       - name: testing
         run: |
+          apt update
+          apt install jq -y
+          apt install findutils -y
           npm ci
+          npm run influx-setup
+          bash parallel-test.sh $CI_NODE_TOTAL $CI_NODE_INDEX
           npm run test
       # - name: Cache node modules
       #   id: cache-npm
