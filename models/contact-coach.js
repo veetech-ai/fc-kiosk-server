@@ -4,36 +4,19 @@ module.exports = (sequelize, DataTypes) => {
     "ContactCoach",
     {
       gcId: {
+        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: "Courses",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       orgId: {
         field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: "Organizations",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       coachId: {
         field: "coach_id",
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: "Careers",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       userPhone: {
         field: "user_phone",
@@ -63,11 +46,11 @@ module.exports = (sequelize, DataTypes) => {
   );
   ContactCoach.associate = function (models) {
     // associations can be defined here
-    models.ContactCoach.belongsTo(models.Organization, {
+    ContactCoach.belongsTo(models.Organization, {
       foreignKey: "org_id",
     });
-    models.ContactCoach.belongsTo(models.Course, { foreignKey: "gc_id" });
-    models.ContactCoach.belongsTo(models.Coach, { foreignKey: "coach_id" });
+    ContactCoach.belongsTo(models.Course, { foreignKey: "gc_id" });
+    ContactCoach.belongsTo(models.Coach, { foreignKey: "coach_id" });
   };
 
   return ContactCoach;
