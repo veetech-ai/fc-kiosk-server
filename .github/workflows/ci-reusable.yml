@@ -54,6 +54,20 @@ jobs:
       TEST_DB_DIALECT: mysql
       TEST_DB_CONSOLE_LOGGING: 0
       TEST_ORGANIZATION_NAME: Test
+      INFLUX_DB_HOST: influxdb
+      INFLUX_DB_NAME: test
+      INFLUX_AGGREGATE_DB_NAME: aggregates-test
+      INFLUX_DB_PORT: 8086
+      INFLUX_DB_TOKEN: aGkcV533WlQq1_ShozzRcxr0ze-k0T_8c04wuq_O-Cdqooo0uNKoDO44WzDNsB0ZY2QgQcUAORg14W3yV1QVPw==
+      INFLUX_DB_ORG: test
+      INFLUX_DB_USERNAME: influxdb
+      INFLUX_DB_PASSWORD: influxdb-pwd
+      INFLUX_DB_PRECISION: ms
+      INFLUX_DB_TIMEOUT: "100000"
+      JWT_SECRET: cowlarviaphotonfundjwtsecrettokenstring
+      JWT_EXPIRATION_IN_SECONDS_SHORT: 3600000
+      JWT_EXPIRATION_IN_SECONDS_LONG: 3600000
+      JWT_REFRESH_TOKEN_EXPIRATION_IN_SECONDS: 7200000
     services:
       database:
         image: mysql
@@ -64,11 +78,11 @@ jobs:
           MYSQL_DATABASE: df-test
         ports:
           - 3306:3306
-      influx:
+      influxdb:
         image: influxdb:2.6-alpine
         env:
-          DOCKER_INFLUXDB_INIT_USERNAME: influxdb2
-          DOCKER_INFLUXDB_INIT_PASSWORD: influxdb2-pwd
+          DOCKER_INFLUXDB_INIT_USERNAME: influxdb
+          DOCKER_INFLUXDB_INIT_PASSWORD: influxdb-pwd
           DOCKER_INFLUXDB_INIT_ORG: test
           DOCKER_INFLUXDB_INIT_BUCKET: test
           DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: aGkcV533WlQq1_ShozzRcxr0ze-k0T_8c04wuq_O-Cdqooo0uNKoDO44WzDNsB0ZY2QgQcUAORg14W3yV1QVPw==
