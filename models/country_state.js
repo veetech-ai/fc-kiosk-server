@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
   CountryState.associate = function (models) {
-    models.Course.hasMany(models.Ad, {
+    models.CountryState.hasMany(models.Ad, {
       as: "Ads",
       foreignKey: "state_id",
     });
