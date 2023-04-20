@@ -78,8 +78,7 @@ jobs:
           MYSQL_DATABASE: df-test
         ports:
           - 3306:3306
-        options: >-
-          --sql-mode=NO_ZERO_DATE
+        command: --sql_mode=""
       influxdb:
         image: influxdb:2.6-alpine
         env:
