@@ -87,7 +87,6 @@ module.exports = {
           onUpdate: Sequelize.literal("CURRENT_TIMESTAMP"),
         },
       }),
-      await queryInterface.addIndex("Games", ["gc_name"]),
       await queryInterface.addIndex("Games", ["total_shots_taken"]),
       await queryInterface.addIndex("Games", ["total_ideal_shots"]),
       await queryInterface.addIndex("Games", ["invite_id"]),
