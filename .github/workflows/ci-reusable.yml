@@ -78,10 +78,7 @@ jobs:
           MYSQL_DATABASE: df-test
         ports:
           - 3306:3306
-        steps:
-          - name: Set up MySQL
-            run: |
-              mysqld --sql_mode=""
+        options: "--name=mysql"
       influxdb:
         image: influxdb:2.6-alpine
         env:
@@ -95,6 +92,8 @@ jobs:
           - 8086:8086
 
     steps:
+      - name: Change the sql mode
+        run: docker exec mysql database -u root -e "SET GLOBAL sql_mode = '';"
       - name: checkout the code
         uses: actions/checkout@v3
         with:
