@@ -45,10 +45,10 @@ jobs:
       TEST_DB_DATABASE: df-test
       cache-name: cache-node-modules
 
-    permissions:
-      checks: write
-      pull-requests: write
-      contents: write
+    # permissions:
+    #   checks: write
+    #   pull-requests: write
+    #   contents: write
 
     runs-on: ubuntu-latest
     container: node:16-bullseye
