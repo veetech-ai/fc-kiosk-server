@@ -12,6 +12,7 @@ module.exports = {
       type: Sequelize.DATE,
       allowNull: false,
       defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      onUpdate: Sequelize.literal("CURRENT_TIMESTAMP"),
     });
   },
 
