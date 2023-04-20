@@ -51,37 +51,41 @@ module.exports = (sequelize, DataTypes) => {
   );
   Course.associate = function (models) {
     // associations can be defined here
-    models.Course.belongsTo(models.Organization, { foreignKey: "org_id" });
-    models.Course.hasMany(models.FAQ, {
+    Course.belongsTo(models.Organization, { foreignKey: "org_id" });
+    Course.hasMany(models.FAQ, {
       as: "FAQs",
       foreignKey: "gc_id",
     });
-    models.Course.hasMany(models.Feedback, {
+    Course.hasMany(models.Feedback, {
       as: "Feedbacks",
       foreignKey: "gc_id",
     });
-    models.Course.hasMany(models.Coach, {
+    Course.hasMany(models.Coach, {
       as: "Coaches",
       foreignKey: "gc_id",
     });
-    models.Course.hasMany(models.Membership, {
+    Course.hasMany(models.Membership, {
       as: "Memberships",
       foreignKey: "gc_id",
     });
-    models.Course.hasMany(models.ContactMembership, {
+    Course.hasMany(models.ContactMembership, {
       as: "ContactMemberships",
       foreignKey: "gc_id",
     });
-    models.Course.hasMany(models.Shop, {
+    Course.hasMany(models.Shop, {
       as: "Shops",
       foreignKey: "gc_id",
     });
-    models.Course.hasMany(models.Career, {
+    Course.hasMany(models.Career, {
       as: "Careers",
       foreignKey: "gc_id",
     });
     Course.hasMany(models.Hole, {
       as: "Holes",
+      foreignKey: "gc_id",
+    });
+    Course.hasMany(models.Ad, {
+      as: "Ads",
       foreignKey: "gc_id",
     });
     Course.hasMany(models.ContactCareer, {
