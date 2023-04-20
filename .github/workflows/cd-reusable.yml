@@ -1,4 +1,4 @@
-name: "workflow"
+name: "deployment - reusable"
 
 "on":
   workflow_call:
