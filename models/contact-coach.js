@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Coach = sequelize.define(
-    "Coach",
+  const ContactCoach = sequelize.define(
+    "ContactCoach",
     {
       gcId: {
         type: DataTypes.INTEGER,
@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       orgId: {
+        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -23,24 +24,30 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      name: {
+      coachId: {
+        field: "coach_id",
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Careers",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      userPhone: {
+        field: "user_phone",
         type: DataTypes.STRING,
         allowNull: true,
       },
-      title: {
+      userEmail: {
+        field: "user_email",
         type: DataTypes.STRING,
         allowNull: true,
       },
-      content: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
-      image: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      timings: {
-        type: DataTypes.JSON,
+      contactMedium: {
+        field: "contact_medium",
+        type: DataTypes.ENUM("phone", "email"),
         allowNull: true,
       },
       createdAt: {
@@ -54,14 +61,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  Coach.associate = function (models) {
+  ContactCoach.associate = function (models) {
     // associations can be defined here
-    Coach.belongsTo(models.Organization, { foreignKey: "org_id" });
-    Coach.belongsTo(models.Course, { foreignKey: "gc_id" });
-    Coach.hasMany(models.ContactCoach, {
-      as: "ContactCoaches",
-      foreignKey: "coach_id",
+    models.ContactCoach.belongsTo(models.Organization, {
+      foreignKey: "org_id",
     });
+    models.ContactCoach.belongsTo(models.Course, { foreignKey: "gc_id" });
+    models.ContactCoach.belongsTo(models.Coach, { foreignKey: "coach_id" });
   };
-  return Coach;
+
+  return ContactCoach;
 };
