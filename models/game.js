@@ -3,63 +3,61 @@ module.exports = (sequelize, DataTypes) => {
   const Game = sequelize.define(
     "Game",
     {
-        gcId: {
-            field:"gc_id"
-            type: DataTypes.INTEGER,
-            allowNull: false,
-          },
-          orgId: {
-            field:"org_id"
-            type: DataTypes.INTEGER,
-            allowNull: false,
-          },
-          ownerId: {
-            field:"owner_id"
-            type: DataTypes.INTEGER,
-            allowNull: false,
-          },
-          participantId: {
-            field:"participant_id"
-            type: DataTypes.INTEGER,
-            allowNull: true,
-          },
-          participantName: {
-            field:"participant_name"
-            type: DataTypes.STRING,
-            allowNull: true,
-          },
-          startTime: {
-            field:"start_time"
-            type: DataTypes.DATE,
-            allowNull: true,
-          },
-          endTime: {
-            field:"end_time"
-            type: DataTypes.DATE,
-            allowNull: true,
-          },
-          totalShotsTaken: {
-            field:"total_shots_taken"
-            type: DataTypes.INTEGER,
-            allowNull: true,
-          },
-          totalIdealShots: {
-            field:"total_ideal_shots"
-            type: DataTypes.INTEGER,
-            allowNull: true,
-          },
-          inviteId: {
-            type:"invite_id"
-            type: DataTypes.STRING,
-            allowNull: true,
-          },
+      gcId: {
+        field: "gc_id",
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      orgId: {
+        field: "org_id",
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      ownerId: {
+        field: "owner_id",
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      participantId: {
+        field: "participant_id",
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      participantName: {
+        field: "participant_name",
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      startTime: {
+        field: "start_time",
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      endTime: {
+        field: "end_time",
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      totalShotsTaken: {
+        field: "total_shots_taken",
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      totalIdealShots: {
+        field: "total_ideal_shots",
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      inviteId: {
+        field: "invite_id",
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       createdAt: {
-        field: "created_at",
         type: DataTypes.DATE,
         allowNull: false,
       },
       updatedAt: {
-        field: "updated_at",
         type: DataTypes.DATE,
         allowNull: false,
       },
