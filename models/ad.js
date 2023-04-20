@@ -7,23 +7,11 @@ module.exports = (sequelize, DataTypes) => {
         field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: "Courses",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       orgId: {
         field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: "Organizations",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       stateId: {
         field: "state_id",
