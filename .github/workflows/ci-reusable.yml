@@ -70,7 +70,7 @@ jobs:
       JWT_REFRESH_TOKEN_EXPIRATION_IN_SECONDS: 7200000
     services:
       database:
-        image: mysql:8.0
+        image: mysql:5.7
         command: mysqld --sql_mode=""
         env:
           MYSQL_USER: mysql
