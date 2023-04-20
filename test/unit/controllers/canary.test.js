@@ -32,7 +32,7 @@ describe("/canary/all", () => {
       endpoint: "canary/all",
       token: superadmin_token,
     });
-
+    console.log(res.body);
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toEqual(true);
   });
