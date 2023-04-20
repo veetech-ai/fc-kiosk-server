@@ -232,6 +232,12 @@ exports.routesConfig = function (app, router) {
     ]),
     UsersController.verify_phone_verification_code,
   ]);
+  router.post(group + "/login/otp", [
+    UsersController.send_phone_verification_code_for_app,
+  ]);
+  router.post(group + "/login/otp/verify", [
+    UsersController.verify_phone_verification_code_for_app,
+  ]);
 
   router.get(group + "/last-login-info", [
     validation_middleware.validJWTNeeded,
