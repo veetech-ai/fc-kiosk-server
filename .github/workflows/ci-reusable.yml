@@ -49,11 +49,10 @@ jobs:
     #   contents: write
 
     runs-on: ubuntu-latest
-    container: node:16-bullseye
-    resources:
-      limits:
-        memory: 16GB
-
+    container:
+      image: node:16
+      options: --cpus 2 --memory 16g
+   
     services:
       database:
         image: mysql
