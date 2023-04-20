@@ -36,7 +36,7 @@ jobs:
 
   testing:
     env:
-      TEST_DB_HOST: localhost
+      TEST_DB_HOST: database
       TEST_DB_PORT: 3306
       TEST_DB_USERNAME: mysql
       TEST_DB_PASSWORD: testPass
