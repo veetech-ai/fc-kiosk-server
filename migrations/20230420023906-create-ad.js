@@ -31,7 +31,26 @@ module.exports = {
           onUpdate: "CASCADE",
           onDelete: "CASCADE",
         },
-
+        state_id: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Country_States",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
+        },
+        screen_id: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Ad_screens",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
+        },
         small_image: {
           type: Sequelize.STRING,
           allowNull: true,
