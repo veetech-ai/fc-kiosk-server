@@ -51,8 +51,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: node:16
-      options: --cpus 2 --memory 16g
-   
+    strategy:
+      matrix:
+        runner-size: [large]
+
     services:
       database:
         image: mysql
