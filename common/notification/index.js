@@ -22,11 +22,18 @@ const {
   replacePlaceholder,
 } = require("./helpers");
 
-webPush.setVapidDetails(
-  `mailto:${config.email.contactEmail}`,
-  config.webPush.publicKey,
-  config.webPush.privateKey,
-);
+try {
+  webPush.setVapidDetails(
+    `mailto:${config.email.contactEmail}`,
+    config.webPush.publicKey,
+    config.webPush.privateKey,
+  );
+} catch (error) {
+  logger.error(
+    "Webpush config is missing - common/notification/index.js",
+    error.message,
+  );
+}
 
 exports.send = async (params) => {
   const self = this;
