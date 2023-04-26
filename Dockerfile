@@ -5,6 +5,8 @@ ARG APP_VERSION=v1.0.0
 
 ARG GITLAB_AUTH_TOKEN
 
+ENV APP_VERSION $APP_VERSION
+
 WORKDIR /app
 
 COPY package.json package-lock.json .npmrc ./
