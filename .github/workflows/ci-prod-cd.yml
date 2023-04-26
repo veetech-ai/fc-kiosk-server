@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 16
           submodules: "recursive"
-          token: $AUTH_TOKEN
+          token: ${{ env.AUTH_TOKEN }}
       - name: Configure AWS credentials
         id: login-step
         uses: "./.github/actions/aws-login-setup"
