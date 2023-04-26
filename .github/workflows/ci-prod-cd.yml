@@ -6,26 +6,40 @@ on:
       tag:
         description: "Tag to push"
         required: false
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION_PRODUCTION }}
+  ECS_CONTAINER_NAME: ${{ secrets.ECS_CONTAINER_NAME_PRODUCTION }}
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE_PRODUCTION }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+  AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+
 jobs:
   production-deployment:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          node-version: 16
+          submodules: "recursive"
+          token: $AUTH_TOKEN
       - name: Configure AWS credentials
         id: login-step
         uses: "./.github/actions/aws-login-setup"
         with:
-          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          awsRegion: ${{ secrets.AWS_REGION }}
+          awsAccessKeyId: $AWS_ACCESS_KEY_ID
+          awsSecretAccessKey: $AWS_SECRET_ACCESS_KEY
+          awsRegion: $AWS_REGION
 
       - name: tag existence
         id: tag-existence
         if: ${{ github.event.inputs.tag != '' }}
         env:
           ECR_REGISTRY: ${{ steps.login-step.outputs.registry }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.event.inputs.tag }}
         run: |
           aws ecr describe-images --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG
@@ -34,8 +48,6 @@ jobs:
       - name: Download staging task definition
         id: staging-task-def
         if: ${{ github.event.inputs.tag == '' }}
-        env:
-          ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION_PRODUCTION }}
         run: |
           aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --query taskDefinition > task-definition-stage.json
           cat task-definition-stage.json
@@ -45,8 +57,8 @@ jobs:
         id: task-def
         uses: "./.github/actions/fetch-task-def-update-and-push"
         with:
-          ecsTaskDefinition: ${{ secrets.ECS_TASK_DEFINITION_PRODUCTION}}
-          ecsContainerName: ${{ secrets.ECS_CONTAINER_NAME_PRODUCTION }}
+          ecsTaskDefinition: $ECS_TASK_DEFINITION
+          ecsContainerName: $ECS_CONTAINER_NAME
           image: ${{ steps.tag-existence.outputs.image || fromJSON(steps.staging-task-def.outputs.latestRevision).containerDefinitions[0].image }}
-          ecsService: ${{ secrets.ECS_SERVICE_PRODUCTION }}
-          ecsCluster: ${{ secrets.ECS_CLUSTER }}
+          ecsService: $ECS_SERVICE
+          ecsCluster: $ECS_CLUSTER
