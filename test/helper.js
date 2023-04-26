@@ -114,7 +114,6 @@ exports.get_token_for = async (role = "superadmin", getNewToken = false) => {
       params.email = this.admin_email;
       params.password = this.admin_password;
     } else if (role == "adminD") {
-      console.log("in helper",this.admind_email)
       params.email = this.admind_email;
       params.password = this.admind_password;
     } else if (role == "testCustomer") {
