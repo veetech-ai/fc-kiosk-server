@@ -82,7 +82,7 @@ jobs:
       JWT_REFRESH_TOKEN_EXPIRATION_IN_SECONDS: 7200000
     services:
       database:
-        image: ${{ AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/mysql:latest
+        image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/mysql:latest
         env:
           MYSQL_USER: mysql
           MYSQL_ROOT_PASSWORD: testPass
