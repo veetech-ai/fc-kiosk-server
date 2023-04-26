@@ -726,10 +726,14 @@ exports.update_user = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register('gender', function(value) {
-      return value === 'male' || value === 'female';
-    }, 'The :attribute field must be either "male" or "female".');
-    
+    Validator.register(
+      "gender",
+      function (value) {
+        return value === "male" || value === "female";
+      },
+      'The :attribute field must be either "male" or "female".',
+    );
+
     const validation = new Validator(req.body, {
       name: ["regex:/^([a-zA-Z][a-zA-Z0-9.' ]*)([a-zA-Z0-9.])$/"],
       phone: [`regex:${helper.PhoneRegex}`],
@@ -755,8 +759,22 @@ exports.update_user = (req, res) => {
       try {
         await UserModel.findById(user_id);
 
-        const { name, phone, advance_user, dateOfBirth, gender, handicapIndex } = req.body;
-        await UserModel.update_user(user_id, { name, phone, advance_user, dateOfBirth, gender, handicapIndex });
+        const {
+          name,
+          phone,
+          advance_user,
+          dateOfBirth,
+          gender,
+          handicapIndex,
+        } = req.body;
+        await UserModel.update_user(user_id, {
+          name,
+          phone,
+          advance_user,
+          dateOfBirth,
+          gender,
+          handicapIndex,
+        });
 
         return apiResponse.success(res, req, "User Updated Successfully");
       } catch (err) {

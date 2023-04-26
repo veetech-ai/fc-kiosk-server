@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       handicapIndex: {
         field: "handicap_index",
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT,
       },
       profile_image: DataTypes.STRING,
       gender: DataTypes.STRING,
