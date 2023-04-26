@@ -94,7 +94,7 @@ module.exports = {
     accessKey: process.env.AWS_ACCESS_KEY_ID,
     accessSecret: process.env.AWS_SECRET_ACCESS_KEY,
     bucketName: process.env.BUCKET_NAME || "mdm-file-store",
-    region: process.env.AWS_REGION || "us-east-2",
+    region: process.env.AWS_REGION || "us-east-1",
     urlExpiryInMinutes: process.env.AWS_URL_EXPIRY_IN_MINUTES || 120,
     apiVersion: process.env.API_VERSION,
   },
@@ -298,8 +298,6 @@ module.exports = {
     process.env.GOOGLE_CAPTCHA_SECRET ||
     "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe", // default test captcha by google
   isCloudUpload:
-    process.env.NODE_ENV == "development" || process.env.NODE_ENV == "test"
-      ? false
-      : process.env.UPLOAD_ON_AWS === "true" ||
-        process.env.UPLOAD_ON_AZURE === "true",
+    process.env.UPLOAD_ON_AWS === "true" ||
+    process.env.UPLOAD_ON_AZURE === "true",
 };

@@ -43,10 +43,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: true,
       },
-      handicap_index: DataTypes.STRING,
+      handicapIndex: {
+        field: "handicap_index",
+        type: DataTypes.FLOAT,
+      },
       profile_image: DataTypes.STRING,
       gender: DataTypes.STRING,
-      date_of_birth: {
+      dateOfBirth: {
         type: DataTypes.DATEONLY,
         field: "date_of_birth",
       },
