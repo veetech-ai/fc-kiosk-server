@@ -95,10 +95,11 @@ jobs:
         ports:
           - 3306:3306
         credentials:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ${{ secrets.AWS_REGION }}
-          aws_registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/mysql:latest
+          aws:
+            access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            region: ${{ secrets.AWS_REGION }}
+            registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/mysql:latest
       influxdb:
         image: influxdb:2.6-alpine
         env:
