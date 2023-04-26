@@ -1,10 +1,21 @@
 name: linting and testing - reusable
 on:
   workflow_call:
-
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_REGION:
+        required: true
+      GITLAB_AUTH_TOKEN:
+        required: true
+      AWS_ACCOUNT_ID:
+        required: true
+      AUTH_TOKEN:
+        required: true
 env:
   GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
-  AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
 
 jobs:
   linting:
@@ -14,23 +25,23 @@ jobs:
         with:
           node-version: 16
           submodules: "recursive"
-          token: ${{ env.AUTH_TOKEN }}
+          token: ${{ secrets.AUTH_TOKEN }}
 
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+      # - name: Cache node modules
+      #   id: cache-npm
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-build-${{ env.cache-name }}-
+      #       ${{ runner.os }}-build-
+      #       ${{ runner.os }}-
 
-      - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
+      # - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
+      #   name: List the state of node modules
+      #   continue-on-error: true
+      #   run: npm list
 
       - run: npm ci
       - run: npm run lint
@@ -79,7 +90,12 @@ jobs:
           MYSQL_DATABASE: df-test
         ports:
           - 3306:3306
-        options: "--name=mysql"
+        credentials:
+          aws:
+            access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            region: ${{ secrets.AWS_REGION }}
+            registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/mysql:latest
       influxdb:
         image: influxdb:2.6-alpine
         env:
@@ -93,8 +109,6 @@ jobs:
           - 8086:8086
 
     steps:
-      - name: Change the sql mode
-        run: docker exec mysql database -u root -e "SET GLOBAL sql_mode = '';"
       - name: checkout the code
         uses: actions/checkout@v3
         with:
