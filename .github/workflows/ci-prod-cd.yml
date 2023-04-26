@@ -58,7 +58,7 @@ jobs:
         uses: "./.github/actions/fetch-task-def-update-and-push"
         with:
           ecsTaskDefinition: ${{ env.ECS_TASK_DEFINITION }}
-          ecsContainerName: ${{ env.ECS_CONTAINER_NAME }]
+          ecsContainerName: ${{ env.ECS_CONTAINER_NAME }}
           image: ${{ steps.tag-existence.outputs.image || fromJSON(steps.staging-task-def.outputs.latestRevision).containerDefinitions[0].image }}
           ecsService: ${{ env.ECS_SERVICE }}
           ecsCluster: ${{ env.ECS_CLUSTER }}
