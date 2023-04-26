@@ -47,6 +47,15 @@ module.exports = (sequelize, DataTypes) => {
       // trial_ended: DataTypes.BOOLEAN,
       // next_bill_date: DataTypes.DATEONLY,
       hw_ver: DataTypes.STRING,
+      gcId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: "gc_id",
+        references: {
+          model: "Courses",
+          key: "id",
+        },
+      },
     },
     {},
   );
@@ -109,6 +118,7 @@ module.exports = (sequelize, DataTypes) => {
       as: "Transaction_Logs",
       foreignKey: "device_id",
     });
+    models.Device.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
   return Device;
 };
