@@ -16,6 +16,10 @@ on:
         required: true
 env:
   GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
   linting:
@@ -82,7 +86,7 @@ jobs:
       JWT_REFRESH_TOKEN_EXPIRATION_IN_SECONDS: 7200000
     services:
       database:
-        image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/mysql:latest
+        image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mysql:latest
         env:
           MYSQL_USER: mysql
           MYSQL_ROOT_PASSWORD: testPass
