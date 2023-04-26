@@ -22,12 +22,10 @@ exports.admind_password = process.env.ADMIN_D_PASSWORD || "123456";
 exports.incorrect_email = "incorrect.email@cowlar.com";
 exports.incorrect_password = "1234567";
 
-exports.testAccountEmail =
-  process.env.TEST_ACCOUNT_EMAIL || "test@df.com";
+exports.testAccountEmail = process.env.TEST_ACCOUNT_EMAIL || "test@df.com";
 exports.testAccountPassword = process.env.TEST_ACCOUNT_PASSWORD || "123456";
 
-exports.testDAccountEmail =
-  process.env.TEST_D_ACCOUNT_EMAIL || "testd@df.com";
+exports.testDAccountEmail = process.env.TEST_D_ACCOUNT_EMAIL || "testd@df.com";
 exports.testDAccountPassword = process.env.TEST_D_ACCOUNT_PASSWORD || "123456";
 
 exports.testOperatorEmail =
@@ -37,15 +35,13 @@ exports.testOperatorPassword = process.env.OPERATOR_PASSWORD || "123456";
 exports.testCeoEmail = process.env.CEO_EMAIL || "testorgceo@df.com";
 exports.testCeoPassword = process.env.CEO_PASSWORD || "123456";
 
-exports.testManagerEmail =
-  process.env.MANAGER_EMAIL || "testorgmanager@df.com";
+exports.testManagerEmail = process.env.MANAGER_EMAIL || "testorgmanager@df.com";
 exports.testManagerPassword = process.env.MANAGER_PASSWORD || "123456";
 
 exports.zongCustomerEmail = process.env.CEO_EMAIL || "zong@df.com";
 exports.zongCustomerPassword = process.env.CEO_PASSWORD || "123456";
 
-exports.zongOperatorEmail =
-  process.env.ZONG_OPERATOR_EMAIL || "zongop@df.com";
+exports.zongOperatorEmail = process.env.ZONG_OPERATOR_EMAIL || "zongop@df.com";
 exports.zongOperatorPassword = process.env.ZONG_OPERATOR_PASSWORD || "123456";
 
 exports.zongCeoEmail = process.env.ZONG_CEO_EMAIL || "zongceo@df.com";
