@@ -1,0 +1,52 @@
+name: "CI/CD Production"
+
+on: 
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to push'     
+        required: false
+jobs:
+  production-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        id: login-step
+        uses: "./.github/actions/aws-login-setup"
+        with:
+          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          awsRegion: ${{ secrets.AWS_REGION }}
+
+      - name: tag existence
+        id: tag-existence
+        if: ${{ github.event.inputs.tag != '' }}
+        env: 
+          ECR_REGISTRY: ${{ steps.login-step.outputs.registry }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.event.inputs.tag }}
+        run: |
+          aws ecr describe-images --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      
+      - name: Download staging task definition
+        id: staging-task-def
+        if: ${{ github.event.inputs.tag == '' }}
+        env:
+          ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION_PRODUCTION }}
+        run: |
+          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --query taskDefinition > task-definition-stage.json
+          cat task-definition-stage.json
+          echo "::set-output name=latestRevision::$(echo $(cat task-definition-stage.json))"
+
+      - name: Dowload ECS task definition, Update with image and deploy
+        id: task-def
+        uses: "./.github/actions/fetch-task-def-update-and-push"
+        with:
+          ecsTaskDefinition: ${{ secrets.ECS_TASK_DEFINITION_PRODUCTION}}
+          ecsContainerName: ${{ secrets.ECS_CONTAINER_NAME_PRODUCTION }}
+          image: ${{ steps.tag-existence.outputs.image || fromJSON(steps.staging-task-def.outputs.latestRevision).containerDefinitions[0].image }} 
+          ecsService: ${{ secrets.ECS_SERVICE_PRODUCTION }}
+          ecsCluster: ${{ secrets.ECS_CLUSTER }}
