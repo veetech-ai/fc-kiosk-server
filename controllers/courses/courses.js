@@ -179,7 +179,8 @@ exports.get_courses = async (req, res) => {
             });
 
             return courseWithDistance;
-          });
+          })
+          .sort((a, b) => a.distance - b.distance);
 
         console.log(coursesRoughlyInRange.length);
         console.timeEnd("TIme");
