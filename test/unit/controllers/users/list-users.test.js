@@ -89,10 +89,13 @@ describe("List All Users", () => {
           "id",
           "name",
           "email",
+          "handicapIndex",
+          "profile_image",
+          "gender",
+          "dateOfBirth",
           "phone",
           "is_admin",
           "status",
-          "profile_image",
           "advance_user",
           "mqtt_token",
           "super_admin",
@@ -114,7 +117,6 @@ describe("List All Users", () => {
           "Role",
         ];
 
-        console.log(response.body.data);
         expect(Object.keys(response.body.data[0])).toEqual(
           expectedResponseKeys,
         );
