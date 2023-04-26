@@ -34,7 +34,7 @@ module.exports = {
         {
           id: 2,
           name: "Admin",
-          email: "admin.df@cowlar.com",
+          email: "admin@df.com",
           is_admin: true,
           super_admin: false,
           status: 1,
@@ -46,7 +46,7 @@ module.exports = {
         {
           id: 3,
           name: "Device Account",
-          email: "device.df@cowlar.com",
+          email: "device@df.com",
           is_admin: true,
           super_admin: false,
           status: 1,
@@ -58,7 +58,7 @@ module.exports = {
         {
           id: 4,
           name: "Super Admin",
-          email: "superadmin.df@cowlar.com",
+          email: "superadmin@df.com",
           is_admin: true,
           super_admin: true,
           status: 1,
@@ -70,7 +70,7 @@ module.exports = {
         {
           id: 5,
           name: "Test Super Admin",
-          email: "testsuperadmin.df@cowlar.com",
+          email: "testsuperadmin@df.com",
           is_admin: true,
           super_admin: true,
           status: 1,
@@ -82,7 +82,7 @@ module.exports = {
         {
           id: 6,
           name: "Test Organization Operator account",
-          email: "testorgoperator.df@cowlar.com",
+          email: "testorgoperator@df.com",
           is_admin: false,
           super_admin: false,
           orgId: TestOrg.id,
@@ -96,7 +96,7 @@ module.exports = {
         {
           id: 7,
           name: "operator account",
-          email: "testoperator.df@cowlar.com",
+          email: "testoperator@df.com",
           is_admin: false,
           super_admin: false,
           orgId: TestOrg.id,
@@ -110,7 +110,7 @@ module.exports = {
         {
           id: 8,
           name: "Test Organization Device Account",
-          email: "testorgdevice.df@cowlar.com",
+          email: "testorgdevice@df.com",
           is_admin: false,
           super_admin: false,
           orgId: TestOrg.id,
@@ -136,7 +136,7 @@ module.exports = {
         {
           id: 10,
           name: "Admin D",
-          email: "admind.df@cowlar.com",
+          email: "admind@df.com",
           is_admin: true,
           super_admin: false,
           status: 1,
@@ -148,7 +148,7 @@ module.exports = {
         {
           id: 11,
           name: "Test Organization Manager account",
-          email: "testorgmanager.df@cowlar.com",
+          email: "testorgmanager@df.com",
           orgId: TestOrg.id,
           status: 1,
           password:

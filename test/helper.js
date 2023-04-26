@@ -10,45 +10,41 @@ jest.setTimeout(300000);
 exports.wrong_email = "zxy@cowlar.com";
 exports.wrong_password = "0987654321";
 exports.super_admin_email =
-  process.env.SUPER_ADMIN_EMAIL || "superadmin.df@cowlar.com";
+  process.env.SUPER_ADMIN_EMAIL || "superadmin@df.com";
 exports.super_admin_password = process.env.SUPER_ADMIN_PASSWORD || "123456";
 
-exports.admin_email = process.env.ADMIN_EMAIL || "admin.df@cowlar.com";
+exports.admin_email = process.env.ADMIN_EMAIL || "admin@df.com";
 exports.admin_password = process.env.ADMIN_PASSWORD || "123456";
 
-exports.admind_email = process.env.ADMIN_D_EMAIL || "admind.df@cowlar.com";
+exports.admind_email = process.env.ADMIN_D_EMAIL || "admind@df.com";
 exports.admind_password = process.env.ADMIN_D_PASSWORD || "123456";
 
 exports.incorrect_email = "incorrect.email@cowlar.com";
 exports.incorrect_password = "1234567";
 
-exports.testAccountEmail =
-  process.env.TEST_ACCOUNT_EMAIL || "test.df@cowlar.com";
+exports.testAccountEmail = process.env.TEST_ACCOUNT_EMAIL || "test@df.com";
 exports.testAccountPassword = process.env.TEST_ACCOUNT_PASSWORD || "123456";
 
-exports.testDAccountEmail =
-  process.env.TEST_D_ACCOUNT_EMAIL || "testd.df@cowlar.com";
+exports.testDAccountEmail = process.env.TEST_D_ACCOUNT_EMAIL || "testd@df.com";
 exports.testDAccountPassword = process.env.TEST_D_ACCOUNT_PASSWORD || "123456";
 
 exports.testOperatorEmail =
-  process.env.OPERATOR_EMAIL || "testorgoperator.df@cowlar.com";
+  process.env.OPERATOR_EMAIL || "testorgoperator@df.com";
 exports.testOperatorPassword = process.env.OPERATOR_PASSWORD || "123456";
 
-exports.testCeoEmail = process.env.CEO_EMAIL || "testorgceo.df@cowlar.com";
+exports.testCeoEmail = process.env.CEO_EMAIL || "testorgceo@df.com";
 exports.testCeoPassword = process.env.CEO_PASSWORD || "123456";
 
-exports.testManagerEmail =
-  process.env.MANAGER_EMAIL || "testorgmanager.df@cowlar.com";
+exports.testManagerEmail = process.env.MANAGER_EMAIL || "testorgmanager@df.com";
 exports.testManagerPassword = process.env.MANAGER_PASSWORD || "123456";
 
-exports.zongCustomerEmail = process.env.CEO_EMAIL || "zong.df@cowlar.com";
+exports.zongCustomerEmail = process.env.CEO_EMAIL || "zong@df.com";
 exports.zongCustomerPassword = process.env.CEO_PASSWORD || "123456";
 
-exports.zongOperatorEmail =
-  process.env.ZONG_OPERATOR_EMAIL || "zongop.df@cowlar.com";
+exports.zongOperatorEmail = process.env.ZONG_OPERATOR_EMAIL || "zongop@df.com";
 exports.zongOperatorPassword = process.env.ZONG_OPERATOR_PASSWORD || "123456";
 
-exports.zongCeoEmail = process.env.ZONG_CEO_EMAIL || "zongceo.df@cowlar.com";
+exports.zongCeoEmail = process.env.ZONG_CEO_EMAIL || "zongceo@df.com";
 exports.zongCeoPassword = process.env.ZONG_CEO_PASSWORD || "123456";
 
 exports.inactive_user_email =
@@ -56,14 +52,14 @@ exports.inactive_user_email =
 exports.inactive_user_password = process.env.INACTIVE_USER_PASSWORD || "123456";
 
 exports.device_role_user_email =
-  process.env.DEVICE_ROLE_USER_EMAIL || "testorgdevice.df@cowlar.com";
+  process.env.DEVICE_ROLE_USER_EMAIL || "testorgdevice@df.com";
 exports.device_role_user_password =
   process.env.DEVICE_ROLE_USER_PASSWORD || "123456";
 
-exports.super_admin_email = "superadmin.df@cowlar.com";
+exports.super_admin_email = "superadmin@df.com";
 exports.super_admin_password = "123456";
 
-exports.admin_email = "admin.df@cowlar.com";
+exports.admin_email = "admin@df.com";
 exports.admin_password = "123456";
 
 exports.test_email = "test.sim-dispenser@cowlar.com";
@@ -108,7 +104,7 @@ exports.get_token_for = async (role = "superadmin", getNewToken = false) => {
       params.email = this.super_admin_email;
       params.password = this.super_admin_password;
     } else if (role == "testsuperadmin") {
-      params.email = "testsuperadmin.df@cowlar.com";
+      params.email = "testsuperadmin@df.com";
       params.password = "123456";
     } else if (role == "admin") {
       params.email = this.admin_email;

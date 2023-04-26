@@ -24,7 +24,7 @@ module.exports = {
         [
           {
             name: "ceo zong",
-            email: "zongceo.df@cowlar.com",
+            email: "zongceo@df.com",
             orgId: zongOrg.id,
             status: 1,
             password:
@@ -34,7 +34,7 @@ module.exports = {
           },
           {
             name: "customer zong",
-            email: "zong.df@cowlar.com",
+            email: "zong@df.com",
             orgId: zongOrg.id,
             status: 1,
             password:
@@ -44,7 +44,7 @@ module.exports = {
           },
           {
             name: "operator zong",
-            email: "zongop.df@cowlar.com",
+            email: "zongop@df.com",
             orgId: zongOrg.id,
             status: 1,
             password:
@@ -69,7 +69,7 @@ module.exports = {
           },
           {
             name: "Test Organization CEO",
-            email: "testorgceo.df@cowlar.com",
+            email: "testorgceo@df.com",
             is_admin: false,
             super_admin: false,
             isapprover: false,
