@@ -4,8 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "debug": "npm run db & node --trace-warnings main.js",
-    "prod": "npm run db & npm run serve",
+    "debug": "npm run db && node --trace-warnings main.js",
+    "prod": "npm run db && npm run serve",
     "db": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "serve": "nodemon --trace-warnings main.js",
     "pm2": "pm2 stop processes.json && pm2 delete processes.json && pm2 start processes.json",
