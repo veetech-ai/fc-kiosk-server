@@ -96,6 +96,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "ContactCoaches",
       foreignKey: "gc_id",
     });
+    Course.hasMany(models.Device, {
+      as: "Devices",
+      foreignKey: "gc_id",
+    });
   };
   return Course;
 };
