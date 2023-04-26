@@ -117,7 +117,6 @@ describe("List All Users", () => {
           "Role",
         ];
 
-        console.log(response.body.data);
         expect(Object.keys(response.body.data[0])).toEqual(
           expectedResponseKeys,
         );
