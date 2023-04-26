@@ -31,9 +31,9 @@ jobs:
         id: login-step
         uses: "./.github/actions/aws-login-setup"
         with:
-          awsAccessKeyId: $AWS_ACCESS_KEY_ID
-          awsSecretAccessKey: $AWS_SECRET_ACCESS_KEY
-          awsRegion: $AWS_REGION
+          awsAccessKeyId: ${{ env.AWS_ACCESS_KEY_ID }}
+          awsSecretAccessKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          awsRegion: ${{ env.AWS_REGION }}
 
       - name: tag existence
         id: tag-existence
@@ -57,8 +57,8 @@ jobs:
         id: task-def
         uses: "./.github/actions/fetch-task-def-update-and-push"
         with:
-          ecsTaskDefinition: $ECS_TASK_DEFINITION
-          ecsContainerName: $ECS_CONTAINER_NAME
+          ecsTaskDefinition: ${{ env.ECS_TASK_DEFINITION }}
+          ecsContainerName: ${{ env.ECS_CONTAINER_NAME }]
           image: ${{ steps.tag-existence.outputs.image || fromJSON(steps.staging-task-def.outputs.latestRevision).containerDefinitions[0].image }}
-          ecsService: $ECS_SERVICE
-          ecsCluster: $ECS_CLUSTER
+          ecsService: ${{ env.ECS_SERVICE }}
+          ecsCluster: ${{ env.ECS_CLUSTER }}
