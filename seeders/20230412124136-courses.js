@@ -1,10 +1,14 @@
 "use strict";
 
 const { getGolfCourses } = require("../common/golf_courses");
+const dataArr = getGolfCourses().map((course) => ({
+  ...course,
+  golfbert_id: course.id,
+  id: undefined, // remove the original id property
+}));
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const dataArr = getGolfCourses();
     await queryInterface.bulkInsert("Courses", dataArr, {
       updateOnDuplicate: ["lat", "long"],
     });
