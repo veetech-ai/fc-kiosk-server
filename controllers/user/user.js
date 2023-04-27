@@ -701,14 +701,45 @@ exports.update_user = (req, res) => {
    *         in: formData
    *         required: false
    *         type: string
+   *       - name: dateOfBirth
+   *         description: User's date of birth.
+   *         in: formData
+   *         required: false
+   *         type: string
+   *         format: date
+   *       - name: handicapIndex
+   *         description: User's Handicap Index.
+   *         in: formData
+   *         required: false
+   *         type: string
+   *         format: date
+   *       - name: gender
+   *         description: User's gender.
+   *         in: formData
+   *         required: false
+   *         type: string
+   *         enum:
+   *          - male
+   *          - female
    *     responses:
    *       200:
    *         description: success
    */
   try {
+    Validator.register(
+      "gender",
+      function (value) {
+        return value === "male" || value === "female";
+      },
+      'The :attribute field must be either "male" or "female".',
+    );
+
     const validation = new Validator(req.body, {
       name: ["regex:/^([a-zA-Z][a-zA-Z0-9.' ]*)([a-zA-Z0-9.])$/"],
       phone: [`regex:${helper.PhoneRegex}`],
+      gender: "gender",
+      dateOfBirth: "date",
+      handicapIndex: "numeric",
       advance_user: "boolean",
     });
 
@@ -723,14 +754,27 @@ exports.update_user = (req, res) => {
 
       const user_id = req.user.id;
 
-      // ? disucssion needed, below code may never reach, as user will always be loggedIn if he gets this far
       if (!user_id) return apiResponse.fail(res, "User not found", 404);
 
       try {
         await UserModel.findById(user_id);
 
-        const { name, phone, advance_user } = req.body;
-        await UserModel.update_user(user_id, { name, phone, advance_user });
+        const {
+          name,
+          phone,
+          advance_user,
+          dateOfBirth,
+          gender,
+          handicapIndex,
+        } = req.body;
+        await UserModel.update_user(user_id, {
+          name,
+          phone,
+          advance_user,
+          dateOfBirth,
+          gender,
+          handicapIndex,
+        });
 
         return apiResponse.success(res, req, "User Updated Successfully");
       } catch (err) {

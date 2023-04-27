@@ -10,8 +10,8 @@ module.exports = {
   apiLimitDefault: Number(process.env.API_RATE_LIMIT) || 14,
   window_tpd: process.env.WINDOW_TPD || 16,
   env: process.env.NODE_ENV || "development",
-  testAccountEmail: process.env.TEST_ACCOUNT_EMAIL || "test.df@cowlar.com",
-  testDAccountEmail: process.env.TEST_D_ACCOUNT_EMAIL || "testd.df@cowlar.com",
+  testAccountEmail: process.env.TEST_ACCOUNT_EMAIL || "test@df.com",
+  testDAccountEmail: process.env.TEST_D_ACCOUNT_EMAIL || "testd@df.com",
   testOrganization: process.env.TEST_ORGANIZATION_NAME || "Test",
   testOrganizationId: process.env.TEST_ORGANIZATION_ID || 5,
   pctTestsPerHourThresholdInSeconds: 600,
@@ -94,7 +94,7 @@ module.exports = {
     accessKey: process.env.AWS_ACCESS_KEY_ID,
     accessSecret: process.env.AWS_SECRET_ACCESS_KEY,
     bucketName: process.env.BUCKET_NAME || "mdm-file-store",
-    region: process.env.AWS_REGION || "us-east-2",
+    region: process.env.AWS_REGION || "us-east-1",
     urlExpiryInMinutes: process.env.AWS_URL_EXPIRY_IN_MINUTES || 120,
     apiVersion: process.env.API_VERSION,
   },
@@ -261,6 +261,20 @@ module.exports = {
       idle: parseInt(process.env.DB_POOL_IDLE) || 10000,
     },
   },
+  staging: {
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    host: process.env.DB_HOST,
+    logging: process.env.DB_CONSOLE_LOGGING == 1,
+    port: process.env.DB_PORT || 3306,
+    dialect: process.env.DB_DIALECT || "mysql",
+    pool: {
+      max: parseInt(process.env.DB_POOL_MAX) || 5,
+      min: parseInt(process.env.DB_POOL_MIN) || 0,
+      idle: parseInt(process.env.DB_POOL_IDLE) || 10000,
+    },
+  },
   test: {
     username: process.env.TEST_DB_USERNAME,
     password: process.env.TEST_DB_PASSWORD,
@@ -298,8 +312,6 @@ module.exports = {
     process.env.GOOGLE_CAPTCHA_SECRET ||
     "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe", // default test captcha by google
   isCloudUpload:
-    process.env.NODE_ENV == "development" || process.env.NODE_ENV == "test"
-      ? false
-      : process.env.UPLOAD_ON_AWS === "true" ||
-        process.env.UPLOAD_ON_AZURE === "true",
+    process.env.UPLOAD_ON_AWS === "true" ||
+    process.env.UPLOAD_ON_AZURE === "true",
 };

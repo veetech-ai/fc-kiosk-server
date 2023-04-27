@@ -89,10 +89,13 @@ describe("List All Users", () => {
           "id",
           "name",
           "email",
+          "handicapIndex",
+          "profile_image",
+          "gender",
+          "dateOfBirth",
           "phone",
           "is_admin",
           "status",
-          "profile_image",
           "advance_user",
           "mqtt_token",
           "super_admin",
@@ -114,7 +117,6 @@ describe("List All Users", () => {
           "Role",
         ];
 
-        console.log(response.body.data);
         expect(Object.keys(response.body.data[0])).toEqual(
           expectedResponseKeys,
         );
@@ -349,11 +351,14 @@ describe("List All Users", () => {
       it("should get all users of a particular organization and card serial", async () => {
         const phone = "+923211234567";
         const name = "operator account";
+        const handicapIndex = 10.5;
+        const dateOfBirth = "2023-01-20";
+        const gender = "male";
 
         const response = await helper.put_request_with_authorization({
           endpoint: `user/update/profile`,
           token: tokens.admin,
-          params: { name, phone },
+          params: { name, phone, handicapIndex, dateOfBirth, gender },
         });
 
         expect(response.status).toEqual(200);
@@ -363,6 +368,9 @@ describe("List All Users", () => {
         const { dataValues } = await User.findOne({ where: { name } });
 
         expect(dataValues.phone).toEqual(phone);
+        expect(dataValues.handicapIndex).toEqual(handicapIndex);
+        expect(dataValues.dateOfBirth).toEqual(dateOfBirth);
+        expect(dataValues.gender).toEqual(gender);
       });
     });
 
