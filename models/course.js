@@ -3,6 +3,13 @@ module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
     "Course",
     {
+      golfbertId: {
+        field: "golfbert_id",
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       name: DataTypes.STRING,
       phone: DataTypes.STRING,
       country: DataTypes.STRING,
