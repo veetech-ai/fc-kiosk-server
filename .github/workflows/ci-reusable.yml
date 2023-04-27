@@ -109,25 +109,15 @@ jobs:
       - name: checkout the code
         uses: actions/checkout@v3
         with:
+          node-version: 16
           submodules: "recursive"
           token: ${{ secrets.AUTH_TOKEN }}
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: Configure AWS credentials
-        id: login-step
-        uses: "./.github/actions/aws-login-setup"
-        with:
-          awsAccessKeyId: ${{ env.AWS_ACCESS_KEY_ID }}
-          awsSecretAccessKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          awsRegion: ${{ env.AWS_REGION }}
-
       - name: testing
         run: |
-          sudo apt update
-          sudo apt install jq -y
-          sudo apt install findutils -y
+          apt update
+          apt install jq -y
+          apt install findutils -y
           npm ci
           npm run influx-setup
           bash parallel-test.sh $CI_NODE_TOTAL $CI_NODE_INDEX
