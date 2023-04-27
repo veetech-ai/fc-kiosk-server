@@ -261,6 +261,20 @@ module.exports = {
       idle: parseInt(process.env.DB_POOL_IDLE) || 10000,
     },
   },
+  staging: {
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    host: process.env.DB_HOST,
+    logging: process.env.DB_CONSOLE_LOGGING == 1,
+    port: process.env.DB_PORT || 3306,
+    dialect: process.env.DB_DIALECT || "mysql",
+    pool: {
+      max: parseInt(process.env.DB_POOL_MAX) || 5,
+      min: parseInt(process.env.DB_POOL_MIN) || 0,
+      idle: parseInt(process.env.DB_POOL_IDLE) || 10000,
+    },
+  },
   test: {
     username: process.env.TEST_DB_USERNAME,
     password: process.env.TEST_DB_PASSWORD,
