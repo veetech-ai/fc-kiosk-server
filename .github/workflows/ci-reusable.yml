@@ -52,8 +52,6 @@ jobs:
 
   testing:
     runs-on: ubuntu-latest
-    container:
-      image: node:16
     strategy:
       fail-fast: false
       matrix:
@@ -70,7 +68,7 @@ jobs:
       TEST_DB_DIALECT: mysql
       TEST_DB_CONSOLE_LOGGING: 0
       TEST_ORGANIZATION_NAME: Test
-      INFLUX_DB_HOST: influxdb
+      INFLUX_DB_HOST: localhost
       INFLUX_DB_NAME: test
       INFLUX_AGGREGATE_DB_NAME: aggregates-test
       INFLUX_DB_PORT: 8086
@@ -127,7 +125,7 @@ jobs:
       - name: run mysql docker image
         run: |
           docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mysql:latest
-          
+
       - name: testing
         run: |
           apt update
