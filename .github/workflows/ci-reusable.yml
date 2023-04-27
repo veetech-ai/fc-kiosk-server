@@ -61,36 +61,15 @@ jobs:
     env:
       CI_NODE_TOTAL: ${{ matrix.ci_total }}
       CI_NODE_INDEX: ${{ matrix.ci_index }}
-      TEST_DB_HOST: database
-      TEST_DB_PORT: 3306
-      TEST_DB_USERNAME: mysql
-      TEST_DB_PASSWORD: testPass
-      TEST_DB_DATABASE: df-test
-      TEST_DB_DIALECT: mysql
-      TEST_DB_CONSOLE_LOGGING: 0
-      TEST_ORGANIZATION_NAME: Test
-      INFLUX_DB_HOST: influxdb
-      INFLUX_DB_NAME: test
-      INFLUX_AGGREGATE_DB_NAME: aggregates-test
-      INFLUX_DB_PORT: 8086
-      INFLUX_DB_TOKEN: aGkcV533WlQq1_ShozzRcxr0ze-k0T_8c04wuq_O-Cdqooo0uNKoDO44WzDNsB0ZY2QgQcUAORg14W3yV1QVPw==
-      INFLUX_DB_ORG: test
-      INFLUX_DB_USERNAME: influxdb
-      INFLUX_DB_PASSWORD: influxdb-pwd
-      INFLUX_DB_PRECISION: ms
-      INFLUX_DB_TIMEOUT: "100000"
-      JWT_SECRET: cowlarviaphotonfundjwtsecrettokenstring
-      JWT_EXPIRATION_IN_SECONDS_SHORT: 3600000
-      JWT_EXPIRATION_IN_SECONDS_LONG: 3600000
-      JWT_REFRESH_TOKEN_EXPIRATION_IN_SECONDS: 7200000
+
     services:
-      database:
+      mysql:
         image: public.ecr.aws/t8d8f5a3/mysql:latest
         env:
-          MYSQL_USER: mysql
-          MYSQL_ROOT_PASSWORD: testPass
-          MYSQL_PASSWORD: testPass
-          MYSQL_DATABASE: df-test
+          MYSQL_USER: user
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_PASSWORD: secret
+          MYSQL_DATABASE: test
         ports:
           - 3306:3306
       influxdb:
@@ -113,11 +92,17 @@ jobs:
           submodules: "recursive"
           token: ${{ secrets.AUTH_TOKEN }}
 
-      - name: testing
+      - name: set the env variables
+        run: echo "${{ vars.TEST_ENV }}" > ".env"
+
+      - name: Install packages
         run: |
           apt update
           apt install jq -y
           apt install findutils -y
+
+      - name: testing
+        run: |
           npm ci
           npm run influx-setup
           bash parallel-test.sh $CI_NODE_TOTAL $CI_NODE_INDEX
