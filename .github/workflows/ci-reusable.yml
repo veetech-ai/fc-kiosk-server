@@ -83,18 +83,15 @@ jobs:
       JWT_EXPIRATION_IN_SECONDS_LONG: 3600000
       JWT_REFRESH_TOKEN_EXPIRATION_IN_SECONDS: 7200000
     services:
-      # database:
-      #   image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/mysql:latest
-      #   credentials:
-      #     username: AWS
-      #     password: ${{ secrets.AWS_ACCESS_KEY_ID }}:${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #   env:
-      #     MYSQL_USER: mysql
-      #     MYSQL_ROOT_PASSWORD: testPass
-      #     MYSQL_PASSWORD: testPass
-      #     MYSQL_DATABASE: df-test
-      #   ports:
-      #     - 3306:3306
+      database:
+        image: public.ecr.aws/t8d8f5a3/mysql:latest
+        env:
+          MYSQL_USER: mysql
+          MYSQL_ROOT_PASSWORD: testPass
+          MYSQL_PASSWORD: testPass
+          MYSQL_DATABASE: df-test
+        ports:
+          - 3306:3306
       influxdb:
         image: influxdb:2.6-alpine
         env:
@@ -124,10 +121,6 @@ jobs:
           awsAccessKeyId: ${{ env.AWS_ACCESS_KEY_ID }}
           awsSecretAccessKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           awsRegion: ${{ env.AWS_REGION }}
-
-      - name: run mysql docker image
-        run: |
-          docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mysql:latest
 
       - name: testing
         run: |
