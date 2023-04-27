@@ -15,7 +15,6 @@ module.exports = {
       where: { name: "Test" },
     });
     const testCustomer = {
-      id: 1,
       name: "Test Organization Customer account",
       email: config.testAccountEmail,
       is_admin: false,
@@ -32,7 +31,6 @@ module.exports = {
       [
         testCustomer,
         {
-          id: 2,
           name: "Admin",
           email: "admin@df.com",
           is_admin: true,
@@ -44,7 +42,6 @@ module.exports = {
           role_id: roles.admin.id,
         },
         {
-          id: 3,
           name: "Device Account",
           email: "device@df.com",
           is_admin: true,
@@ -56,7 +53,6 @@ module.exports = {
           role_id: roles.superAdmin.id,
         },
         {
-          id: 4,
           name: "Super Admin",
           email: "superadmin@df.com",
           is_admin: true,
@@ -68,7 +64,6 @@ module.exports = {
           role_id: roles.superAdmin.id,
         },
         {
-          id: 5,
           name: "Test Super Admin",
           email: "testsuperadmin@df.com",
           is_admin: true,
@@ -80,7 +75,6 @@ module.exports = {
           role_id: roles.superAdmin.id,
         },
         {
-          id: 6,
           name: "Test Organization Operator account",
           email: "testorgoperator@df.com",
           is_admin: false,
@@ -94,7 +88,6 @@ module.exports = {
           card_serial: 123654,
         },
         {
-          id: 7,
           name: "operator account",
           email: "testoperator@df.com",
           is_admin: false,
@@ -108,7 +101,6 @@ module.exports = {
           card_serial: 123654,
         },
         {
-          id: 8,
           name: "Test Organization Device Account",
           email: "testorgdevice@df.com",
           is_admin: false,
@@ -121,7 +113,6 @@ module.exports = {
           role_id: roles.device.id,
         },
         {
-          id: 9,
           name: "Test Organization Customer account - D",
           email: config.testDAccountEmail,
           is_admin: false,
@@ -134,7 +125,6 @@ module.exports = {
           role_id: roles.customer.id,
         },
         {
-          id: 10,
           name: "Admin D",
           email: "admind@df.com",
           is_admin: true,
@@ -146,7 +136,6 @@ module.exports = {
           role_id: roles.admin.id,
         },
         {
-          id: 11,
           name: "Test Organization Manager account",
           email: "testorgmanager@df.com",
           orgId: TestOrg.id,
@@ -158,14 +147,13 @@ module.exports = {
           report_to: testCustomer.id,
         },
         {
-          id: 12,
           name: "Golfer",
-          email: "golfer@cowlar.com",
+          email: "golfer@df.com",
           orgId: TestOrg.id,
           status: 1,
           date_of_birth: new Date(),
           gender: "male",
-          handicap_index: "1",
+          handicap_index: 1,
           password:
             "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
           mqtt_token: randtoken.generate(10),
