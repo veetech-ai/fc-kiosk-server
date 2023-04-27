@@ -75,7 +75,10 @@ describe("product", () => {
       endpoint: "product/create",
     };
     const response = await helper.post_request_with_authorization(data);
-
+    console.log(
+      "creating product successfully with super admin account - 111111111111",
+      response.body,
+    );
     expect(response.status).toBe(200);
     expect(response.body.data.title).toBe(`${data.params.title}`);
     expect(response.body.data.price).toBe(`${data.params.price}`);
