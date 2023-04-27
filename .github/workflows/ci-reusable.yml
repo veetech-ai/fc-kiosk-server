@@ -131,9 +131,9 @@ jobs:
 
       - name: testing
         run: |
-          apt update
-          apt install jq -y
-          apt install findutils -y
+          sudo apt update
+          sudo apt install jq -y
+          sudo apt install findutils -y
           npm ci
           npm run influx-setup
           bash parallel-test.sh $CI_NODE_TOTAL $CI_NODE_INDEX
