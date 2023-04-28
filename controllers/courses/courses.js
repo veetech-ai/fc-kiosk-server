@@ -249,6 +249,7 @@ exports.create_courses = async (req, res) => {
 
     validation.fails(function () {
       return apiResponse.fail(res, validation.errors);
+      
     });
 
     validation.passes(async function () {
