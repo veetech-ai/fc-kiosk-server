@@ -1,13 +1,17 @@
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.addConstraint("Courses", {
-      fields: ["golfbert_id"],
-      type: "unique",
-      name: "unique_golfbert_id_constraint",
+  async up(queryInterface, Sequelize) {
+    await queryInterface.changeColumn("Courses", "golfbert_id", {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      unique: true
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.removeConstraint("Courses", "unique_golfbert_id_constraint");
+  async down(queryInterface, Sequelize) {
+    await queryInterface.changeColumn("Courses", "golfbert_id", {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      unique: false
+    });
   },
 };
