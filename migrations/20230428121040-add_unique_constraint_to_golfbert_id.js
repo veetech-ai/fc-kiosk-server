@@ -3,7 +3,7 @@ module.exports = {
     await queryInterface.changeColumn("Courses", "golfbert_id", {
       type: Sequelize.INTEGER,
       allowNull: true,
-      unique: true
+      unique: true,
     });
   },
 
@@ -11,7 +11,7 @@ module.exports = {
     await queryInterface.changeColumn("Courses", "golfbert_id", {
       type: Sequelize.INTEGER,
       allowNull: true,
-      unique: false
+      unique: false,
     });
   },
 };
