@@ -116,6 +116,10 @@ module.exports = {
     contactEmail: process.env.CONTACT_EMAIL || "mdm@viaphoton.com",
     useTransporter: process.env.EMAIL_USE_TRANSPORTER === "true",
     userMailGun: process.env.EMAIL_USE_MAIL_GUN === "true",
+    contactLink:
+      process.env.CONTACT_LINK ||
+      "https://www.digital-fairways.com/contact-us/",
+    entityTitle: process.env.CONTACT_TITLE || "Fairways Connect Dashboard",
     transporter: {
       host: process.env.EMAIL_HOST_NAME || "smtp.mailtrap.io",
       service: process.env.EMAIL_SERVICE || "mailtrap",
