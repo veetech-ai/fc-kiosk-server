@@ -9,8 +9,8 @@ const { logger } = require("../logger");
 
 let transporter = null;
 let mailGun = null;
-let contact_url = config.email.templateInviter;
-let contact_title = config.email.templateInviterTitle;
+let contact_url = config.email.contactLink;
+let contact_title = config.email.entityTitle;
 if (config.email.useTransporter) {
   transporter = nodemailer.createTransport({
     host: config.email.transporter.host,
