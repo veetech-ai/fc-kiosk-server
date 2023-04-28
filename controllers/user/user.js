@@ -439,7 +439,6 @@ exports.getAllUsersByCardSerial = async (req, res) => {
   }
 };
 
-
 exports.get_by_id = async (req, res) => {
   /**
    * @swagger
