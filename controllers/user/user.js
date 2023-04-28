@@ -576,7 +576,6 @@ exports.get_by_id = async (req, res) => {
   }
 };
 
-
 exports.update_user = (req, res) => {
   /**
    * @swagger
