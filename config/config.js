@@ -119,7 +119,7 @@ module.exports = {
     templateInviter:
       process.env.CONTACT_LINK ||
       "https://www.digital-fairways.com/contact-us/",
-    templateInviterTitle:process.env.CONTACT_TITLE || "Fairways Connect",
+    templateInviterTitle: process.env.CONTACT_TITLE || "Fairways Connect",
     transporter: {
       host: process.env.EMAIL_HOST_NAME || "smtp.mailtrap.io",
       service: process.env.EMAIL_SERVICE || "mailtrap",
