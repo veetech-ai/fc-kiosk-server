@@ -749,6 +749,7 @@ describe("user test cases", () => {
         },
       };
       const response = await helper.post_request_with_authorization(data);
+      console.log(response.body);
       expect(response.statusCode).toEqual(200);
     });
 
