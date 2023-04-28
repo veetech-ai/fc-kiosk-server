@@ -35,11 +35,6 @@ exports.routesConfig = function (app, router) {
     ]),
     UsersController.getAllUsersByCardSerial,
   ]);
-  router.put(group + "/card/:userId/:cardSerial", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageUsers"]),
-    UsersController.updateUserCardSerial,
-  ]);
 
   router.put(group + "/update/profile", [
     validation_middleware.validJWTNeeded,
