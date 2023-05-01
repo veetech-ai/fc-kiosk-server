@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
-    "Course",
+    "Course", // to be used for kiosk
     {
       golfbertId: {
         field: "golfbert_id",
@@ -33,31 +33,6 @@ module.exports = (sequelize, DataTypes) => {
       fairways: DataTypes.STRING,
       members: DataTypes.STRING,
       season: DataTypes.STRING,
-      displayName: {
-        field: "display_name",
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      displayState: {
-        field: "display_state",
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      displayCity: {
-        field: "display_city",
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      displayZip: {
-        field: "display_zip",
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      displayPhone: {
-        field: "display_phone",
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       orgId: {
         field: "org_id",
         type: DataTypes.INTEGER,
@@ -111,10 +86,6 @@ module.exports = (sequelize, DataTypes) => {
     });
     Course.hasMany(models.Career, {
       as: "Careers",
-      foreignKey: "gc_id",
-    });
-    Course.hasMany(models.Hole, {
-      as: "Holes",
       foreignKey: "gc_id",
     });
     Course.hasMany(models.Ad, {
