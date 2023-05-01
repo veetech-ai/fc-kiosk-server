@@ -6,7 +6,7 @@ const geolib = require("geolib");
 // Common Imports
 const apiResponse = require("../../common/api.response");
 const models = require("../../models/index");
-const CourseModel = models.Course;
+const CourseModel = models.Mobile_Course;
 const helper = require("../../common/helper");
 const axios = require("axios");
 // Logger Imports
