@@ -1486,7 +1486,7 @@ exports.getThrownErrorStatusAndMessage = (error) => {
   if(error.message && error.message.includes(config.error_message_separator)) {
     const splitError = error.message.split(config.error_message_separator)
     message = splitError[0] || message
-    code = splitError[1] || code
+    code = +splitError[1] || code
   }
 
   return { code, message };
