@@ -5,6 +5,16 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     // Remove the gc_id column from the Holes table
     await queryInterface.removeColumn("Holes", "gc_id");
+    await queryInterface.addColumn("Holes", "mc_id", {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Mobile_Courses",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    });
   },
 
   async down(queryInterface, Sequelize) {
@@ -19,5 +29,6 @@ module.exports = {
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     });
+    await queryInterface.removeColumn("Holes", "mc_id");
   },
 };
