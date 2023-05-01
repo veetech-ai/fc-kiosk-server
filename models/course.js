@@ -1,11 +1,12 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
-    "Course",
+    "Course", // to be used for kiosk
     {
       golfbertId: {
         field: "golfbert_id",
         type: DataTypes.INTEGER,
+        unique: true,
         allowNull: true,
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
@@ -85,10 +86,6 @@ module.exports = (sequelize, DataTypes) => {
     });
     Course.hasMany(models.Career, {
       as: "Careers",
-      foreignKey: "gc_id",
-    });
-    Course.hasMany(models.Hole, {
-      as: "Holes",
       foreignKey: "gc_id",
     });
     Course.hasMany(models.Ad, {

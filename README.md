@@ -116,5 +116,11 @@ All the API documentation is maintained with swagger.
     - `AZURE_STORAGE_CONNECTION_STRING` This will be used for setting up the Azure storage
     - `AZURE_STORAGE_CONTAINER` Where to store the files, Also needed to create the URL of file
     - `AZURE_STORAGE_URL` Used to generate aURL to the file
+
+## Test Cases Legend
+
+- `✕` = Test case failing
+- `✓` = Test Case passing
+
 # Good Luck
  
