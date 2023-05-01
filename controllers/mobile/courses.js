@@ -13,6 +13,7 @@ const { logger } = require("../../logger");
 const config = require("../../config/config");
 const { Op, Sequelize } = require("sequelize");
 const golfbertService = require("../../services/golfbert/golfbert");
+const courseServices = require("../../services/mobile/courses");
 const CourseModel = models.Mobile_Course;
 
 /**
@@ -228,21 +229,12 @@ exports.getCourse = async (req, res) => {
     validation.passes(async function () {
       try {
         const courseId = Number(req.params.courseId);
-        const courseFromDB = await CourseModel.findOne({
-          where: { id: courseId },
-        });
-
-        if (!courseFromDB) return apiResponse.fail(res, "Course Not Found");
+        const courseFromDB = await courseServices.getCourseFromDb({ id: courseId })
 
         const golfBertCourseId = courseFromDB.golfbertId;
-        if (!golfBertCourseId)
-          return apiResponse.fail(res, "Course's Golfbert Id Not Found");
-
         const holesInfo = await golfbertService.get_holes_by_courseId(
           golfBertCourseId,
         );
-        if (!holesInfo || !holesInfo?.resources?.length)
-          return apiResponse.fail(res, "This course is coming soon");
 
         const parInfo = await golfbertService.get_scorecard_by_courseId(
           golfBertCourseId,
@@ -251,7 +243,8 @@ exports.getCourse = async (req, res) => {
         const response = { pars: parInfo, holes: holesInfo };
         return apiResponse.success(res, req, response);
       } catch (error) {
-        return apiResponse.fail(res, error.message || error, 500);
+        const { code, message } = helper.getThrownErrorStatusAndMessage(error)
+        return apiResponse.fail(res, message, code);
       }
     });
   } catch (error) {

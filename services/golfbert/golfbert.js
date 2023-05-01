@@ -1,5 +1,6 @@
 // Common Imports
 const helper = require("../../common/helper");
+const config = require("../../config/config");
 
 const BASE_URL = "https://api.golfbert.com/v1";
 
@@ -21,6 +22,11 @@ exports.get_holes_by_courseId = async (courseId, queryParams = {}) => {
   const API_URL = BASE_URL + `/courses/${courseId}/holes`;
 
   const response = await helper.call_golfbert_api(API_URL, queryParams);
+  
+  if (!response.data || !response.data?.resources?.length) {
+    throw new Error(`This course is coming soon${config.error_message_separator}404`);
+  }
+
   return response.data;
 };
 
