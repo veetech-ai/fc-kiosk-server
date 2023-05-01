@@ -1,9 +1,10 @@
 const helper = require("../../../helper");
 describe("POST /api/v1/kiosk-courses/create", () => {
   let adminToken;
-
+  let customerToken;
   beforeAll(async () => {
     adminToken = await helper.get_token_for("admin");
+    customerToken = await helper.get_token_for("testCustomer");
   });
 
   const paramsCourseData = {
@@ -23,10 +24,10 @@ describe("POST /api/v1/kiosk-courses/create", () => {
     orgId: 2,
   };
 
-  const makeApiRequest = async (params) => {
+  const makeApiRequest = async (params, token = adminToken) => {
     return helper.post_request_with_authorization({
       endpoint: "kiosk-courses/create",
-      token: adminToken,
+      token: token,
       params: params,
     });
   };
@@ -39,7 +40,6 @@ describe("POST /api/v1/kiosk-courses/create", () => {
   it("should return an error if organization does not exist", async () => {
     const invalidOrgIdData = { ...paramsCourseData, org_id: 999 };
     const response = await makeApiRequest(invalidOrgIdData);
-    console.log("response is:", response.status);
     expect(response.status).toEqual(404);
     expect(response.body.data).toEqual("Invalid organization ID");
   });
@@ -51,5 +51,11 @@ describe("POST /api/v1/kiosk-courses/create", () => {
     expect(response.body.data.errors).toEqual({
       phone: ["The phone must be a string."],
     });
+  });
+  it("should return an error if user is not authorized", async () => {
+    const invalidPhoneData = { ...paramsCourseData, phone: 555 - 1234 };
+    const response = await makeApiRequest(invalidPhoneData, customerToken);
+
+    expect(response.body.data).toEqual("You are not allowed");
   });
 });
