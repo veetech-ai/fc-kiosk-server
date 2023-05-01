@@ -31,6 +31,19 @@ exports.validJWTNeeded = (req, res, next) => {
   }
 };
 
+exports.validJWTOptional = (req, res, next) => {
+  if (req.headers?.authorization) {
+    try {
+      req.user = jwt.verify(req.headers.authorization, secret);
+      return next();
+    } catch (err) {
+      return apiResponse.fail(res, "Token invalid or expire", 401);
+    }
+  } else {
+    return next();
+  }
+};
+
 exports.blockApis = (req, res, next) => {
   return apiResponse.fail(res, "Api blocked", 403);
 };

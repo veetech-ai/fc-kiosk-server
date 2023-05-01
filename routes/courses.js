@@ -6,7 +6,12 @@ exports.routesConfig = function (app, router) {
   const courses = `${config.app.apiPath}courses`;
 
   router.get(courses, [
-    validation_middleware.validJWTNeeded,
+    validation_middleware.validJWTOptional,
     CoursesController.get_courses,
+  ]);
+
+  router.get(`${courses}/:courseId`, [
+    validation_middleware.validJWTOptional,
+    CoursesController.getCourse,
   ]);
 };
