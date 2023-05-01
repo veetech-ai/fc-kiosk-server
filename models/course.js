@@ -113,10 +113,6 @@ module.exports = (sequelize, DataTypes) => {
       as: "Careers",
       foreignKey: "gc_id",
     });
-    Course.hasMany(models.Hole, {
-      as: "Holes",
-      foreignKey: "gc_id",
-    });
     Course.hasMany(models.Ad, {
       as: "Ads",
       foreignKey: "gc_id",
