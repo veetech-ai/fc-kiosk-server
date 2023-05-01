@@ -9,12 +9,12 @@ const dataArr = getGolfCourses().map((course) => ({
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkInsert("Courses", dataArr, {
+    await queryInterface.bulkInsert("Mobile_Courses", dataArr, {
       updateOnDuplicate: ["lat", "long"],
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkDelete("Courses", null, {});
+    await queryInterface.bulkDelete("Mobile_Courses", null, {});
   },
 };
