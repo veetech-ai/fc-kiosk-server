@@ -9,9 +9,4 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     CoursesController.get_courses,
   ]);
-  router.get(courses + "/create", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super"]),
-    
-  ]);
 };
