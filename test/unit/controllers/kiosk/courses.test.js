@@ -1,8 +1,4 @@
 const helper = require("../../../helper");
-const config = require("../../../../config/config");
-const { logger } = require("../../../../logger");
-const jwt = require("jsonwebtoken");
-
 describe("POST /api/v1/kiosk-courses/create", () => {
   let adminToken;
 
