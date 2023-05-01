@@ -231,18 +231,24 @@ exports.getCourse = async (req, res) => {
         const courseFromDB = await CourseModel.findOne({
           where: { id: courseId },
         });
-        
+
         if (!courseFromDB) return apiResponse.fail(res, "Course Not Found");
-        
+
         const golfBertCourseId = courseFromDB.golfbertId;
         if (!golfBertCourseId)
           return apiResponse.fail(res, "Course's Golfbert Id Not Found");
-        
-        const holesInfo = await golfbertService.get_holes_by_courseId(golfBertCourseId)
-        const parInfo = await golfbertService.get_scorecard_by_courseId(golfBertCourseId)
-        if (!holesInfo || !holesInfo?.resources?.length) return apiResponse.fail(res, "This course is coming soon");
-        
-        const response = { parInfo, holesInfo }
+
+        const holesInfo = await golfbertService.get_holes_by_courseId(
+          golfBertCourseId,
+        );
+        if (!holesInfo || !holesInfo?.resources?.length)
+          return apiResponse.fail(res, "This course is coming soon");
+
+        const parInfo = await golfbertService.get_scorecard_by_courseId(
+          golfBertCourseId,
+        );
+
+        const response = { pars: parInfo, holes: holesInfo };
         return apiResponse.success(res, req, response);
       } catch (error) {
         return apiResponse.fail(res, error.message || error, 500);
