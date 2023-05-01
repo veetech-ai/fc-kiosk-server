@@ -59,6 +59,17 @@ module.exports = {
           type: Sequelize.DOUBLE,
           allowNull: true,
         },
+        created_at: {
+          allowNull: false,
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        },
+        updated_at: {
+          allowNull: false,
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+          onUpdate: Sequelize.literal("CURRENT_TIMESTAMP"),
+        },
       }),
       await queryInterface.addIndex("Mobile_Courses", ["lat"]),
       await queryInterface.addIndex("Mobile_Courses", ["long"]),
