@@ -7,7 +7,7 @@ async function createCourse(name, state, city, zip, phone, org_id) {
   // Check if organization exists with the specified org_id
   const organization = await Organization.findOne({ where: { id: org_id } });
   if (!organization) {
-    throw new Error("Invalid organization ID:404");
+    throw new Error(`Invalid organization ID${config.error_message_seperator}404`);
   }
 
   // Create a new course record
