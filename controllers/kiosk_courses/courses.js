@@ -90,16 +90,20 @@ exports.create_courses = async (req, res) => {
           name,
           state,
           city,
-          zip,  
+          zip,
           phone,
           org_id,
         );
         return apiResponse.success(res, req, course);
       } catch (error) {
-        console.log("from config",config.error_message_seperator);
-        const statusCode = parseInt(error.message.split(`${config.error_message_seperator}`)[1]);
-        const errorMessage=error.message.split(`${config.error_message_seperator}`)[0]
-        return apiResponse.fail(res, errorMessage || error, statusCode||500);
+        console.log("from config", config.error_message_seperator);
+        const statusCode = parseInt(
+          error.message.split(`${config.error_message_seperator}`)[1],
+        );
+        const errorMessage = error.message.split(
+          `${config.error_message_seperator}`,
+        )[0];
+        return apiResponse.fail(res, errorMessage || error, statusCode || 500);
       }
     });
   } catch (error) {

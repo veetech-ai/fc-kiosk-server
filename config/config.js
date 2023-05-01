@@ -1,7 +1,7 @@
 require("dotenv").config();
 const timeZone = process.env.TIME_ZONE || "America/Chicago";
 module.exports = {
-  error_message_seperator:process.env.ERROR_MESSAGE_SEPARATOR||":",
+  error_message_seperator: process.env.ERROR_MESSAGE_SEPARATOR || ":",
   slack_Channal_url:
     process.env.SLACK_URL ||
     "https://hooks.slack.com/services/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",
