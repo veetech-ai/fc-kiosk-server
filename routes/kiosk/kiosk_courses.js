@@ -4,9 +4,9 @@ const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
   const courses = `${config.app.apiPath}kiosk-courses`;
-  router.get(courses + "/create", [
+  router.post(courses + "/create", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super"]),
+    validation_middleware.hasAccess(["super", "admin"]),
     CoursesController.create_courses,
   ]);
 };
