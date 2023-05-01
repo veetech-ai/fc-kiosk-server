@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
-    "Course",
+    "Course", // to be used for kiosk
     {
       golfbertId: {
         field: "golfbert_id",
