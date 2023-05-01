@@ -39,7 +39,7 @@ describe("POST /api/v1/kiosk-courses/create", () => {
   it("should return an error if organization does not exist", async () => {
     const invalidOrgIdData = { ...paramsCourseData, org_id: 999 };
     const response = await makeApiRequest(invalidOrgIdData);
-    console.log("response is:",response.status);
+    console.log("response is:", response.status);
     expect(response.status).toEqual(404);
     expect(response.body.data).toEqual("Invalid organization ID");
   });
@@ -48,6 +48,8 @@ describe("POST /api/v1/kiosk-courses/create", () => {
     const invalidPhoneData = { ...paramsCourseData, phone: 555 - 1234 };
     const response = await makeApiRequest(invalidPhoneData);
 
-    expect(response.body.data.errors).toEqual({ phone: ["The phone must be a string."] });
+    expect(response.body.data.errors).toEqual({
+      phone: ["The phone must be a string."],
+    });
   });
 });
