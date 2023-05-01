@@ -96,12 +96,12 @@ exports.create_courses = async (req, res) => {
         );
         return apiResponse.success(res, req, course);
       } catch (error) {
-        console.log("from config", config.error_message_seperator);
+        console.log("from config", config.error_message_separator);
         const statusCode = parseInt(
-          error.message.split(`${config.error_message_seperator}`)[1],
+          error.message.split(`${config.error_message_separator}`)[1],
         );
         const errorMessage = error.message.split(
-          `${config.error_message_seperator}`,
+          `${config.error_message_separator}`,
         )[0];
         return apiResponse.fail(res, errorMessage || error, statusCode || 500);
       }
