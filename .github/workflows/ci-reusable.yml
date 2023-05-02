@@ -52,18 +52,7 @@ jobs:
 
   testing:
     runs-on: ubuntu-latest
-    container:
-      image: node:16
-      options: --user root
-    strategy:
-      fail-fast: false
-      matrix:
-        ci_index: [0, 1, 2, 3, 4, 5]
-        ci_total: [6]
-    env:
-      CI_NODE_TOTAL: ${{ matrix.ci_total }}
-      CI_NODE_INDEX: ${{ matrix.ci_index }}
-
+    container: node:16
     services:
       mysql:
         image: public.ecr.aws/t8d8f5a3/mysql:latest
@@ -85,7 +74,11 @@ jobs:
           DOCKER_INFLUXDB_INIT_MODE: setup
         ports:
           - 8086:8086
-
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_index: [0, 1, 2, 3, 4, 5]
+        ci_total: [6]
     steps:
       - name: checkout the code
         uses: actions/checkout@v3
@@ -108,12 +101,14 @@ jobs:
       - name: testing
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
+          CI_NODE_TOTAL: ${{ matrix.ci_total }}
+          CI_NODE_INDEX: ${{ matrix.ci_index }}
         run: |
+          chmod -R 777 .
+          chmod -R 777 ./public
           npm ci
           npm run influx-setup
           bash parallel-test.sh $CI_NODE_TOTAL $CI_NODE_INDEX
-          chmod -R 777 .
-          chmod -R 777 ./public
 
           npm run test
       # - name: Cache node modules
