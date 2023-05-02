@@ -143,4 +143,3 @@ exports.get_courses_for_organization = async (req, res) => {
     return apiResponse.fail(res, error, 500);
   }
 };
-
