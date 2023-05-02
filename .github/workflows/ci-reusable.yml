@@ -106,11 +106,9 @@ jobs:
         run: |
           chmod -R 777 .
           chmod -R 777 ./public
-          npm ci
+          npm ci --progress=false
           npm run influx-setup
           bash parallel-test.sh $CI_NODE_TOTAL $CI_NODE_INDEX
-
-          npm run test
       # - name: Cache node modules
       #   id: cache-npm
       #   uses: actions/cache@v3
