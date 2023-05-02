@@ -3,9 +3,10 @@ const helper = require("../../common/helper");
 const models = require("../../models/index");
 const Course = models.Course;
 const Organization = models.Organization;
-async function createCourse(name, state, city, zip, phone, org_id) {
+
+async function createCourse(reqBody, orgId) {
   // Check if organization exists with the specified org_id
-  const organization = await Organization.findOne({ where: { id: org_id } });
+  const organization = await Organization.findOne({ where: { id: orgId } });
   if (!organization) {
     throw new Error(
       `Invalid organization ID${config.error_message_separator}404`,
@@ -14,12 +15,8 @@ async function createCourse(name, state, city, zip, phone, org_id) {
 
   // Create a new course record
   const course = await Course.create({
-    name,
-    state,
-    city,
-    zip,
-    phone,
-    orgId: org_id,
+    ...reqBody,
+    orgId,
   });
   return course;
 }

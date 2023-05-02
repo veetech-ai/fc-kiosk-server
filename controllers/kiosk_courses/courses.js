@@ -79,14 +79,14 @@ exports.create_courses = async (req, res) => {
     validation.passes(async function () {
       try {
         const { name, state, city, zip, phone, org_id } = req.body;
-        const course = await courseService.createCourse(
+        const reqBody = {
           name,
           state,
           city,
           zip,
           phone,
-          org_id,
-        );
+        };
+        const course = await courseService.createCourse(reqBody, org_id);
         return apiResponse.success(res, req, course);
       } catch (error) {
         const { code, message } = helper.getThrownErrorStatusAndMessage(error);
