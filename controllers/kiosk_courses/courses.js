@@ -41,12 +41,12 @@ exports.create_courses = async (req, res) => {
    *       - name: state
    *         description: state in which golf course exist
    *         in: formData
-   *         required: false
+   *         required: true
    *         type: string
    *       - name: city
    *         description: city in which golf course exist
    *         in: formData
-   *         required: false
+   *         required: true
    *         type: string
    *       - name: zip
    *         description: zip
