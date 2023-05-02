@@ -53,6 +53,7 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     container: node:16
+    options: --user root
     strategy:
       fail-fast: false
       matrix:
