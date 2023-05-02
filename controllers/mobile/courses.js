@@ -6,13 +6,15 @@ const geolib = require("geolib");
 // Common Imports
 const apiResponse = require("../../common/api.response");
 const models = require("../../models/index");
-const CourseModel = models.Mobile_Course;
 const helper = require("../../common/helper");
 const axios = require("axios");
 // Logger Imports
 const { logger } = require("../../logger");
 const config = require("../../config/config");
 const { Op, Sequelize } = require("sequelize");
+const golfbertService = require("../../services/golfbert/golfbert");
+const courseServices = require("../../services/mobile/courses");
+const CourseModel = models.Mobile_Course;
 
 /**
  * @swagger
@@ -27,8 +29,7 @@ exports.get_courses = async (req, res) => {
    *
    * /courses:
    *   get:
-   *     search:
-   *       - auth: []
+   *     security: []
    *     description: Retrieves a paginated list of courses. The request can be further parameterized to filter courses by name, city, state, zipcode, or gps coordinates.
    *     tags: [Courses]
    *     consumes:
@@ -188,6 +189,64 @@ exports.get_courses = async (req, res) => {
         return apiResponse.success(res, req, coursesRoughlyInRange);
       } catch (error) {
         return apiResponse.fail(res, error.message || error, 500);
+      }
+    });
+  } catch (error) {
+    return apiResponse.fail(res, error, 500);
+  }
+};
+
+exports.getCourse = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /courses/{courseId}:
+   *   get:
+   *     security: []
+   *     description: Retrieves the hole related information for a single course
+   *     tags: [Courses]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     parameters:
+   *       - name: courseId
+   *         description: Id of the course
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const validation = new Validator(req.query, {});
+
+    validation.fails(function () {
+      return apiResponse.fail(res, validation.errors);
+    });
+
+    validation.passes(async function () {
+      try {
+        const courseId = Number(req.params.courseId);
+        const courseFromDB = await courseServices.getCourseFromDb({
+          id: courseId,
+        });
+
+        const golfBertCourseId = courseFromDB.golfbertId;
+        const holesInfo = await golfbertService.get_holes_by_courseId(
+          golfBertCourseId,
+        );
+
+        const parInfo = await golfbertService.get_scorecard_by_courseId(
+          golfBertCourseId,
+        );
+
+        const response = { pars: parInfo, holes: holesInfo };
+        return apiResponse.success(res, req, response);
+      } catch (error) {
+        const { code, message } = helper.getThrownErrorStatusAndMessage(error);
+        return apiResponse.fail(res, message, code);
       }
     });
   } catch (error) {
