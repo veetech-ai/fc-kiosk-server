@@ -30,23 +30,6 @@ jobs:
           node-version: 16
           submodules: "recursive"
           token: ${{ secrets.AUTH_TOKEN }}
-
-      # - name: Cache node modules
-      #   id: cache-npm
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      # - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
-      #   name: List the state of node modules
-      #   continue-on-error: true
-      #   run: npm list
-
       - run: npm ci
       - run: npm run lint
 
@@ -109,36 +92,3 @@ jobs:
           npm ci --progress=false
           npm run influx-setup
           bash parallel-test.sh $CI_NODE_TOTAL $CI_NODE_INDEX
-      # - name: Cache node modules
-      #   id: cache-npm
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/.npm
-      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-${{ env.cache-name }}-
-      #       ${{ runner.os }}-build-
-      #       ${{ runner.os }}-
-
-      # - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
-      #   name: List the state of node modules
-      #   continue-on-error: true
-      #   run: npm list
-
-      # - run: npm ci
-      # - run: |
-      #     chmod 777 ./report.json
-
-      # - name: Jest coverage report
-      #   uses: ArtiomTr/jest-coverage-report-action@v2.0.9
-      #   with:
-      #     test-script: npm run test
-      #     branch-coverage-report-path: ./coverage/coverage-final.json
-      #     base-coverage-report-path: ./coverage/coverage-final.json
-
-      # - run: |
-      #     chmod -R 777 ./badges/
-      # - run: npx jest-coverage-badges --output ./badges
-      # - name: Git Auto Commit
-      #   if: ${{ github.event_name == 'pull_request' }}
-      #   uses: stefanzweifel/git-auto-commit-action@v4.14.1

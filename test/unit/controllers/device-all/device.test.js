@@ -36,7 +36,6 @@ describe("Test the module of management of device configurations", () => {
   beforeAll(async () => {
     tokens = await helper.get_all_roles_tokens();
     devices = await createNewDevices(tokens.superadmin);
-    console.log("created devices are: ", devices);
     setConfigsKeys = await helper.post_request_with_authorization({
       endpoint: "misc/app-configuration",
       token: tokens.superadmin,
