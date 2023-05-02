@@ -229,7 +229,9 @@ exports.getCourse = async (req, res) => {
     validation.passes(async function () {
       try {
         const courseId = Number(req.params.courseId);
-        const courseFromDB = await courseServices.getCourseFromDb({ id: courseId })
+        const courseFromDB = await courseServices.getCourseFromDb({
+          id: courseId,
+        });
 
         const golfBertCourseId = courseFromDB.golfbertId;
         const holesInfo = await golfbertService.get_holes_by_courseId(
@@ -243,7 +245,7 @@ exports.getCourse = async (req, res) => {
         const response = { pars: parInfo, holes: holesInfo };
         return apiResponse.success(res, req, response);
       } catch (error) {
-        const { code, message } = helper.getThrownErrorStatusAndMessage(error)
+        const { code, message } = helper.getThrownErrorStatusAndMessage(error);
         return apiResponse.fail(res, message, code);
       }
     });
