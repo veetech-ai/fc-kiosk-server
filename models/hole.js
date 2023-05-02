@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      gcId: {
-        field: "gc_id",
+      mcId: {
+        field: "mc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
       },
@@ -66,7 +66,7 @@ module.exports = (sequelize, DataTypes) => {
   Hole.associate = function (models) {
     // associations can be defined here
     Hole.belongsTo(models.Game, { foreignKey: "g_id" });
-    Hole.belongsTo(models.Course, { foreignKey: "gc_id" });
+    Hole.belongsTo(models.Mobile_Course, { foreignKey: "mc_id" });
     Hole.belongsTo(models.User, { foreignKey: "user_id" });
   };
   return Hole;

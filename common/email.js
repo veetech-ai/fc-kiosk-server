@@ -9,7 +9,8 @@ const { logger } = require("../logger");
 
 let transporter = null;
 let mailGun = null;
-
+let contact_url = config.email.contactLink;
+let contact_title = config.email.entityTitle;
 if (config.email.useTransporter) {
   transporter = nodemailer.createTransport({
     host: config.email.transporter.host,
@@ -559,6 +560,8 @@ exports.send_complete_registration_email = (user, role) => {
       email: user.email,
       type: role,
       icon_url: config.app.frontendURL + "/img/icons/mstile-310x150.png",
+      contact_url: contact_url,
+      contact_title: contact_title,
     });
 
     this.send({

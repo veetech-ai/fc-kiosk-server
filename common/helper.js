@@ -1474,3 +1474,20 @@ exports.getKeysWithChangedValues = (
     return toCompareWithObject[key] != value && !keysToExclude.includes(key);
   });
 };
+
+exports.getThrownErrorStatusAndMessage = (error) => {
+  // The function is responsible allows us to split the errors that were thrown in services where there was no way of sending status code
+  // we we user config.error_message_separator and split it to send proper status code rather than just making
+  // do with fallback messages and error code
+
+  let code = 500;
+  let message = error.message || error;
+
+  if (error.message && error.message.includes(config.error_message_separator)) {
+    const splitError = error.message.split(config.error_message_separator);
+    message = splitError[0] || message;
+    code = +splitError[1] || code;
+  }
+
+  return { code, message };
+};
