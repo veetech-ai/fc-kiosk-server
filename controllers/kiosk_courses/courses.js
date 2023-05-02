@@ -72,8 +72,8 @@ exports.create_courses = async (req, res) => {
   try {
     const validation = new Validator(req.body, {
       name: "required|string",
-      state: "string",
-      city: "string",
+      state: "required|string",
+      city: "required|string",
       zip: "string",
       phone: "string",
       org_id: "required|integer",
