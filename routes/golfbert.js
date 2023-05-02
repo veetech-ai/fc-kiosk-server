@@ -47,7 +47,7 @@ exports.routesConfig = function (app, router) {
 
   router.get(golfbert + "/holes/:holeId/teeboxes", [
     validation_middleware.validJWTNeeded,
-    GolfController.get_polygons_by_holeId,
+    GolfController.get_teeboxes_by_holeId,
   ]);
 
   router.get(golfbert + "/teeboxcolors", [

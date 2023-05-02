@@ -26,8 +26,6 @@ const { logger } = require("../../logger");
  *   description: Golfbert API's
  */
 
-const BASE_URL = "https://api.golfbert.com/v1";
-
 exports.get_courses = async (req, res) => {
   /**
    * @swagger
@@ -95,10 +93,9 @@ exports.get_courses = async (req, res) => {
    *         description: success
    */
   try {
-    const API_URL = BASE_URL + "/courses";
-
     const queryParams = {
       limit: req.query.limit,
+      marker: req.query.marker,
       courseId: req.query.marker,
       name: req.query.name,
       city: req.query.city,
@@ -108,7 +105,7 @@ exports.get_courses = async (req, res) => {
       long: req.query.long,
     };
 
-    const response = await golfbertService.get_courses(queryParams, API_URL);
+    const response = await golfbertService.get_courses(queryParams);
 
     return apiResponse.success(res, req, response);
   } catch (error) {
@@ -142,12 +139,11 @@ exports.get_courses_by_courseId = async (req, res) => {
    */
   try {
     const courseId = req.params.courseId;
-    const API_URL = `${BASE_URL}/courses/${courseId}`;
 
     const queryParams = {};
     const response = await golfbertService.get_course_by_id(
+      courseId,
       queryParams,
-      API_URL,
     );
 
     return apiResponse.success(res, req, response);
@@ -182,13 +178,12 @@ exports.get_holes_by_courseId = async (req, res) => {
    */
   try {
     const courseId = req.params.courseId;
-    const API_URL = BASE_URL + `/courses/${courseId}/holes`;
 
     const queryParams = {};
 
     const response = await golfbertService.get_holes_by_courseId(
+      courseId,
       queryParams,
-      API_URL,
     );
 
     return apiResponse.success(res, req, response);
@@ -223,13 +218,12 @@ exports.get_scorecard_by_courseId = async (req, res) => {
    */
   try {
     const courseId = req.params.courseId;
-    const API_URL = BASE_URL + `/courses/${courseId}/scorecard`;
 
     const queryParams = {};
 
     const response = await golfbertService.get_scorecard_by_courseId(
+      courseId,
       queryParams,
-      API_URL,
     );
 
     return apiResponse.success(res, req, response);
@@ -264,12 +258,11 @@ exports.get_teeboxes_by_courseId = async (req, res) => {
    */
   try {
     const courseId = req.params.courseId;
-    const API_URL = BASE_URL + `/courses/${courseId}/teeboxes`;
 
     const queryParams = {};
     const response = await golfbertService.get_teeboxes_by_courseId(
+      courseId,
       queryParams,
-      API_URL,
     );
     return apiResponse.success(res, req, response);
   } catch (error) {
@@ -314,7 +307,6 @@ exports.get_holes = async (req, res) => {
    *         description: success
    */
   try {
-    const API_URL = BASE_URL + `/holes`;
     if (!req.query.courseId) {
       return apiResponse.fail(res, "CourseId not found in query", 404);
     }
@@ -325,7 +317,7 @@ exports.get_holes = async (req, res) => {
       limit: req.query.limit,
     };
 
-    const response = await golfbertService.get_holes(queryParams, API_URL);
+    const response = await golfbertService.get_holes(queryParams);
 
     return apiResponse.success(res, req, response);
   } catch (error) {
@@ -363,10 +355,9 @@ exports.get_holes_by_holeId = async (req, res) => {
     if (!holeId) {
       return apiResponse.fail(res, "Hole Id not found in params", 404);
     }
-    const API_URL = BASE_URL + `/holes/${holeId}`;
     const response = await golfbertService.get_holes_by_holeId(
+      holeId,
       queryParams,
-      API_URL,
     );
 
     return apiResponse.success(res, req, response);
@@ -405,11 +396,10 @@ exports.get_polygons_by_holeId = async (req, res) => {
     if (!holeId) {
       return apiResponse.fail(res, "Hole Id not found in params", 404);
     }
-    const API_URL = BASE_URL + `/holes/${holeId}/polygons`;
 
     const response = await golfbertService.get_polygons_by_holeId(
+      holeId,
       queryParams,
-      API_URL,
     );
     return apiResponse.success(res, req, response);
   } catch (error) {
@@ -471,7 +461,6 @@ exports.get_teeboxes_by_holeId = async (req, res) => {
     if (!holeId) {
       return apiResponse.fail(res, "Hole Id not found in params", 404);
     }
-    const API_URL = BASE_URL + `/holes/${holeId}/teeboxes`;
 
     const queryParams = {
       color: req.query.color,
@@ -481,8 +470,8 @@ exports.get_teeboxes_by_holeId = async (req, res) => {
     };
 
     const response = await golfbertService.get_teeboxes_by_holeId(
+      holeId,
       queryParams,
-      API_URL,
     );
     return apiResponse.success(res, req, response);
   } catch (error) {
@@ -510,14 +499,9 @@ exports.get_teeboxcolors = async (req, res) => {
    *         description: success
    */
   try {
-    const API_URL = BASE_URL + `/teeboxcolors`;
-
     const queryParams = {};
 
-    const response = await golfbertService.get_teeboxcolors(
-      queryParams,
-      API_URL,
-    );
+    const response = await golfbertService.get_teeboxcolors(queryParams);
     return apiResponse.success(res, req, response);
   } catch (error) {
     return apiResponse.fail(res, error, 500);
@@ -544,14 +528,9 @@ exports.get_teeboxtypes = async (req, res) => {
    *         description: success
    */
   try {
-    const API_URL = BASE_URL + `/teeboxtypes`;
-
     const queryParams = {};
 
-    const response = await golfbertService.get_teeboxtypes(
-      queryParams,
-      API_URL,
-    );
+    const response = await golfbertService.get_teeboxtypes(queryParams);
     return apiResponse.success(res, req, response);
   } catch (error) {
     return apiResponse.fail(res, error, 500);
