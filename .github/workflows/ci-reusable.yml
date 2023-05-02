@@ -91,7 +91,9 @@ jobs:
           node-version: 16
           submodules: "recursive"
           token: ${{ secrets.AUTH_TOKEN }}
-
+      - name: increase the memory
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
       - name: set the env variables
         run: echo "${{ vars.TEST_ENV }}" > ".env"
 
