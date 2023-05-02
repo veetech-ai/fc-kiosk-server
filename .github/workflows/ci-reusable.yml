@@ -90,10 +90,12 @@ jobs:
       - name: checkout the code
         uses: actions/checkout@v3
         with:
-          node-version: 16
           submodules: "recursive"
           token: ${{ secrets.AUTH_TOKEN }}
-
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: set the env variables
         run: echo "${{ vars.TEST_ENV }}" > ".env"
 
