@@ -70,7 +70,6 @@ describe("test /device/create api", () => {
         params: bodyData,
       };
       const response = await helper.post_request_with_authorization(data);
-      console.log("created device ....", serial);
       expect(response.body.success).toBe(true);
       expect(response.body.data.serial).toBe(serial);
     });

@@ -117,7 +117,7 @@ describe("Test the module of management of device configurations", () => {
           });
           expect(response.statusCode).toBe(401);
         });
-        it.skip("should return 403 if user of other organization try to get specific device config", async () => {
+        it("should return 403 if user of other organization try to get specific device config", async () => {
           // test case not passing in the pipeline, though it gets passed locally. Need to debug the cause
           const response = await helper.get_request_with_authorization({
             endpoint: `device/config/${devices.kiosk.id}`,
