@@ -99,30 +99,30 @@ exports.create_courses = async (req, res) => {
 };
 exports.get_courses_for_organization = async (req, res) => {
   /**
- * @swagger
- *
- * /kiosk-courses/get/{orgId}:
- *   get:
- *     security:
- *       - auth: []
- *     description: Get courses for a specific organization.
- *     tags: [Kiosk-Courses]
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: orgId
- *         description: Organization ID
- *         in: path
- *         required: true
- *         type: integer
- *     responses:
- *       200:
- *         description: Success
- */
+   * @swagger
+   *
+   * /kiosk-courses/get/{orgId}:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get courses for a specific organization.
+   *     tags: [Kiosk-Courses]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: orgId
+   *         description: Organization ID
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     responses:
+   *       200:
+   *         description: Success
+   */
 
   try {
     const validation = new Validator(req.params, {
-      orgId:"required|integer"
+      orgId: "required|integer",
     });
 
     validation.fails(function () {
@@ -132,9 +132,7 @@ exports.get_courses_for_organization = async (req, res) => {
     validation.passes(async function () {
       try {
         const { orgId } = req.params;
-        const course = await courseService.getCoursesByOrganization(
-          orgId,
-        );
+        const course = await courseService.getCoursesByOrganization(orgId);
         return apiResponse.success(res, req, course);
       } catch (error) {
         const { code, message } = helper.getThrownErrorStatusAndMessage(error);

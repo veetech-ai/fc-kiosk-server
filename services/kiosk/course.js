@@ -31,12 +31,12 @@ async function getCoursesByOrganization(orgId) {
   // Find course record
   const course = await Course.findAll({
     where: {
-      org_id: orgId
-    }
+      org_id: orgId,
+    },
   });
   return course;
 }
 module.exports = {
   createCourse,
-  getCoursesByOrganization
+  getCoursesByOrganization,
 };
