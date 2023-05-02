@@ -80,7 +80,7 @@ exports.get_courses = async (req, res) => {
    *         description: success
    */
   try {
-    const validation = new Validator(req.body, {
+    const validation = new Validator(req.query, {
       name: "string",
       range: "integer",
       unit: "string",
