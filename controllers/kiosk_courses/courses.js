@@ -3,15 +3,8 @@ const Validator = require("validatorjs");
 
 // Common Imports
 const apiResponse = require("../../common/api.response");
-const models = require("../../models/index");
 const helper = require("../../common/helper");
-const axios = require("axios");
-const KioskCourseModel = models.Course;
-const Organization = models.Organization;
 // Logger Imports
-const { logger } = require("../../logger");
-const config = require("../../config/config");
-const { Op, Sequelize } = require("sequelize");
 const courseService = require("../../services/kiosk/course");
 
 /**
@@ -26,7 +19,7 @@ exports.create_courses = async (req, res) => {
    *
    * /kiosk-courses/create:
    *   post:
-   *     create:
+   *     security:
    *       - auth: []
    *     description: create golf course (Only Admin).
    *     tags: [Kiosk-Courses]
