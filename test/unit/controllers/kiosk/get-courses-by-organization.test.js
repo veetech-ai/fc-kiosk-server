@@ -79,6 +79,11 @@ describe("GET /api/v1/kiosk-courses/get/{orgId}", () => {
     expect(response.status).toEqual(404);
     expect(response.body.data).toEqual("Organization not found");
   });
+  it("returns empty array of courses if organization is not linked with course", async () => {
+    const response = await makeApiRequest(1);
+    expect(response.status).toEqual(200);
+    expect(response.body.data).toEqual([]);
+  });
 
   it("should return an error if input validation fails", async () => {
     const response = await makeApiRequest();
