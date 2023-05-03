@@ -1,6 +1,7 @@
 // Common Imports
 const helper = require("../../common/helper");
 const config = require("../../config/config");
+const ServiceError = require("../../utils/serviceError");
 
 const BASE_URL = "https://api.golfbert.com/v1";
 
@@ -64,6 +65,11 @@ exports.get_polygons_by_holeId = async (holeId, queryParams = {}) => {
   const API_URL = BASE_URL + `/holes/${holeId}/polygons`;
 
   const response = await helper.call_golfbert_api(API_URL, queryParams);
+  
+  if(!response?.data || !response.data?.resources?.length) {
+    throw new ServiceError(`Polygons Not Found`, 404);
+  }
+
   return response.data;
 };
 
@@ -71,6 +77,11 @@ exports.get_teeboxes_by_holeId = async (holeId, queryParams = {}) => {
   const API_URL = BASE_URL + `/holes/${holeId}/teeboxes`;
 
   const response = await helper.call_golfbert_api(API_URL, queryParams);
+
+  if(!response?.data || !response.data?.resources?.length) {
+    throw new ServiceError(`Teeboxes Not Found`, 404);
+  }
+
   return response.data;
 };
 
