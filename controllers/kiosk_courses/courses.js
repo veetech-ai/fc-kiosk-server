@@ -128,7 +128,6 @@ exports.get_courses_for_organization = async (req, res) => {
     const courses = await courseService.getCoursesByOrganization(orgId);
     return apiResponse.success(res, req, courses);
   } catch (error) {
-    const { code, message } = helper.getThrownErrorStatusAndMessage(error);
     return apiResponse.fail(res, message, code || 500);
   }
 };
