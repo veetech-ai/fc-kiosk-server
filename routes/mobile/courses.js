@@ -14,4 +14,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTOptional,
     CoursesController.getCourse,
   ]);
+
+  router.get(`${courses}/holes/:holeId`, [
+    validation_middleware.validJWTOptional,
+    CoursesController.getCourseHoleInfo,
+  ]);
 };
