@@ -23,6 +23,8 @@ const {
 // Services Imports
 const OrganizationModel = require("./organization");
 const RoleModel = require("./role");
+const organizationServices = require("../services/organization");
+const { organizationsInApplication } = require("../common/organizations.data");
 
 const PNSubscription = models.Push_Notifications_Subscriptions;
 const UserSettings = models.User_Settings;
@@ -131,7 +133,15 @@ exports.create_user = async (params) => {
 
     if (!isPhone) {
       // Create new user with roleId assigned
-      const paramsWithRole = { ...params, role_id: params.role_id };
+      const golferOrganization = await organizationServices.findByName(
+        organizationsInApplication.golfers.name,
+      );
+
+      const paramsWithRole = {
+        ...params,
+        role_id: params.role_id,
+        orgId: golferOrganization.id,
+      };
       await User.create(paramsWithRole);
     }
 
