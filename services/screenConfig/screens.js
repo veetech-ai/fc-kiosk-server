@@ -17,13 +17,13 @@ async function getScreensByCourses(gcId) {
     where: {
       gcId,
     },
-    attributes:{
-      exclude:["gc_id","org_id"]
-    }
+    attributes: {
+      exclude: ["gc_id", "org_id"],
+    },
   });
   return screens;
 }
-async function updateScreens(gcId,reqBody) {
+async function updateScreens(gcId, reqBody) {
   // Check if golf course exist
   const course = await Course.findOne({ where: { id: gcId } });
   if (!course) {
@@ -34,9 +34,9 @@ async function updateScreens(gcId,reqBody) {
     where: {
       gcId,
     },
-    attributes:{
-      exclude:["gc_id","org_id"]
-    }
+    attributes: {
+      exclude: ["gc_id", "org_id"],
+    },
   });
 
   if (!screens) {
@@ -46,9 +46,9 @@ async function updateScreens(gcId,reqBody) {
   // Update the fields with the data provided in the request body
   Object.assign(screens, reqBody);
   await screens.save();
-  return screens
+  return screens;
 }
 module.exports = {
- getScreensByCourses,
- updateScreens
+  getScreensByCourses,
+  updateScreens,
 };

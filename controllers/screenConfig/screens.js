@@ -140,13 +140,13 @@ exports.update_screen_for_course = async (req, res) => {
     validation.fails(function () {
       return apiResponse.fail(res, validation.errors);
     });
-    
+
     const courseId = Number(req.params.courseId);
     if (isNaN(courseId)) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    
-    const courses = await screenService.updateScreens(courseId,req.body);
+
+    const courses = await screenService.updateScreens(courseId, req.body);
     return apiResponse.success(res, req, courses);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

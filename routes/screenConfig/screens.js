@@ -15,5 +15,4 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     ScreenConfigController.update_screen_for_course,
   ]);
- 
 };
