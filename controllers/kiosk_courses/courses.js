@@ -101,7 +101,7 @@ exports.get_courses_for_organization = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-courses/get/{orgId}:
+   * /kiosk-courses/{orgId}:
    *   get:
    *     security:
    *       - auth: []
@@ -121,25 +121,16 @@ exports.get_courses_for_organization = async (req, res) => {
    */
 
   try {
-    const validation = new Validator(req.params, {
-      orgId: "required|integer",
-    });
+    const validation = new Validator(req.params, {});
 
     validation.fails(function () {
       return apiResponse.fail(res, validation.errors);
     });
-
-    validation.passes(async function () {
-      try {
-        const { orgId } = req.params;
-        const course = await courseService.getCoursesByOrganization(orgId);
-        return apiResponse.success(res, req, course);
-      } catch (error) {
-        const { code, message } = helper.getThrownErrorStatusAndMessage(error);
-        return apiResponse.fail(res, message, code);
-      }
-    });
+    const orgId = Number(req.params.orgId);
+    const course = await courseService.getCoursesByOrganization(orgId);
+    return apiResponse.success(res, req, course);
   } catch (error) {
-    return apiResponse.fail(res, error, 500);
+    const { code, message } = helper.getThrownErrorStatusAndMessage(error);
+    return apiResponse.fail(res, message, code || 500);
   }
 };

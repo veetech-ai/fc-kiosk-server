@@ -244,14 +244,14 @@ exports.hasAccess =
   async (req, res, next) => {
     try {
       if (!req.user.role) throw new Error();
-
       const roleInfo = await getRoleByTitle(req.user.role.title);
       if (!roleInfo) throw new Error();
 
       if (!requiredRoleRights && roleInfo.super) return next();
 
       if (!roleInfo.super && !roleInfo.admin) {
-        const resourceOrgId = req.body.orgId || req.query.orgId;
+        const resourceOrgId =
+          req.body.orgId || req.query.orgId || req.params.orgId;
 
         if (resourceOrgId && req.user.orgId != resourceOrgId) throw new Error();
       }
