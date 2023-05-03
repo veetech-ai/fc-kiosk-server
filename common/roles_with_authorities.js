@@ -46,8 +46,6 @@ exports.roleWithAuthorities = {
     get_groups: true,
     manage_groups: true,
     get_roles: true,
-    get_courses: false,
-    manage_courses: false,
   },
   admin: {
     ...defaultAuthorities,
@@ -67,8 +65,6 @@ exports.roleWithAuthorities = {
     get_organization: false,
     manage_organization: false,
     get_roles: true,
-    get_courses: false,
-    manage_courses: false,
   },
   customer: {
     ...defaultAuthorities,

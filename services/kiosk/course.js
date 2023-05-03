@@ -24,15 +24,18 @@ async function getCoursesByOrganization(orgId) {
   // Check if organization exists with the specified org_id
   const organization = await Organization.findOne({ where: { id: orgId } });
   if (!organization) {
-    throw new Error(`Courses not found${config.error_message_separator}404`);
+    throw new Error(`Organization not found${config.error_message_separator}404`);
   }
   // Find course record
-  const course = await Course.findAll({
+  const courses = await Course.findAll({
     where: {
       orgId,
     },
   });
-  return course;
+  if (courses.length === 0) {
+    throw new Error(`No courses found for organization${config.error_message_separator}404`);
+  }
+  return courses;
 }
 module.exports = {
   createCourse,

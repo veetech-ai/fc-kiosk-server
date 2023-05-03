@@ -114,21 +114,20 @@ exports.get_courses_for_organization = async (req, res) => {
    *         description: Organization ID
    *         in: path
    *         required: true
-   *         type: integer
+   *         type: string
    *     responses:
    *       200:
    *         description: Success
    */
 
   try {
-    const validation = new Validator(req.params, {});
-
-    validation.fails(function () {
-      return apiResponse.fail(res, validation.errors);
-    });
     const orgId = Number(req.params.orgId);
-    const course = await courseService.getCoursesByOrganization(orgId);
-    return apiResponse.success(res, req, course);
+    if (isNaN(orgId)) {
+      return apiResponse.fail(res, "orgId must be a valid number");
+    }
+    console.log("going");
+    const courses = await courseService.getCoursesByOrganization(orgId);
+    return apiResponse.success(res, req, courses);
   } catch (error) {
     const { code, message } = helper.getThrownErrorStatusAndMessage(error);
     return apiResponse.fail(res, message, code || 500);

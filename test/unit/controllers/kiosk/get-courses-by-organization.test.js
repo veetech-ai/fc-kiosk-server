@@ -1,10 +1,11 @@
 const helper = require("../../../helper");
 const models = require("../../../../models/index");
 const Course = models.Course;
-describe("GET /api/v1/kiosk-courses/get/{orgId}", () => {
+describe("GET /api/v1/kiosk-courses/{orgId}", () => {
   let adminToken;
   let customerToken;
   let testManagerToken;
+  let zongCustomer;
   let testOrganizationId = 1;
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -33,6 +34,7 @@ describe("GET /api/v1/kiosk-courses/get/{orgId}", () => {
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
     testManagerToken = await helper.get_token_for("testManager");
+    differentOrganizationCustomerToken = await helper.get_token_for("zongCustomer");
   });
   const expected = {
     id: 1,
@@ -60,12 +62,11 @@ describe("GET /api/v1/kiosk-courses/get/{orgId}", () => {
   it("returns 404 status code Request for an invalid organization ID", async () => {
     const response = await makeApiRequest(999);
     expect(response.status).toEqual(404);
-    expect(response.body.data).toEqual("Courses not found");
+    expect(response.body.data).toEqual("Organization not found");
   });
   it("returns empty array of courses if organization is not linked with course", async () => {
     const response = await makeApiRequest(2);
-    expect(response.status).toEqual(200);
-    expect(response.body.data).toEqual([]);
+    expect(response.body.data).toEqual("No courses found for organization");
   });
   it("ensure that organization customer can get courses ", async () => {
     const response = await makeApiRequest(1, customerToken);
@@ -73,8 +74,12 @@ describe("GET /api/v1/kiosk-courses/get/{orgId}", () => {
       expect.arrayContaining([expect.objectContaining(expected)]),
     );
   });
-  it("should return an error if user is not authorized", async () => {
+  it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
     const response = await makeApiRequest(1, testManagerToken);
+    expect(response.body.data).toEqual("You are not allowed");
+  });
+  it("should return an error if user belongs to different organization", async () => {
+    const response = await makeApiRequest(1, differentOrganizationCustomerToken);
     expect(response.body.data).toEqual("You are not allowed");
   });
 });
