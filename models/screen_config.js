@@ -1,9 +1,10 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const ScreenConfig = sequelize.define(
-    "ScreenConfig",
+  const Screen_Config = sequelize.define(
+    "Screen_Config",
     {
       gcId: {
+        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -14,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       orgId: {
+        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -56,6 +58,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
+      faq: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+      },
       createdAt: {
         field: "created_at",
         type: DataTypes.DATE,
@@ -69,10 +75,17 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  ScreenConfig.associate = function (models) {
+  Screen_Config.associate = function (models) {
     // associations can be defined here
-    ScreenConfig.belongsTo(models.Organization, { foreignKey: "org_id" });
-    ScreenConfig.belongsTo(models.Course, { foreignKey: "gc_id" });
+    Screen_Config.belongsTo(models.Organization, { foreignKey: "org_id" });
+    Screen_Config.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
-  return ScreenConfig;
+    // // Exclude gc_id from the output
+    // Screen_Config.prototype.toJSON = function () {
+    //   const values = Object.assign({}, this.get());
+    //   delete values.gc_id;
+    //   delete values.org_id;
+    //   return values;
+    // };
+  return Screen_Config;
 };

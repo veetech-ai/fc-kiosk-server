@@ -3,20 +3,24 @@ const helper = require("../../common/helper");
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const Course = models.Course;
+const ScreenConfig = models.Screen_Config;
 const Organization = models.Organization;
 
 async function createCourse(reqBody, orgId) {
   // Check if organization exists with the specified org_id
   const organization = await Organization.findOne({ where: { id: orgId } });
   if (!organization) {
-    throw new Error(
-      `Organization not found${config.error_message_separator}404`,
-    );
+    throw new ServiceError(`Organization not found`, 404);
   }
 
   // Create a new course record
   const course = await Course.create({
     ...reqBody,
+    orgId,
+  });
+  const gcId = course.id;
+  const screenConfig = await ScreenConfig.create({
+    gcId,
     orgId,
   });
   return course;

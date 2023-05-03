@@ -51,7 +51,7 @@ exports.create_courses = async (req, res) => {
    *         in: formData
    *         required: false
    *         type: string
-   *       - name: org_id
+   *       - name: orgId
    *         description: organization id to be linked to
    *         in: formData
    *         required: true
@@ -69,32 +69,25 @@ exports.create_courses = async (req, res) => {
       city: "required|string",
       zip: "string",
       phone: "string",
-      org_id: "required|integer",
+      orgId: "required|integer",
     });
 
     validation.fails(function () {
       return apiResponse.fail(res, validation.errors);
     });
 
-    validation.passes(async function () {
-      try {
-        const { name, state, city, zip, phone, org_id } = req.body;
-        const reqBody = {
-          name,
-          state,
-          city,
-          zip,
-          phone,
-        };
-        const course = await courseService.createCourse(reqBody, org_id);
-        return apiResponse.success(res, req, course);
-      } catch (error) {
-        const { code, message } = helper.getThrownErrorStatusAndMessage(error);
-        return apiResponse.fail(res, message, code);
-      }
-    });
+    const { name, state, city, zip, phone, orgId } = req.body;
+    const reqBody = {
+      name,
+      state,
+      city,
+      zip,
+      phone,
+    };
+    const course = await courseService.createCourse(reqBody, orgId);
+    return apiResponse.success(res, req, course);
   } catch (error) {
-    return apiResponse.fail(res, error, 500);
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
 exports.get_courses_for_organization = async (req, res) => {
