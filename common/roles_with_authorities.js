@@ -19,6 +19,8 @@ const defaultAuthorities = {
   get_groups: false,
   manage_groups: false,
   get_roles: false,
+  get_courses: false,
+  manage_courses: false,
 };
 
 exports.roleWithAuthorities = {
@@ -86,6 +88,8 @@ exports.roleWithAuthorities = {
     get_groups: true,
     manage_groups: true,
     get_roles: true,
+    get_courses: true,
+    manage_courses: true,
   },
   operator: {
     ...defaultAuthorities,

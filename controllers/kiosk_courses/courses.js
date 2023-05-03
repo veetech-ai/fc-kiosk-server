@@ -97,3 +97,37 @@ exports.create_courses = async (req, res) => {
     return apiResponse.fail(res, error, 500);
   }
 };
+exports.get_courses_for_organization = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /kiosk-courses/{orgId}:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get courses for a specific organization.
+   *     tags: [Kiosk-Courses]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: orgId
+   *         description: Organization ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const orgId = Number(req.params.orgId);
+    if (isNaN(orgId)) {
+      return apiResponse.fail(res, "orgId must be a valid number");
+    }
+    const courses = await courseService.getCoursesByOrganization(orgId);
+    return apiResponse.success(res, req, courses);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};

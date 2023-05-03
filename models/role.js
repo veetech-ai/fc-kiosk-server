@@ -88,6 +88,18 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
         field: "get_roles",
       },
+      getCourses: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        field: "get_courses",
+      },
+      manageCourses: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        field: "manage_courses",
+      },
     },
     {
       defaultScope: {

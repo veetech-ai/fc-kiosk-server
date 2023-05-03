@@ -9,4 +9,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin"]),
     CoursesController.create_courses,
   ]);
+  router.get(courses + "/:orgId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    CoursesController.get_courses_for_organization,
+  ]);
 };
