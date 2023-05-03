@@ -65,8 +65,8 @@ exports.get_polygons_by_holeId = async (holeId, queryParams = {}) => {
   const API_URL = BASE_URL + `/holes/${holeId}/polygons`;
 
   const response = await helper.call_golfbert_api(API_URL, queryParams);
-  
-  if(!response?.data || !response.data?.resources?.length) {
+
+  if (!response?.data || !response.data?.resources?.length) {
     throw new ServiceError(`Polygons Not Found`, 404);
   }
 
@@ -78,7 +78,7 @@ exports.get_teeboxes_by_holeId = async (holeId, queryParams = {}) => {
 
   const response = await helper.call_golfbert_api(API_URL, queryParams);
 
-  if(!response?.data || !response.data?.resources?.length) {
+  if (!response?.data || !response.data?.resources?.length) {
     throw new ServiceError(`Teeboxes Not Found`, 404);
   }
 
