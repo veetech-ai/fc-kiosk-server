@@ -1,104 +1,82 @@
 name: linting and testing - reusable
 on:
   workflow_call:
-
+    secrets:
+      GITLAB_AUTH_TOKEN:
+        required: true
+      AUTH_TOKEN:
+        required: true
 env:
   GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
-  AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
 
 jobs:
   linting:
     runs-on: ubuntu-latest
-    container: node:16-bullseye
     steps:
       - uses: actions/checkout@v3
         with:
           node-version: 16
           submodules: "recursive"
-          token: ${{ env.AUTH_TOKEN }}
-
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
-
+          token: ${{ secrets.AUTH_TOKEN }}
       - run: npm ci
       - run: npm run lint
 
-  # testing:
-  #   env:
-  #     TEST_DB_HOST: database
-  #     TEST_DB_PORT: 3306
-  #     TEST_DB_USERNAME: mysql
-  #     TEST_DB_PASSWORD: testPass
-  #     TEST_DB_DATABASE: df-test
-  #     cache-name: cache-node-modules
+  testing:
+    runs-on: ubuntu-latest
+    container: node:16
+    services:
+      mysql:
+        image: public.ecr.aws/t8d8f5a3/mysql:latest
+        env:
+          MYSQL_USER: user
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_PASSWORD: secret
+          MYSQL_DATABASE: test
+        ports:
+          - 3306:3306
+      influxdb:
+        image: influxdb:2.6-alpine
+        env:
+          DOCKER_INFLUXDB_INIT_USERNAME: influxdb
+          DOCKER_INFLUXDB_INIT_PASSWORD: influxdb-pwd
+          DOCKER_INFLUXDB_INIT_ORG: test
+          DOCKER_INFLUXDB_INIT_BUCKET: test
+          DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: aGkcV533WlQq1_ShozzRcxr0ze-k0T_8c04wuq_O-Cdqooo0uNKoDO44WzDNsB0ZY2QgQcUAORg14W3yV1QVPw==
+          DOCKER_INFLUXDB_INIT_MODE: setup
+        ports:
+          - 8086:8086
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_index: [0, 1, 2, 3, 4, 5]
+        ci_total: [6]
+    steps:
+      - name: checkout the code
+        uses: actions/checkout@v3
+        with:
+          submodules: "recursive"
+          token: ${{ secrets.AUTH_TOKEN }}
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: set the env variables
+        run: echo "${{ vars.TEST_ENV }}" > ".env"
 
-  #   permissions:
-  #     checks: write
-  #     pull-requests: write
-  #     contents: write
+      - name: Install packages
+        run: |
+          apt update
+          apt install jq -y
+          apt install findutils -y
 
-  #   runs-on: ubuntu-latest
-  #   container: node:16-bullseye
-
-  #   services:
-  #     database:
-  #       image: mysql
-  #       env:
-  #         MYSQL_USER: mysql
-  #         MYSQL_ROOT_PASSWORD: testPass
-  #         MYSQL_PASSWORD: testPass
-  #         MYSQL_DATABASE: df-test
-  #       ports:
-  #         - 3306:3306
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-  #         node-version: 16
-
-  #     - name: Cache node modules
-  #       id: cache-npm
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ~/.npm
-  #         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-build-${{ env.cache-name }}-
-  #           ${{ runner.os }}-build-
-  #           ${{ runner.os }}-
-
-  #     - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
-  #       name: List the state of node modules
-  #       continue-on-error: true
-  #       run: npm list
-
-  #     - run: npm ci
-  #     - run: |
-  #         chmod 777 ./report.json
-
-  #     - name: Jest coverage report
-  #       uses: ArtiomTr/jest-coverage-report-action@v2.0.9
-  #       with:
-  #         test-script: npm run test
-  #         branch-coverage-report-path: ./coverage/coverage-final.json
-  #         base-coverage-report-path: ./coverage/coverage-final.json
-
-  #     - run: |
-  #         chmod -R 777 ./badges/
-  #     - run: npx jest-coverage-badges --output ./badges
-  #     - name: Git Auto Commit
-  #       if: ${{ github.event_name == 'pull_request' }}
-  #       uses: stefanzweifel/git-auto-commit-action@v4.14.1
+      - name: testing
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+          CI_NODE_TOTAL: ${{ matrix.ci_total }}
+          CI_NODE_INDEX: ${{ matrix.ci_index }}
+        run: |
+          chmod -R 777 .
+          chmod -R 777 ./public
+          npm ci --progress=false
+          npm run influx-setup
+          bash parallel-test.sh $CI_NODE_TOTAL $CI_NODE_INDEX

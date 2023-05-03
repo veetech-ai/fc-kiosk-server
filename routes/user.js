@@ -15,16 +15,7 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     UsersController.get_by_id,
   ]);
-  router.get(group + "/card/:cardSerial/:deviceId?", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess([
-      "super",
-      "admin",
-      "getUsers",
-      "manageUsers",
-    ]),
-    UsersController.getByCardSerial,
-  ]);
+
   router.get(group + "/org/all/:cardSerial/:orgId?", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess([
@@ -34,11 +25,6 @@ exports.routesConfig = function (app, router) {
       "manageUsers",
     ]),
     UsersController.getAllUsersByCardSerial,
-  ]);
-  router.put(group + "/card/:userId/:cardSerial", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageUsers"]),
-    UsersController.updateUserCardSerial,
   ]);
 
   router.put(group + "/update/profile", [
@@ -69,11 +55,6 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageUsers"]),
     UsersController.enable_by_id,
-  ]);
-  router.put(group + "/:userId/remove/cardSerial/:orgId?", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageUsers"]),
-    UsersController.removeCardSerial,
   ]);
 
   router.get(group + "/all/:organizationId", [

@@ -17,7 +17,9 @@ jobs:
     needs: tag-validation
     name: linting and testing
     uses: "./.github/workflows/ci-reusable.yml"
-    secrets: inherit
+    secrets:
+      GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
+      AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
   stage-deployment:
     name: "Stage Deployment"
     needs: integration
