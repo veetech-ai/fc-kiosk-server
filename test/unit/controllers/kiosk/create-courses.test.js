@@ -41,7 +41,7 @@ describe("POST /api/v1/kiosk-courses/create", () => {
     const invalidOrgIdData = { ...paramsCourseData, org_id: 999 };
     const response = await makeApiRequest(invalidOrgIdData);
     expect(response.status).toEqual(404);
-    expect(response.body.data).toEqual("Invalid organization ID");
+    expect(response.body.data).toEqual("Organization not found");
   });
 
   it("should return an error if input validation fails", async () => {
