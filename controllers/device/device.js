@@ -3596,8 +3596,7 @@ exports.getDeviceConfig = async (req, res) => {
   try {
     const body = { deviceId: req.params.id };
     const validation = new Validator(body, { deviceId: "required" });
-    if (validation.fails())
-      if (validation.fails()) throw { ...validation.errors, status: 400 };
+    if (validation.fails()) throw { ...validation.errors, status: 400 };
 
     const device = await DeviceModel.findById(body.deviceId);
     if (!device)

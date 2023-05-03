@@ -1,11 +1,16 @@
 const config = require("../config/config");
 const accountSid = config.twilio.sid;
 const authToken = config.twilio.token;
-const client = require("twilio")(accountSid, authToken);
+let client = null;
+const { logger } = require("../logger");
+
+try {
+  client = require("twilio")(accountSid, authToken);
+} catch (error) {
+  logger.error("Twillio Config is missing - sms.js", error.message);
+}
 
 const smsLogsModel = require("../services/sms_logs");
-
-const { logger } = require("../logger");
 
 exports.send = (phone, message) => {
   return new Promise((resolve, reject) => {
