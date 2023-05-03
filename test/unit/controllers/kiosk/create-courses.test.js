@@ -13,7 +13,7 @@ describe("POST /api/v1/kiosk-courses/create", () => {
     city: "San Francisco",
     zip: "12345",
     phone: "555-1234",
-    org_id: 2,
+    orgId: 2,
   };
   const validCourseData = {
     name: "Test Course",
@@ -38,10 +38,11 @@ describe("POST /api/v1/kiosk-courses/create", () => {
   });
 
   it("should return an error if organization does not exist", async () => {
-    const invalidOrgIdData = { ...paramsCourseData, org_id: 999 };
+    const invalidOrgIdData = { ...paramsCourseData, orgId: 999 };
     const response = await makeApiRequest(invalidOrgIdData);
-    expect(response.status).toEqual(404);
     expect(response.body.data).toEqual("Organization not found");
+    expect(response.status).toEqual(404);
+
   });
 
   it("should return an error if input validation fails", async () => {
