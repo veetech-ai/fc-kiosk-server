@@ -253,3 +253,46 @@ exports.getCourse = async (req, res) => {
     return apiResponse.fail(res, error, 500);
   }
 };
+
+exports.getCourseHoleInfo = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /courses/holes/{holeId}:
+   *   get:
+   *     security: []
+   *     description: Retrieves the hole related information for a single course
+   *     tags: [Courses]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     parameters:
+   *       - name: holeId
+   *         description: Golfbert Hole Id of the course
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const holeId = Number(req.params.holeId);
+    if(!holeId) return apiResponse.fail(res, "HoleId must be a number", 400)
+    
+    const teeBoxInfo = await golfbertService.get_teeboxes_by_holeId(
+      holeId,
+    );
+
+    const polygonInfo = await golfbertService.get_polygons_by_holeId(
+      holeId,
+    );
+
+    const response = { polygons: polygonInfo, tees: teeBoxInfo };
+    return apiResponse.success(res, req, response);
+  } catch (error) {
+    const { code, message } = helper.getThrownErrorStatusAndMessage(error);
+    return apiResponse.fail(res, message, code);
+  }
+};
