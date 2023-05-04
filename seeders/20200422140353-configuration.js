@@ -9,7 +9,7 @@ module.exports = {
       theme_skin: false,
       color_scheme: 2,
       choose_sizes: 1,
-      footer_text: `2020 © ${config.app.title}`,
+      footer_text: `2023 © ${config.app.title}`,
       fb: "",
       twitter: "",
       google: "",
@@ -61,7 +61,6 @@ module.exports = {
     /*
       Add reverting commands here.
       Return a promise to correctly handle asynchronicity.
-
       Example:
       return queryInterface.bulkDelete('People', null, {});
     */
