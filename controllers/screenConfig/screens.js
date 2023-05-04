@@ -136,9 +136,13 @@ exports.update_screen_for_course = async (req, res) => {
    */
 
   try {
-    Validator.register('strict-boolean', function (value) {
-      return value === true || value === false;
-    }, 'The :attribute field must be true or false.');
+    Validator.register(
+      "strict-boolean",
+      function (value) {
+        return value === true || value === false;
+      },
+      "The :attribute field must be true or false.",
+    );
     const validation = new Validator(req.body, {
       courseInfo: "strict-boolean",
       coupons: "strict-boolean",
@@ -150,7 +154,7 @@ exports.update_screen_for_course = async (req, res) => {
       shop: "strict-boolean",
       faq: "strict-boolean",
     });
-    if(validation.fails()){
+    if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
     const loggedInUserOrg = req.user?.orgId;

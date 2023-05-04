@@ -72,7 +72,7 @@ exports.create_courses = async (req, res) => {
       orgId: "required|integer",
     });
 
-    if(validation.fails()){
+    if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
 

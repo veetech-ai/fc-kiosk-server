@@ -18,7 +18,7 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     shop: true,
     faq: true,
   };
-  let courseId
+  let courseId;
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -34,12 +34,12 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     differentOrganizationCustomerToken = await helper.get_token_for(
       "zongCustomer",
     );
-    const course=await helper.post_request_with_authorization({
+    const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses/create",
       token: adminToken,
       params: courses,
     });
-    courseId=course.body.data.id
+    courseId = course.body.data.id;
   });
 
   const makeApiRequest = async (params, token = adminToken) => {
