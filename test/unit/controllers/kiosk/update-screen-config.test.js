@@ -74,6 +74,10 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
     const actualResponse = { courseInfo, lessons };
     expect(actualResponse).toMatchObject(validbody);
   });
+  it("returns validation error for an invalid course ID", async () => {
+    const response = await makeApiRequest("aa");
+    expect(response.body.data).toEqual("courseId must be a valid number");
+  });
   it("should throw validation error when a non-boolean value is passed in the request body", async () => {
     const response = await makeApiRequest(courseId, invalidBody, customerToken);
     expect(response.body.data.errors).toEqual({

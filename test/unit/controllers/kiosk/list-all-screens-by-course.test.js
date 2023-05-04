@@ -51,7 +51,6 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
 
   it("returns 200 OK and an array of courses for a valid organization ID", async () => {
     const response = await makeApiRequest(courseId);
-    console.log("data", response.body);
     expect(response.body.data).toMatchObject(expected);
   });
 
@@ -59,6 +58,10 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     const response = await makeApiRequest(999);
     expect(response.status).toEqual(404);
     expect(response.body.data).toEqual("course not found");
+  });
+  it("returns validation error for an invalid course ID", async () => {
+    const response = await makeApiRequest("aa");
+    expect(response.body.data).toEqual("courseId must be a valid number");
   });
   it("ensure that organization customer can get screen details for the course belongs to same organization ", async () => {
     const response = await makeApiRequest(courseId, customerToken);
