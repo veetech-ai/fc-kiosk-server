@@ -38,12 +38,21 @@ exports.get_screens_for_course = async (req, res) => {
    */
 
   try {
+    const loggedInUserOrg = req.user?.orgId
+    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin
+    
     const courseId = Number(req.params.courseId);
     if (isNaN(courseId)) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const courses = await screenService.getScreensByCourses(courseId);
-    return apiResponse.success(res, req, courses);
+    const course = await screenService.getScreensByCourses(courseId);
+
+    // Admin and Super Admin can access the resource
+    // Only filtered people by middleware from same org can access the resource  
+    const isSameOrganizationResource = loggedInUserOrg === course.orgId 
+    if(!isSuperOrAdmin && !isSameOrganizationResource) return apiResponse.fail(res, "", 403);
+
+    return apiResponse.success(res, req, course);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -145,7 +154,7 @@ exports.update_screen_for_course = async (req, res) => {
     if (isNaN(courseId)) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-
+  
     const courses = await screenService.updateScreens(courseId, req.body);
     return apiResponse.success(res, req, courses);
   } catch (error) {
