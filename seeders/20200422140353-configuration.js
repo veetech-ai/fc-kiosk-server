@@ -35,8 +35,7 @@ module.exports = {
       label_print_company_name: `${config.app.title}`,
       label_print_company_website: `${config.app.frontendURL}`,
       company_about: "We are best with our services",
-      company_address:
-        "7340 S. Kyrene Rd. • Suite 101 • Tempe, AZ 85283",
+      company_address: "7340 S. Kyrene Rd. • Suite 101 • Tempe, AZ 85283",
       company_phone: "+92 (51) 831 7562",
       company_email: "dev@veetech.ai",
       company_timing: "9:00 AM to 5:00 PM",
