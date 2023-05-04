@@ -150,10 +150,9 @@ exports.update_screen_for_course = async (req, res) => {
       shop: "strict-boolean",
       faq: "strict-boolean",
     });
-    validation.fails(function () {
-      console.log("in validation fails :");
+    if(validation.fails()){
       return apiResponse.fail(res, validation.errors);
-    });
+    }
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
     const courseId = Number(req.params.courseId);

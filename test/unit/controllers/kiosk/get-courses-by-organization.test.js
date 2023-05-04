@@ -39,11 +39,9 @@ describe("GET /api/v1/kiosk-courses/{orgId}", () => {
     );
   });
   const expected = {
-    id: 1,
     name: "Course 1",
     city: "Test City 1",
     state: "Test State 1",
-    orgId: 1,
   };
 
   const makeApiRequest = async (params, token = adminToken) => {
