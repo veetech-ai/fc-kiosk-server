@@ -270,7 +270,7 @@ exports.routesConfig = function (app, router) {
   ]);
   router.put(group + "/link-golf-course/:id", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super","admin","manageCourses"]),
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     DeviceController.link_device_to_course,
   ]);
 };

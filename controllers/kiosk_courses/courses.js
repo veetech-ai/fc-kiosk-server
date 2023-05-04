@@ -69,7 +69,7 @@ exports.create_courses = async (req, res) => {
       city: "required|string",
       zip: "string",
       phone: "string",
-      org_id: "required|integer",
+      orgId: "required|integer",
     });
 
     validation.fails(function () {
@@ -78,7 +78,7 @@ exports.create_courses = async (req, res) => {
 
     validation.passes(async function () {
       try {
-        const { name, state, city, zip, phone, org_id } = req.body;
+        const { name, state, city, zip, phone, orgId } = req.body;
         const reqBody = {
           name,
           state,
@@ -86,7 +86,7 @@ exports.create_courses = async (req, res) => {
           zip,
           phone,
         };
-        const course = await courseService.createCourse(reqBody, org_id);
+        const course = await courseService.createCourse(reqBody, orgId);
         return apiResponse.success(res, req, course);
       } catch (error) {
         const { code, message } = helper.getThrownErrorStatusAndMessage(error);
