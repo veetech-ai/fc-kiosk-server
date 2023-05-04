@@ -13,6 +13,9 @@ const { logger } = require("../../../logger");
 const { products } = require("../../../common/products");
 const { getByPhone } = require("../../../services/otp");
 
+const {
+  organizationsInApplication,
+} = require("../../../common/organizations.data.js");
 const validUserId1 = 1;
 const validUserId2 = 2;
 const userIdWithNoFile = 6;
@@ -54,10 +57,10 @@ async function createNewDevices(token) {
 }
 const Orgs = {
   testOrg: {
-    id: 1,
+    id: organizationsInApplication.test.id,
   },
   org1: {
-    id: 4,
+    id: organizationsInApplication.zong.id,
   },
 };
 describe("user test cases", () => {
