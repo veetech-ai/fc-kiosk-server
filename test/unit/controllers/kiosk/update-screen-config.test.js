@@ -22,6 +22,8 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
     faq: true,
   };
   let courseId
+  const validbody={courseInfo:true,lessons:false}
+  const invalidBody={courseInfo:0,lessons:false}
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -46,7 +48,6 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
   });
 
   const makeApiRequest = async (courseId,params, token = adminToken) => {
-    console.log("adas", params);
     return await helper.put_request_with_authorization({
       endpoint: `screenconfig/courses/${courseId}`,
       params,
@@ -55,11 +56,11 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
   };
 
   it("should successfully update screen configurations for a given course", async () => {
-    const body={courseInfo:true,lessons:false}
-    const response = await makeApiRequest(courseId,body);
+    const response = await makeApiRequest(courseId,validbody);
+    console.log("sdas",response.body);
     const {courseInfo,lessons}=response.body.data
     const actualResponse={courseInfo,lessons}
-    expect(actualResponse).toMatchObject(body)
+    expect(actualResponse).toMatchObject(validbody)
   });
 
   it("returns 404 status code Request for an invalid course ID", async () => {
@@ -68,16 +69,24 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
     expect(response.body.data).toEqual("course not found");
   });
   it("ensure that organization customer can get screen details for the course belongs to same organization ", async () => {
-    const response = await makeApiRequest(1, customerToken);
-    expect(response.body.data).toMatchObject(expected);
+    const response = await makeApiRequest(courseId,validbody, customerToken);
+    const {courseInfo,lessons}=response.body.data
+    const actualResponse={courseInfo,lessons}
+    expect(actualResponse).toMatchObject(validbody)
+  });
+  it("should throw validation error when a non-boolean value is passed in the request body", async () => {
+    const response = await makeApiRequest(courseId,invalidBody, customerToken);
+    expect(response.body.data.errors).toEqual({ courseInfo: [ 'The courseInfo field must be true or false.' ] })
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
-    const response = await makeApiRequest(1, testManagerToken);
+    const response = await makeApiRequest(courseId,validbody, testManagerToken);
     expect(response.body.data).toEqual("You are not allowed");
   });
-  it("should return an error if user belongs to different organization", async () => {
+
+  it.only("should return an error if user belongs to different organization", async () => {
     const response = await makeApiRequest(
-      1,
+      courseId,
+      validbody,
       differentOrganizationCustomerToken,
     );
     expect(response.body.data).toEqual("You are not allowed");

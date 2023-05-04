@@ -21,6 +21,7 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     shop: true,
     faq: true,
   };
+  let courseId
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -36,11 +37,12 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     differentOrganizationCustomerToken = await helper.get_token_for(
       "zongCustomer",
     );
-    await helper.post_request_with_authorization({
+    const course=await helper.post_request_with_authorization({
       endpoint: "kiosk-courses/create",
       token: adminToken,
       params: courses,
     });
+    courseId=course.body.data.id
   });
 
   const makeApiRequest = async (params, token = adminToken) => {
@@ -51,7 +53,7 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
   };
 
   it("returns 200 OK and an array of courses for a valid organization ID", async () => {
-    const response = await makeApiRequest(1);
+    const response = await makeApiRequest(courseId);
     console.log("data", response.body);
     expect(response.body.data).toMatchObject(expected);
   });
@@ -62,16 +64,16 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     expect(response.body.data).toEqual("course not found");
   });
   it("ensure that organization customer can get screen details for the course belongs to same organization ", async () => {
-    const response = await makeApiRequest(1, customerToken);
+    const response = await makeApiRequest(courseId, customerToken);
     expect(response.body.data).toMatchObject(expected);
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
-    const response = await makeApiRequest(1, testManagerToken);
+    const response = await makeApiRequest(courseId, testManagerToken);
     expect(response.body.data).toEqual("You are not allowed");
   });
   it("should return an error if user belongs to different organization", async () => {
     const response = await makeApiRequest(
-      1,
+      courseId,
       differentOrganizationCustomerToken,
     );
     expect(response.body.data).toEqual("You are not allowed");
