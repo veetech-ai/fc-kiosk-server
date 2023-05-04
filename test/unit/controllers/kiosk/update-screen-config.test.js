@@ -23,7 +23,7 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
   };
   let courseId;
   const validbody = { courseInfo: true, lessons: false };
-  const invalidBody = { courseInfo: 0, lessons: false };
+  const invalidBody = { courseInfo: 1, lessons: false };
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -57,7 +57,6 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
 
   it("should successfully update screen configurations for a given course", async () => {
     const response = await makeApiRequest(courseId, validbody);
-    console.log("sdas", response.body);
     const { courseInfo, lessons } = response.body.data;
     const actualResponse = { courseInfo, lessons };
     expect(actualResponse).toMatchObject(validbody);

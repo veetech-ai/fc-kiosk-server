@@ -4,7 +4,7 @@ const Validator = require("validatorjs");
 // Common Imports
 const apiResponse = require("../../common/api.response");
 const helper = require("../../common/helper");
-// Logger Imports
+// import service
 const screenService = require("../../services/screenConfig/screens");
 
 /**
@@ -155,17 +155,38 @@ exports.update_screen_for_course = async (req, res) => {
       faq: "strict-boolean",
     });
     if (validation.fails()) {
+      console.log("asdasdasd");
       return apiResponse.fail(res, validation.errors);
     }
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
     const courseId = Number(req.params.courseId);
-    console.log("courseId in controller :", courseId);
     if (isNaN(courseId)) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-
-    const course = await screenService.updateScreens(courseId, req.body);
+    const {
+      courseInfo,
+      coupons,
+      lessons,
+      statistics,
+      memberships,
+      feedbacks,
+      careers,
+      shop,
+      faq,
+    } = req.body;
+    const reqBody = {
+      courseInfo,
+      coupons,
+      lessons,
+      statistics,
+      memberships,
+      feedbacks,
+      careers,
+      shop,
+      faq,
+    };
+    const course = await screenService.updateScreens(courseId, reqBody);
     const isSameOrganizationResource = loggedInUserOrg === course.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource)
       return apiResponse.fail(res, "", 403);
