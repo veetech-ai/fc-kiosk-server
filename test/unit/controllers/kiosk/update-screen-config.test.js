@@ -83,7 +83,7 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
     expect(response.body.data).toEqual("You are not allowed");
   });
 
-  it.only("should return an error if user belongs to different organization", async () => {
+  it("should return an error if user belongs to different organization", async () => {
     const response = await makeApiRequest(
       courseId,
       validbody,
