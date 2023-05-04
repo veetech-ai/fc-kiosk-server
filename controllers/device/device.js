@@ -3831,10 +3831,10 @@ exports.link_device_to_course = async (req, res) => {
       deviceId,
       req.body.courseId,
     );
-    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource)
-      return apiResponse.fail(res, "", 403);
-    return apiResponse.success(res, req, course);
+    // const isSameOrganizationResource = loggedInUserOrg === course.orgId;
+    // if (!isSuperOrAdmin && !isSameOrganizationResource)
+    //   return apiResponse.fail(res, "", 403);
+    // return apiResponse.success(res, req, course);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
