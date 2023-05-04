@@ -13,6 +13,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
   ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION_PRODUCTION }}
+  ECS_TASK_DEFINITION_STAGING: ${{ secrets.ECS_TASK_DEFINITION_STAGING }}
   ECS_CONTAINER_NAME: ${{ secrets.ECS_CONTAINER_NAME_PRODUCTION }}
   ECS_SERVICE: ${{ secrets.ECS_SERVICE_PRODUCTION }}
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
@@ -49,7 +50,7 @@ jobs:
         id: staging-task-def
         if: ${{ github.event.inputs.tag == '' }}
         run: |
-          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --query taskDefinition > task-definition-stage.json
+          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION_STAGING --query taskDefinition > task-definition-stage.json
           cat task-definition-stage.json
           echo "::set-output name=latestRevision::$(echo $(cat task-definition-stage.json))"
 
