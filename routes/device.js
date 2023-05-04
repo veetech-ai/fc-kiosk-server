@@ -268,4 +268,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super"]),
     DeviceController.setDeviceConfig,
   ]);
+  router.put(group + "/link-golf-course/:id", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super"]),
+    DeviceController.link_device_to_course,
+  ]);
 };

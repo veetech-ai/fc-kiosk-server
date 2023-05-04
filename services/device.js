@@ -1751,3 +1751,7 @@ exports.deviceTransferValidations = async ({
 
   return { device, transfer_to_user };
 };
+exports.link_to_golf_course = async (deviceId, courseId) => {
+  console.log("in service course", deviceId);
+  console.log("in service course", courseId);
+};

@@ -3786,3 +3786,56 @@ exports.updateCurrentConfig = async (deviceId, currentConfig) => {
     );
   }
 };
+exports.link_device_to_course = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /link-golf-course/{id}:
+   *   put:
+   *     security:
+   *       - auth: []
+   *     description: link device to course.
+   *     tags: [Device]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: id
+   *         description: Device ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *       - name: courseId
+   *         description: course ID to be linked to
+   *         in: formData
+   *         required: true
+   *         type: integer
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const validation = new Validator(req.body, {
+      courseId: "integer|required",
+    });
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
+    const deviceId = Number(req.params.id);
+    if (isNaN(deviceId)) {
+      return apiResponse.fail(res, "deviceId must be a valid number");
+    }
+    const response = await DeviceModel.link_to_golf_course(
+      deviceId,
+      req.body.courseId,
+    );
+    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource)
+      return apiResponse.fail(res, "", 403);
+    return apiResponse.success(res, req, course);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
