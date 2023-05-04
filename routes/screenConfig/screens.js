@@ -10,7 +10,7 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     ScreenConfigController.get_screens_for_course,
   ]);
-  router.put(screenConfig + "/update-screen/:courseId", [
+  router.put(screenConfig + "/:courseId", [
     validation_middleware.validJWTOptional,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     ScreenConfigController.update_screen_for_course,

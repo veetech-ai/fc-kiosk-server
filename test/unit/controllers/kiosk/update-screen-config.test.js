@@ -1,7 +1,7 @@
 const helper = require("../../../helper");
 const models = require("../../../../models/index");
 const Course = models.Course;
-describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
+describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
   let adminToken;
   let customerToken;
   let testManagerToken;
@@ -21,6 +21,7 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     shop: true,
     faq: true,
   };
+  let courseId
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -36,24 +37,29 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     differentOrganizationCustomerToken = await helper.get_token_for(
       "zongCustomer",
     );
-    await helper.post_request_with_authorization({
+    const course=await helper.post_request_with_authorization({
       endpoint: "kiosk-courses/create",
       token: adminToken,
       params: courses,
     });
+    courseId=course.body.data.id
   });
 
-  const makeApiRequest = async (params, token = adminToken) => {
-    return await helper.get_request_with_authorization({
-      endpoint: `screenconfig/courses/${params}`,
+  const makeApiRequest = async (courseId,params, token = adminToken) => {
+    console.log("adas", params);
+    return await helper.put_request_with_authorization({
+      endpoint: `screenconfig/courses/${courseId}`,
+      params,
       token: token,
     });
   };
 
-  it("returns 200 OK and an array of courses for a valid organization ID", async () => {
-    const response = await makeApiRequest(1);
-    console.log("data", response.body);
-    expect(response.body.data).toMatchObject(expected);
+  it("should successfully update screen configurations for a given course", async () => {
+    const body={courseInfo:true,lessons:false}
+    const response = await makeApiRequest(courseId,body);
+    const {courseInfo,lessons}=response.body.data
+    const actualResponse={courseInfo,lessons}
+    expect(actualResponse).toMatchObject(body)
   });
 
   it("returns 404 status code Request for an invalid course ID", async () => {
