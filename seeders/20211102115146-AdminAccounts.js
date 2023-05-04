@@ -3,6 +3,8 @@ const randtoken = require("rand-token");
 const roles =
   require("../common/roles_with_authorities").getRolesWithAuthorities()
     .roleWithAuthorities;
+const { organizationsInApplication } = require("../common/organizations.data");
+
 const config = require("../config/config");
 const models = require("../models");
 const Organization = models.Organization;
@@ -149,7 +151,7 @@ module.exports = {
         {
           name: "Golfer",
           email: "golfer@df.com",
-          orgId: TestOrg.id,
+          orgId: organizationsInApplication.golfers.id,
           status: 1,
           date_of_birth: new Date(),
           gender: "male",

@@ -132,15 +132,10 @@ exports.create_user = async (params) => {
     const isPhone = await PhoneExists(params.phone);
 
     if (!isPhone) {
-      // Create new user with roleId assigned
-      const golferOrganization = await organizationServices.findByName(
-        organizationsInApplication.golfers.name,
-      );
-
       const paramsWithRole = {
         ...params,
         role_id: params.role_id,
-        orgId: golferOrganization.id,
+        orgId: organizationsInApplication.golfers.id,
       };
       await User.create(paramsWithRole);
     }
