@@ -54,9 +54,9 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
     expect(response.body.data).toMatchObject(expected);
   });
 
-  it("returns 404 status code Request for an invalid course ID", async () => {
+  it("returns 200 status code with expected response Request for an invalid course ID", async () => {
     const response = await makeApiRequest(999);
-    expect(response.status).toEqual(404);
+    expect(response.status).toEqual(200);
     expect(response.body.data).toEqual("course not found");
   });
   it("returns validation error for an invalid course ID", async () => {

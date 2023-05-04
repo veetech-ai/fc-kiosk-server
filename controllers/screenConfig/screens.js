@@ -155,7 +155,6 @@ exports.update_screen_for_course = async (req, res) => {
       faq: "strict-boolean",
     });
     if (validation.fails()) {
-      console.log("asdasdasd");
       return apiResponse.fail(res, validation.errors);
     }
     const loggedInUserOrg = req.user?.orgId;

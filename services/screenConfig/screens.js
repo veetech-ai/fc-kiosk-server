@@ -10,7 +10,7 @@ async function getScreensByCourses(gcId) {
   // Check if golf course exist
   const course = await Course.findOne({ where: { id: gcId } });
   if (!course) {
-    throw new ServiceError(`course not found`, 404);
+    throw new ServiceError(`course not found`, 200);
   }
   // Find screen record
   const screens = await ScreenConfig.findOne({
@@ -27,7 +27,7 @@ async function updateScreens(gcId, reqBody) {
   // Check if golf course exist
   const course = await Course.findOne({ where: { id: gcId } });
   if (!course) {
-    throw new ServiceError(`course not found`, 404);
+    throw new ServiceError(`course not found`, 200);
   }
   // Find screen record
   const screens = await ScreenConfig.findOne({
@@ -40,7 +40,7 @@ async function updateScreens(gcId, reqBody) {
   });
 
   if (!screens) {
-    throw new ServiceError(`ScreenConfig not found for the given gcId`, 404);
+    throw new ServiceError(`ScreenConfig not found for the given gcId`, 200);
   }
 
   // Update the fields with the data provided in the request body

@@ -62,9 +62,9 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
     expect(actualResponse).toMatchObject(validbody);
   });
 
-  it("returns 404 status code Request for an invalid course ID", async () => {
+  it("returns 200 status code Request with expected message for an invalid course ID", async () => {
     const response = await makeApiRequest(999);
-    expect(response.status).toEqual(404);
+    expect(response.status).toEqual(200);
     expect(response.body.data).toEqual("course not found");
   });
   it("ensure that organization customer can get screen details for the course belongs to same organization ", async () => {

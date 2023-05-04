@@ -10,7 +10,7 @@ async function createCourse(reqBody, orgId) {
   // Check if organization exists with the specified org_id
   const organization = await Organization.findOne({ where: { id: orgId } });
   if (!organization) {
-    throw new ServiceError(`Organization not found`, 404);
+    throw new ServiceError(`Organization not found`, 200);
   }
 
   // Create a new course record
@@ -29,7 +29,7 @@ async function getCoursesByOrganization(orgId) {
   // Check if organization exists with the specified org_id
   const organization = await Organization.findOne({ where: { id: orgId } });
   if (!organization) {
-    throw new ServiceError(`Organization not found`, 404);
+    throw new ServiceError(`Organization not found`, 200);
   }
   // Find course record
   const courses = await Course.findAll({
@@ -38,7 +38,7 @@ async function getCoursesByOrganization(orgId) {
     },
   });
   if (courses.length === 0) {
-    throw new ServiceError(`No courses found for organization`, 404);
+    throw new ServiceError(`No courses found for organization`, 200);
   }
   return courses;
 }
