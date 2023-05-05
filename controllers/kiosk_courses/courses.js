@@ -51,7 +51,7 @@ exports.create_courses = async (req, res) => {
    *         in: formData
    *         required: false
    *         type: string
-   *       - name: org_id
+   *       - name: orgId
    *         description: organization id to be linked to
    *         in: formData
    *         required: true
@@ -72,29 +72,22 @@ exports.create_courses = async (req, res) => {
       orgId: "required|integer",
     });
 
-    validation.fails(function () {
+    if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
-    });
+    }
 
-    validation.passes(async function () {
-      try {
-        const { name, state, city, zip, phone, orgId } = req.body;
-        const reqBody = {
-          name,
-          state,
-          city,
-          zip,
-          phone,
-        };
-        const course = await courseService.createCourse(reqBody, orgId);
-        return apiResponse.success(res, req, course);
-      } catch (error) {
-        const { code, message } = helper.getThrownErrorStatusAndMessage(error);
-        return apiResponse.fail(res, message, code);
-      }
-    });
+    const { name, state, city, zip, phone, orgId } = req.body;
+    const reqBody = {
+      name,
+      state,
+      city,
+      zip,
+      phone,
+    };
+    const course = await courseService.createCourse(reqBody, orgId);
+    return apiResponse.success(res, req, course);
   } catch (error) {
-    return apiResponse.fail(res, error, 500);
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
 exports.get_courses_for_organization = async (req, res) => {
@@ -122,7 +115,7 @@ exports.get_courses_for_organization = async (req, res) => {
 
   try {
     const orgId = Number(req.params.orgId);
-    if (isNaN(orgId)) {
+    if (!orgId) {
       return apiResponse.fail(res, "orgId must be a valid number");
     }
     const courses = await courseService.getCoursesByOrganization(orgId);

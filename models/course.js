@@ -104,6 +104,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "Devices",
       foreignKey: "gc_id",
     });
+    Course.hasMany(models.Screen_Config, {
+      as: "Screen_Configs",
+      foreignKey: "gc_id",
+    });
   };
   return Course;
 };
