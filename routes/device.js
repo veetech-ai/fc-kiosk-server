@@ -252,7 +252,11 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     DeviceController.detach_device_child,
   ]);
-
+  router.put(group + "/:deviceId/courses/:courseId/link", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageDevices"]),
+    DeviceController.link_device_to_course,
+  ]);
   router.get(group + "/type/:id", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageDevices", "ceo"]),

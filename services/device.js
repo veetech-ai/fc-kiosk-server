@@ -3,6 +3,7 @@ const Op = Sequelize.Op;
 
 const models = require("../models");
 const Device = models.Device;
+const Course = models.Course;
 const DScopeReports = models.DScopeReports;
 
 const OrganizationModel = require("../services/organization");
@@ -1768,4 +1769,17 @@ exports.create_device_token = async (deviceId, deviceSerial) => {
     throw new ServiceError("Not updated", 400);
   }
   return response;
+}
+exports.link_to_golf_course = async (deviceId, courseId) => {
+  const device = await Device.findByPk(deviceId);
+  if (!device) {
+    throw new ServiceError(`Device not found`, 200);
+  }
+  const course = await Course.findByPk(courseId);
+  if (!course) {
+    throw new ServiceError(`Course not found`, 200);
+  }
+  await device.update({ gcId: courseId });
+
+  return device;
 };
