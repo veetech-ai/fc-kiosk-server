@@ -51,6 +51,7 @@ const alertsCategories = require("./../df-commons/data/alerts-categories.json");
 // Definitions Imports
 const definitionsValidations = require("./../df-commons/definitions/validations.json");
 const { globalMQTT } = require("./mqtt-init");
+const ServiceError = require("../utils/serviceError");
 
 // Setting Up Ajv
 const ajv = new Ajv({ allErrors: true, useDefaults: true }); // options can be passed, e.g. {allErrors: true}
@@ -1494,8 +1495,10 @@ exports.getThrownErrorStatusAndMessage = (error) => {
 exports.createDeviceJwtToken = (payload) => {
   try {
     const token = jwt.sign(payload, config.jwt.secret);
-    return token;
+    const prefixedToken = config.device_token_prefix + " " + token;
+    return prefixedToken;
   } catch (err) {
     logger.error(err);
+    throw new ServiceError("No Token Created", 500);
   }
 };

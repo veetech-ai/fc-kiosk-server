@@ -4,8 +4,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return Promise.all([
       queryInterface.addColumn("Devices", "device_token", {
-        type: Sequelize.STRING,
-        allowNull: true,
+        type: Sequelize.TEXT,
+        allowNull: false,
       }),
       queryInterface.addColumn("Devices", "is_enable", {
         type: Sequelize.BOOLEAN,

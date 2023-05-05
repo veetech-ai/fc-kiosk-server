@@ -1754,22 +1754,18 @@ exports.deviceTransferValidations = async ({
   return { device, transfer_to_user };
 };
 
-exports.create_device_token = async (deviceId, deviceSerial) => {
+exports.createDeviceToken = async (deviceId, deviceSerial) => {
   const payload = { id: deviceId, serial: deviceSerial };
   const deviceToken = helper.createDeviceJwtToken(payload);
-  if (!deviceToken) {
-    throw new ServiceError("No Token Created", 400);
-  }
-  const prefixedToken = config.device_token_prefix + " " + deviceToken;
-  const response = await Device.update(
-    { device_token: prefixedToken },
+
+  const updatedDevice = await Device.update(
+    { device_token: deviceToken },
     { where: { id: deviceId } },
   );
-  if (!response) {
-    throw new ServiceError("Not updated", 400);
-  }
-  return response;
+
+  return updatedDevice;
 };
+
 exports.link_to_golf_course = async (deviceId, courseId) => {
   const device = await Device.findByPk(deviceId);
   if (!device) {

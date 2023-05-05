@@ -1,5 +1,4 @@
 const helper = require("../../../../helper");
-const models = require("../../../../../models/index");
 
 describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
   let adminToken;

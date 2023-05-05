@@ -385,7 +385,7 @@ exports.create = async (req, res) => {
             owner_id: ownerId,
             hw_ver,
           });
-          DeviceModel.create_device_token(
+          DeviceModel.createDeviceToken(
             created_device.id,
             created_device.serial,
           );
