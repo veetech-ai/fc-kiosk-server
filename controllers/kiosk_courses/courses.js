@@ -115,7 +115,7 @@ exports.get_courses_for_organization = async (req, res) => {
 
   try {
     const orgId = Number(req.params.orgId);
-    if (isNaN(orgId)) {
+    if (!orgId) {
       return apiResponse.fail(res, "orgId must be a valid number");
     }
     const courses = await courseService.getCoursesByOrganization(orgId);

@@ -3,7 +3,7 @@ const Validator = require("validatorjs");
 
 // Common Imports
 const apiResponse = require("../../common/api.response");
-const helper = require("../../common/helper");
+
 // import service
 const screenService = require("../../services/screenConfig/screens");
 
@@ -18,7 +18,7 @@ exports.get_screens_for_course = async (req, res) => {
   /**
    * @swagger
    *
-   * /screenconfig/courses/{courseId}:
+   * /screen-config/courses/{courseId}:
    *   get:
    *     security:
    *       - auth: []
@@ -42,7 +42,7 @@ exports.get_screens_for_course = async (req, res) => {
     const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
 
     const courseId = Number(req.params.courseId);
-    if (isNaN(courseId)) {
+    if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
     const course = await screenService.getScreensByCourses(courseId);
@@ -62,7 +62,7 @@ exports.update_screen_for_course = async (req, res) => {
   /**
    * @swagger
    *
-   * /screenconfig/courses/{courseId}:
+   * /screen-config/courses/{courseId}:
    *   put:
    *     security:
    *       - auth: []

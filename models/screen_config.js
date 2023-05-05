@@ -80,12 +80,6 @@ module.exports = (sequelize, DataTypes) => {
     Screen_Config.belongsTo(models.Organization, { foreignKey: "org_id" });
     Screen_Config.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
-  // // Exclude gc_id from the output
-  // Screen_Config.prototype.toJSON = function () {
-  //   const values = Object.assign({}, this.get());
-  //   delete values.gc_id;
-  //   delete values.org_id;
-  //   return values;
-  // };
+
   return Screen_Config;
 };

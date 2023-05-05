@@ -6,6 +6,15 @@ const Course = models.Course;
 const ScreenConfig = models.Screen_Config;
 const Organization = models.Organization;
 
+async function createScreenConfig(gcId, orgId) {
+  const screens = await ScreenConfig.create({
+    gcId,
+    orgId,
+  });
+
+  return screens;
+}
+
 async function getScreensByCourses(gcId) {
   // Check if golf course exist
   const course = await Course.findOne({ where: { id: gcId } });
@@ -49,6 +58,7 @@ async function updateScreens(gcId, reqBody) {
   return screens;
 }
 module.exports = {
+  createScreenConfig,
   getScreensByCourses,
   updateScreens,
 };

@@ -1,7 +1,7 @@
 const helper = require("../../../helper");
 const models = require("../../../../models/index");
 const Course = models.Course;
-describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
+describe("GET /api/v1/screen-config/courses/{courseId}", () => {
   let adminToken;
   let customerToken;
   let testManagerToken;
@@ -44,7 +44,7 @@ describe("GET /api/v1/screenconfig/courses/{courseId}", () => {
 
   const makeApiRequest = async (params, token = adminToken) => {
     return await helper.get_request_with_authorization({
-      endpoint: `screenconfig/courses/${params}`,
+      endpoint: `screen-config/courses/${params}`,
       token: token,
     });
   };

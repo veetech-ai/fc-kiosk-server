@@ -59,14 +59,15 @@ describe("GET /api/v1/kiosk-courses/{orgId}", () => {
     expect(response.status).toEqual(200);
   });
 
-  it("returns 200 status code with expected message Request for an invalid organization ID", async () => {
+  it("returns 404 status code with expected message Request for an invalid organization ID", async () => {
     const response = await makeApiRequest(999);
-    expect(response.status).toEqual(200);
+    expect(response.status).toEqual(404);
     expect(response.body.data).toEqual("Organization not found");
   });
-  it("returns 200 status code with expected message if organization is not linked with course", async () => {
+  it("returns 404 status code with expected message if organization is not linked with course", async () => {
     const response = await makeApiRequest(2);
-    expect(response.body.data).toEqual("No courses found for organization");
+    expect(response.status).toEqual(200);
+    expect(response.body.data).toEqual([]);
   });
   it("ensure that organization customer can get courses ", async () => {
     const response = await makeApiRequest(1, customerToken);

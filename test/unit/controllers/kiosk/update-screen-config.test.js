@@ -1,26 +1,12 @@
 const helper = require("../../../helper");
 const models = require("../../../../models/index");
-const Course = models.Course;
-describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
+
+describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
   let adminToken;
   let customerToken;
   let testManagerToken;
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
-  const expected = {
-    id: 1,
-    gcId: 1,
-    orgId: 1,
-    courseInfo: true,
-    coupons: true,
-    lessons: true,
-    statistics: true,
-    memberships: true,
-    feedback: true,
-    careers: true,
-    shop: true,
-    faq: true,
-  };
   let courseId;
   const validbody = { courseInfo: true, lessons: false };
   const invalidBody = { courseInfo: 1, lessons: false };
@@ -49,7 +35,7 @@ describe("GET /api/v1/screenconfig/courses/update-screen/{courseId}", () => {
 
   const makeApiRequest = async (courseId, params, token = adminToken) => {
     return await helper.put_request_with_authorization({
-      endpoint: `screenconfig/courses/${courseId}`,
+      endpoint: `screen-config/courses/${courseId}`,
       params,
       token: token,
     });
