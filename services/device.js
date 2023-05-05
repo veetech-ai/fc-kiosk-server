@@ -18,6 +18,7 @@ const moment = require("moment");
 const config = require("../config/config");
 const { deviceSettings } = require("../config/config");
 const { logger } = require("../logger");
+const ServiceError = require("../utils/serviceError");
 
 function serialExists(serial) {
   return Device.count({
@@ -1752,19 +1753,19 @@ exports.deviceTransferValidations = async ({
   return { device, transfer_to_user };
 };
 
-exports.create_device_token = async(deviceId,deviceSerial) => {
-  const payload={id:deviceId,serial:deviceSerial}
+exports.create_device_token = async (deviceId, deviceSerial) => {
+  const payload = { id: deviceId, serial: deviceSerial };
   const deviceToken = helper.createDeviceJwtToken(payload);
-  if(!deviceToken){
-    throw new ServiceErrror("No Token Created",400)
+  if (!deviceToken) {
+    throw new ServiceError("No Token Created", 400);
   }
-  const prefixedToken="Device " + deviceToken
-  const response=await Device.update(
+  const prefixedToken = "Device " + deviceToken;
+  const response = await Device.update(
     { device_token: prefixedToken },
-    { where: { id: deviceId } } 
+    { where: { id: deviceId } },
   );
-  if(!response){
-    throw new ServiceError("Not updated",400)
+  if (!response) {
+    throw new ServiceError("Not updated", 400);
   }
-  return response
+  return response;
 };

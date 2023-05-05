@@ -56,14 +56,14 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
-      device_token:{
+      device_token: {
         type: DataTypes.STRING,
-        allowNull:true
+        allowNull: true,
       },
-      is_enable:{
-        type:DataTypes.BOOLEAN,
-        defaultValue:true
-      }
+      is_enable: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+      },
     },
     {},
   );

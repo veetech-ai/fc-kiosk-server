@@ -9,7 +9,7 @@ module.exports = {
       }),
       queryInterface.addColumn("Devices", "is_enable", {
         type: Sequelize.BOOLEAN,
-        defaultValue:true
+        defaultValue: true,
       }),
     ]);
   },
