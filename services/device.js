@@ -3,6 +3,7 @@ const Op = Sequelize.Op;
 
 const models = require("../models");
 const Device = models.Device;
+const Course = models.Course;
 const DScopeReports = models.DScopeReports;
 
 const OrganizationModel = require("../services/organization");
@@ -18,6 +19,7 @@ const moment = require("moment");
 const config = require("../config/config");
 const { deviceSettings } = require("../config/config");
 const { logger } = require("../logger");
+const ServiceError = require("../utils/serviceError");
 
 function serialExists(serial) {
   return Device.count({
@@ -1750,4 +1752,17 @@ exports.deviceTransferValidations = async ({
   }
 
   return { device, transfer_to_user };
+};
+exports.link_to_golf_course = async (deviceId, courseId) => {
+  const device = await Device.findByPk(deviceId);
+  if (!device) {
+    throw new ServiceError(`Device not found`, 200);
+  }
+  const course = await Course.findByPk(courseId);
+  if (!course) {
+    throw new ServiceError(`Course not found`, 200);
+  }
+  await device.update({ gcId: courseId });
+
+  return device;
 };
