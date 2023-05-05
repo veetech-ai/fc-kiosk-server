@@ -11,7 +11,7 @@ module.exports = {
             type: Sequelize.STRING(25550),
           },
         },
-        allowNull: false,
+        allowNull: true,
       }),
       queryInterface.addColumn("Devices", "is_enabled", {
         type: Sequelize.BOOLEAN,

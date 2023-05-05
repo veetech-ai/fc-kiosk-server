@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       device_token: {
         type: DataTypes.TEXT,
         unique: true,
-        allowNull: false,
+        allowNull: true,
       },
       is_enabled: {
         type: DataTypes.BOOLEAN,
