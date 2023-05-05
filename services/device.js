@@ -1759,7 +1759,7 @@ exports.create_device_token = async (deviceId, deviceSerial) => {
   if (!deviceToken) {
     throw new ServiceError("No Token Created", 400);
   }
-  const prefixedToken = "Device " + deviceToken;
+  const prefixedToken = config.device_token_prefix + deviceToken;
   const response = await Device.update(
     { device_token: prefixedToken },
     { where: { id: deviceId } },
