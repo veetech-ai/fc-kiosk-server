@@ -12,7 +12,7 @@ exports.routesConfig = function (app, router) {
   ]);
   router.put(screenConfig + "/:courseId", [
     validation_middleware.validJWTOptional,
-    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     ScreenConfigController.update_screen_for_course,
   ]);
 };
