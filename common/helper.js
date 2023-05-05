@@ -1491,3 +1491,11 @@ exports.getThrownErrorStatusAndMessage = (error) => {
 
   return { code, message };
 };
+exports.createDeviceJwtToken = (payload) => {
+  try {
+    const token = jwt.sign(payload, config.jwt.secret);
+    return token;
+  } catch (err) {
+    logger.error(err);
+  }
+};

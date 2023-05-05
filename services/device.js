@@ -1751,3 +1751,20 @@ exports.deviceTransferValidations = async ({
 
   return { device, transfer_to_user };
 };
+
+exports.create_device_token = async(deviceId,deviceSerial) => {
+  const payload={id:deviceId,serial:deviceSerial}
+  const deviceToken = helper.createDeviceJwtToken(payload);
+  if(!deviceToken){
+    throw new ServiceErrror("No Token Created",400)
+  }
+  const prefixedToken="Device " + deviceToken
+  const response=await Device.update(
+    { device_token: prefixedToken },
+    { where: { id: deviceId } } 
+  );
+  if(!response){
+    throw new ServiceError("Not updated",400)
+  }
+  return response
+};
