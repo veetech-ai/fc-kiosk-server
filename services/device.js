@@ -1753,6 +1753,19 @@ exports.deviceTransferValidations = async ({
 
   return { device, transfer_to_user };
 };
+
+exports.createDeviceToken = async (deviceId, deviceSerial) => {
+  const payload = { id: deviceId, serial: deviceSerial };
+  const deviceToken = helper.createDeviceJwtToken(payload);
+
+  const updatedDevice = await Device.update(
+    { device_token: deviceToken },
+    { where: { id: deviceId } },
+  );
+
+  return updatedDevice;
+};
+
 exports.link_to_golf_course = async (deviceId, courseId) => {
   const device = await Device.findByPk(deviceId);
   if (!device) {
