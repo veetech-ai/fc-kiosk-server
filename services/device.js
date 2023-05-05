@@ -1760,7 +1760,7 @@ exports.create_device_token = async (deviceId, deviceSerial) => {
   if (!deviceToken) {
     throw new ServiceError("No Token Created", 400);
   }
-  const prefixedToken = config.device_token_prefix + deviceToken;
+  const prefixedToken = config.device_token_prefix + " " + deviceToken;
   const response = await Device.update(
     { device_token: prefixedToken },
     { where: { id: deviceId } },
@@ -1769,7 +1769,7 @@ exports.create_device_token = async (deviceId, deviceSerial) => {
     throw new ServiceError("Not updated", 400);
   }
   return response;
-}
+};
 exports.link_to_golf_course = async (deviceId, courseId) => {
   const device = await Device.findByPk(deviceId);
   if (!device) {

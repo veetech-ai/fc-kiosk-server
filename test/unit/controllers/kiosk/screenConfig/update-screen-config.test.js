@@ -1,24 +1,15 @@
-const helper = require("../../../helper");
-const models = require("../../../../models/index");
-const Course = models.Course;
-describe("GET /api/v1/screen-config/courses/{courseId}", () => {
+const helper = require("../../../../helper");
+const models = require("../../../../../models/index");
+
+describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
   let adminToken;
   let customerToken;
   let testManagerToken;
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
-  const expected = {
-    courseInfo: true,
-    coupons: true,
-    lessons: true,
-    statistics: true,
-    memberships: true,
-    feedback: true,
-    careers: true,
-    shop: true,
-    faq: true,
-  };
   let courseId;
+  const validbody = { courseInfo: true, lessons: false };
+  const invalidBody = { courseInfo: 1, lessons: false };
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -42,38 +33,55 @@ describe("GET /api/v1/screen-config/courses/{courseId}", () => {
     courseId = course.body.data.id;
   });
 
-  const makeApiRequest = async (params, token = adminToken) => {
-    return await helper.get_request_with_authorization({
-      endpoint: `screen-config/courses/${params}`,
+  const makeApiRequest = async (courseId, params, token = adminToken) => {
+    return await helper.put_request_with_authorization({
+      endpoint: `screen-config/courses/${courseId}`,
+      params,
       token: token,
     });
   };
 
-  it("returns 200 OK and an array of courses for a valid organization ID", async () => {
-    const response = await makeApiRequest(courseId);
-    expect(response.body.data).toMatchObject(expected);
+  it("should successfully update screen configurations for a given course", async () => {
+    const response = await makeApiRequest(courseId, validbody);
+    const { courseInfo, lessons } = response.body.data;
+    const actualResponse = { courseInfo, lessons };
+    expect(actualResponse).toMatchObject(validbody);
   });
 
-  it("returns 200 status code with expected response Request for an invalid course ID", async () => {
+  it("returns 200 status code Request with expected message for an invalid course ID", async () => {
     const response = await makeApiRequest(999);
     expect(response.status).toEqual(200);
     expect(response.body.data).toEqual("course not found");
+  });
+  it("ensure that organization customer can get screen details for the course belongs to same organization ", async () => {
+    const response = await makeApiRequest(courseId, validbody, customerToken);
+    const { courseInfo, lessons } = response.body.data;
+    const actualResponse = { courseInfo, lessons };
+    expect(actualResponse).toMatchObject(validbody);
   });
   it("returns validation error for an invalid course ID", async () => {
     const response = await makeApiRequest("aa");
     expect(response.body.data).toEqual("courseId must be a valid number");
   });
-  it("ensure that organization customer can get screen details for the course belongs to same organization ", async () => {
-    const response = await makeApiRequest(courseId, customerToken);
-    expect(response.body.data).toMatchObject(expected);
+  it("should throw validation error when a non-boolean value is passed in the request body", async () => {
+    const response = await makeApiRequest(courseId, invalidBody, customerToken);
+    expect(response.body.data.errors).toEqual({
+      courseInfo: ["The courseInfo field must be true or false."],
+    });
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
-    const response = await makeApiRequest(courseId, testManagerToken);
+    const response = await makeApiRequest(
+      courseId,
+      validbody,
+      testManagerToken,
+    );
     expect(response.body.data).toEqual("You are not allowed");
   });
+
   it("should return an error if user belongs to different organization", async () => {
     const response = await makeApiRequest(
       courseId,
+      validbody,
       differentOrganizationCustomerToken,
     );
     expect(response.body.data).toEqual("You are not allowed");

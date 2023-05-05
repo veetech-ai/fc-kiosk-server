@@ -1,5 +1,5 @@
-const helper = require("../../../helper");
-const models = require("../../../../models/index");
+const helper = require("../../../../helper");
+const models = require("../../../../../models/index");
 const Course = models.Course;
 describe("GET /api/v1/kiosk-courses/{orgId}", () => {
   let adminToken;
