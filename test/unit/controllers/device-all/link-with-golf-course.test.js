@@ -5,7 +5,7 @@ const Course = models.Course;
 describe("PUT /api/v1/device/link-golf-course/{id}", () => {
   let adminToken;
   let customerToken;
-  let testManagerToken;
+  let testOperatorToken;
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
   let courseId;
@@ -29,7 +29,7 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
 
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
-    testManagerToken = await helper.get_token_for("testManager");
+    testOperatorToken = await helper.get_token_for("testOperator");
     differentOrganizationCustomerToken = await helper.get_token_for(
       "zongCustomer",
     );
@@ -83,7 +83,11 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
     );
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
-    const response = await makeApiRequest(deviceId, courseId, testManagerToken);
+    const response = await makeApiRequest(
+      deviceId,
+      courseId,
+      testOperatorToken,
+    );
     expect(response.body.data).toEqual("You are not allowed");
   });
 
