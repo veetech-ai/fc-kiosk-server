@@ -58,9 +58,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       device_token: {
         type: DataTypes.TEXT,
+        unique: true,
         allowNull: false,
       },
-      is_enable: {
+      is_enabled: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
