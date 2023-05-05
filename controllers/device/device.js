@@ -3790,7 +3790,7 @@ exports.link_device_to_course = async (req, res) => {
   /**
    * @swagger
    *
-   * /device/link-golf-course/{id}:
+   * /device/{deviceId}/courses/{courseId}/link:
    *   put:
    *     security:
    *       - auth: []
@@ -3799,38 +3799,34 @@ exports.link_device_to_course = async (req, res) => {
    *     produces:
    *       - application/json
    *     parameters:
-   *       - name: id
+   *       - name: deviceId
    *         description: Device ID
    *         in: path
    *         required: true
    *         type: string
    *       - name: courseId
    *         description: course ID to be linked to
-   *         in: formData
+   *         in: path
    *         required: true
-   *         type: integer
+   *         type: string
    *     responses:
    *       200:
    *         description: Success
    */
 
   try {
-    const validation = new Validator(req.body, {
-      courseId: "integer|required",
-    });
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
-    const deviceId = Number(req.params.id);
-    if (isNaN(deviceId)) {
-      return apiResponse.fail(res, "deviceId must be a valid number");
+    const courseId = Number(req.params.courseId);
+    const deviceId = Number(req.params.deviceId);
+    if (!deviceId || !courseId) {
+      return apiResponse.fail(
+        res,
+        "deviceId and courseId must be a valid number",
+      );
     }
-    const response = await DeviceModel.link_to_golf_course(
-      deviceId,
-      req.body.courseId,
-    );
+
+    const response = await DeviceModel.link_to_golf_course(deviceId, courseId);
     const isSameOrganizationResource = loggedInUserOrg == response.owner_id;
     if (!isSuperOrAdmin && !isSameOrganizationResource)
       return apiResponse.fail(res, "", 403);

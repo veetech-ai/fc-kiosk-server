@@ -47,65 +47,50 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
     deviceId = device.body.data.id;
   });
 
-  const makeApiRequest = async (deviceId, params, token = adminToken) => {
+  const makeApiRequest = async (deviceId, courseId, token = adminToken) => {
+    const deviceIdString = deviceId.toString();
+    const courseIdString = courseId.toString();
+
     return await helper.put_request_with_authorization({
-      endpoint: `device/link-golf-course/${deviceId}`,
-      params,
+      endpoint: `device/${deviceIdString}/courses/${courseIdString}/link`,
+      params: {},
       token: token,
     });
   };
 
   it("should successfully link the device with golf course", async () => {
-    const response = await makeApiRequest(deviceId.toString(), { courseId });
+    const response = await makeApiRequest(deviceId, courseId);
     expect(response.body.data.gcId).toBe(courseId);
   });
   it("returns 200 status code Request with expected message for an invalid course ID", async () => {
-    const response = await makeApiRequest(invalidDeviceId.toString(), {
-      courseId,
-    });
+    const response = await makeApiRequest(invalidDeviceId, courseId);
     expect(response.body.data).toEqual("Device not found");
     expect(response.status).toEqual(200);
   });
   it("returns 200 status code Request with expected message for an invalid course ID", async () => {
-    const response = await makeApiRequest(deviceId.toString(), {
-      courseId: invalidCourseId,
-    });
+    const response = await makeApiRequest(deviceId, invalidCourseId);
     expect(response.body.data).toEqual("Course not found");
     expect(response.status).toEqual(200);
   });
   it("ensure that organization customer can get screen details for the course belongs to same organization ", async () => {
-    const response = await makeApiRequest(
-      deviceId.toString(),
-      { courseId },
-      customerToken,
-    );
+    const response = await makeApiRequest(deviceId, courseId, customerToken);
     expect(response.body.data.gcId).toBe(courseId);
   });
   it("returns validation error for an invalid device ID", async () => {
-    const response = await makeApiRequest("aa", { courseId });
-    expect(response.body.data).toEqual("deviceId must be a valid number");
-  });
-  it("should throw validation error when a non-boolean value is passed in the request body", async () => {
-    const response = await makeApiRequest(deviceId.toString(), {
-      courseId: "aa",
-    });
-    expect(response.body.data.errors).toEqual({
-      courseId: ["The courseId must be an integer."],
-    });
+    const response = await makeApiRequest("aa", courseId);
+    expect(response.body.data).toEqual(
+      "deviceId and courseId must be a valid number",
+    );
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
-    const response = await makeApiRequest(
-      deviceId.toString(),
-      { courseId },
-      testManagerToken,
-    );
+    const response = await makeApiRequest(deviceId, courseId, testManagerToken);
     expect(response.body.data).toEqual("You are not allowed");
   });
 
   it("should return an error if user belongs to different organization", async () => {
     const response = await makeApiRequest(
-      deviceId.toString(),
-      { courseId },
+      deviceId,
+      courseId,
       differentOrganizationCustomerToken,
     );
     expect(response.body.data).toEqual("You are not allowed");
