@@ -1766,3 +1766,12 @@ exports.link_to_golf_course = async (deviceId, courseId) => {
 
   return device;
 };
+exports.getCourse = async (deviceId) => {
+  const device = await Device.findByPk(deviceId);
+  if (!device) {
+    throw new ServiceError(`Device not found`, 200);
+  }
+  console.log("in service :",device);
+  const {gcId}=device
+  return gcId;
+};
