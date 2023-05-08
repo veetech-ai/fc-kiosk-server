@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       fairways: DataTypes.STRING,
       members: DataTypes.STRING,
       season: DataTypes.STRING,
+      length:DataTypes.INTEGER,
       orgId: {
         field: "org_id",
         type: DataTypes.INTEGER,

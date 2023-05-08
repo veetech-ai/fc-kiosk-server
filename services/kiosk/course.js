@@ -41,25 +41,28 @@ async function getCoursesByOrganization(orgId) {
 async function createCourseInfo(reqBody, courseId) {
   // Check if organization exists with the specified org_id
   // Create a new course record
-  console.log("request Body :",reqBody);
-  const updatedCourse = await Course.update({
-    ...reqBody,
-    
-  },{where: { id: courseId }});
-  if (!updatedCourse[0]) throw new ServiceError("There is a problem. Please try later.");
+  console.log("request Body :", reqBody);
+  const updatedCourse = await Course.update(
+    {
+      ...reqBody,
+    },
+    { where: { id: courseId } },
+  );
+  if (!updatedCourse[0])
+    throw new ServiceError("There is a problem. Please try later.");
   return updatedCourse;
 }
 async function getCourseById(courseId) {
- // Check if organization exists with the specified org_id
- const course = await Course.findOne({ where: { id: courseId } });
- if (!course) {
-   throw new ServiceError(`Course not found`, 404);
- }
- return course;
+  // Check if organization exists with the specified org_id
+  const course = await Course.findOne({ where: { id: courseId } });
+  if (!course) {
+    throw new ServiceError(`Course not found`, 404);
+  }
+  return course;
 }
 module.exports = {
   createCourse,
   getCoursesByOrganization,
   getCourseById,
-  createCourseInfo
+  createCourseInfo,
 };

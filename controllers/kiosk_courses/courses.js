@@ -128,94 +128,96 @@ exports.get_courses_for_organization = async (req, res) => {
 };
 exports.create_course_info = async (req, res) => {
   /**
- * @swagger
- *
- * /kiosk-courses/{courseId}/course-info:
- *   patch:
- *     security:
- *       - auth: []
- *     description: create golf course (Only Admin).
- *     tags: [Kiosk-Courses]
- *     parameters:
- *       - name: courseId
- *         description: id of course
- *         in: path
- *         required: true
- *         type: integer
- *       - name: holes
- *         description: Holes of the golf course
- *         in: formData
- *         required: false
- *         type: string
- *         enum:
- *           - '9'
- *           - '18'
- *         default: '9'
- *       - name: par
- *         description: par of golf course
- *         in: formData
- *         required: false
- *         type: integer
- *       - name: length
- *         description: length of golf course in yards
- *         in: formData
- *         required: false
- *         type: string
- *       - name: slope
- *         description: slope of golf course
- *         in: formData
- *         required: false
- *         type: string
- *       - name: content
- *         description: description of golf course
- *         in: formData
- *         required: false
- *         type: string
- *     produces:
- *       - application/json
- *     responses:
- *       200:
- *         description: success
- */
+   * @swagger
+   *
+   * /kiosk-courses/{courseId}/course-info:
+   *   patch:
+   *     security:
+   *       - auth: []
+   *     description: create golf course (Only Admin).
+   *     tags: [Kiosk-Courses]
+   *     parameters:
+   *       - name: courseId
+   *         description: id of course
+   *         in: path
+   *         required: true
+   *         type: integer
+   *       - name: holes
+   *         description: Holes of the golf course
+   *         in: formData
+   *         required: false
+   *         type: string
+   *         enum:
+   *           - '9'
+   *           - '18'
+   *         default: '9'
+   *       - name: par
+   *         description: par of golf course
+   *         in: formData
+   *         required: false
+   *         type: integer
+   *       - name: length
+   *         description: length of golf course in yards
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: slope
+   *         description: slope of golf course
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: content
+   *         description: description of golf course
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: course_image
+   *         description: Image of the golf course
+   *         in: formData
+   *         required: false
+   *         type: file
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
 
   try {
     const courseId = Number(req.params.courseId);
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    // const course=await courseService.getCourseById(courseId);
-    const validation = new Validator(req.body, {
-      holes: "integer",
-      par: "integer",
-      length: "string",
-      slope: "string",
-      content: "string",
+    const form = new formidable.IncomingForm();
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        resolve({ fields, files });
+      });
     });
 
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
-
-    const { holes, par, length, slope, content} = req.body;
-    
-    // const form = new formidable.IncomingForm();
-    // const files = await new Promise((resolve, reject) => {
-    //   form.parse(req, (err, fields, files) => {
-    //     if (err) reject(err);
-    //     resolve(files);
-    //   });
-    // });
-    // const profileImage = files.course_image;
-    // console.log("profile image :",profileImage);
-    // const key = await upload_file.uploadProfileImage(profileImage, course.id);
-    
-
+    const { holes, par, length, slope, content } = fields;
     const reqBody = {
-      holes, par, length, slope, content
+      holes,
+      par,
+      length,
+      slope,
+      content,
     };
-    const updatedCourse = await courseService.createCourseInfo(reqBody, courseId);
-    return apiResponse.success(res, req, updatedCourse);
+    // const courseImage = files.course_image;
 
+    // Handle the uploaded file (e.g., save to storage, get the file URL)
+    // Assuming you have a function `uploadCourseImage` that uploads the image and returns its URL
+    // const courseImageUrl = await uploadCourseImage(courseImage);
+
+    // const reqBody = {
+    //   holes, par, length, slope, content, course_image_url: courseImageUrl
+    // };
+    const updatedCourse = await courseService.createCourseInfo(
+      reqBody,
+      courseId,
+    );
+    return apiResponse.success(res, req, updatedCourse);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
