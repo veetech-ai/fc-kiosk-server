@@ -1,6 +1,6 @@
-const helper = require("../../../helper");
-const models = require("../../../../models/index");
-const Course = models.Course;
+const helper = require("../../../../helper");
+const models = require("../../../../../models/index");
+
 describe("GET /api/v1/screen-config/courses/{courseId}", () => {
   let adminToken;
   let customerToken;
