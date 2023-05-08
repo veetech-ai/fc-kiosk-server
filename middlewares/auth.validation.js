@@ -21,6 +21,7 @@ exports.validJWTNeeded = (req, res, next) => {
   if (req.headers.authorization) {
     try {
       req.user = jwt.verify(req.headers.authorization, secret);
+      console.log(req.user);
       return next();
     } catch (err) {
       // err.message = "jwt expired" // In case, if token is expired.
@@ -30,7 +31,22 @@ exports.validJWTNeeded = (req, res, next) => {
     return apiResponse.fail(res, "Token not provided", 401);
   }
 };
-
+exports.onlyDeviceAccess = (req, res, next) => {
+  if (req.headers.authorization) {
+    try {
+      req.user = jwt.verify(req.headers.authorization, secret);
+      if (!Object.prototype.hasOwnProperty.call(req.user, "serial")) {
+        return apiResponse.fail(res, "Token invalid or expire", 403);
+      }
+      return next();
+    } catch (err) {
+      // err.message = "jwt expired" // In case, if token is expired.
+      return apiResponse.fail(res, "Token invalid or expire", 401);
+    }
+  } else {
+    return apiResponse.fail(res, "Token not provided", 401);
+  }
+};
 exports.validJWTOptional = (req, res, next) => {
   if (req.headers?.authorization) {
     try {
