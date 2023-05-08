@@ -36,7 +36,7 @@ exports.get_screens_for_device = async (req, res) => {
     // if (!orgId) {
     //   return apiResponse.fail(res, "orgId must be a valid number");
     // }
-    const deviceId = req.user.id;
+    const deviceId = req.user.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const screens = await screenService.getScreensByCourses(courseId);
     return apiResponse.success(res, req, screens);

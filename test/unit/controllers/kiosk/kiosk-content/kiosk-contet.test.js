@@ -7,6 +7,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
   let courseId;
   let deviceId;
   let deviceToken;
+  let testOrganizationId=1
   const expected = {
     courseInfo: true,
     coupons: true,
@@ -69,8 +70,8 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     expect(response.body.data).toMatchObject(expected);
   });
   it("returns 200 status code Request with expected message for an invalid course ID", async () => {
-    const response = await makeApiRequest({},adminToken);
-    console.log("response from 2 :",response.body.data);
+    const response = await makeApiRequest({}, adminToken);
+    console.log("response from 2 :", response.body.data);
     expect(response.body.data).toEqual("Token invalid or expire");
   });
 });
