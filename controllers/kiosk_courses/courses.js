@@ -142,7 +142,7 @@ exports.create_course_info = async (req, res) => {
  *         in: path
  *         required: true
  *         type: integer
- *       - name: Holes
+ *       - name: holes
  *         description: Holes of the golf course
  *         in: formData
  *         required: false
@@ -171,16 +171,6 @@ exports.create_course_info = async (req, res) => {
  *         in: formData
  *         required: false
  *         type: string
- *       - name: image
- *         description: image file of the golf course
- *         in: formData
- *         required: false
- *         type: file
- *       - name: course_image
- *         description: Upload Profile Image
- *         in: formData
- *         required: false
- *         type: file
  *     produces:
  *       - application/json
  *     responses:
@@ -195,7 +185,7 @@ exports.create_course_info = async (req, res) => {
     }
     // const course=await courseService.getCourseById(courseId);
     const validation = new Validator(req.body, {
-      hole: "integer",
+      holes: "integer",
       par: "integer",
       length: "string",
       slope: "string",
@@ -206,7 +196,7 @@ exports.create_course_info = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const { hole, par, length, slope, description} = req.body;
+    const { holes, par, length, slope, description} = req.body;
     console.log("request body :",req.body);
     
     // const form = new formidable.IncomingForm();
