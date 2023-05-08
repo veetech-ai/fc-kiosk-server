@@ -136,6 +136,8 @@ exports.create_course_info = async (req, res) => {
  *       - auth: []
  *     description: create golf course (Only Admin).
  *     tags: [Kiosk-Courses]
+ *     consumes:
+ *     - application/x-www-form-urlencoded
  *     parameters:
  *       - name: courseId
  *         description: id of course
@@ -171,6 +173,11 @@ exports.create_course_info = async (req, res) => {
  *         in: formData
  *         required: false
  *         type: string
+ *       - name: course_image
+ *         description: Upload course image
+ *         in: formData
+ *         required: false
+ *         type: file
  *     produces:
  *       - application/json
  *     responses:
@@ -197,7 +204,6 @@ exports.create_course_info = async (req, res) => {
     }
 
     const { holes, par, length, slope, content} = req.body;
-    console.log("request body :",req.body);
     
     // const form = new formidable.IncomingForm();
     // const files = await new Promise((resolve, reject) => {
@@ -206,7 +212,8 @@ exports.create_course_info = async (req, res) => {
     //     resolve(files);
     //   });
     // });
-    // const profileImage = files.profile_image;
+    // const profileImage = files.course_image;
+    // console.log("profile image :",profileImage);
     // const key = await upload_file.uploadProfileImage(profileImage, course.id);
     
 
