@@ -7,7 +7,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
   let courseId;
   let deviceId;
   let deviceToken;
-  let testOrganizationId=1
+  let testOrganizationId = 1;
   const expected = {
     courseInfo: true,
     coupons: true,
