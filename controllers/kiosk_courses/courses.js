@@ -211,7 +211,7 @@ exports.create_course_info = async (req, res) => {
     
 
     const reqBody = {
-      hole, par, length, slope, description
+      holes, par, length, slope, description
     };
     const updatedCourse = await courseService.createCourseInfo(reqBody, courseId);
     return apiResponse.success(res, req, updatedCourse);
