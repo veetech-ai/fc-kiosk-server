@@ -166,7 +166,7 @@ exports.create_course_info = async (req, res) => {
  *         in: formData
  *         required: false
  *         type: string
- *       - name: description
+ *       - name: content
  *         description: description of golf course
  *         in: formData
  *         required: false
@@ -189,14 +189,14 @@ exports.create_course_info = async (req, res) => {
       par: "integer",
       length: "string",
       slope: "string",
-      description: "string",
+      content: "string",
     });
 
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const { holes, par, length, slope, description} = req.body;
+    const { holes, par, length, slope, content} = req.body;
     console.log("request body :",req.body);
     
     // const form = new formidable.IncomingForm();
@@ -211,7 +211,7 @@ exports.create_course_info = async (req, res) => {
     
 
     const reqBody = {
-      holes, par, length, slope, description
+      holes, par, length, slope, content
     };
     const updatedCourse = await courseService.createCourseInfo(reqBody, courseId);
     return apiResponse.success(res, req, updatedCourse);

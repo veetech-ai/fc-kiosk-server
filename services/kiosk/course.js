@@ -45,7 +45,6 @@ async function createCourseInfo(reqBody, courseId) {
     ...reqBody,
     
   },{where: { id: courseId }});
-
   return updatedCourse;
 }
 async function getCourseById(courseId) {
