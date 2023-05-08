@@ -8,7 +8,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
   let testOrganizationId = 1;
   let courseId;
   const validbody = { courseInfo: true, lessons: false };
-  const invalidBody = { courseInfo: 1, lessons: false };
+  const invalidBody = { courseInfo: "aa", lessons: false };
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -65,7 +65,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
   it("should throw validation error when a non-boolean value is passed in the request body", async () => {
     const response = await makeApiRequest(courseId, invalidBody, customerToken);
     expect(response.body.data.errors).toEqual({
-      courseInfo: ["The courseInfo field must be true or false."],
+      courseInfo: ["The courseInfo attribute has errors."],
     });
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {

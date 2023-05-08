@@ -1,9 +1,11 @@
 // External Module Imports
 const Validator = require("validatorjs");
+const formidable = require("formidable");
 
 // Common Imports
 const apiResponse = require("../../common/api.response");
 const helper = require("../../common/helper");
+const upload_file = require("../../common/upload");
 // Logger Imports
 const courseService = require("../../services/kiosk/course");
 
@@ -120,6 +122,110 @@ exports.get_courses_for_organization = async (req, res) => {
     }
     const courses = await courseService.getCoursesByOrganization(orgId);
     return apiResponse.success(res, req, courses);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+exports.create_course_info = async (req, res) => {
+  /**
+ * @swagger
+ *
+ * /kiosk-courses/{courseId}/course-info:
+ *   patch:
+ *     security:
+ *       - auth: []
+ *     description: create golf course (Only Admin).
+ *     tags: [Kiosk-Courses]
+ *     parameters:
+ *       - name: courseId
+ *         description: id of course
+ *         in: path
+ *         required: true
+ *         type: integer
+ *       - name: Holes
+ *         description: Holes of the golf course
+ *         in: formData
+ *         required: false
+ *         type: string
+ *         enum:
+ *           - '9'
+ *           - '18'
+ *         default: '9'
+ *       - name: par
+ *         description: par of golf course
+ *         in: formData
+ *         required: false
+ *         type: integer
+ *       - name: length
+ *         description: length of golf course in yards
+ *         in: formData
+ *         required: false
+ *         type: string
+ *       - name: slope
+ *         description: slope of golf course
+ *         in: formData
+ *         required: false
+ *         type: string
+ *       - name: description
+ *         description: description of golf course
+ *         in: formData
+ *         required: false
+ *         type: string
+ *       - name: image
+ *         description: image file of the golf course
+ *         in: formData
+ *         required: false
+ *         type: file
+ *       - name: course_image
+ *         description: Upload Profile Image
+ *         in: formData
+ *         required: false
+ *         type: file
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: success
+ */
+
+  try {
+    const courseId = Number(req.params.courseId);
+    if (!courseId) {
+      return apiResponse.fail(res, "courseId must be a valid number");
+    }
+    // const course=await courseService.getCourseById(courseId);
+    const validation = new Validator(req.body, {
+      hole: "integer",
+      par: "integer",
+      length: "string",
+      slope: "string",
+      description: "string",
+    });
+
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
+    const { hole, par, length, slope, description} = req.body;
+    console.log("request body :",req.body);
+    
+    // const form = new formidable.IncomingForm();
+    // const files = await new Promise((resolve, reject) => {
+    //   form.parse(req, (err, fields, files) => {
+    //     if (err) reject(err);
+    //     resolve(files);
+    //   });
+    // });
+    // const profileImage = files.profile_image;
+    // const key = await upload_file.uploadProfileImage(profileImage, course.id);
+    
+
+    const reqBody = {
+      hole, par, length, slope, description
+    };
+    const updatedCourse = await courseService.createCourseInfo(reqBody, courseId);
+    return apiResponse.success(res, req, updatedCourse);
+
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
