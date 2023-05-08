@@ -41,6 +41,7 @@ async function getCoursesByOrganization(orgId) {
 async function createCourseInfo(reqBody, courseId) {
   // Check if organization exists with the specified org_id
   // Create a new course record
+  console.log("request Body :",reqBody);
   const updatedCourse = await Course.update({
     ...reqBody,
     
