@@ -1,5 +1,6 @@
 const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
+const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
 const Course = models.Course;
 describe("GET /api/v1/kiosk-content/screens", () => {
@@ -19,6 +20,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     shop: true,
     faq: true,
   };
+  let productId = product.products.kiosk.id;
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -30,7 +32,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     const bodyData = {
       serial: uuid(),
       pin_code: 1111,
-      device_type: 1,
+      device_type: productId,
     };
 
     adminToken = await helper.get_token_for("admin");
@@ -47,7 +49,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     });
     deviceId = device_created.body.data.id;
     await helper.put_request_with_authorization({
-      endpoint: `device/${deviceId.toString()}/courses/${courseId.toString()}/link`,
+      endpoint: `device/${deviceId}/courses/${courseId}/link`,
       params: {},
       token: adminToken,
     });
@@ -69,9 +71,9 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     const response = await makeApiRequest();
     expect(response.body.data).toMatchObject(expected);
   });
-  it("returns 200 status code Request with expected message for an invalid course ID", async () => {
+  it("returns 403 status code Request", async () => {
     const response = await makeApiRequest({}, adminToken);
-    console.log("response from 2 :", response.body.data);
     expect(response.body.data).toEqual("Token invalid or expire");
+    expect(response.status).toEqual(403);
   });
 });

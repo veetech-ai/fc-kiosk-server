@@ -36,7 +36,7 @@ exports.onlyDeviceAccess = (req, res, next) => {
     try {
       req.user = jwt.verify(req.headers.authorization, secret);
       if (!Object.prototype.hasOwnProperty.call(req.user, "serial")) {
-        return apiResponse.fail(res, "Token invalid or expire", 401);
+        return apiResponse.fail(res, "Token invalid or expire", 403);
       }
       return next();
     } catch (err) {
