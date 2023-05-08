@@ -1784,7 +1784,6 @@ exports.getCourse = async (deviceId) => {
   if (!device) {
     throw new ServiceError(`Device not found`, 200);
   }
-  console.log("in service :",device);
-  const {gcId}=device
+  const { gcId } = device;
   return gcId;
 };
