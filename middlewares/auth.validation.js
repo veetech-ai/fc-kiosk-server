@@ -15,6 +15,7 @@ const deviceQueries = require("../services/device");
 
 // Configuration Imports
 const config = require("../config/config");
+const deviceOnboardingCodeServices = require("../services/kiosk/device_onboarding_code");
 const secret = config.jwt.secret;
 
 exports.validJWTNeeded = (req, res, next) => {
@@ -31,6 +32,21 @@ exports.validJWTNeeded = (req, res, next) => {
     return apiResponse.fail(res, "Token not provided", 401);
   }
 };
+
+exports.isValidDeviceCode = async (req, res, next) => {
+  if (req?.body?.code) {
+    // check if is the similar code
+    const isValidCode = await deviceOnboardingCodeServices.isValidDeviceOnboardingCode(req.body.code)
+
+    if (!isValidCode) {
+      return apiResponse.fail(res, "Invalid code", 401);
+    }
+    next()
+  } else {
+    return apiResponse.fail(res, "Device code not provided", 401);
+  }
+};
+
 exports.onlyDeviceAccess = (req, res, next) => {
   if (req.headers.authorization) {
     try {
