@@ -3,7 +3,6 @@ const DeviceOnboardingCodesController = require("../../controllers/kiosk/device_
 const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
-  
   const baseUrl = `${config.app.apiPath}device-onboarding-codes`;
 
   router.get(baseUrl + "/", [

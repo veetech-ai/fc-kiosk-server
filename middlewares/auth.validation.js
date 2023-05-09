@@ -36,12 +36,15 @@ exports.validJWTNeeded = (req, res, next) => {
 exports.isValidDeviceCode = async (req, res, next) => {
   if (req?.body?.code) {
     // check if is the similar code
-    const isValidCode = await deviceOnboardingCodeServices.isValidDeviceOnboardingCode(req.body.code)
+    const isValidCode =
+      await deviceOnboardingCodeServices.isValidDeviceOnboardingCode(
+        req.body.code,
+      );
 
     if (!isValidCode) {
       return apiResponse.fail(res, "Invalid code", 401);
     }
-    next()
+    next();
   } else {
     return apiResponse.fail(res, "Device code not provided", 401);
   }

@@ -385,12 +385,12 @@ exports.create = async (req, res) => {
             owner_id: ownerId,
             hw_ver,
           });
-          const deviceToken = await DeviceModel.createDeviceToken(
+          const device_token = await DeviceModel.createDeviceToken(
             created_device.id,
             created_device.serial,
           );
           if (created_device.dataValues) {
-            created_device.dataValues.deviceToken = deviceToken
+            created_device.dataValues.device_token = device_token;
           }
           try {
             await DeviceModel.set_owner_with_bill_info({
