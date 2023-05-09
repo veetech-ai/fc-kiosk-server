@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      tableName: "Device_Onboarding_Codes"
+      tableName: "Device_Onboarding_Codes",
     },
   );
   return DeviceOnboardingCode;
