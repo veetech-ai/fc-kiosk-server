@@ -39,7 +39,7 @@ async function refreshDeviceOnboardingCode() {
 
 async function isValidDeviceOnboardingCode(code) {
   const existingCode = await DeviceOnboardingCode.findOne({});
-  const isValidCode = existingCode.code === code;
+  const isValidCode = existingCode?.code === code;
   return isValidCode;
 }
 
