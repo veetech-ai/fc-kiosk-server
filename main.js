@@ -110,6 +110,7 @@ const CoursesRouter = require("./routes//mobile/courses");
 const ScreenConfigRouter = require("./routes//screenConfig/screens");
 const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
+const { createDeviceOnboardingCodeIfNotCreated } = require("./services/kiosk/device_onboarding_code");
 
 swaggerDoc(router);
 
@@ -332,6 +333,14 @@ if (config.env === "test") {
         });
       global.app_root_path = path.resolve(__dirname);
 
+      // Device Onboarding Pass Codes
+      createDeviceOnboardingCodeIfNotCreated()
+      .then(() => {
+        logger.info("Device onboarding code setup successfully");
+      })
+      .catch(() => {
+        logger.error("Error setting up device onboarding code");
+      });
       // connect the client
       globalMQTT.client.on("message", MQTTController.MessageArrived);
       globalMQTT.client.disconnectedPublishing = true;

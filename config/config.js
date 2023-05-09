@@ -181,6 +181,9 @@ module.exports = {
     number: process.env.TWILIO_ACCOUNT_NUMBER,
   },
   auth: {
+    kioskOnboardingAuth: {
+      otpLength: process.env.MOBILE_AUTH_OTP_LENGTH || 4,
+    },
     mobileAuth: {
       otpLength: process.env.MOBILE_AUTH_OTP_LENGTH || 4,
       otpExpirationInSeconds:
