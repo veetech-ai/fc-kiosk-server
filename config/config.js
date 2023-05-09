@@ -3,6 +3,7 @@ const timeZone = process.env.TIME_ZONE || "America/Chicago";
 module.exports = {
   error_message_separator: process.env.ERROR_MESSAGE_SEPARATOR || ":cow:",
   device_token_prefix: process.env.DEVICE_TOKEN_PREFIX || "Device",
+  maxPayloadSize:process.env.MAX_PAYLOAD_SIZE || "50mb",
   slack_Channal_url:
     process.env.SLACK_URL ||
     "https://hooks.slack.com/services/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",
