@@ -16,6 +16,10 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageDevices"]),
     DeviceController.create,
   ]);
+  router.post(group + "/create/onboarding", [
+    validation_middleware.isValidDeviceCode,
+    DeviceController.create,
+  ]);
   router.put(group + "/update/:deviceId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin"]),
