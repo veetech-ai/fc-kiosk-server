@@ -144,6 +144,11 @@ exports.create_course_info = async (req, res) => {
    *         required: true
    *         type: integer
    *       - in: formData
+   *         name: name
+   *         description: name of course
+   *         required: false
+   *         type: string
+   *       - in: formData
    *         name: holes
    *         description: Holes of the golf course
    *         required: false
@@ -169,6 +174,11 @@ exports.create_course_info = async (req, res) => {
    *         description: description of golf course
    *         required: false
    *         type: string
+   *       - name: logo
+   *         description: Upload logo of Golf course 
+   *         in: formData
+   *         required: false
+   *         type: file
    *       - in: formData
    *         name: course_images
    *         description: Images of the golf course
@@ -197,16 +207,19 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
-    const { holes, par, length, slope, content } = fields;
+    const { name,holes, par, length, slope, content } = fields;
+    const logoImages=files.logo;
     const courseImages = files.course_images;
-
+    const logo=await upload_file.uploadLogoImage(logoImages, courseId, 3);
     const images = await upload_file.uploadCourseImage(courseImages, courseId, 3);
     const reqBody = {
+      name,
       holes,
       par,
       length,
       slope,
       content,
+      logo,
       images
     };
     const updatedCourse = await courseService.createCourseInfo(
