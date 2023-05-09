@@ -169,36 +169,51 @@ exports.getFileURL = (key) => {
   }
 };
 exports.uploadCourseImage = async (
-  imageFile,
+  imageFiles,
   courseId,
   uploadOn = defaultUploadOn,
 ) => {
   try {
     const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
-    const fileName = this.rename_file(imageFile.name);
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
-    validateFile(
-      imageFile,
-      ["jpg", "jpeg", "png"],
-      settings.get("profile_image_max_size"),
-    );
-
-    switch (uploadOn) {
-      case 1:
-        return await server_upload.upload(imageFile, `${newpath}/${fileName}`);
-      // case 2:
-      //   return await azureUpload.upload(
-      //     imageFile,
-      //     `users-profile-images/${userId}/${fileName}`,
-      //   );
-      case 3:
-        return await awsS3.uploadFile(imageFile.path, uuid());
-      default:
-        throw {
-          message:
-            "The uploadOn parameter is not corect please correct it in params ",
-        };
+   
+    const uploadedFiles = [];
+    console.log("in uploaded_common :",imageFiles);
+    for (const imageFile of imageFiles) {
+      validateFile(
+        imageFile,
+        ["jpg", "jpeg", "png"],
+        settings.get("profile_image_max_size"),
+      );
+      const fileName = this.rename_file(imageFile.name);
+      console.log("filenames :",fileName);
+      let uploadedFile;
+      switch (uploadOn) {
+        case 1:
+          uploadedFile = await server_upload.upload(
+            imageFile,
+            `${newpath}/${fileName}`,
+          );
+          uploadedFiles.push(uploadedFile);
+          break;
+        // case 2:
+        //   return await azureUpload.upload(
+        //     imageFile,
+        //     `users-profile-images/${userId}/${fileName}`,
+        //   );
+        case 3:
+          uploadedFile = await awsS3.uploadFile(imageFile.path, uuid());
+          console.log(uploadedFile);
+          uploadedFiles.push(uploadedFile);
+          break;
+        default:
+          throw {
+            message:
+              "The uploadOn parameter is not corect please correct it in params ",
+          };
+      }
     }
+    return uploadedFiles;
   } catch (err) {
     throw err.status ? err : { message: err.message };
   }

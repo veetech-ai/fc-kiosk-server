@@ -129,53 +129,54 @@ exports.get_courses_for_organization = async (req, res) => {
 exports.create_course_info = async (req, res) => {
   /**
    * @swagger
-   *
    * /kiosk-courses/{courseId}/course-info:
    *   patch:
    *     security:
    *       - auth: []
    *     description: create golf course (Only Admin).
    *     tags: [Kiosk-Courses]
+   *     consumes:
+   *       - multipart/form-data
    *     parameters:
-   *       - name: courseId
+   *       - in: path
+   *         name: courseId
    *         description: id of course
-   *         in: path
    *         required: true
    *         type: integer
-   *       - name: holes
+   *       - in: formData
+   *         name: holes
    *         description: Holes of the golf course
-   *         in: formData
-   *         required: false
-   *         type: string
-   *         enum:
-   *           - '9'
-   *           - '18'
-   *         default: '9'
-   *       - name: par
-   *         description: par of golf course
-   *         in: formData
    *         required: false
    *         type: integer
-   *       - name: length
+   *         enum: [9, 18]
+   *       - in: formData
+   *         name: par
+   *         description: par of golf course
+   *         required: false
+   *         type: integer
+   *       - in: formData
+   *         name: length
    *         description: length of golf course in yards
-   *         in: formData
    *         required: false
    *         type: string
-   *       - name: slope
+   *       - in: formData
+   *         name: slope
    *         description: slope of golf course
-   *         in: formData
    *         required: false
    *         type: string
-   *       - name: content
+   *       - in: formData
+   *         name: content
    *         description: description of golf course
-   *         in: formData
    *         required: false
    *         type: string
-   *       - name: course_image
-   *         description: Image of the golf course
-   *         in: formData
+   *       - in: formData
+   *         name: course_images
+   *         description: Images of the golf course
    *         required: false
-   *         type: file
+   *         type: array
+   *         items:
+   *           type: file
+   *         collectionFormat: multi
    *     produces:
    *       - application/json
    *     responses:
@@ -189,30 +190,25 @@ exports.create_course_info = async (req, res) => {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
     const form = new formidable.IncomingForm();
+    form.multiples = true;
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);
         resolve({ fields, files });
       });
     });
-
     const { holes, par, length, slope, content } = fields;
+    const courseImages = files.course_images;
+
+    const images = await upload_file.uploadCourseImage(courseImages, courseId, 3);
     const reqBody = {
       holes,
       par,
       length,
       slope,
       content,
+      images
     };
-    // const courseImage = files.course_image;
-
-    // Handle the uploaded file (e.g., save to storage, get the file URL)
-    // Assuming you have a function `uploadCourseImage` that uploads the image and returns its URL
-    // const courseImageUrl = await uploadCourseImage(courseImage);
-
-    // const reqBody = {
-    //   holes, par, length, slope, content, course_image_url: courseImageUrl
-    // };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,

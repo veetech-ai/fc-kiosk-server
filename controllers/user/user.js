@@ -479,6 +479,7 @@ exports.get_by_id = async (req, res) => {
     if (!helper.isURL(result.profile_image)) {
       result.profile_image = upload_file.getFileURL(result.profile_image);
     }
+    console.log("resultant_image :",result.profile_image);
 
     const isAllowed = helper.resourceAccessControl(
       req.user,
@@ -829,7 +830,6 @@ exports.upload_profile_image = async (req, res) => {
 
     const profileImage = files.profile_image;
     const key = await upload_file.uploadProfileImage(profileImage, req.user.id);
-
     await UserModel.update_user(req.user.id, { profile_image: key });
     return apiResponse.success(res, req, upload_file.getFileURL(key));
   } catch (err) {
