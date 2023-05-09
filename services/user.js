@@ -157,7 +157,7 @@ exports.create_user = async (params) => {
 };
 
 exports.update_user = async (id, user) => {
-  console.log("in service :",user);
+  console.log("in service :", user);
   const result = await User.update(user, {
     where: {
       id: id,

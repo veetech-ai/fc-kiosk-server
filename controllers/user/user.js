@@ -479,7 +479,7 @@ exports.get_by_id = async (req, res) => {
     if (!helper.isURL(result.profile_image)) {
       result.profile_image = upload_file.getFileURL(result.profile_image);
     }
-    console.log("resultant_image :",result.profile_image);
+    console.log("resultant_image :", result.profile_image);
 
     const isAllowed = helper.resourceAccessControl(
       req.user,
