@@ -37,8 +37,15 @@ async function refreshDeviceOnboardingCode() {
   return updatedCode;
 }
 
+async function isValidDeviceOnboardingCode(code) {
+    const existingCode = await DeviceOnboardingCode.findOne({});
+    const isValidCode = existingCode.code === code;
+    return isValidCode
+}
+
 module.exports = {
   createDeviceOnboardingCodeIfNotCreated,
   createDeviceOnboardingCode,
   refreshDeviceOnboardingCode,
+  isValidDeviceOnboardingCode,
 };
