@@ -1,7 +1,7 @@
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
-const membershipService=require("./membership");
+const membershipService = require("./membership");
 
 const Course = models.Course;
 const Organization = models.Organization;
@@ -28,7 +28,7 @@ async function createCourse(reqBody, orgId) {
     return course;
   } catch (error) {
     // Handle the error here
-    throw new ServiceError('Failed to create course');
+    throw new ServiceError("Failed to create course");
   }
 }
 async function getCoursesByOrganization(orgId) {
