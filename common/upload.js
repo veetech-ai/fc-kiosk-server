@@ -74,7 +74,7 @@ exports.uploadProfileImage = async (
       default:
         throw {
           message:
-            "The uploadOn parameter is not corect please correct it in params ",
+            "The uploadOn parameter is not correct please correct it in params ",
         };
     }
   } catch (err) {
@@ -99,7 +99,7 @@ exports.upload_binary = async (file, uploadOn = defaultUploadOn) => {
       default:
         throw {
           message:
-            "The uploadOn parameter is not corect please correct it in params ",
+            "The uploadOn parameter is not correct please correct it in params ",
         };
     }
   } catch (err) {
@@ -129,7 +129,7 @@ exports.upload_file = async (
       default:
         throw {
           message:
-            "The defaultUploadOn parameter is not corect please correct it in env params ",
+            "The defaultUploadOn parameter is not correct please correct it in env params ",
         };
     }
   } catch (err) {
@@ -166,7 +166,7 @@ exports.getFileURL = (key) => {
     default:
       throw {
         message:
-          "The defaultUploadOn parameter is not corect please correct it in env params ",
+          "The defaultUploadOn parameter is not correct please correct it in env params ",
       };
   }
 };
@@ -198,7 +198,7 @@ const uploadCourseImage = async (
       default:
         throw {
           message:
-            "The uploadOn parameter is not corect please correct it in params ",
+            "The uploadOn parameter is not correct please correct it in params ",
         };
     }
   } catch (err) {
@@ -246,7 +246,7 @@ exports.uploadCourseImages = async (
         default:
           throw {
             message:
-              "The uploadOn parameter is not corect please correct it in params ",
+              "The uploadOn parameter is not correct please correct it in params ",
           };
       }
     }
@@ -282,7 +282,7 @@ exports.uploadLogoImage = async (
       default:
         throw {
           message:
-            "The uploadOn parameter is not corect please correct it in params ",
+            "The uploadOn parameter is not correct please correct it in params ",
         };
     }
   } catch (err) {

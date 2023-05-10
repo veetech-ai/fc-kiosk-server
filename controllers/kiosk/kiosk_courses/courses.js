@@ -3,11 +3,11 @@ const Validator = require("validatorjs");
 const formidable = require("formidable");
 
 // Common Imports
-const apiResponse = require("../../common/api.response");
-const helper = require("../../common/helper");
-const upload_file = require("../../common/upload");
+const apiResponse = require("../../../common/api.response");
+const helper = require("../../../common/helper");
+const upload_file = require("../../../common/upload");
 // Logger Imports
-const courseService = require("../../services/kiosk/course");
+const courseService = require("../../../services/kiosk/course");
 
 /**
  * @swagger
@@ -174,6 +174,11 @@ exports.create_course_info = async (req, res) => {
    *         description: description of golf course
    *         required: false
    *         type: string
+   *       - in: formData
+   *         name: email
+   *         description: email of golf course
+   *         required: false
+   *         type: string
    *       - name: logo
    *         description: Upload logo of Golf course
    *         in: formData
@@ -207,10 +212,10 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
-    const { name, holes, par, length, slope, content } = fields;
-    const logoImages = files.logo;
+    const { name, holes, par, length, slope, content ,email } = fields;
+    const logoImage = files.logo;
     const courseImages = files.course_images;
-    const logo = await upload_file.uploadLogoImage(logoImages, courseId, 3);
+    const logo = await upload_file.uploadLogoImage(logoImage, courseId, 3);
     const images = await upload_file.uploadCourseImages(
       courseImages,
       courseId,
@@ -225,6 +230,7 @@ exports.create_course_info = async (req, res) => {
       content,
       logo,
       images,
+      email
     };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,

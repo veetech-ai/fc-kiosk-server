@@ -1,13 +1,58 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
+const { Log } = require("@influxdata/influxdb-client");
+
+// Mocking formidable
+jest.mock('formidable', () => {
+  return {
+    IncomingForm: jest.fn().mockImplementation(() => {
+      return {
+        multiples: true,
+        parse: (req, cb) => {
+          cb(null, {
+            name: "Sedona Golf Club Exclusive",
+            holes: 18,
+            par: 72,
+            length: "6900",
+            slope: "113",
+            content: "Amazing course with beautiful landscapes",
+            email:"sample123@gmail.com"
+          }, {
+            logo: {
+              name: "mock-logo.png",
+              type: "image/png",
+              size: 5000, // bytes
+              path: "/mock/path/to/logo.png",
+            },
+            course_images: [
+              {
+                name: "mock-course-image1.png",
+                type: "image/png",
+                size: 5000, // bytes
+                path: "/mock/path/to/course-image1.png",
+              },
+              {
+                name: "mock-course-image2.png",
+                type: "image/png",
+                size: 5000, // bytes
+                path: "/mock/path/to/course-image2.png",
+              },
+            ]
+          });
+        }
+      };
+    }),
+  };
+});
+
 describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
   let adminToken;
+  let customerToken;
   let courseId;
+  let testOperatorToken;
   let testOrganizationId = 1;
-  beforeAll(async () => {
-    adminToken = await helper.get_token_for("admin");
-    customerToken = await helper.get_token_for("testCustomer");
-  });
+
+ 
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -19,6 +64,8 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     };
 
     adminToken = await helper.get_token_for("admin");
+    testOperatorToken = await helper.get_token_for("testOperator");
+    customerToken = await helper.get_token_for("testCustomer");
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses/create",
       token: adminToken,
@@ -26,80 +73,62 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     });
     courseId = course.body.data.id;
   });
-  const makeApiRequest = async (courseId, params, logoImages, courseImages, token = adminToken) => {
-    const logo = await upload_file.uploadLogoImage(logoImages, courseId, 3);
-    const images = await upload_file.uploadCourseImage(courseImages, courseId, 3);
-  
-    const extendedParams = {
-      ...params,
-      logo,
-      images,
-    };
-  
+
+  const makeApiRequest = async (
+    courseId,
+    params,
+    token = adminToken,
+  ) => {
     return helper.patch_request_with_authorization({
       endpoint: `kiosk-courses/${courseId}/course-info`,
       token: token,
-      params: extendedParams,
+      params: params,
     });
   };
 
   it.only("should create a new course info with valid input", async () => {
+    jest
+      .spyOn(upload_file, "uploadLogoImage")
+      .mockImplementation(() => Promise.resolve("mock-logo-url"));
+    jest
+      .spyOn(upload_file, "uploadCourseImages")
+      .mockImplementation(() => Promise.resolve("mock-images-url"));
+
     const params = {
-      name: "Sedona Golf Club Exclusive",
-      holes: 18,
-      par: 12,
-      length: "12",
-      slope: 12,
-      content: "",
-    };
-    const logoImages = {
-        name: 'mock-logo.png',
-        type: 'image/png',
-        size: 5000, // bytes
-        path: '/mock/path/to/logo.png',
+        name: "Sedona Golf Club Exclusive",
+        holes: 18,
+        par: 72,
+        length: "6900",
+        slope: "113",
+        content: "Amazing course with beautiful landscapes",
       };
-      
-      const courseImages = [
-        {
-          name: 'mock-course-image1.png',
-          type: 'image/png',
-          size: 5000, // bytes
-          path: '/mock/path/to/course-image1.png',
-        },
-        {
-          name: 'mock-course-image2.png',
-          type: 'image/png',
-          size: 5000, // bytes
-          path: '/mock/path/to/course-image2.png',
-        },
-      ];
-      
-    jest.spyOn(upload_file, 'uploadLogoImage').mockImplementation(() => Promise.resolve('mock-logo-url'));
-    jest.spyOn(upload_file, 'uploadCourseImage').mockImplementation(() => Promise.resolve('mock-images-url'));
-    const response = await makeApiRequest(courseId,logoImages,courseImages, params);
-    console.log("respponse is :",response.body);
-    // expect(response.body.data).toMatchObject(validCourseData);
+
+    const response = await makeApiRequest(courseId, params);
+    expect(response.body.data[0]).toEqual(1);
   });
+  it.only("should return an error if user belongs to same organization and do not have proper rights is not authorized", async () => {
+    jest
+      .spyOn(upload_file, "uploadLogoImage")
+      .mockImplementation(() => Promise.resolve("mock-logo-url"));
+    jest
+      .spyOn(upload_file, "uploadCourseImages")
+      .mockImplementation(() => Promise.resolve("mock-images-url"));
 
-  //   it("should return expected response if organization does not exist", async () => {
-  //     const invalidOrgIdData = { ...paramsCourseData, orgId: 999 };
-  //     const response = await makeApiRequest(invalidOrgIdData);
-  //     expect(response.body.data).toEqual("Organization not found");
-  //     expect(response.status).toEqual(200);
-  //   });
+    const params = {
+        name: "Sedona Golf Club Exclusive",
+        holes: 18,
+        par: 72,
+        length: "6900",
+        slope: "113",
+        content: "Amazing course with beautiful landscapes",
+      };
 
-  //   it("should return an error if input validation fails", async () => {
-  //     const invalidPhoneData = { ...paramsCourseData, phone: 555 - 1234 };
-  //     const response = await makeApiRequest(invalidPhoneData);
-
-  //     expect(response.body.data.errors).toEqual({
-  //       phone: ["The phone must be a string."],
-  //     });
-  //   });
-  //   it("should return an error if user is not authorized", async () => {
-  //     const invalidPhoneData = { ...paramsCourseData, phone: 555 - 1234 };
-  //     const response = await makeApiRequest(invalidPhoneData, customerToken);
-
-  //     expect(response.body.data).toEqual("You are not allowed");
-  //   });
+    const response = await makeApiRequest(courseId, params);
+    expect(response.body.data[0]).toEqual(1);
+  });
+  it.only("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
+    const params={}
+    const response = await makeApiRequest(courseId, params,testOperatorToken);
+    expect(response.body.data).toEqual("You are not allowed");
+  });
 });

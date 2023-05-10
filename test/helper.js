@@ -239,7 +239,6 @@ exports.put_request_with_authorization = async (data) => {
   }
 };
 exports.patch_request_with_authorization = async (data) => {
-  console.log("in patch");
   if (data.fileupload) {
     const dirname = __dirname;
     return await request
