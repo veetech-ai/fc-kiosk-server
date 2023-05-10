@@ -131,13 +131,21 @@ exports.get_devices = async (req, res) => {
    *         in: query
    *         required: false
    *         type: string
+   *       - name: orgId
+   *         description: Get devices for this Org Id (only Super Admin and Admin) 
+   *         in: query
+   *         required: false
+   *         type: string
    *     responses:
    *       200:
    *         description: success
    */
-  try {
+  try { 
+    const orgId = Number(req.query.orgId)
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success
+    const orgIdToUse = !isSuperOrAdmin ? req.user.orgId : (isSuperOrAdmin && orgId) ? orgId : false;
     const result = await OrganizationDeviceModel.get_all_organization_devices(
-      !req.user.admin ? req.user.orgId : false,
+      orgIdToUse,
       req.query.device_type ? req.query.device_type : false,
     );
 

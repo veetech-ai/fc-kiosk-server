@@ -17,6 +17,15 @@ module.exports = (sequelize, DataTypes) => {
       share_verify_token: DataTypes.STRING,
       can_change_geo_fence: DataTypes.BOOLEAN,
       can_change_scheduling: DataTypes.BOOLEAN,
+      gcId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: "gc_id",
+        references: {
+          model: "Courses",
+          key: "id",
+        },
+      },
     },
     {},
   );
@@ -32,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "device_id",
       sourceKey: "id",
     });
+    models.Device.belongsTo(models.Course, { foreignKey: "gc_id" });
   };
   return Organization_Device;
 };

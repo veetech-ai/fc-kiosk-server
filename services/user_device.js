@@ -109,6 +109,7 @@ exports.get_all_organization_devices = async (
               },
             ],
           },
+          // join the gc
         ],
       },
     ],
