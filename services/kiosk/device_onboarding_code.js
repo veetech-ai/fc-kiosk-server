@@ -12,6 +12,11 @@ function generateDeviceOnboardingCode() {
   return code;
 }
 
+async function getValidDeviceOnboardingCode() {
+  const code = await DeviceOnboardingCode.findOne({});
+  return code;
+}
+
 async function createDeviceOnboardingCode() {
   const code = generateDeviceOnboardingCode();
   const createdCode = await DeviceOnboardingCode.create({ code });
@@ -22,12 +27,12 @@ async function createDeviceOnboardingCode() {
 }
 
 async function createDeviceOnboardingCodeIfNotCreated() {
-  const existingCode = await DeviceOnboardingCode.findOne({});
+  const existingCode = await getValidDeviceOnboardingCode();
   if (!existingCode) await createDeviceOnboardingCode();
 }
 
 async function refreshDeviceOnboardingCode() {
-  const existingCode = await DeviceOnboardingCode.findOne({});
+  const existingCode = await getValidDeviceOnboardingCode();
   if (!existingCode) {
     throw new ServiceError("No device onboarding code exists", 404);
   }
@@ -38,12 +43,13 @@ async function refreshDeviceOnboardingCode() {
 }
 
 async function isValidDeviceOnboardingCode(code) {
-  const existingCode = await DeviceOnboardingCode.findOne({});
+  const existingCode = await getValidDeviceOnboardingCode();
   const isValidCode = existingCode?.code === code;
   return isValidCode;
 }
 
 module.exports = {
+  getValidDeviceOnboardingCode,
   createDeviceOnboardingCodeIfNotCreated,
   createDeviceOnboardingCode,
   refreshDeviceOnboardingCode,
