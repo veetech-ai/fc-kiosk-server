@@ -7,29 +7,24 @@ const Course = models.Course;
 const Organization = models.Organization;
 
 async function createCourse(reqBody, orgId) {
-  try {
-    // Check if organization exists with the specified org_id
-    const organization = await Organization.findOne({ where: { id: orgId } });
-    if (!organization) {
-      throw new ServiceError(`Organization not found`, 404);
-    }
-
-    // Create a new course record
-    const course = await Course.create({
-      ...reqBody,
-      orgId,
-    });
-
-    // Create Screen Config to allow toggling visibility of content sections on kiosk
-    const gcId = course.id;
-    await screenConfigServices.createScreenConfig(gcId, orgId);
-    await membershipService.createMembership(gcId, orgId);
-
-    return course;
-  } catch (error) {
-    // Handle the error here
-    throw new ServiceError("Failed to create course");
+  // Check if organization exists with the specified org_id
+  const organization = await Organization.findOne({ where: { id: orgId } });
+  if (!organization) {
+    throw new ServiceError(`Organization not found`, 404);
   }
+
+  // Create a new course record
+  const course = await Course.create({
+    ...reqBody,
+    orgId,
+  });
+
+  // Create Screen Config to allow toggling visibility of content sections on kiosk
+  const gcId = course.id;
+  await screenConfigServices.createScreenConfig(gcId, orgId);
+  await membershipService.createMembership(gcId, orgId);
+
+  return course;
 }
 async function getCoursesByOrganization(orgId) {
   // Check if organization exists with the specified org_id
