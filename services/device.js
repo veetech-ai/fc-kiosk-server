@@ -818,6 +818,7 @@ exports.findBySerial = (serial, organizationId = null, select = null) => {
         "enable_bill",
         "sims",
         "lst",
+        "device_token",
       ],
       where: {
         serial: serial,
@@ -1758,12 +1759,12 @@ exports.createDeviceToken = async (deviceId, deviceSerial) => {
   const payload = { id: deviceId, serial: deviceSerial };
   const deviceToken = helper.createDeviceJwtToken(payload);
 
-  const updatedDevice = await Device.update(
+  await Device.update(
     { device_token: deviceToken },
     { where: { id: deviceId } },
   );
 
-  return updatedDevice;
+  return deviceToken;
 };
 
 exports.link_to_golf_course = async (deviceId, courseId) => {
