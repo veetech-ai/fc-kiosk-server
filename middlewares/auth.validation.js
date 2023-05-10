@@ -34,16 +34,20 @@ exports.validJWTNeeded = (req, res, next) => {
 };
 
 exports.isValidDeviceCode = async (req, res, next) => {
-  if (req?.headers?.device_onboarding_code) {
+  const authCodeHeader = req.get("Device-Onboarding-Code")
+  if (authCodeHeader) {
     // check if is the similar code
     const isValidCode =
       await deviceOnboardingCodeServices.isValidDeviceOnboardingCode(
-        req?.headers?.device_onboarding_code,
+        authCodeHeader,
       );
 
     if (!isValidCode) {
       return apiResponse.fail(res, "Invalid code", 401);
     }
+
+    // refresh the token so it cannot be used again
+    await deviceOnboardingCodeServices.refreshDeviceOnboardingCode();
     next();
   } else {
     return apiResponse.fail(res, "Device code not provided", 401);
