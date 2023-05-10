@@ -297,7 +297,7 @@ exports.create_course_info = async (req, res) => {
       city: "string",
       long: "numeric",
       lat: "numeric",
-      street: "string"
+      street: "string",
     });
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
