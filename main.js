@@ -110,6 +110,7 @@ const CoursesRouter = require("./routes//mobile/courses");
 const ScreenConfigRouter = require("./routes//screenConfig/screens");
 const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
+const DeviceOnboardingCode = require("./routes/kiosk/device_onboarding_code");
 const {
   createDeviceOnboardingCodeIfNotCreated,
 } = require("./services/kiosk/device_onboarding_code");
@@ -188,6 +189,7 @@ CoursesRouter.routesConfig(app, router);
 KioskCoursesRouter.routesConfig(app, router);
 ScreenConfigRouter.routesConfig(app, router);
 KioskCoursesContentRouter.routesConfig(app, router);
+DeviceOnboardingCode.routesConfig(app, router);
 if (config.env === "test") {
   // for test case server
   app.use(router);
