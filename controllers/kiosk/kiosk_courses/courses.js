@@ -204,6 +204,19 @@ exports.create_course_info = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
+    const validation = new Validator(req.body, {
+      name: "string",
+      holes: "integer",
+      par: "integer",
+      length: "integer",
+      slope: "integer",
+      content: "string",
+      email: "string",
+    });
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
     const form = new formidable.IncomingForm();
     form.multiples = true;
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -212,7 +225,7 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
-    const { name, holes, par, length, slope, content ,email } = fields;
+    const { name, holes, par, length, slope, content, email } = fields;
     const logoImage = files.logo;
     const courseImages = files.course_images;
     const logo = await upload_file.uploadLogoImage(logoImage, courseId, 3);
@@ -230,7 +243,7 @@ exports.create_course_info = async (req, res) => {
       content,
       logo,
       images,
-      email
+      email,
     };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,

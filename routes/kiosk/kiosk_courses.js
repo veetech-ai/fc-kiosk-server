@@ -12,7 +12,7 @@ exports.routesConfig = function (app, router) {
   router.get(courses + "/:orgId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
-    CoursesController.get_courses_for_organization, 
+    CoursesController.get_courses_for_organization,
   ]);
   router.patch(courses + "/:courseId/course-info", [
     validation_middleware.validJWTNeeded,

@@ -11,9 +11,8 @@ module.exports = {
       await queryInterface.addColumn("Courses", "email", {
         type: Sequelize.STRING,
         allowNull: true,
-      })
-    ])
-   
+      }),
+    ]);
   },
 
   async down(queryInterface, Sequelize) {
