@@ -83,7 +83,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
 
   it("should create a new course info with valid input", async () => {
     jest
-      .spyOn(upload_file, "uploadLogoImage")
+      .spyOn(upload_file, "uploadCourseImage")
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
     jest
       .spyOn(upload_file, "uploadCourseImages")
