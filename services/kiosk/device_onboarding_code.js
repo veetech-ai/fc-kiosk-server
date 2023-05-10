@@ -13,7 +13,22 @@ function generateDeviceOnboardingCode() {
 }
 
 async function getValidDeviceOnboardingCode() {
-  const code = await DeviceOnboardingCode.findOne({});
+  let code = await DeviceOnboardingCode.findOne({});
+  const expiryLimitMS = config.auth.kioskOnboardingAuth.otpExpirationInSeconds * 1000
+  const timeNowMS = Date.now();
+
+  if(!code) {
+    const newCode = generateDeviceOnboardingCode();
+    code = await DeviceOnboardingCode.create({ code: newCode });
+  }  
+
+  const isExpired = new Date(code.updatedAt).getTime() + expiryLimitMS < timeNowMS 
+  
+  if(isExpired) {
+    const newCode = generateDeviceOnboardingCode();
+    code = await code.update({ code: newCode });
+  }
+
   return code;
 }
 
@@ -27,30 +42,32 @@ async function createDeviceOnboardingCode() {
 }
 
 async function createDeviceOnboardingCodeIfNotCreated() {
-  const existingCode = await getValidDeviceOnboardingCode();
-  if (!existingCode) await createDeviceOnboardingCode();
-}
+
+} // no longer need this not in the main file aswell!
 
 async function refreshDeviceOnboardingCode() {
   const existingCode = await getValidDeviceOnboardingCode();
-  if (!existingCode) {
-    throw new ServiceError("No device onboarding code exists", 404);
-  }
-  const newCode = generateDeviceOnboardingCode();
-  const updatedCode = await existingCode.update({ code: newCode });
 
+  const newCode = generateDeviceOnboardingCode();
+  let updatedCode;
+  if (!existingCode) {
+    updatedCode = await DeviceOnboardingCode.create({ code: newCode });
+  } else {
+    updatedCode = await existingCode.update({ code: newCode }); 
+  }
+  
   return updatedCode;
 }
 
 async function isValidDeviceOnboardingCode(code) {
-  const existingCode = await getValidDeviceOnboardingCode();
+  const existingCode = await getValidDeviceOnboardingCode();  
+  // code.modifiedTime + exp > Date.now
   const isValidCode = existingCode?.code === code;
   return isValidCode;
 }
 
 module.exports = {
   getValidDeviceOnboardingCode,
-  createDeviceOnboardingCodeIfNotCreated,
   createDeviceOnboardingCode,
   refreshDeviceOnboardingCode,
   isValidDeviceOnboardingCode,
