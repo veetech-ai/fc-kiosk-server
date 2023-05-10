@@ -21,7 +21,9 @@ if (config.isCloudUpload) {
 
 exports.upload_path = uploadPath;
 exports.public_path = publicPath;
-
+function isIterable(parameter) {
+  return Symbol.iterator in Object(parameter);
+}
 const validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
   const fileExtension = this.get_file_extension(file.name)
     .toLowerCase()
@@ -168,7 +170,42 @@ exports.getFileURL = (key) => {
       };
   }
 };
-exports.uploadCourseImage = async (
+const uploadCourseImage = async (
+  imageFile,
+  courseId,
+  uploadOn = defaultUploadOn,
+) => {
+  try {
+    const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
+    const fileName = this.rename_file(imageFile.name);
+    if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
+    validateFile(
+      imageFile,
+      ["jpg", "jpeg", "png"],
+      settings.get("profile_image_max_size"),
+    );
+
+    switch (uploadOn) {
+      case 1:
+        return await server_upload.upload(imageFile, `${newpath}/${fileName}`);
+      // case 2:
+      //   return await azureUpload.upload(
+      //     imageFile,
+      //     `users-profile-images/${userId}/${fileName}`,
+      //   );
+      case 3:
+        return await awsS3.uploadFile(imageFile.path, uuid());
+      default:
+        throw {
+          message:
+            "The uploadOn parameter is not corect please correct it in params ",
+        };
+    }
+  } catch (err) {
+    throw err.status ? err : { message: err.message };
+  }
+};
+exports.uploadCourseImages = async (
   imageFiles,
   courseId,
   uploadOn = defaultUploadOn,
@@ -178,6 +215,9 @@ exports.uploadCourseImage = async (
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
 
     const uploadedFiles = [];
+    if (!isIterable(imageFiles)) {
+      return await uploadCourseImage(imageFiles, courseId, 3);
+    }
     for (const imageFile of imageFiles) {
       validateFile(
         imageFile,
@@ -229,7 +269,6 @@ exports.uploadLogoImage = async (
       ["jpg", "jpeg", "png"],
       settings.get("profile_image_max_size"),
     );
-
     switch (uploadOn) {
       case 1:
         return await server_upload.upload(imageFile, `${newpath}/${fileName}`);

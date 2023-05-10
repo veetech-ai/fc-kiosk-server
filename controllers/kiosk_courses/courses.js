@@ -211,7 +211,7 @@ exports.create_course_info = async (req, res) => {
     const logoImages = files.logo;
     const courseImages = files.course_images;
     const logo = await upload_file.uploadLogoImage(logoImages, courseId, 3);
-    const images = await upload_file.uploadCourseImage(
+    const images = await upload_file.uploadCourseImages(
       courseImages,
       courseId,
       3,
