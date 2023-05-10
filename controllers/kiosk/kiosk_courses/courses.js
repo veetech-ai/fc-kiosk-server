@@ -160,10 +160,10 @@ exports.create_course_info = async (req, res) => {
    *         required: false
    *         type: integer
    *       - in: formData
-   *         name: length
+   *         name: yards
    *         description: length of golf course in yards
    *         required: false
-   *         type: string
+   *         type: integer
    *       - in: formData
    *         name: slope
    *         description: slope of golf course
@@ -179,9 +179,81 @@ exports.create_course_info = async (req, res) => {
    *         description: email of golf course
    *         required: false
    *         type: string
-   *       - name: logo
+   *       - in: formData
+   *         name: year_built
+   *         description: Year in which the course was built
+   *         required: false
+   *         type: integer
+   *       - in: formData
+   *         name: architects
+   *         description: architects of golf course (CSV)
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: greens
+   *         description: name of the greens of golf course (CSV)
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: fairways
+   *         description: fairways of golf course (CSV)
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: members
+   *         description: members of golf course (eg 500+)
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: season
+   *         description: season of golf course (e.g. Year Round)
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: phone
+   *         description: phone number of golf course
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: country
+   *         description: country of golf course
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: state
+   *         description: state of golf course
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: zip
+   *         description: zip of golf course
+   *         required: false
+   *         type: integer
+   *       - in: formData
+   *         name: city
+   *         description: city of golf course
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: long
+   *         description: long of golf course
+   *         required: false
+   *         type: number
+   *         format: float
+   *       - in: formData
+   *         name: lat
+   *         description: lat  of golf course
+   *         required: false
+   *         type: number
+   *         format: float
+   *       - in: formData
+   *         name: street
+   *         description: street of golf course
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: logo
    *         description: Upload logo of Golf course
-   *         in: formData
    *         required: false
    *         type: file
    *       - in: formData
@@ -208,15 +280,28 @@ exports.create_course_info = async (req, res) => {
       name: "string",
       holes: "integer",
       par: "integer",
-      length: "integer",
       slope: "integer",
       content: "string",
       email: "string",
+      yards: "integer",
+      year_built: "integer",
+      architects: "string",
+      greens: "string",
+      fairways: "string",
+      members: "string",
+      season: "string",
+      phone: "string",
+      country: "string",
+      state: "string",
+      zip: "integer",
+      city: "string",
+      long: "numeric",
+      lat: "numeric",
+      street: "string"
     });
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
-
     const form = new formidable.IncomingForm();
     form.multiples = true;
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -225,7 +310,7 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
-    const { name, holes, par, length, slope, content, email } = fields;
+
     const logoImage = files.logo;
     const courseImages = files.course_images;
     const logo = await upload_file.uploadLogoImage(logoImage, courseId, 3);
@@ -234,17 +319,8 @@ exports.create_course_info = async (req, res) => {
       courseId,
       3,
     );
-    const reqBody = {
-      name,
-      holes,
-      par,
-      length,
-      slope,
-      content,
-      logo,
-      images,
-      email,
-    };
+
+    const reqBody = { ...fields, logo, images };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
