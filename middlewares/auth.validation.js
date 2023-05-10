@@ -34,11 +34,11 @@ exports.validJWTNeeded = (req, res, next) => {
 };
 
 exports.isValidDeviceCode = async (req, res, next) => {
-  if (req?.body?.code) {
+  if (req?.headers?.device_onboarding_code) {
     // check if is the similar code
     const isValidCode =
       await deviceOnboardingCodeServices.isValidDeviceOnboardingCode(
-        req.body.code,
+        req?.headers?.device_onboarding_code,
       );
 
     if (!isValidCode) {
