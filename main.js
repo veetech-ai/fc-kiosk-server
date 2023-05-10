@@ -63,7 +63,7 @@ app.use(
   }),
 );
 
-router.use(bodyParser.json({ limit: "500kb" }));
+router.use(bodyParser.json({ limit: config.maxPayloadSize }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/files", express.static("public"));

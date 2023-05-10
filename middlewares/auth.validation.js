@@ -22,7 +22,6 @@ exports.validJWTNeeded = (req, res, next) => {
   if (req.headers.authorization) {
     try {
       req.user = jwt.verify(req.headers.authorization, secret);
-      console.log(req.user);
       return next();
     } catch (err) {
       // err.message = "jwt expired" // In case, if token is expired.
