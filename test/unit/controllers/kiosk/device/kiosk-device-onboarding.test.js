@@ -11,11 +11,14 @@ async function getCurrentOTP(token) {
   return otp?.body?.data?.code;
 }
 async function createDeviceForOnboarding(reqBody, token = null) {
-  const device = await helper.post_request_with_authorization({
-    endpoint: "device/create/onboarding",
-    params: reqBody,
-    token,
-  }, true);
+  const device = await helper.post_request_with_authorization(
+    {
+      endpoint: "device/create/onboarding",
+      params: reqBody,
+      token,
+    },
+    true,
+  );
 
   return device;
 }
@@ -23,11 +26,11 @@ async function createDeviceForOnboarding(reqBody, token = null) {
 describe("post /api/v1/device/create/onboarding", () => {
   let expectedCode;
   let superAdminToken;
-  
+
   beforeAll(async () => {
     superAdminToken = await helper.get_token_for("superadmin");
-    expectedCode = await getCurrentOTP(superAdminToken)
-  })
+    expectedCode = await getCurrentOTP(superAdminToken);
+  });
 
   it("should throw an error if code is not provided in body", async () => {
     const reqBody = {
@@ -37,7 +40,10 @@ describe("post /api/v1/device/create/onboarding", () => {
     };
     const response = await createDeviceForOnboarding(reqBody);
 
-    const expectedResponse = { success: false, data: 'Device code not provided' }
+    const expectedResponse = {
+      success: false,
+      data: "Device code not provided",
+    };
     expect(response.body).toEqual(expectedResponse);
   });
 
@@ -49,7 +55,7 @@ describe("post /api/v1/device/create/onboarding", () => {
     };
 
     const response = await createDeviceForOnboarding(reqBody, 1111);
-    const expectedResponse = { success: false, data: 'Invalid code' }
+    const expectedResponse = { success: false, data: "Invalid code" };
     expect(response.body).toMatchObject(expectedResponse);
   });
 
@@ -73,9 +79,8 @@ describe("post /api/v1/device/create/onboarding", () => {
     };
 
     const response = await createDeviceForOnboarding(reqBody, expectedCode);
-    const expectedResponse = { success: false, data: 'Invalid code' }
+    const expectedResponse = { success: false, data: "Invalid code" };
 
     expect(response.body).toEqual(expectedResponse);
   });
-
 });

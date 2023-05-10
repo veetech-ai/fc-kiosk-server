@@ -34,7 +34,7 @@ exports.validJWTNeeded = (req, res, next) => {
 };
 
 exports.isValidDeviceCode = async (req, res, next) => {
-  const authCodeHeader = req.get("Device-Onboarding-Code")
+  const authCodeHeader = req.get("Device-Onboarding-Code");
   if (authCodeHeader) {
     // check if is the similar code
     const isValidCode =

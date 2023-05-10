@@ -31,7 +31,8 @@ exports.getDeviceOnboardingCode = async (req, res) => {
    */
 
   try {
-    const code = await DeviceUniqueOnboardingCode.getValidDeviceOnboardingCode();
+    const code =
+      await DeviceUniqueOnboardingCode.getValidDeviceOnboardingCode();
     return apiResponse.success(res, req, code);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

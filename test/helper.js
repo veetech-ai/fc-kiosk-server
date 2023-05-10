@@ -186,9 +186,14 @@ exports.post_request = async (data) => {
  * @param {{endpoint: string, token: string, params: {file_key: string, file_path: string, [fieldName: string]: any}}} data Configuration for the request
  * @returns Promise <any>
  */
-exports.post_request_with_authorization = async (data, isOtpOnboardingAuth = false) => {
+exports.post_request_with_authorization = async (
+  data,
+  isOtpOnboardingAuth = false,
+) => {
   try {
-    const authHeaderName = isOtpOnboardingAuth ? "Device-Onboarding-Code" : "authorization"
+    const authHeaderName = isOtpOnboardingAuth
+      ? "Device-Onboarding-Code"
+      : "authorization";
     if (data.fileupload) {
       const dirname = __dirname;
       return await request
