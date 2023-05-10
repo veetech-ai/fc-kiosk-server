@@ -17,7 +17,7 @@ exports.getDeviceOnboardingCode = async (req, res) => {
   /**
    * @swagger
    *
-   * /device-onboarding-codes/:
+   * /device-onboarding-codes:
    *   get:
    *     security:
    *       - auth: []
@@ -31,10 +31,8 @@ exports.getDeviceOnboardingCode = async (req, res) => {
    */
 
   try {
-    const deviceId = req.user.id; // device Id
-    const courseId = await deviceService.getCourse(deviceId);
-    const screens = await screenService.getScreensByCourses(courseId);
-    return apiResponse.success(res, req, screens);
+    const code = await DeviceUniqueOnboardingCode.getValidDeviceOnboardingCode();
+    return apiResponse.success(res, req, code);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -58,10 +56,8 @@ exports.refreshDeviceOnboardingCode = async (req, res) => {
    */
 
   try {
-    const deviceId = req.user.id; // device Id
-    const courseId = await deviceService.getCourse(deviceId);
-    const screens = await screenService.getScreensByCourses(courseId);
-    return apiResponse.success(res, req, screens);
+    const code = await DeviceUniqueOnboardingCode.refreshDeviceOnboardingCode();
+    return apiResponse.success(res, req, code);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
