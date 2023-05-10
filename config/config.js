@@ -182,12 +182,14 @@ module.exports = {
   },
   auth: {
     kioskOnboardingAuth: {
-      otpLength: process.env.MOBILE_AUTH_OTP_LENGTH || 4,
+      otpLength: process.env.KIOSK_AUTH_OTP_LENGTH  || 4,
+      otpExpirationInSeconds:
+        process.env.KIOSK_AUTH_OTP_EXPIRATION_IN_SECONDS || 3600,
     },
     mobileAuth: {
       otpLength: process.env.MOBILE_AUTH_OTP_LENGTH || 4,
       otpExpirationInSeconds:
-        process.env.MOBILE_AUTH_OTP_EXPIRATION_IN_SECONDS || 300,
+        process.env.MOBILE_AUTH_OTP_EXPIRATION_IN_SECONDS || 3600,
     },
   },
   slack: {
