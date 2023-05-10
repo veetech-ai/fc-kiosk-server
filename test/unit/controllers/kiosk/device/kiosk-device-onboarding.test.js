@@ -32,7 +32,7 @@ describe("post /api/v1/device/create/onboarding", () => {
     expectedCode = await getCurrentOTP(superAdminToken);
   });
 
-  it("should throw an error if code is not provided in body", async () => {
+  it("should throw an error if code is not provided in header", async () => {
     const reqBody = {
       serial: uuid(),
       pin_code: uuid(),

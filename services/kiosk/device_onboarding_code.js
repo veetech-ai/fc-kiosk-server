@@ -18,8 +18,8 @@ async function getValidDeviceOnboardingCode() {
     config.auth.kioskOnboardingAuth.otpExpirationInSeconds * 1000;
   const timeNowMS = Date.now();
 
+  const newCode = generateDeviceOnboardingCode();
   if (!code) {
-    const newCode = generateDeviceOnboardingCode();
     code = await DeviceOnboardingCode.create({ code: newCode });
   }
 
@@ -27,48 +27,31 @@ async function getValidDeviceOnboardingCode() {
     new Date(code.updatedAt).getTime() + expiryLimitMS < timeNowMS;
 
   if (isExpired) {
-    const newCode = generateDeviceOnboardingCode();
     code = await code.update({ code: newCode });
   }
 
   return code;
 }
 
-async function createDeviceOnboardingCode() {
-  const code = generateDeviceOnboardingCode();
-  const createdCode = await DeviceOnboardingCode.create({ code });
-  if (!createdCode) {
-    throw new ServiceError("Unable to Create Device Onboarding code", 500);
-  }
-  return createdCode;
-}
-
-async function createDeviceOnboardingCodeIfNotCreated() {} // no longer need this not in the main file aswell!
-
 async function refreshDeviceOnboardingCode() {
   const existingCode = await getValidDeviceOnboardingCode();
 
   const newCode = generateDeviceOnboardingCode();
-  let updatedCode;
-  if (!existingCode) {
-    updatedCode = await DeviceOnboardingCode.create({ code: newCode });
-  } else {
-    updatedCode = await existingCode.update({ code: newCode });
-  }
+
+  let updatedCode = await existingCode.update({ code: newCode });
 
   return updatedCode;
 }
 
 async function isValidDeviceOnboardingCode(code) {
   const existingCode = await getValidDeviceOnboardingCode();
-  // code.modifiedTime + exp > Date.now
+
   const isValidCode = existingCode?.code === code;
   return isValidCode;
 }
 
 module.exports = {
   getValidDeviceOnboardingCode,
-  createDeviceOnboardingCode,
   refreshDeviceOnboardingCode,
   isValidDeviceOnboardingCode,
 };

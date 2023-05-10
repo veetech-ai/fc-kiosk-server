@@ -28,7 +28,6 @@ module.exports = {
           onUpdate: Sequelize.literal("CURRENT_TIMESTAMP"),
         },
       }),
-      await queryInterface.addIndex("Device_Onboarding_Codes", ["code"]),
     ]);
   },
 
