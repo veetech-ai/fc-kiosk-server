@@ -390,7 +390,7 @@ exports.create = async (req, res) => {
             created_device.serial,
           );
           if (created_device.dataValues) {
-            created_device.dataValues.device_token = device_token;
+            created_device.setDataValue("device_token", device_token);
           }
           try {
             await DeviceModel.set_owner_with_bill_info({
