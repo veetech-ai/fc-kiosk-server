@@ -1,5 +1,5 @@
 const config = require("../../config/config");
-const CoursesController = require("../../controllers/kiosk_courses/courses");
+const CoursesController = require("../../controllers/kiosk/kiosk_courses/courses");
 const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
@@ -13,5 +13,10 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     CoursesController.get_courses_for_organization,
+  ]);
+  router.patch(courses + "/:courseId/course-info", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CoursesController.create_course_info,
   ]);
 };

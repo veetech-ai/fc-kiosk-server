@@ -47,7 +47,22 @@ async function getCoursesByOrganization(orgId) {
 
   return courses;
 }
+async function createCourseInfo(reqBody, courseId) {
+  // Check if organization exists with the specified org_id
+  // Create a new course record
+  const updatedCourse = await Course.update(
+    {
+      ...reqBody,
+    },
+    { where: { id: courseId } },
+  );
+  if (!updatedCourse[0])
+    throw new ServiceError("There is a problem. Please try later.");
+  return updatedCourse;
+}
+
 module.exports = {
   createCourse,
   getCoursesByOrganization,
+  createCourseInfo,
 };

@@ -1,5 +1,5 @@
 const config = require("../../config/config");
-const KioskContentController = require("../../controllers/kiosk_content/kiosk_content");
+const KioskContentController = require("../../controllers/kiosk/kiosk_content/kiosk_content");
 const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {

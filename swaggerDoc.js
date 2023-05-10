@@ -23,8 +23,8 @@ const options = {
   apis: [
     "./controllers/authorization/authorization.js",
     "./controllers/golfbert/golfbert.js",
-    "./controllers/kiosk_courses/courses.js",
-    "./controllers/kiosk_content/kiosk_content.js",
+    "./controllers/kiosk/kiosk_courses/courses.js",
+    "./controllers/kiosk/kiosk_content/kiosk_content.js",
     "./controllers/mobile/courses.js",
     "./controllers/screenConfig/screens.js",
     "./controllers/user/user.js",

@@ -238,7 +238,24 @@ exports.put_request_with_authorization = async (data) => {
       .send(data.params);
   }
 };
-
+exports.patch_request_with_authorization = async (data) => {
+  if (data.fileupload) {
+    const dirname = __dirname;
+    return await request
+      .patch(`${config.app.apiPath}${data.endpoint}`)
+      .set("authorization", data.token)
+      .field(data.params)
+      .attach(
+        data.params.file_key || "file",
+        `${dirname}/assets/${data.params.file_path || "test.bin"}`,
+      );
+  } else {
+    return await request
+      .patch(`${config.app.apiPath}${data.endpoint}`)
+      .set("authorization", data.token)
+      .send(data.params);
+  }
+};
 exports.delete_request = async (data) => {
   return await request
     .delete(`${config.app.apiPath}${data.endpoint}`)

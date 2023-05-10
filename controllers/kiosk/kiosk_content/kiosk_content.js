@@ -2,10 +2,10 @@
 const Validator = require("validatorjs");
 
 // Common Imports
-const apiResponse = require("../../common/api.response");
-const helper = require("../../common/helper");
-const screenService = require("../../services/screenConfig/screens");
-const deviceService = require("../../services/device");
+const apiResponse = require("../../../common/api.response");
+const helper = require("../../../common/helper");
+const screenService = require("../../../services/screenConfig/screens");
+const deviceService = require("../../../services/device");
 // Logger Imports
 
 /**
