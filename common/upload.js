@@ -21,9 +21,7 @@ if (config.isCloudUpload) {
 
 exports.upload_path = uploadPath;
 exports.public_path = publicPath;
-function isIterable(parameter) {
-  return Symbol.iterator in Object(parameter);
-}
+
 const validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
   const fileExtension = this.get_file_extension(file.name)
     .toLowerCase()
@@ -215,7 +213,7 @@ exports.uploadCourseImages = async (
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
 
     const uploadedFiles = [];
-    if (!isIterable(imageFiles)) {
+    if (!Symbol.iterator in Object(imageFiles)) {
       return await uploadCourseImage(imageFiles, courseId, 3);
     }
     for (const imageFile of imageFiles) {
