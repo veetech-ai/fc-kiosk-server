@@ -12,10 +12,10 @@ const helper = require("../common/helper");
 // Services Imports
 const { getRoleByTitle } = require("../services/role");
 const deviceQueries = require("../services/device");
+const deviceOnboardingCodeServices = require("../services/kiosk/device_onboarding_code");
 
 // Configuration Imports
 const config = require("../config/config");
-const deviceOnboardingCodeServices = require("../services/kiosk/device_onboarding_code");
 const secret = config.jwt.secret;
 
 exports.validJWTNeeded = (req, res, next) => {
