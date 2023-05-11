@@ -537,7 +537,6 @@ exports.createAndInviteUser = async (params) => {
   if (user && user.email_token) throw new Error("Invitation already sent");
 
   const createdUser = await this.create_user(params);
-  console.log(createdUser.dataValues);
   const e_mail = createdUser.email;
   const name = createdUser.name;
   const userId = createdUser.id;

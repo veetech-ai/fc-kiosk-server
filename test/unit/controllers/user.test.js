@@ -12,7 +12,6 @@ const mailer = require("../../../common/email");
 const { logger } = require("../../../logger");
 const { products } = require("../../../common/products");
 const { getByPhone } = require("../../../services/otp");
-
 const {
   organizationsInApplication,
 } = require("../../../common/organizations.data.js");
@@ -63,6 +62,14 @@ const Orgs = {
     id: organizationsInApplication.zong.id,
   },
 };
+
+jest.mock("../../../middlewares/auth.validation", () => ({
+  ...jest.requireActual("../../../middlewares/auth.validation"),
+  validReCaptchaToken: jest.fn().mockImplementation((req, res, next) => {
+    next();
+  }),
+}));
+
 describe("user test cases", () => {
   beforeAll(async () => {
     tokens = await helper.get_all_roles_tokens();
