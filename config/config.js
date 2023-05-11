@@ -322,7 +322,7 @@ module.exports = {
   },
   googleCaptchaSecret:
     process.env.GOOGLE_CAPTCHA_SECRET ||
-    "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe", // default test captcha by google
+    "6LfzUPolAAAAANei6ynojgxzDrPVSoz6GOL60Txz", // default test captcha by google
   isCloudUpload:
     process.env.UPLOAD_ON_AWS === "true" ||
     process.env.UPLOAD_ON_AZURE === "true",
