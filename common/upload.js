@@ -180,12 +180,11 @@ exports.getFileURL = (key) => {
           );
         // case 2:
         //   return azureUpload.getFileUrl(key);
-        case 3:
-          {
-            const imageWithCompleteUrl = awsS3.getObjectUrl(data);
-            imagesWithCompleteUrl.push(imageWithCompleteUrl);
+        case 3: {
+          const imageWithCompleteUrl = awsS3.getObjectUrl(data);
+          imagesWithCompleteUrl.push(imageWithCompleteUrl);
           break;
-          }
+        }
         default:
           throw {
             message:
