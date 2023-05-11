@@ -56,8 +56,22 @@ async function createCourseInfo(reqBody, courseId) {
   return updatedCourse;
 }
 
+async function getCourseById(courseId) {
+  
+  const course = await Course.findOne({
+    where: {
+      id:courseId
+    },
+    attributes: {
+      exclude: ["org_id"],
+    },
+  });
+  return course;
+}
+
 module.exports = {
   createCourse,
   getCoursesByOrganization,
   createCourseInfo,
+  getCourseById,
 };
