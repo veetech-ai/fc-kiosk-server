@@ -162,8 +162,6 @@ exports.getFileURL = (key) => {
       // case 2:
       //   return azureUpload.getFileUrl(key);
       case 3:
-        const resp=awsS3.getObjectUrl(key);
-        console.log(resp);
         return awsS3.getObjectUrl(key);
       default:
         throw {
@@ -183,9 +181,10 @@ exports.getFileURL = (key) => {
         // case 2:
         //   return azureUpload.getFileUrl(key);
         case 3:
-          const imageWithCompleteUrl = awsS3.getObjectUrl(data);
-
-          imagesWithCompleteUrl.push(imageWithCompleteUrl);
+          {
+            const imageWithCompleteUrl = awsS3.getObjectUrl(data);
+            imagesWithCompleteUrl.push(imageWithCompleteUrl);
+          }
           break;
         default:
           throw {

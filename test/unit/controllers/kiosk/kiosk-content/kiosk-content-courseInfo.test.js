@@ -5,50 +5,50 @@ const upload_file = require("../../../../../common/upload");
 const { uuid } = require("uuidv4");
 const Course = models.Course;
 jest.mock("formidable", () => {
-    return {
-      IncomingForm: jest.fn().mockImplementation(() => {
-        return {
-          multiples: true,
-          parse: (req, cb) => {
-            cb(
-              null,
-              {
-                name: "Sedona Golf Club Exclusive",
-                holes: 18,
-                par: 72,
-                yards: "6900",
-                slope: "113",
-                content: "Amazing course with beautiful landscapes",
-                email: "sample123@gmail.com",
+  return {
+    IncomingForm: jest.fn().mockImplementation(() => {
+      return {
+        multiples: true,
+        parse: (req, cb) => {
+          cb(
+            null,
+            {
+              name: "Sedona Golf Club Exclusive",
+              holes: 18,
+              par: 72,
+              yards: "6900",
+              slope: "113",
+              content: "Amazing course with beautiful landscapes",
+              email: "sample123@gmail.com",
+            },
+            {
+              logo: {
+                name: "mock-logo.png",
+                type: "image/png",
+                size: 5000, // bytes
+                path: "/mock/path/to/logo.png",
               },
-              {
-                logo: {
-                  name: "mock-logo.png",
+              course_images: [
+                {
+                  name: "mock-course-image1.png",
                   type: "image/png",
                   size: 5000, // bytes
-                  path: "/mock/path/to/logo.png",
+                  path: "/mock/path/to/course-image1.png",
                 },
-                course_images: [
-                  {
-                    name: "mock-course-image1.png",
-                    type: "image/png",
-                    size: 5000, // bytes
-                    path: "/mock/path/to/course-image1.png",
-                  },
-                  {
-                    name: "mock-course-image2.png",
-                    type: "image/png",
-                    size: 5000, // bytes
-                    path: "/mock/path/to/course-image2.png",
-                  },
-                ],
-              },
-            );
-          },
-        };
-      }),
-    };
-  });
+                {
+                  name: "mock-course-image2.png",
+                  type: "image/png",
+                  size: 5000, // bytes
+                  path: "/mock/path/to/course-image2.png",
+                },
+              ],
+            },
+          );
+        },
+      };
+    }),
+  };
+});
 describe("GET /api/v1/kiosk-content/course-info", () => {
   let adminToken;
   let courseId;
@@ -134,16 +134,16 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
   };
 
   it("should successfully list screens configurtaion related to device", async () => {
-    const expected={
+    const expected = {
       name: "Sedona Golf Club Exclusive",
       holes: 18,
       par: 72,
       yards: 6900,
       slope: 113,
       content: "Amazing course with beautiful landscapes",
-    }
+    };
     const response = await makeApiRequest();
-    expect(response.body.data).toEqual(expect.objectContaining(expected))
+    expect(response.body.data).toEqual(expect.objectContaining(expected));
   });
   it("returns 403 status code Request", async () => {
     const response = await makeApiRequest({}, adminToken);

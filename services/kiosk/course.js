@@ -57,10 +57,9 @@ async function createCourseInfo(reqBody, courseId) {
 }
 
 async function getCourseById(courseId) {
-  
   const course = await Course.findOne({
     where: {
-      id:courseId
+      id: courseId,
     },
     attributes: {
       exclude: ["org_id"],

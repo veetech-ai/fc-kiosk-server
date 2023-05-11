@@ -310,8 +310,7 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
-    console.log("fields :",fields);
-    console.log("fields :",files);
+
     const logoImage = files?.logo;
     const courseImages = files?.course_images;
     const logo = await upload_file.uploadCourseImage(logoImage, courseId, 3);
@@ -320,8 +319,7 @@ exports.create_course_info = async (req, res) => {
       courseId,
       3,
     );
-    
-      
+
     const reqBody = { ...fields, logo, images };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,

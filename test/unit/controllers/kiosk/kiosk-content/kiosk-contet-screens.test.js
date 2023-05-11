@@ -62,7 +62,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
 
   const makeApiRequest = async (params, token = deviceToken) => {
     return await helper.get_request_with_authorization({
-      endpoint: `kiosk-content/course-info`,
+      endpoint: `kiosk-content/screens`,
       token: token,
     });
   };
