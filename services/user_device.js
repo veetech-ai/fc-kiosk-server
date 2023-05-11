@@ -79,12 +79,17 @@ exports.get_all_organization_devices = async (
           "hw_ver",
           "versions",
           "device_ip",
+          "gc_id",
         ],
         include: [
           {
             as: "Device_Type",
             model: models.Product,
             attributes: ["title"],
+          },
+          {
+            model: models.Course,
+            attributes: ["id", "name"],
           },
           {
             as: "Settings",
@@ -109,6 +114,7 @@ exports.get_all_organization_devices = async (
               },
             ],
           },
+          // join the gc
         ],
       },
     ],
