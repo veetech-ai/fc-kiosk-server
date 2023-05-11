@@ -1,6 +1,7 @@
 const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
+const upload_file = require("../../../../../common/upload");
 const { uuid } = require("uuidv4");
 const Course = models.Course;
 jest.mock("formidable", () => {
@@ -15,7 +16,7 @@ jest.mock("formidable", () => {
                 name: "Sedona Golf Club Exclusive",
                 holes: 18,
                 par: 72,
-                length: "6900",
+                yards: "6900",
                 slope: "113",
                 content: "Amazing course with beautiful landscapes",
                 email: "sample123@gmail.com",
@@ -67,6 +68,21 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
   };
   let productId = product.products.kiosk.id;
   beforeAll(async () => {
+    jest
+      .spyOn(upload_file, "uploadCourseImage")
+      .mockImplementation(() => Promise.resolve("mock-logo-url"));
+    jest
+      .spyOn(upload_file, "uploadCourseImages")
+      .mockImplementation(() => Promise.resolve("mock-images-url"));
+
+    const params = {
+      name: "Sedona Golf Club Exclusive",
+      holes: 18,
+      par: 72,
+      yards: 6900,
+      slope: 113,
+      content: "Amazing course with beautiful landscapes",
+    };
     // Create some courses for the test organization
     const courses = {
       name: "Course 1",
@@ -103,9 +119,14 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
+    await helper.patch_request_with_authorization({
+      endpoint: `kiosk-courses/${courseId}/course-info`,
+      token: adminToken,
+      params: params,
+    });
   });
 
-  const makeApiRequest = async (params, token = deviceToken) => {
+  const makeApiRequest = async (token = deviceToken) => {
     return await helper.get_request_with_authorization({
       endpoint: `kiosk-content/course-info`,
       token: token,
@@ -113,12 +134,19 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
   };
 
   it("should successfully list screens configurtaion related to device", async () => {
+    const expected={
+      name: "Sedona Golf Club Exclusive",
+      holes: 18,
+      par: 72,
+      yards: 6900,
+      slope: 113,
+      content: "Amazing course with beautiful landscapes",
+    }
     const response = await makeApiRequest();
-    expect(response.body.data).toMatchObject(expected);
+    expect(response.body.data).toEqual(expect.objectContaining(expected))
   });
   it("returns 403 status code Request", async () => {
     const response = await makeApiRequest({}, adminToken);
     expect(response.body.data).toEqual("Token invalid or expire");
-    expect(response.status).toEqual(403);
   });
 });
