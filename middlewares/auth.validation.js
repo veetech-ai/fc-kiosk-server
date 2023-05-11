@@ -12,6 +12,7 @@ const helper = require("../common/helper");
 // Services Imports
 const { getRoleByTitle } = require("../services/role");
 const deviceQueries = require("../services/device");
+const deviceOnboardingCodeServices = require("../services/kiosk/device_onboarding_code");
 
 // Configuration Imports
 const config = require("../config/config");
@@ -30,6 +31,28 @@ exports.validJWTNeeded = (req, res, next) => {
     return apiResponse.fail(res, "Token not provided", 401);
   }
 };
+
+exports.isValidDeviceCode = async (req, res, next) => {
+  const authCodeHeader = req.get("Device-Onboarding-Code");
+  if (authCodeHeader) {
+    // check if is the similar code
+    const isValidCode =
+      await deviceOnboardingCodeServices.isValidDeviceOnboardingCode(
+        authCodeHeader,
+      );
+
+    if (!isValidCode) {
+      return apiResponse.fail(res, "Invalid code", 401);
+    }
+
+    // refresh the token so it cannot be used again
+    await deviceOnboardingCodeServices.refreshDeviceOnboardingCode();
+    next();
+  } else {
+    return apiResponse.fail(res, "Device code not provided", 401);
+  }
+};
+
 exports.onlyDeviceAccess = (req, res, next) => {
   if (req.headers.authorization) {
     try {

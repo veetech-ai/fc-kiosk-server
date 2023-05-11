@@ -370,7 +370,7 @@ exports.create = async (req, res) => {
         let ownerId;
 
         try {
-          if (req.user.orgId) {
+          if (req?.user?.orgId) {
             ownerId = req.user.orgId;
           } else {
             // attach with test user if added by admin
@@ -393,10 +393,13 @@ exports.create = async (req, res) => {
             owner_id: ownerId,
             hw_ver,
           });
-          DeviceModel.createDeviceToken(
+          const device_token = await DeviceModel.createDeviceToken(
             created_device.id,
             created_device.serial,
           );
+          if (created_device.dataValues) {
+            created_device.setDataValue("device_token", device_token);
+          }
           try {
             await DeviceModel.set_owner_with_bill_info({
               owner_id: ownerId,
