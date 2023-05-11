@@ -184,8 +184,8 @@ exports.getFileURL = (key) => {
           {
             const imageWithCompleteUrl = awsS3.getObjectUrl(data);
             imagesWithCompleteUrl.push(imageWithCompleteUrl);
-          }
           break;
+          }
         default:
           throw {
             message:
