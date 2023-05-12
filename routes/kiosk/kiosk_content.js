@@ -9,6 +9,12 @@ exports.routesConfig = function (app, router) {
     validation_middleware.onlyDeviceAccess,
     KioskContentController.get_screens_for_device,
   ]);
+
+  router.get(kioskContentBaseUrl + "/course-info", [
+    validation_middleware.onlyDeviceAccess,
+    KioskContentController.getCourseInfo,
+  ]);
+
   router.post(kioskContentBaseUrl + "/feedback", [
     validation_middleware.onlyDeviceAccess,
     FeedbackController.create_feedback,
