@@ -40,6 +40,7 @@ exports.create_feedback = async (req, res) => {
    *       - name: contatc_medium
    *         description: contact_medium
    *         in: formData
+   *         enum: ['text', 'call']
    *         required: true
    *         type: string
    *     produces:
@@ -51,7 +52,7 @@ exports.create_feedback = async (req, res) => {
   try {
     const validation = new Validator(req.body, {
       phone: "string",
-      rating: "required||number",
+      rating: "required|integer",
       contact_medium:"string"
     });
 
