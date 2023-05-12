@@ -6,7 +6,7 @@ exports.routesConfig = function (app, router) {
   const kioskContentBaseUrl = `${config.app.apiPath}kiosk-content`;
   router.post(kioskContentBaseUrl + "/coupons", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["admin", "manage-coupons"]),
+    validation_middleware.hasAccess(["admin", "manageCoupons"]),
     KioskContentCouponsController.create,
   ]);
 };

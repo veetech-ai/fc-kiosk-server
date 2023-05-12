@@ -1,6 +1,5 @@
-const apiResponse = require("../common/api.response");
+const apiResponse = require("../../../common/api.response");
 const Validator = require("validatorjs");
-const { hasProvidedRoleRights } = require("../../../common/helper");
 const KioskCouponServices = require("../../../services/kiosk/coupons");
 /**
  * @swagger
@@ -9,7 +8,7 @@ const KioskCouponServices = require("../../../services/kiosk/coupons");
  *   description: Coupons management
  */
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   /**
    * @swagger
    *
@@ -95,8 +94,8 @@ exports.create = (req, res) => {
     try {
         const { orgId, gcId } = req.body
         const loggedInUserOrgId = req.user.orgId
-        await KioskCouponServices.isParentValid({ orgId, gcId, loggedInUserOrgId})
-        const result = await KioskCouponServices.create(req.body);
+        const validParent = await KioskCouponServices.getValidParent({ orgId: orgId, gcId, loggedInUserOrgId })
+        const result = await KioskCouponServices.create({ ...req.body, ...validParent });
         return apiResponse.success(res, req, result);
     } catch (error) {
         return apiResponse.fail(res, error.message, error.statusCode || 500);

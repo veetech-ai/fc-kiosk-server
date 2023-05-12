@@ -22,24 +22,21 @@ module.exports = {
       expiry: {
         type: Sequelize.DATE,
         allowNull: false,
-        comment: "Coupon expiry date. after this it will worthless",
+        comment: "Coupon expiry date. after this it will be worthless",
       },
       code: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: false,
+        validate: {
+          isAlphanumeric: true,
+        },
         comment: "Coupon code",
       },
       discountType: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM('fixed', 'percentage'),
         defaultValue: "fixed",
         allowNull: false,
-        validate: {
-          isIn: {
-            args: [['fixed', 'percentage']],
-            msg: 'Invalid coupon type'
-          }
-        },
         comment: "Coupon discount type. 0=fixed, 1=percentage. default is 0",
       },
       discount: {

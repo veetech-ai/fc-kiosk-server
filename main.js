@@ -106,6 +106,7 @@ const JazzCashController = require("./routes/jazzcash");
 const GolfBertRouter = require("./routes/golfbert");
 const KioskCoursesRouter = require("./routes/kiosk/kiosk_courses");
 const KioskCoursesContentRouter = require("./routes/kiosk/kiosk_content");
+const KioskCoursesContentCouponsRouter = require("./routes/kiosk/coupons");
 const CoursesRouter = require("./routes//mobile/courses");
 const ScreenConfigRouter = require("./routes//screenConfig/screens");
 const MQTTController = require("./controllers/mqtt/mqtt");
@@ -186,7 +187,9 @@ CoursesRouter.routesConfig(app, router);
 KioskCoursesRouter.routesConfig(app, router);
 ScreenConfigRouter.routesConfig(app, router);
 KioskCoursesContentRouter.routesConfig(app, router);
+KioskCoursesContentCouponsRouter.routesConfig(app, router);
 DeviceOnboardingCode.routesConfig(app, router);
+
 if (config.env === "test") {
   // for test case server
   app.use(router);

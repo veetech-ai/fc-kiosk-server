@@ -6,24 +6,21 @@ module.exports = (sequelize, DataTypes) => {
       title: DataTypes.STRING,
       description: DataTypes.STRING,
       expiry: DataTypes.DATE,
-      code: DataTypes.STRING,
-      discountType: {
+      code: {
         type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
         validate: {
-          isIn: {
-            args: [['fixed', 'percentage']],
-            msg: 'Invalid coupon type'
-          }
+          isAlphanumeric: true,
         },
       },
+      discountType: DataTypes.ENUM('fixed', 'percentage'),
       discount: DataTypes.FLOAT,
       maxUseLimit: DataTypes.INTEGER,
       usedBy: DataTypes.INTEGER,
-      couponFor: DataTypes.INTEGER,
       status: DataTypes.BOOLEAN,
       orgId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
           model: "Organization",
           key: "id",
@@ -33,7 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       gcId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
           model: "Course",
           key: "id",
@@ -42,7 +38,9 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
     },
-    {},
+    {
+      timestamps: true
+    },
   );
   Coupon.associate = function (models) {
     // associations can be defined here
