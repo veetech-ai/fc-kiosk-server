@@ -86,7 +86,6 @@ async function getLinkedCourse(courseId, orgId) {
   return course;
 }
 
-
 module.exports = {
   createCourse,
   getCoursesByOrganization,

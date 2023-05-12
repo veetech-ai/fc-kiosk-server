@@ -72,7 +72,6 @@ exports.create_lesson = async (req, res) => {
    */
 
   try {
-    console.log("innnnnnnnn");
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
 
@@ -87,12 +86,9 @@ exports.create_lesson = async (req, res) => {
     const isSameOrganizationResource = loggedInUserOrg === orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource)
       return apiResponse.fail(res, "", 403);
-    const isLinked = await courseService.getLinkedCourse(
-      courseId,
-      orgId,
-    );
+    const isLinked = await courseService.getLinkedCourse(courseId, orgId);
     console.log(!isLinked);
-    if (!isLinked) {
+    if (isLinked) {
       const form = new formidable.IncomingForm();
       form.multiples = true;
       const { fields, files } = await new Promise((resolve, reject) => {
