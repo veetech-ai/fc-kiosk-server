@@ -30,7 +30,7 @@ module.exports = {
         allowNull: false,
         comment: "Coupon code",
       },
-      discount_type: {
+      discountType: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
         allowNull: false,
@@ -41,38 +41,26 @@ module.exports = {
         allowNull: false,
         comment: "Coupon discount rate",
       },
-      max_use_limit: {
+      maxUseLimit: {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
         comment:
           "Coupon maximum use limit. default value is null, means limited user can use it.",
       },
-      used_by: {
+      usedBy: {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: 0,
         comment:
           "Coupon used by user(s). will tell us that how many users used this token.",
       },
-      coupon_for: {
+      couponFor: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
         comment:
           "Specify that this coupon is for users or device type. default value is 0. 0=users, 1=device_type",
-      },
-      users: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        comment:
-          "Coupon for specific user. contianer commma separated user IDs. default value is null, means for all users",
-      },
-      device_types: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        comment:
-          "Coupon for specific device type. contianer commma separated device type IDs. default value is null, means for all device type",
       },
       status: {
         type: Sequelize.BOOLEAN,

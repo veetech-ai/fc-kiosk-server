@@ -8,13 +8,23 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user_id: {
+      deviceId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      coupon_id: {
+      gcId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+      },
+      couponId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Coupons",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,

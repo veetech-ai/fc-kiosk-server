@@ -1,28 +1,26 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Coupons = sequelize.define(
-    "Coupons",
+  const Coupon = sequelize.define(
+    "Coupon",
     {
       title: DataTypes.STRING,
       description: DataTypes.STRING,
       expiry: DataTypes.DATE,
       code: DataTypes.STRING,
-      discount_type: DataTypes.INTEGER,
+      discountType: DataTypes.INTEGER,
       discount: DataTypes.FLOAT,
-      max_use_limit: DataTypes.INTEGER,
-      used_by: DataTypes.INTEGER,
-      coupon_for: DataTypes.INTEGER,
-      users: DataTypes.STRING,
-      device_types: DataTypes.STRING,
+      maxUseLimit: DataTypes.INTEGER,
+      usedBy: DataTypes.INTEGER,
+      couponFor: DataTypes.INTEGER,
       status: DataTypes.BOOLEAN,
     },
     {},
   );
-  Coupons.associate = function (models) {
+  Coupon.associate = function (models) {
     // associations can be defined here
-    models.Coupons.hasMany(models.Coupon_Used, {
+    models.Coupon.hasMany(models.Coupon_Used, {
       as: "Coupon_Used",
-      foreignKey: "coupon_id",
+      foreignKey: "couponId",
     });
   };
   return Coupons;
