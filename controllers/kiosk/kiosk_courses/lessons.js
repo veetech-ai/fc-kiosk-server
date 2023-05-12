@@ -72,8 +72,7 @@ exports.create_lesson = async (req, res) => {
    */
 
   try {
-    const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
+
 
     const courseId = Number(req.params.courseId);
     const orgId = Number(req.params.orgId);
@@ -83,9 +82,6 @@ exports.create_lesson = async (req, res) => {
     if (!orgId) {
       return apiResponse.fail(res, "orgId must be a valid number");
     }
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource)
-      return apiResponse.fail(res, "", 403);
     const isLinked = await courseService.getLinkedCourse(courseId, orgId);
     if (isLinked) {
       const form = new formidable.IncomingForm();
@@ -109,8 +105,8 @@ exports.create_lesson = async (req, res) => {
       const image = await upload_file.uploadImage(
         coachImage,
         courseId,
-        3,
         "coach-images/",
+        3
       );
       const reqBody = { ...fields, image };
       const coach = await courseLesson.createCoach(reqBody, courseId, orgId);
@@ -171,6 +167,8 @@ exports.update_lesson = async (req, res) => {
    */
 
   try {
+    // const loggedInUserOrg = req.user?.orgId;
+    // const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
     const lessonId = Number(req.params.lessonId);
     if (!lessonId) {
       return apiResponse.fail(res, "lessonId must be a valid number");
@@ -197,8 +195,9 @@ exports.update_lesson = async (req, res) => {
     const image = await upload_file.uploadImage(
       coachImage,
       lessonId,
-      3,
       "coach-images/",
+      3
+     
     );
     const reqBody = { ...fields, image };
     const updatedCoach = await courseLesson.updateCoach(reqBody, lessonId);
