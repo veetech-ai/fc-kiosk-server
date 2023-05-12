@@ -87,7 +87,6 @@ exports.create_lesson = async (req, res) => {
     if (!isSuperOrAdmin && !isSameOrganizationResource)
       return apiResponse.fail(res, "", 403);
     const isLinked = await courseService.getLinkedCourse(courseId, orgId);
-    console.log(!isLinked);
     if (isLinked) {
       const form = new formidable.IncomingForm();
       form.multiples = true;
