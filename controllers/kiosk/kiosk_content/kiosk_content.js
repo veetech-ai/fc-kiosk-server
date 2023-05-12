@@ -65,8 +65,11 @@ exports.getCourseInfo = async (req, res) => {
     const courseInfo = await courseService.getCourseById(courseId);
     const logo = upload_file.getFileURL(courseInfo.logo);
     const images = upload_file.getFileURL(courseInfo.images);
-    const response = { ...courseInfo.dataValues, logo, images };
-    return apiResponse.success(res, req, response);
+
+    courseInfo.setDataValue("logo", logo);
+    courseInfo.setDataValue("images", images);
+
+    return apiResponse.success(res, req, courseInfo);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

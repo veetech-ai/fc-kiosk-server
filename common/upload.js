@@ -154,7 +154,9 @@ exports.getHost = () => {
 
 exports.getFileURL = (key) => {
   const imagesWithCompleteUrl = [];
+
   if (!key) return null; // Return null if no key found
+
   if (typeof key === "string") {
     switch (defaultUploadOn) {
       case 1:
@@ -170,6 +172,7 @@ exports.getFileURL = (key) => {
         };
     }
   }
+
   if (Array.isArray(key)) {
     for (const data of key) {
       switch (defaultUploadOn) {
@@ -195,6 +198,7 @@ exports.getFileURL = (key) => {
     return imagesWithCompleteUrl;
   }
 };
+
 exports.uploadCourseImage = async (
   imageFile,
   courseId,

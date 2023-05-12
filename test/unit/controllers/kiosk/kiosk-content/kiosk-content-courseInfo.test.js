@@ -1,9 +1,8 @@
 const helper = require("../../../../helper");
-const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const upload_file = require("../../../../../common/upload");
 const { uuid } = require("uuidv4");
-const Course = models.Course;
+
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -49,24 +48,15 @@ jest.mock("formidable", () => {
     }),
   };
 });
+
 describe("GET /api/v1/kiosk-content/course-info", () => {
   let adminToken;
   let courseId;
   let deviceId;
   let deviceToken;
   let testOrganizationId = 1;
-  const expected = {
-    courseInfo: true,
-    coupons: true,
-    lessons: true,
-    statistics: true,
-    memberships: true,
-    feedback: true,
-    careers: true,
-    shop: true,
-    faq: true,
-  };
   let productId = product.products.kiosk.id;
+
   beforeAll(async () => {
     jest
       .spyOn(upload_file, "uploadCourseImage")
@@ -75,7 +65,7 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
       .spyOn(upload_file, "uploadCourseImages")
       .mockImplementation(() => Promise.resolve("mock-images-url"));
 
-    const params = {
+    const courseInfoReqBody = {
       name: "Sedona Golf Club Exclusive",
       holes: 18,
       par: 72,
@@ -83,46 +73,52 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
       slope: 113,
       content: "Amazing course with beautiful landscapes",
     };
+
     // Create some courses for the test organization
-    const courses = {
+    const coursesReqBody = {
       name: "Course 1",
       city: "Test City 1",
       state: "Test State 1",
       orgId: testOrganizationId,
     };
-    const bodyData = {
+    const deviceReqBody = {
       serial: uuid(),
       pin_code: 1111,
       device_type: productId,
     };
 
     adminToken = await helper.get_token_for("admin");
+
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses/create",
       token: adminToken,
-      params: courses,
+      params: coursesReqBody,
     });
     courseId = course.body.data.id;
+
     const device_created = await helper.post_request_with_authorization({
       endpoint: "device/create",
       token: adminToken,
-      params: bodyData,
+      params: deviceReqBody,
     });
     deviceId = device_created.body.data.id;
+
     await helper.put_request_with_authorization({
       endpoint: `device/${deviceId}/courses/${courseId}/link`,
       params: {},
       token: adminToken,
     });
+
     const device = await helper.get_request_with_authorization({
       endpoint: `device/${deviceId}`,
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
+
     await helper.patch_request_with_authorization({
       endpoint: `kiosk-courses/${courseId}/course-info`,
       token: adminToken,
-      params: params,
+      params: courseInfoReqBody,
     });
   });
 
@@ -133,7 +129,7 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
     });
   };
 
-  it("should successfully list screens configurtaion related to device", async () => {
+  it("should successfully list screens configuration related to device", async () => {
     const expected = {
       name: "Sedona Golf Club Exclusive",
       holes: 18,
@@ -145,6 +141,7 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
     const response = await makeApiRequest();
     expect(response.body.data).toEqual(expect.objectContaining(expected));
   });
+
   it("returns 403 status code Request", async () => {
     const response = await makeApiRequest({}, adminToken);
     expect(response.body.data).toEqual("Token invalid or expire");
