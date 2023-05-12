@@ -168,13 +168,14 @@ exports.getFileURL = (key) => {
       };
   }
 };
-exports.uploadCourseImage = async (
+exports.uploadImage = async (
   imageFile,
   courseId,
   uploadOn = defaultUploadOn,
+  path
 ) => {
   try {
-    const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
+    const newpath = `${this.upload_path}${path}${courseId}`;
     const fileName = this.rename_file(imageFile.name);
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
     validateFile(
@@ -203,13 +204,14 @@ exports.uploadCourseImage = async (
     throw err.status ? err : { message: err.message };
   }
 };
-exports.uploadCourseImages = async (
+exports.uploadImages = async (
   imageFiles,
   courseId,
   uploadOn = defaultUploadOn,
+  path
 ) => {
   try {
-    const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
+    const newpath = `${this.upload_path}${path}${courseId}`;
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
 
     const uploadedFiles = [];

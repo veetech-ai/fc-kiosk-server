@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     "Coach",
     {
       gcId: {
+        field:"gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -14,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       orgId: {
+        field:"org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
