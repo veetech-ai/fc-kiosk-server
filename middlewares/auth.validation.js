@@ -56,8 +56,8 @@ exports.isValidDeviceCode = async (req, res, next) => {
 exports.onlyDeviceAccess = (req, res, next) => {
   if (req.headers.authorization) {
     try {
-      req.user = jwt.verify(req.headers.authorization, secret);
-      if (!Object.prototype.hasOwnProperty.call(req.user, "serial")) {
+      req.device = jwt.verify(req.headers.authorization, secret);
+      if (!Object.prototype.hasOwnProperty.call(req.device, "serial")) {
         return apiResponse.fail(res, "Token invalid or expire", 403);
       }
       return next();
