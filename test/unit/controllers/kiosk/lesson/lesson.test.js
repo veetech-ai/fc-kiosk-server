@@ -94,16 +94,6 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
     const params = {};
     const response = await makeApiRequest(
-      courseId="",
-      orgId="",
-      params,
-    );
-    // expect(response.body.data).toEqual("You are not allowed");
-    console.log("res`",response.body);
-  });
-  it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
-    const params = {};
-    const response = await makeApiRequest(
       courseId,
       orgId,
       params,
