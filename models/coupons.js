@@ -7,12 +7,40 @@ module.exports = (sequelize, DataTypes) => {
       description: DataTypes.STRING,
       expiry: DataTypes.DATE,
       code: DataTypes.STRING,
-      discountType: DataTypes.INTEGER,
+      discountType: {
+        type: DataTypes.STRING,
+        validate: {
+          isIn: {
+            args: [['fixed', 'percentage']],
+            msg: 'Invalid coupon type'
+          }
+        },
+      },
       discount: DataTypes.FLOAT,
       maxUseLimit: DataTypes.INTEGER,
       usedBy: DataTypes.INTEGER,
       couponFor: DataTypes.INTEGER,
       status: DataTypes.BOOLEAN,
+      orgId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Organization",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      gcId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Course",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
     },
     {},
   );
@@ -22,6 +50,15 @@ module.exports = (sequelize, DataTypes) => {
       as: "Coupon_Used",
       foreignKey: "couponId",
     });
+    models.Coupon.belongsTo(models.Organization, {
+      as: "Organization",
+      foreignKey: "orgId",
+    });
+
+    models.Coupon.belongsTo(models.Course, {
+      as: "Course",
+      foreignKey: "gcId",
+    });
   };
-  return Coupons;
+  return Coupon;
 };

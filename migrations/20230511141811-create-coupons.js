@@ -31,9 +31,15 @@ module.exports = {
         comment: "Coupon code",
       },
       discountType: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
+        type: Sequelize.STRING,
+        defaultValue: "fixed",
         allowNull: false,
+        validate: {
+          isIn: {
+            args: [['fixed', 'percentage']],
+            msg: 'Invalid coupon type'
+          }
+        },
         comment: "Coupon discount type. 0=fixed, 1=percentage. default is 0",
       },
       discount: {
@@ -55,12 +61,25 @@ module.exports = {
         comment:
           "Coupon used by user(s). will tell us that how many users used this token.",
       },
-      couponFor: {
+      orgId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-        comment:
-          "Specify that this coupon is for users or device type. default value is 0. 0=users, 1=device_type",
+        allowNull: true,
+        references: {
+          model: "Organizations",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      gcId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "Courses",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       status: {
         type: Sequelize.BOOLEAN,

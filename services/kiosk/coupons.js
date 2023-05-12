@@ -186,26 +186,24 @@ exports.use_increment = (id) => {
     });
 };
 
-exports.isParentValid = async ({couponFor, parentId, loggedInUserOrgId}) => {
+exports.isParentValid = async ({ orgId, gcId, loggedInUserOrgId }) => {
     let parent = null;
     let isParentValid = false;
+    if (!orgId && !gcId && !loggedInUserOrgId) throw new ServiceError("Parent resource id is required", 400)
 
-    if (!parentId && !loggedInUserOrgId) throw new ServiceError("Parent id is required", 400)
-
-    if (couponFor == "organization") {
-
-        if (loggedInUserOrgId && !parentId) parentId = loggedInUserOrgId
-        
-        if (loggedInUserOrgId && parentId !== loggedInUserOrgId) throw new ServiceError("You are not allowed", 403);
-        
-        parent = await organizationServices.findById(parentId)
-    } else if (couponFor == "golfcourse") {
-        if (!parentId) throw new ServiceError("Parent id is required", 400);
+    if (gcId) {
         const where = {
-            id: parentId
+            id: gcId
         }
         if (loggedInUserOrgId) where.orgId = loggedInUserOrgId
         parent = await courseServices.getOne(where)
+    } else if (orgId || loggedInUserOrgId) {
+
+        if (loggedInUserOrgId && !orgId) orgId = loggedInUserOrgId
+
+        if (loggedInUserOrgId && orgId !== loggedInUserOrgId) throw new ServiceError("You are not allowed", 403);
+        parent = await organizationServices.findById(orgId)
+
     }
 
     if (!parent) throw new ServiceError("Parent does not exist", 404)

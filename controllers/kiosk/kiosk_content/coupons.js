@@ -5,7 +5,7 @@ const KioskCouponServices = require("../../../services/kiosk/coupons");
 /**
  * @swagger
  * tags:
- *   name: Coupons
+ *   name: Kiosk-Courses-Content-Coupons
  *   description: Coupons management
  */
 
@@ -13,12 +13,12 @@ exports.create = (req, res) => {
   /**
    * @swagger
    *
-   * kiosk-content/coupon:
+   * kiosk-content/coupons:
    *   post:
    *     security:
    *      - auth: []
    *     description: Create new Coupon
-   *     tags: [Coupons]
+   *     tags: [Kiosk-Courses-Content-Coupons]
    *     consumes:
    *       - application/x-www-form-urlencoded
    *     produces:
@@ -44,11 +44,14 @@ exports.create = (req, res) => {
    *         in: formData
    *         required: true
    *         type: string
-   *       - name: discount_type
+   *       - name: discountType
    *         description: Coupon discount type (fixed or percentage)
    *         in: formData
    *         required: true
    *         type: string
+   *         enum: 
+   *           - fixed
+   *           - percentage
    *       - name: discount
    *         description: discount rate
    *         in: formData
@@ -59,13 +62,13 @@ exports.create = (req, res) => {
    *         in: formData
    *         required: true
    *         type: number
-   *       - name: couponFor
-   *         description: Coupon for golf course or the organization - golfcourse or organization 
+   *       - name: orgId
+   *         description: The organization with which the coupon is going to be attached.
    *         in: formData
-   *         required: true
-   *         type: string
-   *       - name: parentId
-   *         description: The resource with which the coupon is going to be attached, it can either be organization id or golf course id
+   *         required: false
+   *         type: number
+   *       - name: gcId
+   *         description: The gold course with which the coupon is going to be attached.
    *         in: formData
    *         required: false
    *         type: number
@@ -84,16 +87,15 @@ exports.create = (req, res) => {
       code: "required",
       discountType: "required",
       discount: "required",
-      maxUserLimit: "required",
-      couponFor: "required",
+      maxUseLimit: "required",
     });
 
     if (validation.fails()) return apiResponse.fail(res, validation.errors);
 
     try {
-        const { couponFor, parentId } = req.body
+        const { orgId, gcId } = req.body
         const loggedInUserOrgId = req.user.orgId
-        await KioskCouponServices.isParentValid({couponFor, parentId, loggedInUserOrgId})
+        await KioskCouponServices.isParentValid({ orgId, gcId, loggedInUserOrgId})
         const result = await KioskCouponServices.create(req.body);
         return apiResponse.success(res, req, result);
     } catch (error) {
