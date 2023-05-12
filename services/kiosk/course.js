@@ -65,6 +65,10 @@ async function getCourseById(courseId) {
       exclude: ["org_id"],
     },
   });
+
+  if (!course) {
+    throw new ServiceError("Course not found", 404);
+  }
   return course;
 }
 

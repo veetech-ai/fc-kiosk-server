@@ -3,7 +3,6 @@ const Validator = require("validatorjs");
 
 // Common Imports
 const apiResponse = require("../../../common/api.response");
-const helper = require("../../../common/helper");
 const screenService = require("../../../services/screenConfig/screens");
 const deviceService = require("../../../services/device");
 const courseService = require("../../../services/kiosk/course");
@@ -34,7 +33,7 @@ exports.get_screens_for_device = async (req, res) => {
    */
 
   try {
-    const deviceId = req.user.id; // device Id
+    const deviceId = req.device.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const screens = await screenService.getScreensByCourses(courseId);
     return apiResponse.success(res, req, screens);
@@ -61,7 +60,7 @@ exports.getCourseInfo = async (req, res) => {
    */
 
   try {
-    const deviceId = req.user.id; // device Id
+    const deviceId = req.device.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const courseInfo = await courseService.getCourseById(courseId);
     const logo = upload_file.getFileURL(courseInfo.logo);
