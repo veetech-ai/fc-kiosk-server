@@ -55,9 +55,24 @@ async function createCourseInfo(reqBody, courseId) {
     throw new ServiceError("There is a problem. Please try later.");
   return updatedCourse;
 }
+async function getCourseById(courseId) {
+  const course = await Course.findOne({
+    where: {
+      id: courseId,
+    },
+    attributes: {
+      exclude: ["org_id"],
+    },
+  });
 
+  if (!course) {
+    throw new ServiceError("Course not found", 404);
+  }
+  return course;
+}
 module.exports = {
   createCourse,
   getCoursesByOrganization,
   createCourseInfo,
+  getCourseById,
 };
