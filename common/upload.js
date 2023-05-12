@@ -171,8 +171,8 @@ exports.getFileURL = (key) => {
 exports.uploadImage = async (
   imageFile,
   courseId,
-  uploadOn = defaultUploadOn,
   path,
+  uploadOn = defaultUploadOn,
 ) => {
   if (!imageFile) return null;
   try {
@@ -208,9 +208,10 @@ exports.uploadImage = async (
 exports.uploadImages = async (
   imageFiles,
   courseId,
-  uploadOn = defaultUploadOn,
   path,
+  uploadOn = defaultUploadOn,
 ) => {
+  if (!imageFiles) return null;
   try {
     const newpath = `${this.upload_path}${path}${courseId}`;
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });

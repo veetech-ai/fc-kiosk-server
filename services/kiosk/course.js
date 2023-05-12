@@ -55,9 +55,41 @@ async function createCourseInfo(reqBody, courseId) {
     throw new ServiceError("There is a problem. Please try later.");
   return updatedCourse;
 }
+async function getCourseById(courseId) {
+  const course = await Course.findOne({
+    where: {
+      id: courseId,
+    },
+    attributes: {
+      exclude: ["org_id"],
+    },
+  });
+  if (!course) {
+    throw new ServiceError("Not found", 404);
+  }
+  return course;
+}
+
+async function getLinkedCourse(courseId, orgId) {
+  const course = await Course.findOne({
+    where: {
+      id: courseId,
+      orgId,
+    },
+    attributes: {
+      exclude: ["org_id"],
+    },
+  });
+  if (!course) {
+    throw new ServiceError("Not found", 404);
+  }
+  return course;
+}
+
 
 module.exports = {
   createCourse,
   getCoursesByOrganization,
   createCourseInfo,
+  getLinkedCourse,
 };

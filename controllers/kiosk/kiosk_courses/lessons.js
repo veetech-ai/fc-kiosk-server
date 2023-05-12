@@ -8,6 +8,7 @@ const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseLesson = require("../../../services/kiosk/lessons");
+const courseService = require("../../../services/kiosk/course");
 
 /**
  * @swagger
@@ -71,43 +72,55 @@ exports.create_lesson = async (req, res) => {
    */
 
   try {
+    console.log("innnnnnnnn");
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
+
     const courseId = Number(req.params.courseId);
     const orgId = Number(req.params.orgId);
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const form = new formidable.IncomingForm();
-    form.multiples = true;
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
-      });
-    });
-    const validation = new Validator(fields, {
-      name: "string",
-      title: "string",
-      content: "string",
-      timings: "string",
-    });
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
+    if (!orgId) {
+      return apiResponse.fail(res, "orgId must be a valid number");
     }
-    const coachImage = files.coachImage;
-    const image = await upload_file.uploadImage(
-      coachImage,
-      courseId,
-      3,
-      "coach-images/",
-    );
-    const reqBody = { ...fields, image };
-
-    const updatedCoach = await courseLesson.createCoach(
-      reqBody,
+    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource)
+      return apiResponse.fail(res, "", 403);
+    const isLinked = await courseService.getLinkedCourse(
       courseId,
       orgId,
     );
-    return apiResponse.success(res, req, updatedCoach);
+    console.log(!isLinked);
+    if (!isLinked) {
+      const form = new formidable.IncomingForm();
+      form.multiples = true;
+      const { fields, files } = await new Promise((resolve, reject) => {
+        form.parse(req, (err, fields, files) => {
+          if (err) reject(err);
+          resolve({ fields, files });
+        });
+      });
+      const validation = new Validator(fields, {
+        name: "string",
+        title: "string",
+        content: "string",
+        timings: "string",
+      });
+      if (validation.fails()) {
+        return apiResponse.fail(res, validation.errors);
+      }
+      const coachImage = files.coachImage;
+      const image = await upload_file.uploadImage(
+        coachImage,
+        courseId,
+        3,
+        "coach-images/",
+      );
+      const reqBody = { ...fields, image };
+      const coach = await courseLesson.createCoach(reqBody, courseId, orgId);
+      return apiResponse.success(res, req, coach);
+    }
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

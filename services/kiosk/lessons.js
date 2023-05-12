@@ -11,7 +11,7 @@ async function createCoach(reqBody, gcId, orgId) {
   if (!coach) {
     throw new ServiceError("Something Went wrong", 401);
   }
-  return Coach;
+  return coach;
 }
 async function updateCoach(reqBody, lessonId) {
   const updatedCoach = await Coach.update(
