@@ -16,7 +16,7 @@ const courseLesson = require("../../../services/kiosk/lessons");
  *   description: Web Portal Courses API's
  */
 exports.create_lesson = async (req, res) => {
-   /**
+  /**
    * @swagger
    *
    * /kiosk-courses/{orgId}/{courseId}/lesson:
@@ -53,7 +53,7 @@ exports.create_lesson = async (req, res) => {
    *         in: formData
    *         required: false
    *         type: string
-   *       - name: timmings
+   *       - name: timings
    *         description: availability if coach
    *         in: formData
    *         required: false
@@ -69,8 +69,8 @@ exports.create_lesson = async (req, res) => {
    *       200:
    *         description: success
    */
-  
-   try {
+
+  try {
     const courseId = Number(req.params.courseId);
     const orgId = Number(req.params.orgId);
     if (!courseId) {
@@ -88,20 +88,24 @@ exports.create_lesson = async (req, res) => {
       name: "string",
       title: "string",
       content: "string",
-      timmings: "string",
+      timings: "string",
     });
-
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
     const coachImage = files.coachImage;
-    const image = await upload_file.uploadImage(coachImage, courseId, 3,'coach-images/');
+    const image = await upload_file.uploadImage(
+      coachImage,
+      courseId,
+      3,
+      "coach-images/",
+    );
     const reqBody = { ...fields, image };
-   
+
     const updatedCoach = await courseLesson.createCoach(
       reqBody,
       courseId,
-      orgId
+      orgId,
     );
     return apiResponse.success(res, req, updatedCoach);
   } catch (error) {
@@ -109,7 +113,7 @@ exports.create_lesson = async (req, res) => {
   }
 };
 exports.update_lesson = async (req, res) => {
-      /**
+  /**
    * @swagger
    *
    * /kiosk-courses/lesson/{lessonId}:
@@ -123,7 +127,7 @@ exports.update_lesson = async (req, res) => {
    *     parameters:
    *       - name: lessonId
    *         description: id of lesson
-   *         in: formData
+   *         in: path
    *         required: true
    *         type: integer
    *       - name: name
@@ -141,7 +145,7 @@ exports.update_lesson = async (req, res) => {
    *         in: formData
    *         required: false
    *         type: string
-   *       - name: timmings
+   *       - name: timings
    *         description: availability if coach
    *         in: formData
    *         required: false
@@ -157,41 +161,41 @@ exports.update_lesson = async (req, res) => {
    *       200:
    *         description: success
    */
-  
-    try {
-      const lessonId = Number(req.params.lessonId);
-      if (!lessonId) {
-        return apiResponse.fail(res, "lessonId must be a valid number");
-      }
-      const form = new formidable.IncomingForm();
-      form.multiples = true;
-      const { fields, files } = await new Promise((resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
-          if (err) reject(err);
-          resolve({ fields, files });
-        });
-      });
-      const validation = new Validator(fields, {
-        name: "string",
-        title: "string",
-        content: "string",
-        timmings: "string",
-      });
-  
-      if (validation.fails()) {
-        return apiResponse.fail(res, validation.errors);
-      }
-      const coachImage = files.coachImage;
-      const image = await upload_file.uploadImage(coachImage, courseId, 3,'coach-images/');
-      const reqBody = { ...fields, image };
-     
-      const updatedCoach = await courseLesson.updateCoach(
-        reqBody,
-        lessonId,
-      );
-      return apiResponse.success(res, req, updatedCoach);
-    } catch (error) {
-      return apiResponse.fail(res, error.message, error.statusCode || 500);
-    }
-  };
 
+  try {
+    const lessonId = Number(req.params.lessonId);
+    if (!lessonId) {
+      return apiResponse.fail(res, "lessonId must be a valid number");
+    }
+    const form = new formidable.IncomingForm();
+    form.multiples = true;
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        resolve({ fields, files });
+      });
+    });
+    const validation = new Validator(fields, {
+      name: "string",
+      title: "string",
+      content: "string",
+      timings: "string",
+    });
+
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+    const coachImage = files.coachImage;
+    const image = await upload_file.uploadImage(
+      coachImage,
+      lessonId,
+      3,
+      "coach-images/",
+    );
+    const reqBody = { ...fields, image };
+    const updatedCoach = await courseLesson.updateCoach(reqBody, lessonId);
+    return apiResponse.success(res, req, updatedCoach);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};

@@ -172,8 +172,9 @@ exports.uploadImage = async (
   imageFile,
   courseId,
   uploadOn = defaultUploadOn,
-  path
+  path,
 ) => {
+  if (!imageFile) return null;
   try {
     const newpath = `${this.upload_path}${path}${courseId}`;
     const fileName = this.rename_file(imageFile.name);
@@ -208,7 +209,7 @@ exports.uploadImages = async (
   imageFiles,
   courseId,
   uploadOn = defaultUploadOn,
-  path
+  path,
 ) => {
   try {
     const newpath = `${this.upload_path}${path}${courseId}`;

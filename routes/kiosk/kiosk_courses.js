@@ -1,6 +1,6 @@
 const config = require("../../config/config");
 const CoursesController = require("../../controllers/kiosk/kiosk_courses/courses");
-const CourseLessonsController= require("../../controllers/kiosk/kiosk_courses/lessons");
+const CourseLessonsController = require("../../controllers/kiosk/kiosk_courses/lessons");
 const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
