@@ -70,5 +70,5 @@ module.exports = {
   createCourse,
   getCoursesByOrganization,
   createCourseInfo,
-  getCourseById
+  getCourseById,
 };

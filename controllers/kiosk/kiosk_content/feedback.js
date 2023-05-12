@@ -6,7 +6,7 @@ const helper = require("../../../common/helper");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
-const feedbackService=require("../../../services/kiosk/feedback")
+const feedbackService = require("../../../services/kiosk/feedback");
 
 /**
  * @swagger
@@ -53,22 +53,26 @@ exports.create_feedback = async (req, res) => {
     const validation = new Validator(req.body, {
       phone: "string",
       rating: "required|integer",
-      contact_medium:"string"
+      contact_medium: "string",
     });
 
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const {phone,rating,contact_medium } = req.body;
+    const { phone, rating, contact_medium } = req.body;
 
     const deviceId = req.user.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
-    const course=await courseService.getCourseById(courseId)
-    const orgId=course.orgId
+    const course = await courseService.getCourseById(courseId);
+    const orgId = course.orgId;
     const reqBody = {
-      phone,rating,contact_medium,gc_id:courseId,orgId
-  };
+      phone,
+      rating,
+      contact_medium,
+      gc_id: courseId,
+      orgId,
+    };
 
     const feedback = await feedbackService.createFeedback(reqBody);
     return apiResponse.success(res, req, feedback);

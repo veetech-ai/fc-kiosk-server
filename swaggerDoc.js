@@ -67,7 +67,6 @@ const options = {
     "./controllers/test.js",
     "./controllers/org_user_rel_fp_user.js",
     "./controllers/roles/index.js",
-    
   ],
 };
 

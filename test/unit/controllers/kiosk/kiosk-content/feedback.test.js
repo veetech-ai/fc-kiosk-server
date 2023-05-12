@@ -53,30 +53,31 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     return await helper.post_request_with_authorization({
       endpoint: `kiosk-content/feedback`,
       token: token,
-      params:params
+      params: params,
     });
   };
 
   it("should successfully return registerd feedback with valid input", async () => {
-    const reqBody={
-        phoneNumber:"",
-        rating:3,
-        contact_medium:"text"
-    }
+    const reqBody = {
+      phoneNumber: "",
+      rating: 3,
+      contact_medium: "text",
+    };
     const response = await makeApiRequest(reqBody);
-    expect(response.body.data.rating).toEqual(reqBody.rating)
-    expect(response.body.data.contact_medium).toEqual(reqBody.contact_medium)
-    expect(response.body.data.phoneNumber).toEqual(undefined)
+    expect(response.body.data.rating).toEqual(reqBody.rating);
+    expect(response.body.data.contact_medium).toEqual(reqBody.contact_medium);
+    expect(response.body.data.phoneNumber).toEqual(undefined);
   });
   it("should return validation error invalid input", async () => {
-    const reqBody={
-        phoneNumber:"12312312",
-        rating:3,
-        contact_medium:"text"
-    }
+    const reqBody = {
+      phoneNumber: "12312312",
+      rating: 3,
+      contact_medium: 12,
+    };
     const response = await makeApiRequest(reqBody);
-
-    expect
+    console.log("response :",response.body.data.errors);
+    expect(response.body.data.errors).toEqual({ contact_medium: [ 'The contact medium must be a string.' ] })
+    
   });
   it("returns 403 status code Request", async () => {
     const response = await makeApiRequest({}, adminToken);
