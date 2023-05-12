@@ -219,7 +219,7 @@ exports.uploadImages = async (
     const uploadedFiles = [];
     const isIterable = Symbol.iterator in Object(imageFiles);
     if (!isIterable) {
-      return await this.uploadCourseImage(imageFiles, courseId, 3);
+      return await this.uploadImage(imageFiles, courseId, 3);
     }
     for (const imageFile of imageFiles) {
       validateFile(
