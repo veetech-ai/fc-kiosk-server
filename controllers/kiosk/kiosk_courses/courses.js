@@ -277,54 +277,116 @@ exports.create_course_info = async (req, res) => {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
     const form = new formidable.IncomingForm();
-    form.multiples = true;
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
+    form.parse(req, function (err, fields, files) {
+      if (err) return apiResponse.fail(res, err.message);
+      const validation = new Validator(fields, {
+        name: "string",
+        holes: "integer",
+        par: "integer",
+        slope: "integer",
+        content: "string",
+        email: "string",
+        yards: "integer",
+        year_built: "integer",
+        architects: "string",
+        greens: "string",
+        fairways: "string",
+        members: "string",
+        season: "string",
+        phone: "string",
+        country: "string",
+        state: "string",
+        zip: "integer",
+        city: "string",
+        long: "numeric",
+        lat: "numeric",
+        street: "string",
+      });
+      console.log("uuuuuuu");
+      validation.fails(function () {
+        return apiResponse.fail(res, validation.errors);
+      });
+
+      validation.passes(async function () {
+        console.log("pppppp");
+        try {
+          const logoImage = files.logo;
+          const courseImages = files.course_images;
+          const logo = await upload_file.uploadCourseImage(
+            logoImage,
+            courseId,
+            3,
+          );
+          const images = await upload_file.uploadCourseImages(
+            courseImages,
+            courseId,
+            3,
+          );
+          console.log("images :",logo);
+            console.log("images :",images);
+          const reqBody = { ...fields, logo, images };
+          console.log(reqBody);
+          const updatedCourse = await courseService.createCourseInfo(
+            reqBody,
+            courseId,
+          );
+          return apiResponse.success(res, req, updatedCourse);
+        } catch (err) {
+          if (err == "exists")
+            return apiResponse.fail(res, "Firmware already exists");
+          else return apiResponse.fail(res, err.message, 500);
+        }
       });
     });
-    const validation = new Validator(fields, {
-      name: "string",
-      holes: "integer",
-      par: "integer",
-      slope: "integer",
-      content: "string",
-      email: "string",
-      yards: "integer",
-      year_built: "integer",
-      architects: "string",
-      greens: "string",
-      fairways: "string",
-      members: "string",
-      season: "string",
-      phone: "string",
-      country: "string",
-      state: "string",
-      zip: "integer",
-      city: "string",
-      long: "numeric",
-      lat: "numeric",
-      street: "string",
-    });
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
-    const logoImage = files.logo;
-    const courseImages = files.course_images;
-    const logo = await upload_file.uploadCourseImage(logoImage, courseId, 3);
-    const images = await upload_file.uploadCourseImages(
-      courseImages,
-      courseId,
-      3,
-    );
+    // const form = new formidable.IncomingForm();
+    // form.multiples = true;
+    // const { fields, files } = await new Promise((resolve, reject) => {
+    //   form.parse(req, (err, fields, files) => {
+    //     if (err) reject(err);
+    //     resolve({ fields, files });
+    //   });
+    // });
+    // const validation = new Validator(fields, {
+    //   name: "string",
+    //   holes: "integer",
+    //   par: "integer",
+    //   slope: "integer",
+    //   content: "string",
+    //   email: "string",
+    //   yards: "integer",
+    //   year_built: "integer",
+    //   architects: "string",
+    //   greens: "string",
+    //   fairways: "string",
+    //   members: "string",
+    //   season: "string",
+    //   phone: "string",
+    //   country: "string",
+    //   state: "string",
+    //   zip: "integer",
+    //   city: "string",
+    //   long: "numeric",
+    //   lat: "numeric",
+    //   street: "string",
+    // });
+    // if (validation.fails()) {
+    //   return apiResponse.fail(res, validation.errors);
+    // }
+    // const logoImage = files.logo;
+    // const courseImages = files.course_images;
+    // const logo = await upload_file.uploadCourseImage(logoImage, courseId, 3);
+    // const images = await upload_file.uploadCourseImages(
+    //   courseImages,
+    //   courseId,
+    //   3,
+    // );
 
-    const reqBody = { ...fields, logo, images };
-    const updatedCourse = await courseService.createCourseInfo(
-      reqBody,
-      courseId,
-    );
-    return apiResponse.success(res, req, updatedCourse);
+    // const reqBody = { ...fields, logo, images };
+    // const updatedCourse = await courseService.createCourseInfo(
+    //   reqBody,
+    //   courseId,
+    // );
+    // return apiResponse.success(res, req, updatedCourse);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
