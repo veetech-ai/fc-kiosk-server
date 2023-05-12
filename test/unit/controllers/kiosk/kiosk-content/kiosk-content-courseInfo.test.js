@@ -129,7 +129,7 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
     });
   };
 
-  it("should successfully list screens configuration related to device", async () => {
+  it("should successfully list course info related to device", async () => {
     const expected = {
       name: "Sedona Golf Club Exclusive",
       holes: 18,
