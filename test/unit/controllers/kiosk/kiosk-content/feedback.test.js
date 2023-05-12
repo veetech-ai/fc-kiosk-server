@@ -2,7 +2,7 @@ const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
-const Course = models.Course;
+
 describe("GET /api/v1/kiosk-content/screens", () => {
   let adminToken;
   let courseId;
@@ -10,6 +10,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
   let deviceToken;
   let testOrganizationId = 1;
   let productId = product.products.kiosk.id;
+
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -18,7 +19,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       state: "Test State 1",
       orgId: testOrganizationId,
     };
-    const bodyData = {
+    const deviceReqBody = {
       serial: uuid(),
       pin_code: 1111,
       device_type: productId,
@@ -34,7 +35,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     const device_created = await helper.post_request_with_authorization({
       endpoint: "device/create",
       token: adminToken,
-      params: bodyData,
+      params: deviceReqBody,
     });
     deviceId = device_created.body.data.id;
     await helper.put_request_with_authorization({
@@ -57,7 +58,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     });
   };
 
-  it("should successfully return registerd feedback with valid input", async () => {
+  it("should successfully return registered feedback with valid input", async () => {
     const reqBody = {
       phoneNumber: "",
       rating: 3,
