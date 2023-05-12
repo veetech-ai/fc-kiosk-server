@@ -2,7 +2,7 @@ const Validator = require("validatorjs");
 
 // Common Imports
 const apiResponse = require("../../../common/api.response");
-const helper = require("../../../common/helper");
+
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
@@ -22,7 +22,7 @@ exports.create_feedback = async (req, res) => {
    *   post:
    *     security:
    *       - auth: []
-   *     description: create feedback for golf course (Only Admin).
+   *     description: create feedback for golf course.
    *     tags: [Kiosk-Courses-Content]
    *     consumes:
    *       - application/x-www-form-urlencoded
@@ -37,11 +37,11 @@ exports.create_feedback = async (req, res) => {
    *         in: formData
    *         required: true
    *         type: integer
-   *       - name: contatc_medium
+   *       - name: contact_medium
    *         description: contact_medium
    *         in: formData
    *         enum: ['text', 'call']
-   *         required: true
+   *         required: false
    *         type: string
    *     produces:
    *       - application/json
@@ -62,7 +62,7 @@ exports.create_feedback = async (req, res) => {
 
     const { phone, rating, contact_medium } = req.body;
 
-    const deviceId = req.user.id; // device Id
+    const deviceId = req.device.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const course = await courseService.getCourseById(courseId);
     const orgId = course.orgId;

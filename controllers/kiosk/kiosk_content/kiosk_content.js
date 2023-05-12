@@ -31,7 +31,7 @@ exports.get_screens_for_device = async (req, res) => {
    */
 
   try {
-    const deviceId = req.user.id; // device Id
+    const deviceId = req.device.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const screens = await screenService.getScreensByCourses(courseId);
     return apiResponse.success(res, req, screens);
