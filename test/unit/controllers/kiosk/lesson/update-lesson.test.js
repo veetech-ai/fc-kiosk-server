@@ -2,35 +2,6 @@ const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
 
 // Mocking formidable
-
-// jest.mock("formidable", () => {
-//   return {
-//     IncomingForm: jest.fn().mockImplementation(() => {
-//       return {
-//         multiples: true,
-//         parse: (req, cb) => {
-//           cb(
-//             null,
-//             {
-//               name: "Mark Rober",
-//               title: "Assistant",
-//               content: "asdasdasdas asdasdasda",
-//               timings: "9:00-10:00",
-//             },
-//             {
-//               image: {
-//                 name: "mock-logo.png",
-//                 type: "image/png",
-//                 size: 5000, // bytes
-//                 path: "/mock/path/to/logo.png",
-//               },
-//             },
-//           );
-//         },
-//       };
-//     }),
-//   };
-// });
 let mockFields;
 let mockFiles;
 
