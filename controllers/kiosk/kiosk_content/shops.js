@@ -6,7 +6,7 @@ const apiResponse = require("../../../common/api.response");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
-const shopService = require("../../../services/kiosk/shops");
+const shopService = require("../../../services/kiosk/course_shops");
 
 /**
  * @swagger
@@ -37,7 +37,7 @@ exports.getShops = async (req, res) => {
     const courseId = await deviceService.getCourse(deviceId);
     await courseService.getCourseById(courseId);
 
-    const shops = await shopService.getShopsByGolfCourseId(courseId);
+    const shops = await shopService.getCourseShops(courseId);
     return apiResponse.success(res, req, shops);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

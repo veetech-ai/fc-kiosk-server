@@ -2,6 +2,7 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
 const membershipService = require("./membership");
+const upload_file = require("../../common/upload");
 
 const Shop = models.Shop;
 const Organization = models.Organization;
@@ -23,11 +24,20 @@ exports.createCourseShop = async (reqBody, orgId) => {
 }
 
 exports.getCourseShops = async (gcId) => {
-  const courseShop = await Shop.findAll({
+  const shops = await Shop.findAll({
     where: { gcId },
+    raw: true,
   });
 
-  return courseShop;
+  if (shops.length) {
+    shops.forEach(shop => {
+      if(!shop?.image) return;
+      const image = upload_file.getFileURL(shop.image);
+      shop.image = image
+    })
+  } 
+  
+  return shops;
 }
 
 exports.getCourseShopById = async (id) => {

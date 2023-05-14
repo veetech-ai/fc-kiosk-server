@@ -95,10 +95,8 @@ exports.createCourseShop = async (req, res) => {
     const reqBody = { ...fields, image: imageIdentifier }
     const courseShop = await courseShopsService.createCourseShop(reqBody, course.orgId)
     
-    if(courseShop) {
-        const imageUrl = upload_file.getFileURL(courseShop.image);
-        courseShop.setDataValue("image", imageUrl)
-    }
+    const imageUrl = upload_file.getFileURL(courseShop.image);
+    courseShop.setDataValue("image", imageUrl)
 
     return apiResponse.success(res, req, courseShop);
   } catch (error) {
