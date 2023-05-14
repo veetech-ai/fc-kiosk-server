@@ -59,3 +59,15 @@ exports.updateCourseShop = async (shopId, reqBody) => {
   const updatedShop = await this.getCourseShopById(shopId)
   return updatedShop;
 }
+
+exports.deleteCourseShop = async (shopId) => {
+  const courseShop = await Shop.destroy({
+    where: {id: shopId}
+  });
+
+  if(!courseShop) {
+    throw new ServiceError(`Error deleting shop`, 500);
+  }
+
+  return courseShop;
+}

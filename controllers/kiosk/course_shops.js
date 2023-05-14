@@ -245,16 +245,16 @@ exports.deleteCourseShop = async (req, res) => {
     /**
      * @swagger
      *
-     * /course-shops/{orgId}:
-     *   get:
+     * /course-shops/{shopId}:
+     *   delete:
      *     security:
      *       - auth: []
-     *     description: Get courses for a specific organization.
+     *     description: Delete shop.
      *     tags: [Course-Shops]
      *     produces:
      *       - application/json
      *     parameters:
-     *       - name: orgId
+     *       - name: shopId
      *         description: Organization ID
      *         in: path
      *         required: true
@@ -265,12 +265,21 @@ exports.deleteCourseShop = async (req, res) => {
      */
   
     try {
-      const orgId = Number(req.params.orgId);
-      if (!orgId) {
-        return apiResponse.fail(res, "orgId must be a valid number");
+      const shopId = Number(req.params.shopId);
+      if (!shopId) {
+        return apiResponse.fail(res, "shopId must be a valid number");
       }
-      const courses = await courseService.getCoursesByOrganization(orgId);
-      return apiResponse.success(res, req, courses);
+
+      const courseShop = await courseShopsService.getCourseShopById(shopId)
+  
+      const loggedInUserOrgId = req.user.orgId;
+      const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
+      if(!isSuperOrAdmin && loggedInUserOrgId !== courseShop.orgId){
+        return apiResponse.fail(res, "Shop not Found", 404);
+      }
+  
+        await courseShopsService.deleteCourseShop(shopId)
+      return apiResponse.success(res, req, "Shop Deleted");
     } catch (error) {
       return apiResponse.fail(res, error.message, error.statusCode || 500);
     }

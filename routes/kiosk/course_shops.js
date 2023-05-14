@@ -22,4 +22,10 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseShopsController.updateCourseShop,
   ]);
+
+  router.delete(courseShops + "/:shopId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CourseShopsController.deleteCourseShop,
+  ]);
 };
