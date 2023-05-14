@@ -57,7 +57,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
     orgId = course.body.data.orgId;
     const createLesson = async () => {
       const fields = {
-        gcId:courseId,
+        gcId: courseId,
         name: "Mark Rober",
         title: "Assistant",
         content: "asdasdasdas asdasdasda",
@@ -97,7 +97,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
 
   it("should create a new course info with valid input", async () => {
     const fields = {
-      gcId:courseId,
+      gcId: courseId,
       name: "Mark -o plier",
       title: "Assistant Professor",
       content: "asdasdasdas asdasdasda",
@@ -123,7 +123,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
   });
   it("should create a new course with the customer token who is the part of same organization", async () => {
     const fields = {
-      gcId:courseId,
+      gcId: courseId,
       name: "Pewdipie",
     };
 

@@ -64,45 +64,44 @@ exports.create_lesson = async (req, res) => {
   try {
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
-      const form = new formidable.IncomingForm();
-      form.multiples = true;
-      const { fields, files } = await new Promise((resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
-          if (err) reject(err);
-          resolve({ fields, files });
-        });
+    const form = new formidable.IncomingForm();
+    form.multiples = true;
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        resolve({ fields, files });
       });
-      console.log(fields);
-      const validation = new Validator(fields, {
-        gcId:"integer",
-        name: "string",
-        title: "string",
-        content: "string",
-        timings: "string",
-      });
-      if (validation.fails()) {
-        return apiResponse.fail(res, validation.errors);
-      }
-      const courseId=fields.gcId
-      const course=await courseService.getCourseById(courseId)
-      const orgId=course.orgId
-      const isSameOrganizationResource = loggedInUserOrg === orgId;
-      if (!isSuperOrAdmin && !isSameOrganizationResource) {
-        return apiResponse.fail(res, "", 403);
-      }
-      const coachImage = files.coachImage;
-     
+    });
+    console.log(fields);
+    const validation = new Validator(fields, {
+      gcId: "integer",
+      name: "string",
+      title: "string",
+      content: "string",
+      timings: "string",
+    });
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+    const courseId = fields.gcId;
+    const course = await courseService.getCourseById(courseId);
+    const orgId = course.orgId;
+    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
+      return apiResponse.fail(res, "", 403);
+    }
+    const coachImage = files.coachImage;
+
     const image = await upload_file.uploadImageForCourse(
-        coachImage,
-        courseId,
-        "coach-images/",
-        3,
-      );
-     
-      const reqBody = { ...fields, image };
-      const coach = await courseLesson.createCoach(reqBody, orgId);
-      return apiResponse.success(res, req, coach);
-    
+      coachImage,
+      courseId,
+      "coach-images/",
+      3,
+    );
+
+    const reqBody = { ...fields, image };
+    const coach = await courseLesson.createCoach(reqBody, orgId);
+    return apiResponse.success(res, req, coach);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -188,15 +187,15 @@ exports.update_lesson = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const coachImage = files.coachImage;
-    let image
-    if(coachImage){
-   image = await upload_file.uploadImageForCourse(
-      coachImage,
-      courseId,
-      "coach-images/",
-      3,
-    );
-   }
+    let image;
+    if (coachImage) {
+      image = await upload_file.uploadImageForCourse(
+        coachImage,
+        courseId,
+        "coach-images/",
+        3,
+      );
+    }
     const reqBody = { ...fields, image };
     const updatedCoach = await courseLesson.updateCoach(reqBody, lessonId);
     return apiResponse.success(res, req, updatedCoach);

@@ -19,5 +19,4 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CoursesController.create_course_info,
   ]);
-  
 };

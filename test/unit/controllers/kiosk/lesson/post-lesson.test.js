@@ -81,10 +81,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
     orgId = course.body.data.orgId;
   });
 
-  const makeApiRequest = async (
-    params,
-    token = adminToken,
-  ) => {
+  const makeApiRequest = async (params, token = adminToken) => {
     return helper.post_request_with_authorization({
       endpoint: `course-lesson`,
       token: token,
@@ -94,7 +91,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
 
   it("should create a new course info with valid input", async () => {
     const fields = {
-      gcId:courseId,
+      gcId: courseId,
       name: "Mark -o plier",
       title: "Assistant Professor",
       content: "asdasdasdas asdasdasda",
@@ -123,7 +120,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
   });
   it("should create a new course with the customer token who is the part of same organization", async () => {
     const fields = {
-      gcId:courseId,
+      gcId: courseId,
       name: "Mark -o plier",
       title: "Assistant Professor",
       content: "asdasdasdas asdasdasda",
@@ -144,7 +141,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
       .spyOn(upload_file, "uploadImageForCourse")
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
-    const response = await makeApiRequest(fields,customerToken);
+    const response = await makeApiRequest(fields, customerToken);
     expect(response.body.data.name).toEqual(fields.name);
     expect(response.body.data.title).toEqual(fields.title);
     expect(response.body.data.content).toEqual(fields.content);
@@ -152,10 +149,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
   });
   it("should return an error if user belongs to different organization", async () => {
     const params = {};
-    const response = await makeApiRequest(
-      params,
-      testOperatorToken,
-    );
+    const response = await makeApiRequest(params, testOperatorToken);
     expect(response.body.data).toEqual("You are not allowed");
   });
 });
