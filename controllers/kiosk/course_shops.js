@@ -91,7 +91,7 @@ exports.createCourseShop = async (req, res) => {
     }
 
     const shopImage = files?.image;
-    const imageIdentifier = await upload_file.uploadCourseImage(shopImage, courseId, 3);
+    const imageIdentifier = await upload_file.uploadImageForCourse(shopImage, courseId);
     const reqBody = { ...fields, image: imageIdentifier }
     const courseShop = await courseShopsService.createCourseShop(reqBody, course.orgId)
     
