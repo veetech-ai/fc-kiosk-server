@@ -23,7 +23,7 @@ const mockFormidable = (fields, files) => {
   mockFiles = files;
 };
 
-describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
+describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
   let adminToken;
   let courseId;
   let orgId;
@@ -57,6 +57,7 @@ describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
     orgId = course.body.data.orgId;
     const createLesson = async () => {
       const fields = {
+        gcId:courseId,
         name: "Mark Rober",
         title: "Assistant",
         content: "asdasdasdas asdasdasda",
@@ -77,7 +78,7 @@ describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
         .spyOn(upload_file, "uploadImage")
         .mockImplementation(() => Promise.resolve("mock-logo-url"));
       const lesson = await helper.post_request_with_authorization({
-        endpoint: `kiosk-courses/${orgId}/${courseId}/lesson`,
+        endpoint: `course-lesson`,
         token: adminToken,
         params: fields,
       });
@@ -88,7 +89,7 @@ describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
 
   const makeApiRequest = async (lessonId, params, token = adminToken) => {
     return helper.patch_request_with_authorization({
-      endpoint: `kiosk-courses/lesson/${lessonId}`,
+      endpoint: `course-lesson/${lessonId}`,
       params: params,
       token: token,
     });
@@ -96,6 +97,7 @@ describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
 
   it("should create a new course info with valid input", async () => {
     const fields = {
+      gcId:courseId,
       name: "Mark -o plier",
       title: "Assistant Professor",
       content: "asdasdasdas asdasdasda",
@@ -121,6 +123,7 @@ describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
   });
   it("should create a new course with the customer token who is the part of same organization", async () => {
     const fields = {
+      gcId:courseId,
       name: "Pewdipie",
     };
 

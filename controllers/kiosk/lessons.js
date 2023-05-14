@@ -1,42 +1,32 @@
-// External Module Imports
 const Validator = require("validatorjs");
 const formidable = require("formidable");
-
-// Common Imports
-const apiResponse = require("../../../common/api.response");
-const helper = require("../../../common/helper");
-const upload_file = require("../../../common/upload");
-// Logger Imports
-const courseLesson = require("../../../services/kiosk/lessons");
-const courseService = require("../../../services/kiosk/course");
+const apiResponse = require("../../common/api.response");
+const upload_file = require("../../common/upload");
+const courseLesson = require("../../services/kiosk/lessons");
+const courseService = require("../../services/kiosk/course");
 
 /**
  * @swagger
  * tags:
- *   name: Kiosk-Courses
+ *   name: Courses-Lesson
  *   description: Web Portal Courses API's
  */
 exports.create_lesson = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-courses/{orgId}/{courseId}/lesson:
+   * /course-lesson:
    *   post:
    *     security:
    *       - auth: []
    *     description: CREATE golf course lessons (Only Admin).
-   *     tags: [Kiosk-Courses]
+   *     tags: [Courses-Lesson]
    *     consumes:
    *       - multipart/form-data
    *     parameters:
-   *       - name: courseId
+   *       - name: gcId
    *         description: id of golf course
-   *         in: path
-   *         required: true
-   *         type: integer
-   *       - name: orgId
-   *         description: organization id of golf course
-   *         in: path
+   *         in: formData
    *         required: true
    *         type: integer
    *       - name: name
@@ -72,16 +62,6 @@ exports.create_lesson = async (req, res) => {
    */
 
   try {
-    const courseId = Number(req.params.courseId);
-    const orgId = Number(req.params.orgId);
-    if (!courseId) {
-      return apiResponse.fail(res, "courseId must be a valid number");
-    }
-    if (!orgId) {
-      return apiResponse.fail(res, "orgId must be a valid number");
-    }
-    const isLinked = await courseService.getLinkedCourse(courseId, orgId);
-    if (isLinked) {
       const form = new formidable.IncomingForm();
       form.multiples = true;
       const { fields, files } = await new Promise((resolve, reject) => {
@@ -90,26 +70,35 @@ exports.create_lesson = async (req, res) => {
           resolve({ fields, files });
         });
       });
+      console.log(fields);
       const validation = new Validator(fields, {
+        gcId:"integer",
         name: "string",
         title: "string",
         content: "string",
         timings: "string",
       });
       if (validation.fails()) {
+        console.log("insdsad");
         return apiResponse.fail(res, validation.errors);
       }
+      const courseId=fields.gcId
+      const course=await courseService.getCourseById(courseId)
+      const orgId=course.orgId
       const coachImage = files.coachImage;
-      const image = await upload_file.uploadImage(
+      let image
+      if(coachImage){
+     image = await upload_file.uploadImage(
         coachImage,
         courseId,
         "coach-images/",
         3,
       );
+     }
       const reqBody = { ...fields, image };
-      const coach = await courseLesson.createCoach(reqBody, courseId, orgId);
+      const coach = await courseLesson.createCoach(reqBody, orgId);
       return apiResponse.success(res, req, coach);
-    }
+    
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -118,12 +107,12 @@ exports.update_lesson = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-courses/lesson/{lessonId}:
+   * /course-lesson/{lessonId}:
    *   patch:
    *     security:
    *       - auth: []
    *     description: update golf course lessons (Only Admin).
-   *     tags: [Kiosk-Courses]
+   *     tags: [Courses-Lesson]
    *     consumes:
    *       - multipart/form-data
    *     parameters:
@@ -195,7 +184,7 @@ exports.update_lesson = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const coachImage = files.coachImage;
-    const image = await upload_file.uploadImage(
+    let image = await upload_file.uploadImage(
       coachImage,
       lessonId,
       "coach-images/",

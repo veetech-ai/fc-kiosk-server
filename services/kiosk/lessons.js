@@ -3,10 +3,9 @@ const ServiceError = require("../../utils/serviceError");
 const Coach = models.Coach;
 const Course = models.Course;
 
-async function createCoach(reqBody, gcId, orgId) {
+async function createCoach(reqBody, orgId) {
   const coach = await Coach.create({
     ...reqBody,
-    gcId,
     orgId,
   });
   if (!coach) {

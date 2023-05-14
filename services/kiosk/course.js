@@ -91,4 +91,5 @@ module.exports = {
   getCoursesByOrganization,
   createCourseInfo,
   getLinkedCourse,
+  getCourseById
 };

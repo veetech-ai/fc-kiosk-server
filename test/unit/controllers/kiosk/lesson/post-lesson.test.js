@@ -2,34 +2,55 @@ const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
 
 // Mocking formidable
+// jest.mock("formidable", () => {
+//   return {
+//     IncomingForm: jest.fn().mockImplementation(() => {
+//       return {
+//         multiples: true,
+//         parse: (req, cb) => {
+//           cb(
+//             null,
+//             {
+//               name: "Mark Rober",
+//               title: "Assistant",
+//               content: "asdasdasdas asdasdasda",
+//               timings: "9:00-10:00",
+//             },
+//             {
+//               image: {
+//                 name: "mock-logo.png",
+//                 type: "image/png",
+//                 size: 5000, // bytes
+//                 path: "/mock/path/to/logo.png",
+//               },
+//             },
+//           );
+//         },
+//       };
+//     }),
+//   };
+// });
+// Mocking formidable
+let mockFields;
+let mockFiles;
+
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
       return {
         multiples: true,
         parse: (req, cb) => {
-          cb(
-            null,
-            {
-              name: "Mark Rober",
-              title: "Assistant",
-              content: "asdasdasdas asdasdasda",
-              timings: "9:00-10:00",
-            },
-            {
-              image: {
-                name: "mock-logo.png",
-                type: "image/png",
-                size: 5000, // bytes
-                path: "/mock/path/to/logo.png",
-              },
-            },
-          );
+          cb(null, mockFields, mockFiles);
         },
       };
     }),
   };
 });
+
+const mockFormidable = (fields, files) => {
+  mockFields = fields;
+  mockFiles = files;
+};
 
 describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
   let adminToken;
@@ -61,41 +82,48 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
   });
 
   const makeApiRequest = async (
-    courseId,
-    orgId,
     params,
     token = adminToken,
   ) => {
     return helper.post_request_with_authorization({
-      endpoint: `kiosk-courses/${orgId}/${courseId}/lesson`,
+      endpoint: `course-lesson`,
       token: token,
       params: params,
     });
   };
 
   it("should create a new course info with valid input", async () => {
-    jest
-      .spyOn(upload_file, "uploadImage")
-      .mockImplementation(() => Promise.resolve("mock-logo-url"));
-
-    const params = {
-      name: "Mark Rober",
-      title: "Assistant",
+    const fields = {
+      gcId:courseId,
+      name: "Mark -o plier",
+      title: "Assistant Professor",
       content: "asdasdasdas asdasdasda",
       timings: "9:00-10:00",
     };
 
-    const response = await makeApiRequest(courseId, orgId, params);
-    expect(response.body.data.name).toEqual(params.name);
-    expect(response.body.data.title).toEqual(params.title);
-    expect(response.body.data.content).toEqual(params.content);
-    expect(response.body.data.timings).toEqual(params.timings);
+    const files = {
+      image: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
+
+    mockFormidable(fields, files);
+    jest
+      .spyOn(upload_file, "uploadImage")
+      .mockImplementation(() => Promise.resolve("mock-logo-url"));
+
+    const response = await makeApiRequest(fields);
+    expect(response.body.data.name).toEqual(fields.name);
+    expect(response.body.data.title).toEqual(fields.title);
+    expect(response.body.data.content).toEqual(fields.content);
+    expect(response.body.data.timings).toEqual(fields.timings);
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
     const params = {};
     const response = await makeApiRequest(
-      courseId,
-      orgId,
       params,
       testOperatorToken,
     );
