@@ -3,11 +3,6 @@ const upload_file = require("../../../../../common/upload");
 const { organizationsInApplication, testOrganizations } = require("../../../../../common/organizations.data");
 
 // Fixtures
-let adminToken;
-let customerToken;
-let zongCustomerToken;
-let testOperatorToken;
-
 const coursesFixtures = {
   test: {
     name: "Course 1",
@@ -30,7 +25,17 @@ const shopFixtures = {
     subheading: "Sub Heading",
     description: "Extensive Description",
   },
+  inValid:{
+    gcId : 1,
+    name : "Assistant",
+  },
 }
+
+let adminToken;
+let customerToken;
+let zongCustomerToken;
+let testOperatorToken;
+let mockedReqBody = shopFixtures.valid;
 
 // Helper Functions for this test
 async function createGolfCourse(reqBody, token) {
@@ -42,30 +47,8 @@ async function createGolfCourse(reqBody, token) {
   return course
 }
 
-function mockFormidable(mockedReqBody) {
-  return {
-    IncomingForm: jest.fn().mockImplementation(() => {
-      return {
-        multiples: true,
-        parse: (req, cb) => {
-          cb(
-            null,
-            {
-              ...mockedReqBody
-            },
-            {
-              image: {
-                name: "mock-logo.png",
-                type: "image/png",
-                size: 5000, // bytes
-                path: "/mock/path/to/logo.png",
-              },
-            },
-          );
-        },
-      };
-    }),
-  };
+function changeFormidableMockedValues(reqBody) {
+  mockedReqBody = reqBody
 }
 
 const makeApiRequest = async (
@@ -81,7 +64,27 @@ const makeApiRequest = async (
 
 // mocks
 jest.mock("formidable", () => {
-  return mockFormidable(shopFixtures.valid);
+  return {
+    IncomingForm: jest.fn().mockImplementation(() => {
+      return {
+        multiples: true,
+        parse: (req, cb) => {
+          cb(
+            null,
+            mockedReqBody,
+            {
+              image: {
+                name: "mock-logo.png",
+                type: "image/png",
+                size: 5000, // bytes
+                path: "/mock/path/to/logo.png",
+              },
+            },
+          );
+        },
+      };
+    }),
+  };
 });
 
 
@@ -153,6 +156,21 @@ describe("POST /api/v1/course-shops", () => {
       testOperatorToken,
     );
     expect(response.body.data).toEqual("You are not allowed");
+  });
+
+  it("should return an error if reqBody is invalid", async () => {
+    changeFormidableMockedValues(shopFixtures.inValid) 
+    const response = await makeApiRequest(
+      shopFixtures.inValid,
+      adminToken,
+    );
+    const expectedResponse = {
+      errors: {
+        description: ["The description field is required."], 
+        subheading: ["The subheading field is required."]
+      }
+    }
+    expect(response.body.data).toEqual(expectedResponse);
   });
 
 });
