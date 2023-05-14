@@ -110,7 +110,7 @@ exports.getCourseShops = async (req, res) => {
   /**
    * @swagger
    *
-   * /course-shops/course/{gcId}:
+   * /course-shops/course/{courseId}:
    *   get:
    *     security:
    *       - auth: []
@@ -119,7 +119,7 @@ exports.getCourseShops = async (req, res) => {
    *     produces:
    *       - application/json
    *     parameters:
-   *       - name: gcId
+   *       - name: courseId
    *         description: Golf Course ID
    *         in: path
    *         required: true
@@ -130,12 +130,12 @@ exports.getCourseShops = async (req, res) => {
    */
 
   try {
-    const gcId = Number(req.params.gcId);
-    if (!gcId) {
-      return apiResponse.fail(res, "gcId must be a valid number");
+    const courseId = Number(req.params.courseId);
+    if (!courseId) {
+      return apiResponse.fail(res, "courseId must be a valid number");
     }
 
-    const course = await courseService.getCourseById(gcId);
+    const course = await courseService.getCourseById(courseId);
 
     const loggedInUserOrgId = req.user.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
@@ -143,7 +143,7 @@ exports.getCourseShops = async (req, res) => {
       return apiResponse.fail(res, "Course not Found", 404);
     }
 
-    const courseShops = await courseShopsService.getCourseShops(gcId)
+    const courseShops = await courseShopsService.getCourseShops(courseId)
 
     return apiResponse.success(res, req, courseShops);
   } catch (error) {

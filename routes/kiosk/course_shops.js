@@ -3,23 +3,23 @@ const CourseShopsController = require("../../controllers/kiosk/course_shops");
 const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
-  const courses = `${config.app.apiPath}course-shops`;
+  const courseShops = `${config.app.apiPath}course-shops`;
   
-  router.post(courses, [
+  router.post(courseShops, [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseShopsController.createCourseShop,
   ]);
   
-  router.get(courses + "/course/:gcId", [
+  router.get(courseShops + "/course/:courseId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     CourseShopsController.getCourseShops,
   ]);
   
-  // router.patch(courses + "/:courseId/course-info", [
-  //   validation_middleware.validJWTNeeded,
-  //   validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
-  //   CourseShopsController.createCourseShop,
-  // ]);
+  router.patch(courseShops + "/:courseId/course-info", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CourseShopsController.createCourseShop,
+  ]);
 };
