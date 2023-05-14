@@ -151,144 +151,43 @@ exports.getCourseShops = async (req, res) => {
   }
 };
 
-exports.updateCourseShops = async (req, res) => {
+exports.updateCourseShop = async (req, res) => {
   /**
    * @swagger
-   * /course-shops/{courseId}/course-info:
+   * /course-shops/{shopId}:
    *   patch:
    *     security:
    *       - auth: []
-   *     description: create golf course (Only Admin).
+   *     description: update shop for a golf course.
    *     tags: [Course-Shops]
    *     consumes:
    *       - multipart/form-data
    *     parameters:
    *       - in: path
-   *         name: courseId
+   *         name: shopId
    *         description: id of course
    *         required: true
    *         type: integer
-   *       - in: formData
-   *         name: name
-   *         description: name of course
+   *       - name: name
+   *         description: name of the shop
+   *         in: formData
    *         required: false
    *         type: string
-   *       - in: formData
-   *         name: holes
-   *         description: Holes of the golf course
-   *         required: false
-   *         type: integer
-   *         enum: [9, 18]
-   *       - in: formData
-   *         name: par
-   *         description: par of golf course
-   *         required: false
-   *         type: integer
-   *       - in: formData
-   *         name: yards
-   *         description: length of golf course in yards
-   *         required: false
-   *         type: integer
-   *       - in: formData
-   *         name: slope
-   *         description: slope of golf course
+   *       - name: subheading
+   *         description: subheading briefly describing the shop
+   *         in: formData
    *         required: false
    *         type: string
-   *       - in: formData
-   *         name: content
-   *         description: description of golf course
+   *       - name: description
+   *         description: description of the shop
+   *         in: formData
    *         required: false
    *         type: string
-   *       - in: formData
-   *         name: email
-   *         description: email of golf course
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: year_built
-   *         description: Year in which the course was built
-   *         required: false
-   *         type: integer
-   *       - in: formData
-   *         name: architects
-   *         description: architects of golf course (CSV)
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: greens
-   *         description: name of the greens of golf course (CSV)
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: fairways
-   *         description: fairways of golf course (CSV)
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: members
-   *         description: members of golf course (eg 500+)
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: season
-   *         description: season of golf course (e.g. Year Round)
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: phone
-   *         description: phone number of golf course
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: country
-   *         description: country of golf course
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: state
-   *         description: state of golf course
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: zip
-   *         description: zip of golf course
-   *         required: false
-   *         type: integer
-   *       - in: formData
-   *         name: city
-   *         description: city of golf course
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: long
-   *         description: long of golf course
-   *         required: false
-   *         type: number
-   *         format: float
-   *       - in: formData
-   *         name: lat
-   *         description: lat  of golf course
-   *         required: false
-   *         type: number
-   *         format: float
-   *       - in: formData
-   *         name: street
-   *         description: street of golf course
-   *         required: false
-   *         type: string
-   *       - in: formData
-   *         name: logo
-   *         description: Upload logo of Golf course
+   *       - name: image
+   *         in: formData
+   *         description: Upload image of Golf course shop
    *         required: false
    *         type: file
-   *       - in: formData
-   *         name: course_images
-   *         description: Images of the golf course
-   *         required: false
-   *         type: array
-   *         items:
-   *           type: file
-   *         collectionFormat: multi
    *     produces:
    *       - application/json
    *     responses:
@@ -297,38 +196,8 @@ exports.updateCourseShops = async (req, res) => {
    */
 
   try {
-    const courseId = Number(req.params.courseId);
-    if (!courseId) {
-      return apiResponse.fail(res, "courseId must be a valid number");
-    }
-    const validation = new Validator(req.body, {
-      name: "string",
-      holes: "integer",
-      par: "integer",
-      slope: "integer",
-      content: "string",
-      email: "string",
-      yards: "integer",
-      year_built: "integer",
-      architects: "string",
-      greens: "string",
-      fairways: "string",
-      members: "string",
-      season: "string",
-      phone: "string",
-      country: "string",
-      state: "string",
-      zip: "integer",
-      city: "string",
-      long: "numeric",
-      lat: "numeric",
-      street: "string",
-    });
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
     const form = new formidable.IncomingForm();
-    form.multiples = true;
+
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);
@@ -336,21 +205,39 @@ exports.updateCourseShops = async (req, res) => {
       });
     });
 
-    const logoImage = files?.logo;
-    const courseImages = files?.course_images;
-    const logo = await upload_file.uploadCourseImage(logoImage, courseId, 3);
-    const images = await upload_file.uploadCourseImages(
-      courseImages,
-      courseId,
-      3,
-    );
+    const validation = new Validator(fields, {
+      name: "string",
+      subheading: "string",
+      description: "string",
+    });
 
-    const reqBody = { ...fields, logo, images };
-    const updatedCourse = await courseService.createCourseInfo(
-      reqBody,
-      courseId,
-    );
-    return apiResponse.success(res, req, updatedCourse);
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
+    const shopId = req.params.shopId;
+    const courseShop = await courseShopsService.getCourseShopById(shopId)
+
+    const loggedInUserOrgId = req.user.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
+    if(!isSuperOrAdmin && loggedInUserOrgId !== courseShop.orgId){
+      return apiResponse.fail(res, "Shop not Found", 404);
+    }
+
+    const reqBody = { ...fields }
+    const shopImage = files?.image;
+    if (shopImage) {
+        const imageIdentifier = await upload_file.uploadImageForCourse(shopImage, courseShop.gcId);
+        reqBody.image = imageIdentifier 
+    }
+    const updatedCourseShop = await courseShopsService.updateCourseShop(shopId, reqBody)
+
+    if(updatedCourseShop) {
+        const imageUrl = upload_file.getFileURL(updatedCourseShop.image);
+        updatedCourseShop.setDataValue("image", imageUrl)
+    }
+
+    return apiResponse.success(res, req, updatedCourseShop);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

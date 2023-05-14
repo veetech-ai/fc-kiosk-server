@@ -29,3 +29,23 @@ exports.getCourseShops = async (gcId) => {
 
   return courseShop;
 }
+
+exports.getCourseShopById = async (id) => {
+  const courseShop = await Shop.findOne({
+    where: { id },
+  });
+
+  if(!courseShop) {
+    throw new ServiceError(`Shop not found`, 404);
+  }
+
+  return courseShop;
+}
+
+exports.updateCourseShop = async (shopId, reqBody) => {
+  const courseShop = await Shop.update(reqBody, {
+    where: { id: shopId },
+  });
+  const updatedShop = await this.getCourseShopById(shopId)
+  return updatedShop;
+}

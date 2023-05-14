@@ -17,9 +17,9 @@ exports.routesConfig = function (app, router) {
     CourseShopsController.getCourseShops,
   ]);
   
-  router.patch(courseShops + "/:courseId/course-info", [
+  router.patch(courseShops + "/:shopId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
-    CourseShopsController.createCourseShop,
+    CourseShopsController.updateCourseShop,
   ]);
 };
