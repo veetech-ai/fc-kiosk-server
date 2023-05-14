@@ -1,6 +1,7 @@
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const Coach = models.Coach;
+const Course = models.Course;
 
 async function createCoach(reqBody, gcId, orgId) {
   const coach = await Coach.create({
@@ -12,6 +13,15 @@ async function createCoach(reqBody, gcId, orgId) {
     throw new ServiceError("Something Went wrong", 401);
   }
   return coach;
+}
+async function findLessonById(lessonId) {
+  const lesson = await Coach.findOne({
+    where: { id: lessonId },
+  });
+  if (!lesson) {
+    throw new ServiceError("Something Went wrong", 401);
+  }
+  return lesson;
 }
 async function updateCoach(reqBody, lessonId) {
   const updatedCoach = await Coach.update(
@@ -28,4 +38,5 @@ async function updateCoach(reqBody, lessonId) {
 module.exports = {
   createCoach,
   updateCoach,
+  findLessonById,
 };

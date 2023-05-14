@@ -2,34 +2,55 @@ const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
 
 // Mocking formidable
+
+// jest.mock("formidable", () => {
+//   return {
+//     IncomingForm: jest.fn().mockImplementation(() => {
+//       return {
+//         multiples: true,
+//         parse: (req, cb) => {
+//           cb(
+//             null,
+//             {
+//               name: "Mark Rober",
+//               title: "Assistant",
+//               content: "asdasdasdas asdasdasda",
+//               timings: "9:00-10:00",
+//             },
+//             {
+//               image: {
+//                 name: "mock-logo.png",
+//                 type: "image/png",
+//                 size: 5000, // bytes
+//                 path: "/mock/path/to/logo.png",
+//               },
+//             },
+//           );
+//         },
+//       };
+//     }),
+//   };
+// });
+let mockFields;
+let mockFiles;
+
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
       return {
         multiples: true,
         parse: (req, cb) => {
-          cb(
-            null,
-            {
-              name: "Mark Rober",
-              title: "Assistant",
-              content: "asdasdasdas asdasdasda",
-              timings: "9:00-10:00",
-            },
-            {
-              image: {
-                name: "mock-logo.png",
-                type: "image/png",
-                size: 5000, // bytes
-                path: "/mock/path/to/logo.png",
-              },
-            },
-          );
+          cb(null, mockFields, mockFiles);
         },
       };
     }),
   };
 });
+
+const mockFormidable = (fields, files) => {
+  mockFields = fields;
+  mockFiles = files;
+};
 
 describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
   let adminToken;
@@ -37,8 +58,9 @@ describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
   let orgId;
   let customerToken;
   let testOperatorToken;
+  let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
-    let lessonId;
+  let lessonId;
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -48,16 +70,13 @@ describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
       state: "Test State 1",
       orgId: testOrganizationId,
     };
-    const lessonsFields={
-        name: "Mark Rober",
-        title: "Assistant",
-        content: "asdasdasdas asdasdasda",
-        timings: "9:00-10:00",
-    }
 
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
     testOperatorToken = await helper.get_token_for("testOperator");
+    differentOrganizationCustomerToken = await helper.get_token_for(
+      "zongCustomer",
+    );
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses/create",
       token: adminToken,
@@ -65,50 +84,98 @@ describe("PATCH /api/v1/kiosk-courses/lesson/{lessonId}", () => {
     });
     courseId = course.body.data.id;
     orgId = course.body.data.orgId;
-   const lesson= await helper.post_request_with_authorization({
+    const createLesson = async () => {
+      const fields = {
+        name: "Mark Rober",
+        title: "Assistant",
+        content: "asdasdasdas asdasdasda",
+        timings: "9:00-10:00",
+      };
+
+      const files = {
+        image: {
+          name: "mock-logo.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/logo.png",
+        },
+      };
+
+      mockFormidable(fields, files);
+      jest
+        .spyOn(upload_file, "uploadImage")
+        .mockImplementation(() => Promise.resolve("mock-logo-url"));
+      const lesson = await helper.post_request_with_authorization({
         endpoint: `kiosk-courses/${orgId}/${courseId}/lesson`,
         token: adminToken,
-        params: lessonsFields,
+        params: fields,
       });
-    lessonId=lesson.body.data.id
+      return lesson.body.data.id;
+    };
+    lessonId = await createLesson();
   });
 
-  const makeApiRequest = async (
-    lessonsId,
-    params,
-    token = adminToken,
-  ) => {
-    return helper.post_request_with_authorization({
+  const makeApiRequest = async (lessonId, params, token = adminToken) => {
+    return helper.patch_request_with_authorization({
       endpoint: `kiosk-courses/lesson/${lessonId}`,
-      token: token,
       params: params,
+      token: token,
     });
   };
 
-  it.only("should create a new course info with valid input", async () => {
-    jest
-      .spyOn(upload_file, "uploadImage")
-      .mockImplementation(() => Promise.resolve("mock-logo-url"));
-
-    const lessonFieldsToUpdate = {
-      name: "Mark Rober",
-      title: "Assistant",
+  it("should create a new course info with valid input", async () => {
+    const fields = {
+      name: "Mark -o plier",
+      title: "Assistant Professor",
       content: "asdasdasdas asdasdasda",
       timings: "9:00-10:00",
     };
 
-    const response = await makeApiRequest(lessonId, lessonFieldsToUpdate);
-   
+    const files = {
+      image: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
 
+    mockFormidable(fields, files);
+    jest
+      .spyOn(upload_file, "uploadImage")
+      .mockImplementation(() => Promise.resolve("mock-logo-url"));
+
+    const response = await makeApiRequest(lessonId, fields);
+    expect(response.body.data[0]).toEqual(1);
+  });
+  it("should create a new course with the customer token who is the part of same organization", async () => {
+    const fields = {
+      name: "Pewdipie",
+    };
+
+    const files = {
+      image: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
+    mockFormidable(fields, files);
+    jest
+      .spyOn(upload_file, "uploadImage")
+      .mockImplementation(() => Promise.resolve("mock-logo-url"));
+
+    const response = await makeApiRequest(lessonId, fields, customerToken);
+    expect(response.body.data[0]).toEqual(1);
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
     const params = {};
     const response = await makeApiRequest(
-      courseId,
-      orgId,
+      lessonId,
       params,
-      testOperatorToken,
+      differentOrganizationCustomerToken,
     );
-    expect(response.body).toEqual("You are not allowed");
+    expect(response.body.data).toEqual("You are not allowed");
   });
 });
