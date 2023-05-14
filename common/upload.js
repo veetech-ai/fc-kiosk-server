@@ -153,19 +153,49 @@ exports.getHost = () => {
 };
 
 exports.getFileURL = (key) => {
+  const imagesWithCompleteUrl = [];
+
   if (!key) return null; // Return null if no key found
-  switch (defaultUploadOn) {
-    case 1:
-      return `${config.app.backendURL}${key}`.replace("./public/", "files/");
-    // case 2:
-    //   return azureUpload.getFileUrl(key);
-    case 3:
-      return awsS3.getObjectUrl(key);
-    default:
-      throw {
-        message:
-          "The defaultUploadOn parameter is not correct please correct it in env params ",
-      };
+
+  if (typeof key === "string") {
+    switch (defaultUploadOn) {
+      case 1:
+        return `${config.app.backendURL}${key}`.replace("./public/", "files/");
+      // case 2:
+      //   return azureUpload.getFileUrl(key);
+      case 3:
+        return awsS3.getObjectUrl(key);
+      default:
+        throw {
+          message:
+            "The defaultUploadOn parameter is not correct please correct it in env params ",
+        };
+    }
+  }
+
+  if (Array.isArray(key)) {
+    for (const data of key) {
+      switch (defaultUploadOn) {
+        case 1:
+          return `${config.app.backendURL}${key}`.replace(
+            "./public/",
+            "files/",
+          );
+        // case 2:
+        //   return azureUpload.getFileUrl(key);
+        case 3: {
+          const imageWithCompleteUrl = awsS3.getObjectUrl(data);
+          imagesWithCompleteUrl.push(imageWithCompleteUrl);
+          break;
+        }
+        default:
+          throw {
+            message:
+              "The defaultUploadOn parameter is not correct please correct it in env params ",
+          };
+      }
+    }
+    return imagesWithCompleteUrl;
   }
 };
 exports.uploadImageForCourse = async (
