@@ -121,7 +121,36 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
     expect(response.body.data.content).toEqual(fields.content);
     expect(response.body.data.timings).toEqual(fields.timings);
   });
-  it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
+  it("should create a new course with the customer token who is the part of same organization", async () => {
+    const fields = {
+      gcId:courseId,
+      name: "Mark -o plier",
+      title: "Assistant Professor",
+      content: "asdasdasdas asdasdasda",
+      timings: "9:00-10:00",
+    };
+
+    const files = {
+      image: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
+
+    mockFormidable(fields, files);
+    jest
+      .spyOn(upload_file, "uploadImageForCourse")
+      .mockImplementation(() => Promise.resolve("mock-logo-url"));
+
+    const response = await makeApiRequest(fields,customerToken);
+    expect(response.body.data.name).toEqual(fields.name);
+    expect(response.body.data.title).toEqual(fields.title);
+    expect(response.body.data.content).toEqual(fields.content);
+    expect(response.body.data.timings).toEqual(fields.timings);
+  });
+  it("should return an error if user belongs to different organization", async () => {
     const params = {};
     const response = await makeApiRequest(
       params,

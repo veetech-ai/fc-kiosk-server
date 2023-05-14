@@ -143,7 +143,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
     const response = await makeApiRequest(lessonId, fields, customerToken);
     expect(response.body.data[0]).toEqual(1);
   });
-  it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
+  it("should return an error if user belongs to different organization access api", async () => {
     const params = {};
     const response = await makeApiRequest(
       lessonId,
