@@ -20,21 +20,21 @@ const coursesFixtures = {
 
 const shopFixtures = {
   test: {
-    id : 1,
-    gcId : 1,
     name : "Assistant",
     subheading: "Sub Heading",
     description: "Extensive Description",
   },
   zong: {
-    id : 2,
-    gcId : 2,
     name : "Assistant",
     subheading: "Sub Heading",
     description: "Extensive Description",
   },
 }
 
+let testCourseId;
+let zongCourseId;
+let testCourseShopId;
+let zongCourseShopId;
 let adminToken;
 let customerToken;
 let zongCustomerToken;
@@ -65,13 +65,13 @@ function changeFormidableMockedValues(reqBody) {
 }
 
 const makeApiRequest = async (
-  params,
+  courseId,
   token = adminToken,
 ) => {
-  return helper.post_request_with_authorization({
-    endpoint: `course-shops`,
+  console.log("idddddddddddddddddddddddddd", courseId);
+  return helper.get_request_with_authorization({
+    endpoint: `course-shops/course/${courseId}`,
     token: token,
-    params: params,
   });
 };
 
@@ -113,21 +113,22 @@ describe("POST /api/v1/course-shops", () => {
     testOperatorToken = await helper.get_token_for("testOperator");
     
     const course = await createGolfCourse(coursesFixtures.test, adminToken);
-    shopFixtures.test.gcId = course.body.data.id;
-    
     const zongCourse = await createGolfCourse(coursesFixtures.zong, adminToken);
-    shopFixtures.zong.gcId = zongCourse.body.data.id;
     
-    const courseShop = await createGolfCourseShop(shopFixtures.test, adminToken);
-    shopFixtures.test.id = courseShop.body.data.id;
+    testCourseId = course.body.data.id
+    zongCourseId = zongCourse.body.data.id
+    console.log(testCourseId, zongCourseId);
+    const courseShop = await createGolfCourseShop({...shopFixtures.test, gcId: testCourseId }, adminToken);
+    testCourseShopId = courseShop.body.data.id;
 
-    const zongCourseShop = await createGolfCourseShop(shopFixtures.zong, adminToken);
-    shopFixtures.zong.id = zongCourseShop.body.data.id;
-    console.log("sadalikdjkad sdaskj d  ", shopFixtures, zongCourseShop.body.data);
+    const zongCourseShop = await createGolfCourseShop({...shopFixtures.zong, gcId: zongCourseId }, adminToken);
+    zongCourseShopId = zongCourseShop.body.data.id;
+    
+    // console.log("ddsddd,", zongCourseShop.body.data);
   });
 
-  it("should create a new course shop with valid input", async () => {
-    const response = await makeApiRequest(shopFixtures.test);
+  it("should return a list shops for the golf course", async () => {
+    const response = await makeApiRequest(testCourseId);
     const expectedResponse = {
       "createdAt": expect.any(String),
       "description": expect.any(String),
@@ -139,28 +140,31 @@ describe("POST /api/v1/course-shops", () => {
       "subheading": expect.any(String),
       "updatedAt": expect.any(String),
     }
-    expect(response.body.data).toEqual(expectedResponse);
+    expect(response.body.data).toEqual(expect.arrayContaining([expect.objectContaining(expectedResponse)]));
   });
 
-  // it("should create a new course shop for same org golf course", async () => {
-  //   jest
-  //     .spyOn(upload_file, "uploadImageForCourse")
-  //     .mockImplementation(() => Promise.resolve("mock-logo-url"));
+  it("should return shops for courses to the same org customer", async () => {
+    const response = await makeApiRequest(testCourseId, customerToken);
+    const expectedResponse = {
+      "createdAt": expect.any(String),
+      "description": expect.any(String),
+      "gcId": expect.any(Number),
+      "id": expect.any(Number),
+      "image": expect.any(String),
+      "name": expect.any(String),
+      "orgId": expect.any(Number),
+      "subheading": expect.any(String),
+      "updatedAt": expect.any(String),
+    }
+    console.log("response.body.data.length", response.body.data);
+    expect(response.body.data).toEqual(expect.arrayContaining([expect.objectContaining(expectedResponse)]));
+  });
 
-  //   const response = await makeApiRequest(shopFixtures.test, customerToken);
-  //   const expectedResponse = {
-  //     "createdAt": expect.any(String),
-  //     "description": expect.any(String),
-  //     "gcId": expect.any(Number),
-  //     "id": expect.any(Number),
-  //     "image": expect.any(String),
-  //     "name": expect.any(String),
-  //     "orgId": expect.any(Number),
-  //     "subheading": expect.any(String),
-  //     "updatedAt": expect.any(String),
-  //   }
-  //   expect(response.body.data).toEqual(expectedResponse);
-  // });
+  it("should return an error if the golf course is of different org", async () => {
+    const response = await makeApiRequest(testCourseId, zongCustomerToken);
+    const expectedResponse = "Course not Found"
+    expect(response.body.data).toEqual(expectedResponse);
+  });
   
   // it("should not create a new course shop for different org golf course", async () => {
   //   jest
