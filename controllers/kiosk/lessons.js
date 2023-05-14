@@ -73,7 +73,6 @@ exports.create_lesson = async (req, res) => {
         resolve({ fields, files });
       });
     });
-    console.log(fields);
     const validation = new Validator(fields, {
       gcId: "integer",
       name: "string",

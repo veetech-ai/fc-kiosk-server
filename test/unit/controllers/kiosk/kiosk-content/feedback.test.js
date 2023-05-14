@@ -76,7 +76,6 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       contact_medium: 12,
     };
     const response = await makeApiRequest(reqBody);
-    console.log("response :", response.body.data.errors);
     expect(response.body.data.errors).toEqual({
       contact_medium: ["The contact medium must be a string."],
     });
