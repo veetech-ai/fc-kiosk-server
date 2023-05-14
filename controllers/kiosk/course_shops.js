@@ -82,21 +82,30 @@ exports.createCourseShop = async (req, res) => {
     }
 
     const courseId = fields.gcId;
-    const course = await courseService.getCourseById(courseId)
-     
+    const course = await courseService.getCourseById(courseId);
+
     const loggedInUserOrgId = req.user.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
-    if(!isSuperOrAdmin && loggedInUserOrgId !== course.orgId){
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    if (!isSuperOrAdmin && loggedInUserOrgId !== course.orgId) {
       return apiResponse.fail(res, "Course not Found", 404);
     }
 
     const shopImage = files?.image;
-    const imageIdentifier = await upload_file.uploadImageForCourse(shopImage, courseId);
-    const reqBody = { ...fields, image: imageIdentifier }
-    const courseShop = await courseShopsService.createCourseShop(reqBody, course.orgId)
-    
+    const imageIdentifier = await upload_file.uploadImageForCourse(
+      shopImage,
+      courseId,
+    );
+    const reqBody = { ...fields, image: imageIdentifier };
+    const courseShop = await courseShopsService.createCourseShop(
+      reqBody,
+      course.orgId,
+    );
+
     const imageUrl = upload_file.getFileURL(courseShop.image);
-    courseShop.setDataValue("image", imageUrl)
+    courseShop.setDataValue("image", imageUrl);
 
     return apiResponse.success(res, req, courseShop);
   } catch (error) {
@@ -136,12 +145,15 @@ exports.getCourseShops = async (req, res) => {
     const course = await courseService.getCourseById(courseId);
 
     const loggedInUserOrgId = req.user.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
-    if(!isSuperOrAdmin && loggedInUserOrgId !== course.orgId){
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    if (!isSuperOrAdmin && loggedInUserOrgId !== course.orgId) {
       return apiResponse.fail(res, "Course not Found", 404);
     }
 
-    const courseShops = await courseShopsService.getCourseShops(courseId)
+    const courseShops = await courseShopsService.getCourseShops(courseId);
 
     return apiResponse.success(res, req, courseShops);
   } catch (error) {
@@ -214,25 +226,34 @@ exports.updateCourseShop = async (req, res) => {
     }
 
     const shopId = req.params.shopId;
-    const courseShop = await courseShopsService.getCourseShopById(shopId)
+    const courseShop = await courseShopsService.getCourseShopById(shopId);
 
     const loggedInUserOrgId = req.user.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
-    if(!isSuperOrAdmin && loggedInUserOrgId !== courseShop.orgId){
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    if (!isSuperOrAdmin && loggedInUserOrgId !== courseShop.orgId) {
       return apiResponse.fail(res, "Shop not Found", 404);
     }
 
-    const reqBody = { ...fields }
+    const reqBody = { ...fields };
     const shopImage = files?.image;
     if (shopImage) {
-        const imageIdentifier = await upload_file.uploadImageForCourse(shopImage, courseShop.gcId);
-        reqBody.image = imageIdentifier 
+      const imageIdentifier = await upload_file.uploadImageForCourse(
+        shopImage,
+        courseShop.gcId,
+      );
+      reqBody.image = imageIdentifier;
     }
-    const updatedCourseShop = await courseShopsService.updateCourseShop(shopId, reqBody)
+    const updatedCourseShop = await courseShopsService.updateCourseShop(
+      shopId,
+      reqBody,
+    );
 
-    if(updatedCourseShop) {
-        const imageUrl = upload_file.getFileURL(updatedCourseShop.image);
-        updatedCourseShop.setDataValue("image", imageUrl)
+    if (updatedCourseShop) {
+      const imageUrl = upload_file.getFileURL(updatedCourseShop.image);
+      updatedCourseShop.setDataValue("image", imageUrl);
     }
 
     return apiResponse.success(res, req, updatedCourseShop);
@@ -242,45 +263,48 @@ exports.updateCourseShop = async (req, res) => {
 };
 
 exports.deleteCourseShop = async (req, res) => {
-    /**
-     * @swagger
-     *
-     * /course-shops/{shopId}:
-     *   delete:
-     *     security:
-     *       - auth: []
-     *     description: Delete shop.
-     *     tags: [Course-Shops]
-     *     produces:
-     *       - application/json
-     *     parameters:
-     *       - name: shopId
-     *         description: Organization ID
-     *         in: path
-     *         required: true
-     *         type: string
-     *     responses:
-     *       200:
-     *         description: Success
-     */
-  
-    try {
-      const shopId = Number(req.params.shopId);
-      if (!shopId) {
-        return apiResponse.fail(res, "shopId must be a valid number");
-      }
+  /**
+   * @swagger
+   *
+   * /course-shops/{shopId}:
+   *   delete:
+   *     security:
+   *       - auth: []
+   *     description: Delete shop.
+   *     tags: [Course-Shops]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: shopId
+   *         description: Organization ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
 
-      const courseShop = await courseShopsService.getCourseShopById(shopId)
-  
-      const loggedInUserOrgId = req.user.orgId;
-      const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
-      if(!isSuperOrAdmin && loggedInUserOrgId !== courseShop.orgId){
-        return apiResponse.fail(res, "Shop not Found", 404);
-      }
-  
-        await courseShopsService.deleteCourseShop(shopId)
-      return apiResponse.success(res, req, "Shop Deleted");
-    } catch (error) {
-      return apiResponse.fail(res, error.message, error.statusCode || 500);
+  try {
+    const shopId = Number(req.params.shopId);
+    if (!shopId) {
+      return apiResponse.fail(res, "shopId must be a valid number");
     }
+
+    const courseShop = await courseShopsService.getCourseShopById(shopId);
+
+    const loggedInUserOrgId = req.user.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    if (!isSuperOrAdmin && loggedInUserOrgId !== courseShop.orgId) {
+      return apiResponse.fail(res, "Shop not Found", 404);
+    }
+
+    await courseShopsService.deleteCourseShop(shopId);
+    return apiResponse.success(res, req, "Shop Deleted");
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
 };
