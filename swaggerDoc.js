@@ -68,6 +68,7 @@ const options = {
     "./controllers/org_user_rel_fp_user.js",
     "./controllers/roles/index.js",
     "./controllers/kiosk/lessons.js",
+    "./controllers/kiosk/kiosk_content/lesson.js"
   ],
 };
 

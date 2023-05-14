@@ -191,7 +191,7 @@ exports.update_lesson = async (req, res) => {
     if (coachImage) {
       image = await upload_file.uploadImageForCourse(
         coachImage,
-        courseId,
+        lessonId,
         "coach-images/",
         3,
       );
