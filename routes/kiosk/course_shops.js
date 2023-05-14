@@ -11,11 +11,11 @@ exports.routesConfig = function (app, router) {
     CourseShopsController.createCourseShop,
   ]);
   
-  // router.get(courses + "/:orgId", [
-  //   validation_middleware.validJWTNeeded,
-  //   validation_middleware.hasAccess(["super", "admin", "getCourses"]),
-  //   CourseShopsController.createCourseShop,
-  // ]);
+  router.get(courses + "/course/:gcId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    CourseShopsController.getCourseShops,
+  ]);
   
   // router.patch(courses + "/:courseId/course-info", [
   //   validation_middleware.validJWTNeeded,

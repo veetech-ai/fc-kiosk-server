@@ -110,17 +110,17 @@ exports.getCourseShops = async (req, res) => {
   /**
    * @swagger
    *
-   * /course-shops/{orgId}:
+   * /course-shops/course/{gcId}:
    *   get:
    *     security:
    *       - auth: []
-   *     description: Get courses for a specific organization.
+   *     description: Get shops for a specific course.
    *     tags: [Course-Shops]
    *     produces:
    *       - application/json
    *     parameters:
-   *       - name: orgId
-   *         description: Organization ID
+   *       - name: gcId
+   *         description: Golf Course ID
    *         in: path
    *         required: true
    *         type: string
@@ -130,12 +130,22 @@ exports.getCourseShops = async (req, res) => {
    */
 
   try {
-    const orgId = Number(req.params.orgId);
-    if (!orgId) {
-      return apiResponse.fail(res, "orgId must be a valid number");
+    const gcId = Number(req.params.gcId);
+    if (!gcId) {
+      return apiResponse.fail(res, "gcId must be a valid number");
     }
-    const courses = await courseService.getCoursesByOrganization(orgId);
-    return apiResponse.success(res, req, courses);
+
+    const course = await courseService.getCourseById(gcId);
+
+    const loggedInUserOrgId = req.user.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
+    if(!isSuperOrAdmin && loggedInUserOrgId !== course.orgId){
+      return apiResponse.fail(res, "Course not Found", 404);
+    }
+
+    const courseShops = await courseShopsService.getCourseShops(gcId)
+
+    return apiResponse.success(res, req, courseShops);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

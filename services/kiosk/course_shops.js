@@ -21,3 +21,11 @@ exports.createCourseShop = async (reqBody, orgId) => {
 
   return courseShop;
 }
+
+exports.getCourseShops = async (gcId) => {
+  const courseShop = await Shop.findAll({
+    where: { gcId },
+  });
+
+  return courseShop;
+}
