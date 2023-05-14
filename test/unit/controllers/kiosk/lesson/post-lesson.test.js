@@ -112,7 +112,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
 
     mockFormidable(fields, files);
     jest
-      .spyOn(upload_file, "uploadImage")
+      .spyOn(upload_file, "uploadImageForCourse")
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeApiRequest(fields);

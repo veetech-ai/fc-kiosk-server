@@ -62,6 +62,8 @@ exports.create_lesson = async (req, res) => {
    */
 
   try {
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
       const form = new formidable.IncomingForm();
       form.multiples = true;
       const { fields, files } = await new Promise((resolve, reject) => {
@@ -79,22 +81,24 @@ exports.create_lesson = async (req, res) => {
         timings: "string",
       });
       if (validation.fails()) {
-        console.log("insdsad");
         return apiResponse.fail(res, validation.errors);
       }
       const courseId=fields.gcId
       const course=await courseService.getCourseById(courseId)
       const orgId=course.orgId
+      const isSameOrganizationResource = loggedInUserOrg === orgId;
+      if (!isSuperOrAdmin && !isSameOrganizationResource) {
+        return apiResponse.fail(res, "", 403);
+      }
       const coachImage = files.coachImage;
-      let image
-      if(coachImage){
-     image = await upload_file.uploadImage(
+     
+    const image = await upload_file.uploadImageForCourse(
         coachImage,
         courseId,
         "coach-images/",
         3,
       );
-     }
+     
       const reqBody = { ...fields, image };
       const coach = await courseLesson.createCoach(reqBody, orgId);
       return apiResponse.success(res, req, coach);
@@ -184,12 +188,15 @@ exports.update_lesson = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const coachImage = files.coachImage;
-    let image = await upload_file.uploadImage(
+    let image
+    if(coachImage){
+   image = await upload_file.uploadImageForCourse(
       coachImage,
-      lessonId,
+      courseId,
       "coach-images/",
       3,
     );
+   }
     const reqBody = { ...fields, image };
     const updatedCoach = await courseLesson.updateCoach(reqBody, lessonId);
     return apiResponse.success(res, req, updatedCoach);

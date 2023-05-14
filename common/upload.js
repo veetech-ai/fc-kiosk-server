@@ -168,10 +168,10 @@ exports.getFileURL = (key) => {
       };
   }
 };
-exports.uploadImage = async (
+exports.uploadImageForCourse = async (
   imageFile,
   courseId,
-  path,
+  path = "golf-courses-images/",
   uploadOn = defaultUploadOn,
 ) => {
   if (!imageFile) return null;
@@ -205,7 +205,7 @@ exports.uploadImage = async (
     throw err.status ? err : { message: err.message };
   }
 };
-exports.uploadImages = async (
+exports.uploadImagesForCourse = async (
   imageFiles,
   courseId,
   path,
@@ -219,7 +219,7 @@ exports.uploadImages = async (
     const uploadedFiles = [];
     const isIterable = Symbol.iterator in Object(imageFiles);
     if (!isIterable) {
-      return await this.uploadImage(imageFiles, courseId, 3);
+      return await this.uploadImageForCourse(imageFiles, courseId, 3);
     }
     for (const imageFile of imageFiles) {
       validateFile(

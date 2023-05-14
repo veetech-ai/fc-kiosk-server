@@ -75,7 +75,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
 
       mockFormidable(fields, files);
       jest
-        .spyOn(upload_file, "uploadImage")
+        .spyOn(upload_file, "uploadImageForCourse")
         .mockImplementation(() => Promise.resolve("mock-logo-url"));
       const lesson = await helper.post_request_with_authorization({
         endpoint: `course-lesson`,
@@ -115,7 +115,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
 
     mockFormidable(fields, files);
     jest
-      .spyOn(upload_file, "uploadImage")
+      .spyOn(upload_file, "uploadImageForCourse")
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeApiRequest(lessonId, fields);
@@ -137,7 +137,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
     };
     mockFormidable(fields, files);
     jest
-      .spyOn(upload_file, "uploadImage")
+      .spyOn(upload_file, "uploadImageForCourse")
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeApiRequest(lessonId, fields, customerToken);
