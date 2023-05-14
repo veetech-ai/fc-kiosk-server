@@ -215,3 +215,7 @@ exports.getValidParent = async ({ orgId, gcId, loggedInUserOrgId }) => {
 
     return toReturn;
 }
+
+exports.deleteAll = async (where) => {
+    return await Coupon.destroy({ where });
+};

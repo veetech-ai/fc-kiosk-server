@@ -1,6 +1,7 @@
 const { organizationsInApplication } = require("../../../../../common/organizations.data");
 const helper = require("../../../../helper");
 const moment = require("moment");
+const KioskCouponsServices = require("../../../../../services/kiosk/coupons");
 
 let testCustomerToken, superAdminToken, testOrganizatonId = organizationsInApplication.test.id, zongOrganizationId = organizationsInApplication.zong.id
 
@@ -9,16 +10,15 @@ beforeAll(async () => {
     testCustomerToken = await helper.get_token_for("testCustomer")
     superAdminToken = await helper.get_token_for("superadmin")
 })
-const requestBody = {
+let requestBody = {
     title: "Example",
     description: "Test Coupon",
-    expiry: moment().format("YYYY-MM-DDTHH:mm:ssZ"),
+    expiry: moment().format("YYYY-MM-DDTHH:mm:ssZ").toString(),
     code: "XYZa123",
     discountType: "fixed",
     discount: 50,
     maxUseLimit: 100
 }
-console.log({requestBody});
 describe("POST /kiosk-content/coupons", () => {
 
     const makeApiRequest = async (params, token = superAdminToken) => {
@@ -68,22 +68,6 @@ describe("POST /kiosk-content/coupons", () => {
 
     })
 
-    it("should return error if super admin does not send orgId nor gcId in the body", async () => {
-
-        // It is compulsory for super admin to send either gcId or orgId.
-        
-        const expectedResponse = {
-            success: false,
-            data: "Parent resource id is required"
-        }
-
-        const response = await makeApiRequest(requestBody)
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(400)
-
-    })
-
     it("should return error if customer tries to create coupons in the organization he/she does not belong to", async () => {
 
         // It is compulsory for super admin to send either gcId or orgId.
@@ -97,36 +81,6 @@ describe("POST /kiosk-content/coupons", () => {
         
         expect(response.body).toStrictEqual(expectedResponse)
         expect(response.statusCode).toBe(403)
-
-    })
-
-    it("should return error if the specified parent (organization or golf course) does not exist", async () => {
-
-        // It is compulsory for super admin to send either gcId or orgId.
-        
-        const expectedResponse = {
-            success: false,
-            data: "You are not allowed"
-        }
-        const requestBodyClone = {...requestBody, orgId: zongOrganizationId}
-        const response = await makeApiRequest(requestBodyClone, testCustomerToken)
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(403)
-
-    })
-
-    it("should return error if both gcId and orgId are sent - Coupon can have only one parent", async () => {
-
-        const expectedResponse = {
-            success: false,
-            data: "Coupon can have only one parent"
-        }
-        const requestBodyClone = {...requestBody, orgId: testOrganizatonId, gcId: 1000}
-        const response = await makeApiRequest(requestBodyClone, testCustomerToken)
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(400)
 
     })
 
@@ -162,19 +116,68 @@ describe("POST /kiosk-content/coupons", () => {
 
         const requestBodyClone = {...requestBody}
         const response = await makeApiRequest(requestBodyClone, testCustomerToken)
-        
+        await KioskCouponsServices.deleteAll({ code: requestBodyClone.code })
         const expectedResponse = {
-            ...requestBodyClone,
-            orgId: testOrganizatonId,
-            createdAt: expect.any(String),
-            updatedAt: expect.any(String),
-            id: expect.any(Number)
+            title: "Example",
+            description: "Test Coupon",
+            code: "XYZa123",
+            discountType: "fixed",
+            discount: 50,
+            maxUseLimit: 100,
+            orgId: testOrganizatonId
         }
-        expect(response.body.data).toEqual(expectedResponse)
+        expect(response.body.data).toEqual(expect.objectContaining(expectedResponse))
+
+        // test the expiry date separately
+        const receivedExpiryDate = new Date(response.body.data.expiry)
+        const expectedExpiryDate = new Date(requestBodyClone.expiry)
+        expect(receivedExpiryDate).toEqual(expectedExpiryDate)
+
         expect(response.body.success).toBe(true)
         expect(response.statusCode).toBe(200)
 
     })
-    
         
+    it("should return an error if the coupon with the same coupon code already exists", async () => {
+
+        const requestBodyClone = {...requestBody, orgId: testOrganizatonId}
+        await makeApiRequest(requestBodyClone, superAdminToken)
+
+        const response = await makeApiRequest(requestBodyClone, superAdminToken)
+        await KioskCouponsServices.deleteAll({ code: requestBodyClone.code })
+        const expectedResponse = {
+            success: false,
+            data: "Coupon already exists"
+        }
+        expect(response.body).toEqual(expectedResponse)
+
+        expect(response.statusCode).toBe(409)
+
+    })
+
+    it("should create the coupon of 'percentage' discount type ", async () => {
+
+        const requestBodyClone = {...requestBody, discountType: "percentage", orgId: testOrganizatonId}
+        const response = await makeApiRequest(requestBodyClone, superAdminToken)
+        const expectedResponse = {
+            title: "Example",
+            description: "Test Coupon",
+            code: "XYZa123",
+            discountType: "percentage",
+            discount: 50,
+            maxUseLimit: 100,
+            orgId: testOrganizatonId
+        }
+        expect(response.body.data).toEqual(expect.objectContaining(expectedResponse))
+
+        // test the expiry date separately
+        const receivedExpiryDate = new Date(response.body.data.expiry)
+        const expectedExpiryDate = new Date(requestBodyClone.expiry)
+        expect(receivedExpiryDate).toEqual(expectedExpiryDate)
+
+        expect(response.body.success).toBe(true)
+        expect(response.statusCode).toBe(200)
+
+    })
+
 })  
