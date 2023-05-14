@@ -4,6 +4,7 @@ const apiResponse = require("../../common/api.response");
 const upload_file = require("../../common/upload");
 const courseLesson = require("../../services/kiosk/lessons");
 const courseService = require("../../services/kiosk/course");
+const helper = require("../../common/helper");
 
 /**
  * @swagger
@@ -63,7 +64,7 @@ exports.create_lesson = async (req, res) => {
 
   try {
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
     const form = new formidable.IncomingForm();
     form.multiples = true;
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -158,7 +159,7 @@ exports.update_lesson = async (req, res) => {
 
   try {
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
     const lessonId = Number(req.params.lessonId);
     if (!lessonId) {
       return apiResponse.fail(res, "lessonId must be a valid number");
