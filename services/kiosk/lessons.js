@@ -20,6 +20,9 @@ async function findLessonById(lessonId) {
   if (!lesson) {
     throw new ServiceError("Something Went wrong", 401);
   }
+  if (!lesson?.image) return;
+  const image = upload_file.getFileURL(lesson.image);
+  lesson.image = image;
   return lesson;
 }
 async function updateCoach(reqBody, lessonId) {
@@ -34,20 +37,19 @@ async function updateCoach(reqBody, lessonId) {
   }
   return updatedCoach;
 }
-async function findLessonByCourseId(courseId) {
+async function findLessonsByCourseId(courseId) {
   const lessons = await Coach.findAll({
     where: { gcId: courseId },
   });
   if (!lessons.length) {
     throw new ServiceError("Something Went wrong", 401);
   }
-  
-    lessons.forEach((lesson) => {
-      if (!lesson?.image) return;
-      const image = upload_file.getFileURL(lesson.image);
-      lesson.image = image;
-    });
 
+  lessons.forEach((lesson) => {
+    if (!lesson?.image) return;
+    const image = upload_file.getFileURL(lesson.image);
+    lesson.image = image;
+  });
 
   return lessons;
 }
@@ -55,5 +57,5 @@ module.exports = {
   createCoach,
   updateCoach,
   findLessonById,
-  findLessonByCourseId
+  findLessonsByCourseId,
 };

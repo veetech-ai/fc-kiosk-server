@@ -64,7 +64,10 @@ exports.create_lesson = async (req, res) => {
 
   try {
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
     const form = new formidable.IncomingForm();
     form.multiples = true;
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -158,7 +161,10 @@ exports.update_lesson = async (req, res) => {
 
   try {
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
     const lessonId = Number(req.params.lessonId);
     if (!lessonId) {
       return apiResponse.fail(res, "lessonId must be a valid number");
