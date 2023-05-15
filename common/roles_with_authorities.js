@@ -93,7 +93,7 @@ exports.roleWithAuthorities = {
     get_courses: true,
     manage_courses: true,
     get_coupons: true,
-    manage_coupons: true
+    manage_coupons: true,
   },
   operator: {
     ...defaultAuthorities,

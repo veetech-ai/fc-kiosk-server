@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
           isAlphanumeric: true,
         },
       },
-      discountType: DataTypes.ENUM('fixed', 'percentage'),
+      discountType: DataTypes.ENUM("fixed", "percentage"),
       discount: DataTypes.FLOAT,
       maxUseLimit: DataTypes.INTEGER,
       usedBy: DataTypes.INTEGER,
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      timestamps: true
+      timestamps: true,
     },
   );
   Coupon.associate = function (models) {

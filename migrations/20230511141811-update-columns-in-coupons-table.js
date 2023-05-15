@@ -23,23 +23,21 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       }),
-      
-      queryInterface.removeColumn('Coupons', 'discount_type'),
+
+      queryInterface.removeColumn("Coupons", "discount_type"),
       queryInterface.addColumn("Coupons", "discountType", {
-        type: Sequelize.ENUM('fixed', 'percentage'),
+        type: Sequelize.ENUM("fixed", "percentage"),
         defaultValue: "fixed",
         allowNull: false,
         comment: "Coupon discount type. fixed, percentage. default is fixed",
       }),
-      
-      queryInterface.renameColumn('Coupons', 'max_use_limit', 'maxUseLimit'),
-      queryInterface.renameColumn('Coupons', 'used_by', 'usedBy'),
-      
-      
-      queryInterface.removeColumn('Coupons', 'coupon_for'),
-      queryInterface.removeColumn('Coupons', 'users'),
-      queryInterface.removeColumn('Coupons', 'device_types')
 
+      queryInterface.renameColumn("Coupons", "max_use_limit", "maxUseLimit"),
+      queryInterface.renameColumn("Coupons", "used_by", "usedBy"),
+
+      queryInterface.removeColumn("Coupons", "coupon_for"),
+      queryInterface.removeColumn("Coupons", "users"),
+      queryInterface.removeColumn("Coupons", "device_types"),
     ]);
   },
 
@@ -49,7 +47,6 @@ module.exports = {
       queryInterface.removeColumn("Coupons", "gcId"),
       queryInterface.removeColumn("Coupons", "discountType"),
 
-
       queryInterface.addColumn("Coupons", "discount_type", {
         type: Sequelize.INTEGER,
         defaultValue: 0,
@@ -57,8 +54,8 @@ module.exports = {
         comment: "Coupon discount type. 0=fixed, 1=percentage. default is 0",
       }),
 
-      queryInterface.renameColumn('Coupons', 'maxUseLimit', 'max_use_limit'),
-      queryInterface.renameColumn('Coupons', 'usedBy', 'used_by'),
+      queryInterface.renameColumn("Coupons", "maxUseLimit", "max_use_limit"),
+      queryInterface.renameColumn("Coupons", "usedBy", "used_by"),
 
       queryInterface.addColumn("Coupons", "coupon_for", {
         type: Sequelize.INTEGER,

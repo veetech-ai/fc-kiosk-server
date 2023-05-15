@@ -1,292 +1,302 @@
-const { organizationsInApplication } = require("../../../../../common/organizations.data");
+const {
+  organizationsInApplication,
+} = require("../../../../../common/organizations.data");
 const helper = require("../../../../helper");
 const moment = require("moment");
 const CouponServices = require("../../../../../services/coupons");
 
-let testCustomerToken, superAdminToken, testOrganizatonId = organizationsInApplication.test.id, zongOrganizationId = organizationsInApplication.zong.id,
-zongGolfCourseId, testGolfCourseId
-
+let testCustomerToken,
+  superAdminToken,
+  testOrganizatonId = organizationsInApplication.test.id,
+  zongOrganizationId = organizationsInApplication.zong.id,
+  zongGolfCourseId,
+  testGolfCourseId;
 
 beforeAll(async () => {
-    testCustomerToken = await helper.get_token_for("testCustomer")
-    superAdminToken = await helper.get_token_for("superadmin")
-})
+  testCustomerToken = await helper.get_token_for("testCustomer");
+  superAdminToken = await helper.get_token_for("superadmin");
+});
 let requestBody = {
-    title: "Example",
-    description: "Test Coupon",
-    expiry: moment().format("YYYY-MM-DDTHH:mm:ssZ").toString(),
-    code: "XYZa123",
-    discountType: "fixed",
-    discount: 50,
-    maxUseLimit: 100
-}
+  title: "Example",
+  description: "Test Coupon",
+  expiry: moment().format("YYYY-MM-DDTHH:mm:ssZ").toString(),
+  code: "XYZa123",
+  discountType: "fixed",
+  discount: 50,
+  maxUseLimit: 100,
+};
 
 describe("POST /coupons", () => {
+  const makeApiRequest = async (
+    params,
+    token = superAdminToken,
+    endpoint = "coupons",
+  ) => {
+    return helper.post_request_with_authorization({
+      endpoint,
+      token,
+      params: params,
+    });
+  };
+  beforeAll(async () => {
+    // create golf courses
 
-    const makeApiRequest = async (params, token = superAdminToken, endpoint = "coupons") => {
-        return helper.post_request_with_authorization({
-            endpoint,
-            token,
-            params: params,
-        });
+    const testGolfCourseCreationResponse = await makeApiRequest(
+      {
+        name: "TEST COURSE",
+        orgId: testOrganizatonId,
+        state: "Albama",
+        city: "Abbeville",
+      },
+      superAdminToken,
+      "kiosk-courses/create",
+    );
+    testGolfCourseId = testGolfCourseCreationResponse.body.data.id;
+
+    const zongGolfCourseCreationResponse = await makeApiRequest(
+      {
+        name: "ZONG COURSE",
+        orgId: zongOrganizationId,
+        state: "Albama",
+        city: "Abbeville",
+      },
+      superAdminToken,
+      "kiosk-courses/create",
+    );
+
+    zongGolfCourseId = zongGolfCourseCreationResponse.body.data.id;
+    console.log(testGolfCourseId, zongGolfCourseId);
+  });
+
+  it("should return 400 and validation errors for the corresponding required fields", async () => {
+    const expectedResponse = {
+      success: false,
+      data: {
+        errors: {
+          code: ["The code field is required."],
+          discount: ["The discount field is required."],
+          discountType: ["The discountType field is required."],
+          expiry: ["The expiry field is required."],
+          maxUseLimit: ["The maxUseLimit field is required."],
+          title: ["The title field is required."],
+        },
+      },
     };
-    beforeAll(async () => {
-        // create golf courses
 
-        const testGolfCourseCreationResponse = await makeApiRequest({
-            name: "TEST COURSE",
-            orgId: testOrganizatonId,
-            state: "Albama",
-            city: "Abbeville"
-        }, superAdminToken, "kiosk-courses/create")
-        testGolfCourseId = testGolfCourseCreationResponse.body.data.id
+    const response = await makeApiRequest({});
 
-        const zongGolfCourseCreationResponse = await makeApiRequest({
-            name: "ZONG COURSE",
-            orgId: zongOrganizationId,
-            state: "Albama",
-            city: "Abbeville"
-        }, superAdminToken, "kiosk-courses/create")
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(400);
+  });
 
-        zongGolfCourseId = zongGolfCourseCreationResponse.body.data.id
-        console.log(testGolfCourseId, zongGolfCourseId);
-    })
+  it("should return error if super admin does not send orgId nor gcId in the body", async () => {
+    // It is compulsory for super admin to send either gcId or orgId.
 
-    it("should return 400 and validation errors for the corresponding required fields", async () => {
+    const expectedResponse = {
+      success: false,
+      data: "Parent resource id is required",
+    };
 
-        const expectedResponse = {
-            success: false,
-            data: {
-                errors: {
-                    code: [ "The code field is required." ],
-                    discount:  [ "The discount field is required." ],
-                    discountType: ["The discountType field is required."],
-                    expiry: ["The expiry field is required."],
-                    maxUseLimit: [ "The maxUseLimit field is required." ],
-                    title: [ "The title field is required." ]
-                }
-            }
-        }
+    const response = await makeApiRequest(requestBody);
 
-        const response = await makeApiRequest({})
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(400)
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(400);
+  });
+  it("should return error if both gcId and orgId are sent - Coupon can have only one parent", async () => {
+    const expectedResponse = {
+      success: false,
+      data: "Coupon can have only one parent",
+    };
+    const requestBodyClone = {
+      ...requestBody,
+      orgId: testOrganizatonId,
+      gcId: 1000,
+    };
+    const response = await makeApiRequest(requestBodyClone, testCustomerToken);
 
-    })
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(400);
+  });
 
-    it("should return error if super admin does not send orgId nor gcId in the body", async () => {
+  it("should return error if test organization's customer tries to create coupons in the organization he/she does not belong to", async () => {
+    // It is compulsory for super admin to send either gcId or orgId.
 
-        // It is compulsory for super admin to send either gcId or orgId.
-        
-        const expectedResponse = {
-            success: false,
-            data: "Parent resource id is required"
-        }
+    const expectedResponse = {
+      success: false,
+      data: "You are not allowed",
+    };
+    const requestBodyClone = { ...requestBody, orgId: zongOrganizationId };
+    const response = await makeApiRequest(requestBodyClone, testCustomerToken);
 
-        const response = await makeApiRequest(requestBody)
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(400)
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(403);
+  });
 
-    })
-    it("should return error if both gcId and orgId are sent - Coupon can have only one parent", async () => {
+  it("should return error if customer tries to create coupons in the golf course of the different organization", async () => {
+    // It is compulsory for super admin to send either gcId or orgId.
 
-        const expectedResponse = {
-            success: false,
-            data: "Coupon can have only one parent"
-        }
-        const requestBodyClone = {...requestBody, orgId: testOrganizatonId, gcId: 1000}
-        const response = await makeApiRequest(requestBodyClone, testCustomerToken )
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(400)
+    const expectedResponse = {
+      success: false,
+      data: "Parent does not exist",
+    };
+    const requestBodyClone = { ...requestBody, gcId: zongGolfCourseId };
+    const response = await makeApiRequest(requestBodyClone, testCustomerToken);
 
-    })
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(404);
+  });
 
-    it("should return error if test organization's customer tries to create coupons in the organization he/she does not belong to", async () => {
+  it("should return error if customer tries to create coupons in the golf course of the different organization", async () => {
+    // It is compulsory for super admin to send either gcId or orgId.
 
-        // It is compulsory for super admin to send either gcId or orgId.
-        
-        const expectedResponse = {
-            success: false,
-            data: "You are not allowed"
-        }
-        const requestBodyClone = {...requestBody, orgId: zongOrganizationId}
-        const response = await makeApiRequest(requestBodyClone, testCustomerToken )
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(403)
+    const expectedResponse = {
+      success: false,
+      data: "Parent does not exist",
+    };
+    const requestBodyClone = { ...requestBody, gcId: zongGolfCourseId };
+    const response = await makeApiRequest(requestBodyClone, testCustomerToken);
 
-    })
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(404);
+  });
 
-    it("should return error if customer tries to create coupons in the golf course of the different organization", async () => {
+  it("should return error if organization does not exist in case of super admin", async () => {
+    const expectedResponse = {
+      success: false,
+      data: "Parent does not exist",
+    };
+    const requestBodyClone = { ...requestBody, orgId: -1 };
+    const response = await makeApiRequest(requestBodyClone, superAdminToken);
 
-        // It is compulsory for super admin to send either gcId or orgId.
-        
-        const expectedResponse = {
-            success: false,
-            data: "Parent does not exist"
-        }
-        const requestBodyClone = {...requestBody, gcId: zongGolfCourseId }
-        const response = await makeApiRequest(requestBodyClone, testCustomerToken )
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(404)
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(404);
+  });
 
-    })
+  it("should create the coupon under the customer's organization successfully", async () => {
+    const requestBodyClone = { ...requestBody };
+    const response = await makeApiRequest(requestBodyClone, testCustomerToken);
+    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    const expectedResponse = {
+      title: "Example",
+      description: "Test Coupon",
+      code: "XYZa123",
+      discountType: "fixed",
+      discount: 50,
+      maxUseLimit: 100,
+      orgId: testOrganizatonId,
+    };
+    expect(response.body.data).toEqual(
+      expect.objectContaining(expectedResponse),
+    );
 
-    it("should return error if customer tries to create coupons in the golf course of the different organization", async () => {
+    // test the expiry date separately
+    const receivedExpiryDate = new Date(response.body.data.expiry);
+    const expectedExpiryDate = new Date(requestBodyClone.expiry);
+    expect(receivedExpiryDate).toEqual(expectedExpiryDate);
 
-        // It is compulsory for super admin to send either gcId or orgId.
-        
-        const expectedResponse = {
-            success: false,
-            data: "Parent does not exist"
-        }
-        const requestBodyClone = {...requestBody, gcId: zongGolfCourseId }
-        const response = await makeApiRequest(requestBodyClone, testCustomerToken )
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(404)
+    expect(response.body.success).toBe(true);
+    expect(response.statusCode).toBe(200);
+  });
 
-    })
+  it("should create the coupon under the customer's organization's golf course successfully", async () => {
+    const requestBodyClone = { ...requestBody, gcId: testGolfCourseId };
+    const response = await makeApiRequest(requestBodyClone, testCustomerToken);
+    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    const expectedResponse = {
+      title: "Example",
+      description: "Test Coupon",
+      code: "XYZa123",
+      discountType: "fixed",
+      discount: 50,
+      maxUseLimit: 100,
+      gcId: testGolfCourseId,
+    };
+    expect(response.body.data).toEqual(
+      expect.objectContaining(expectedResponse),
+    );
 
-    it("should return error if organization does not exist in case of super admin", async () => {
+    // test the expiry date separately
+    const receivedExpiryDate = new Date(response.body.data.expiry);
+    const expectedExpiryDate = new Date(requestBodyClone.expiry);
+    expect(receivedExpiryDate).toEqual(expectedExpiryDate);
 
-        const expectedResponse = {
-            success: false,
-            data: "Parent does not exist"
-        }
-        const requestBodyClone = {...requestBody, orgId: -1}
-        const response = await makeApiRequest(requestBodyClone, superAdminToken)
-        
-        expect(response.body).toStrictEqual(expectedResponse)
-        expect(response.statusCode).toBe(404)
+    expect(response.body.success).toBe(true);
+    expect(response.statusCode).toBe(200);
+  });
 
-    })
+  it("should create the coupon of 'percentage' discount type ", async () => {
+    const requestBodyClone = {
+      ...requestBody,
+      discountType: "percentage",
+      orgId: testOrganizatonId,
+    };
+    const response = await makeApiRequest(requestBodyClone, superAdminToken);
+    await CouponServices.deleteAll({ code: requestBodyClone.code });
 
-    it("should create the coupon under the customer's organization successfully", async () => {
+    const expectedResponse = {
+      title: "Example",
+      description: "Test Coupon",
+      code: "XYZa123",
+      discountType: "percentage",
+      discount: 50,
+      maxUseLimit: 100,
+      orgId: testOrganizatonId,
+    };
+    expect(response.body.data).toEqual(
+      expect.objectContaining(expectedResponse),
+    );
 
-        const requestBodyClone = {...requestBody}
-        const response = await makeApiRequest(requestBodyClone,  testCustomerToken)
-        await CouponServices.deleteAll({ code: requestBodyClone.code })
-        const expectedResponse = {
-            title: "Example",
-            description: "Test Coupon",
-            code: "XYZa123",
-            discountType: "fixed",
-            discount: 50,
-            maxUseLimit: 100,
-            orgId: testOrganizatonId
-        }
-        expect(response.body.data).toEqual(expect.objectContaining(expectedResponse))
+    // test the expiry date separately
+    const receivedExpiryDate = new Date(response.body.data.expiry);
+    const expectedExpiryDate = new Date(requestBodyClone.expiry);
+    expect(receivedExpiryDate).toEqual(expectedExpiryDate);
 
-        // test the expiry date separately
-        const receivedExpiryDate = new Date(response.body.data.expiry)
-        const expectedExpiryDate = new Date(requestBodyClone.expiry)
-        expect(receivedExpiryDate).toEqual(expectedExpiryDate)
+    expect(response.body.success).toBe(true);
+    expect(response.statusCode).toBe(200);
+  });
+  it("should return an error if the coupon with the same coupon code already exists", async () => {
+    const requestBodyClone = { ...requestBody, orgId: testOrganizatonId };
+    await makeApiRequest(requestBodyClone, superAdminToken);
 
-        expect(response.body.success).toBe(true)
-        expect(response.statusCode).toBe(200)
+    const response = await makeApiRequest(requestBodyClone);
+    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    const expectedResponse = {
+      success: false,
+      data: "Coupon already exists",
+    };
+    expect(response.body).toEqual(expectedResponse);
 
-    })
-        
-    it("should create the coupon under the customer's organization's golf course successfully", async () => {
+    expect(response.statusCode).toBe(409);
+  });
 
-        const requestBodyClone = {...requestBody, gcId: testGolfCourseId}
-        const response = await makeApiRequest(requestBodyClone,  testCustomerToken)
-        await CouponServices.deleteAll({ code: requestBodyClone.code })
-        const expectedResponse = {
-            title: "Example",
-            description: "Test Coupon",
-            code: "XYZa123",
-            discountType: "fixed",
-            discount: 50,
-            maxUseLimit: 100,
-            gcId: testGolfCourseId
-        }
-        expect(response.body.data).toEqual(expect.objectContaining(expectedResponse))
+  it("should create the coupon of 'percentage' discount type ", async () => {
+    const requestBodyClone = {
+      ...requestBody,
+      discountType: "percentage",
+      orgId: testOrganizatonId,
+    };
+    const response = await makeApiRequest(requestBodyClone, superAdminToken);
+    await CouponServices.deleteAll({ code: requestBodyClone.code });
 
-        // test the expiry date separately
-        const receivedExpiryDate = new Date(response.body.data.expiry)
-        const expectedExpiryDate = new Date(requestBodyClone.expiry)
-        expect(receivedExpiryDate).toEqual(expectedExpiryDate)
+    const expectedResponse = {
+      title: "Example",
+      description: "Test Coupon",
+      code: "XYZa123",
+      discountType: "percentage",
+      discount: 50,
+      maxUseLimit: 100,
+      orgId: testOrganizatonId,
+    };
+    expect(response.body.data).toEqual(
+      expect.objectContaining(expectedResponse),
+    );
 
-        expect(response.body.success).toBe(true)
-        expect(response.statusCode).toBe(200)
+    // test the expiry date separately
+    const receivedExpiryDate = new Date(response.body.data.expiry);
+    const expectedExpiryDate = new Date(requestBodyClone.expiry);
+    expect(receivedExpiryDate).toEqual(expectedExpiryDate);
 
-    })
-
-    it("should create the coupon of 'percentage' discount type ", async () => {
-
-        const requestBodyClone = {...requestBody, discountType: "percentage", orgId: testOrganizatonId}
-        const response = await makeApiRequest(requestBodyClone, superAdminToken)
-        await CouponServices.deleteAll({ code: requestBodyClone.code })
-
-        const expectedResponse = {
-            title: "Example",
-            description: "Test Coupon",
-            code: "XYZa123",
-            discountType: "percentage",
-            discount: 50,
-            maxUseLimit: 100,
-            orgId: testOrganizatonId
-        }
-        expect(response.body.data).toEqual(expect.objectContaining(expectedResponse))
-
-        // test the expiry date separately
-        const receivedExpiryDate = new Date(response.body.data.expiry)
-        const expectedExpiryDate = new Date(requestBodyClone.expiry)
-        expect(receivedExpiryDate).toEqual(expectedExpiryDate)
-
-        expect(response.body.success).toBe(true)
-        expect(response.statusCode).toBe(200)
-
-    })
-    it("should return an error if the coupon with the same coupon code already exists", async () => {
-
-        const requestBodyClone = {...requestBody, orgId: testOrganizatonId}
-        await makeApiRequest(requestBodyClone, superAdminToken)
-
-        const response = await makeApiRequest(requestBodyClone)
-        await CouponServices.deleteAll({ code: requestBodyClone.code })
-        const expectedResponse = {
-            success: false,
-            data: "Coupon already exists"
-        }
-        expect(response.body).toEqual(expectedResponse)
-
-        expect(response.statusCode).toBe(409)
-
-    })
-
-    it("should create the coupon of 'percentage' discount type ", async () => {
-
-        const requestBodyClone = {...requestBody, discountType: "percentage", orgId: testOrganizatonId}
-        const response = await makeApiRequest(requestBodyClone, superAdminToken)
-        await CouponServices.deleteAll({ code: requestBodyClone.code })
-
-        const expectedResponse = {
-            title: "Example",
-            description: "Test Coupon",
-            code: "XYZa123",
-            discountType: "percentage",
-            discount: 50,
-            maxUseLimit: 100,
-            orgId: testOrganizatonId
-        }
-        expect(response.body.data).toEqual(expect.objectContaining(expectedResponse))
-
-        // test the expiry date separately
-        const receivedExpiryDate = new Date(response.body.data.expiry)
-        const expectedExpiryDate = new Date(requestBodyClone.expiry)
-        expect(receivedExpiryDate).toEqual(expectedExpiryDate)
-
-        expect(response.body.success).toBe(true)
-        expect(response.statusCode).toBe(200)
-
-    })
-
-    
-})  
+    expect(response.body.success).toBe(true);
+    expect(response.statusCode).toBe(200);
+  });
+});

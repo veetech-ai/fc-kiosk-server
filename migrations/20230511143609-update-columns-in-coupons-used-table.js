@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.removeColumn('Coupon_Useds', 'user_id'),
+      queryInterface.removeColumn("Coupon_Useds", "user_id"),
       queryInterface.removeColumn("Coupon_Useds", "coupon_id"),
       queryInterface.addColumn("Coupon_Useds", "couponId", {
         type: Sequelize.INTEGER,
@@ -25,7 +25,6 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       }),
-
     ]);
   },
 
@@ -43,8 +42,6 @@ module.exports = {
       queryInterface.removeColumn("Coupon_Useds", "couponId"),
       queryInterface.removeColumn("Coupon_Useds", "gcId"),
       queryInterface.removeColumn("Coupon_Useds", "deviceId"),
-
-
     ]);
   },
 };

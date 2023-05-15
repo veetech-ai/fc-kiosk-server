@@ -125,11 +125,13 @@ exports.validate = (code) => {
 };
 
 exports.create = async (params) => {
-  const coupon = await Coupon.findOne({ where: {
-      code: params.code
-  } })
+  const coupon = await Coupon.findOne({
+    where: {
+      code: params.code,
+    },
+  });
   if (coupon) throw new ServiceError("Coupon already exists", 409);
-  return await Coupon.create(params)
+  return await Coupon.create(params);
 };
 
 exports.update = (id, params) => {
@@ -189,32 +191,36 @@ exports.use_increment = (id) => {
 exports.getValidParent = async ({ orgId, gcId, loggedInUserOrgId }) => {
   let parent = null;
   let toReturn;
-  if (!orgId && !gcId && !loggedInUserOrgId) throw new ServiceError("Parent resource id is required", 400)
-  if (orgId && gcId) throw new ServiceError("Coupon can have only one parent", 400)
+  if (!orgId && !gcId && !loggedInUserOrgId)
+    throw new ServiceError("Parent resource id is required", 400);
+  if (orgId && gcId)
+    throw new ServiceError("Coupon can have only one parent", 400);
   if (gcId) {
-      const where = {
-          id: gcId
-      }
-      if (loggedInUserOrgId) where.orgId = loggedInUserOrgId
-      parent = await courseServices.getOne(where)
-      toReturn = {
-          gcId 
-      }
+    const where = {
+      id: gcId,
+    };
+    if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
+    parent = await courseServices.getOne(where);
+    toReturn = {
+      gcId,
+    };
   } else if (orgId || loggedInUserOrgId) {
-      let organizationIdToFind = orgId;
-      if (loggedInUserOrgId && !organizationIdToFind) organizationIdToFind = loggedInUserOrgId
+    let organizationIdToFind = orgId;
+    if (loggedInUserOrgId && !organizationIdToFind)
+      organizationIdToFind = loggedInUserOrgId;
 
-      if (loggedInUserOrgId && organizationIdToFind !== loggedInUserOrgId) throw new ServiceError("You are not allowed", 403);
-      parent = await organizationServices.findById(organizationIdToFind)
-      toReturn = {
-          orgId: organizationIdToFind
-      }
+    if (loggedInUserOrgId && organizationIdToFind !== loggedInUserOrgId)
+      throw new ServiceError("You are not allowed", 403);
+    parent = await organizationServices.findById(organizationIdToFind);
+    toReturn = {
+      orgId: organizationIdToFind,
+    };
   }
 
-  if (!parent) throw new ServiceError("Parent does not exist", 404)
+  if (!parent) throw new ServiceError("Parent does not exist", 404);
 
   return toReturn;
-}
+};
 
 exports.deleteAll = async (where) => {
   return await Coupon.destroy({ where });

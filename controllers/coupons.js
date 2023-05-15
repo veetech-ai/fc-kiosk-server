@@ -157,7 +157,7 @@ exports.create = async (req, res) => {
    *         in: formData
    *         required: true
    *         type: string
-   *         enum: 
+   *         enum:
    *           - fixed
    *           - percentage
    *       - name: discount
@@ -189,27 +189,30 @@ exports.create = async (req, res) => {
    *       200:
    *         description: success
    */
-    const validation = new Validator(req.body, {
-      title: "required",
-      expiry: "required",
-      code: "required",
-      discountType: "required",
-      discount: "required",
-      maxUseLimit: "required",
+  const validation = new Validator(req.body, {
+    title: "required",
+    expiry: "required",
+    code: "required",
+    discountType: "required",
+    discount: "required",
+    maxUseLimit: "required",
+  });
+
+  if (validation.fails()) return apiResponse.fail(res, validation.errors);
+
+  try {
+    const { orgId, gcId } = req.body;
+    const loggedInUserOrgId = req.user.orgId;
+    const validParent = await CouponServices.getValidParent({
+      orgId,
+      gcId,
+      loggedInUserOrgId,
     });
-
-    if (validation.fails()) return apiResponse.fail(res, validation.errors);
-
-    try {
-        const { orgId, gcId } = req.body
-        const loggedInUserOrgId = req.user.orgId
-        const validParent = await CouponServices.getValidParent({ orgId, gcId, loggedInUserOrgId })
-        const result = await CouponServices.create({ ...req.body, ...validParent });
-        return apiResponse.success(res, req, result);
-    } catch (error) {
-        return apiResponse.fail(res, error.message, error.statusCode || 500);
-    }
-
+    const result = await CouponServices.create({ ...req.body, ...validParent });
+    return apiResponse.success(res, req, result);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
 };
 exports.update = (req, res) => {
   /**
