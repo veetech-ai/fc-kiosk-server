@@ -8,6 +8,7 @@ let mockFiles;
 let fields;
 let files;
 
+
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -70,24 +71,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
-    const createLesson = async () => {
-      fields = {
-        gcId: courseId,
-        name: "Mark Rober",
-        title: "Assistant",
-        content: "asdasdasdas asdasdasda",
-        timings: "9:00-10:00",
-      };
-
-      files = {
-        image: {
-          name: "mock-logo.png",
-          type: "image/png",
-          size: 5000, // bytes
-          path: "/mock/path/to/logo.png",
-        },
-      };
-
+    const createLesson = async (fields,files) => {
       mockFormidable(fields, files);
       jest
         .spyOn(upload_file, "uploadImageForCourse")
@@ -98,7 +82,49 @@ describe("GET /api/v1/kiosk-content/screens", () => {
         params: fields,
       });
     };
-    await createLesson();
+    const lessonFields = [
+  
+      {
+        fields: {
+          gcId: courseId,
+          name: "Mark Rober",
+          title: "Assistant",
+          content: "asdasdasdas asdasdasda",
+          timings: "9:00-10:00",
+        },
+        files: {
+          image: {
+            name: "mock-logo.png",
+            type: "image/png",
+            size: 5000, // bytes
+            path: "/mock/path/to/logo.png",
+          },
+        },
+      },
+      {
+        fields: {
+          gcId: courseId,
+          name: "Pewdipie",
+          title: "Golf Expert",
+          content: "asdasdasdas asdasdasda",
+          timings: "9:00-10:00",
+        },
+        files: {
+          image: {
+            name: "mock-logo.png",
+            type: "image/png",
+            size: 5000, // bytes
+            path: "/mock/path/to/logo.png",
+          },
+        },
+      }
+  ]
+    const createMultipleLessons=async(lessonFields)=>{
+      for(lessonField of lessonFields){
+        await createLesson(lessonField.fields,lessonField.files)
+      }
+    }
+    await createMultipleLessons(lessonFields)
   });
 
   const makeApiRequest = async (token = deviceToken) => {
@@ -110,11 +136,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
 
   it("should successfully return all lessons attached to device's linked course", async () => {
     const response = await makeApiRequest();
-    expect(response.body.data.gcId).toEqual(files.gcId);
-    expect(response.body.data.name).toEqual(files.name);
-    expect(response.body.data.title).toEqual(files.title);
-    expect(response.body.data.content).toEqual(files.content);
-    expect(response.body.data.timings).toEqual(files.timings);
+    expect(response.body.data.length).toEqual(2)
   });
   it("returns 403 status code Request", async () => {
     const response = await makeApiRequest(adminToken);
