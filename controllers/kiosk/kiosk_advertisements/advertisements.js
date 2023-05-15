@@ -23,7 +23,7 @@ exports.createAdvertisements = async (req, res) => {
    *   post:
    *     security:
    *       - auth: []
-   *     description: create advertisements (Only Admin).
+   *     description: create advertisements.
    *     tags: [Kiosk-Advertisements]
    *     consumes:
    *       - application/x-www-form-urlencoded
@@ -33,6 +33,16 @@ exports.createAdvertisements = async (req, res) => {
    *         in: path
    *         required: true
    *         type: integer
+   *       - name: name
+   *         description: name
+   *         in: formData
+   *         required: true
+   *         type: string
+   *       - name: small_image
+   *         description: Small Image
+   *         in: formData
+   *         required: false
+   *         type: file
    *     produces:
    *       - application/json
    *     responses:
@@ -41,7 +51,23 @@ exports.createAdvertisements = async (req, res) => {
    */
 
   try {
-    console.log(req.params.gcId)
+
+
+    const courseId  = req.params.gcId;
+    console.log(courseId)
+    
+    const form = new formidable.IncomingForm();
+    form.multiples = true;
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        resolve({ fields, files });
+      });
+    });
+
+    console.log(fields,files)
+
+
     const orgId = Number(req.body.gcId);
     if (!orgId) {
       return apiResponse.fail(res, "orgId must be a valid number");
