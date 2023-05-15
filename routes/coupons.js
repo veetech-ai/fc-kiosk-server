@@ -3,7 +3,7 @@ const CouponsController = require("../controllers/coupons");
 const validation_middleware = require("../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
-  const group = `${config.app.apiPath}coupon`;
+  const group = `${config.app.apiPath}coupons`;
 
   router.get(group + "/all/available", [
     // validation_middleware.validJWTNeeded,
@@ -22,9 +22,9 @@ exports.routesConfig = function (app, router) {
     CouponsController.get_all,
   ]);
 
-  router.post(group + "/create", [
+  router.post(group + "/", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin"]),
+    validation_middleware.hasAccess(["super", "admin", "manageCoupons"]),
     CouponsController.create,
   ]);
 

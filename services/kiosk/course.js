@@ -71,6 +71,10 @@ async function getLinkedCourse(courseId, orgId) {
   return course;
 }
 
+async function getOne(where) {
+  return await Course.findOne({ where });
+}
+
 async function getCourseById(courseId) {
   const course = await Course.findOne({
     where: {
@@ -92,5 +96,6 @@ module.exports = {
   getCoursesByOrganization,
   createCourseInfo,
   getLinkedCourse,
+  getOne,
   getCourseById,
 };

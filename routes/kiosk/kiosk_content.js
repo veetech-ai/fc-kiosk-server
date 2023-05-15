@@ -4,6 +4,7 @@ const validation_middleware = require("../../middlewares/auth.validation");
 const FeedbackController = require("../../controllers/kiosk/kiosk_content/feedback");
 const LessonController = require("../../controllers/kiosk/kiosk_content/lesson");
 const ContactLessonController = require("../../controllers/kiosk/kiosk_content/contact_lesson");
+const ShopsController = require("../../controllers/kiosk/kiosk_content/shops");
 
 exports.routesConfig = function (app, router) {
   const kioskContentBaseUrl = `${config.app.apiPath}kiosk-content`;
@@ -35,5 +36,10 @@ exports.routesConfig = function (app, router) {
   router.post(kioskContentBaseUrl + "/lessons/contacts", [
     validation_middleware.onlyDeviceAccess,
     ContactLessonController.create_contact_lesson,
+  ])  
+  
+  router.get(kioskContentBaseUrl + "/shops", [
+    validation_middleware.onlyDeviceAccess,
+    ShopsController.getShops,
   ]);
 };

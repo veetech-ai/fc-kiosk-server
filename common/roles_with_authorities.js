@@ -21,6 +21,8 @@ const defaultAuthorities = {
   get_roles: false,
   get_courses: false,
   manage_courses: false,
+  get_coupons: false,
+  manage_coupons: false,
 };
 
 exports.roleWithAuthorities = {
@@ -90,6 +92,8 @@ exports.roleWithAuthorities = {
     get_roles: true,
     get_courses: true,
     manage_courses: true,
+    get_coupons: true,
+    manage_coupons: true,
   },
   operator: {
     ...defaultAuthorities,
