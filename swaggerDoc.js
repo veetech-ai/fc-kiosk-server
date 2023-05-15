@@ -70,6 +70,7 @@ const options = {
     "./controllers/kiosk/lessons.js",
     "./controllers/kiosk/kiosk_content/lesson.js",
     "./controllers/kiosk/kiosk_content/contact_lesson.js",
+    "./controllers/kiosk/contact_lesson.js",
   ],
 };
 

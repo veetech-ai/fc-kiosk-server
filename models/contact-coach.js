@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       isAddressed: {
         field: "is_addressed",
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
       createdAt: {

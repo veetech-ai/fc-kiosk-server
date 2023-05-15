@@ -112,6 +112,7 @@ const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
 const DeviceOnboardingCode = require("./routes/kiosk/device_onboarding_code");
 const LessonRouteController = require("./routes/kiosk/lesson");
+const ContactLessonRouteController = require("./routes/kiosk/contact_lesson");
 swaggerDoc(router);
 
 router.use(function (req, res, next) {
@@ -188,6 +189,7 @@ ScreenConfigRouter.routesConfig(app, router);
 KioskCoursesContentRouter.routesConfig(app, router);
 DeviceOnboardingCode.routesConfig(app, router);
 LessonRouteController.routesConfig(app, router);
+ContactLessonRouteController.routesConfig(app, router);
 if (config.env === "test") {
   // for test case server
   app.use(router);

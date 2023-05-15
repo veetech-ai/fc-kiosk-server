@@ -5,10 +5,21 @@ const ContactCoach = models.Contact_Coach;
 
 async function createContactCoach(reqBody) {
   const contactCoach = await ContactCoach.create(reqBody);
-
+  if(!contactCoach){
+    return new ServiceError("Something went wrong",401)
+  }
   return contactCoach;
+}
+
+async function getContactCoachesByLessonId(lessonId) {
+  const contactCoaches = await ContactCoach.findAll({where:{coach_id:lessonId}});
+  if(!contactCoaches.length){
+    return new ServiceError("Something went wrong",401)
+  }
+  return contactCoaches;
 }
 
 module.exports = {
   createContactCoach,
+  getContactCoachesByLessonId
 };
