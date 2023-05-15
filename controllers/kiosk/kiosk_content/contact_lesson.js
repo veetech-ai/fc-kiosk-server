@@ -55,7 +55,6 @@ exports.create_contact_lesson = async (req, res) => {
    *         description: success
    */
   try {
-    console.log("in controller");
     const validation = new Validator(req.body, {
       lessonId: "required|integer",
       phone: "string",
