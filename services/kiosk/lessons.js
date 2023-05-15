@@ -67,5 +67,5 @@ module.exports = {
   updateLesson,
   findLessonById,
   findLessonsByCourseId,
-  deleteLessonById
+  deleteLessonById,
 };

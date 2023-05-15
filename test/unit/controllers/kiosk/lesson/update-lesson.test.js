@@ -26,7 +26,6 @@ const mockFormidable = (fields, files) => {
 describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
   let adminToken;
   let courseId;
-  let orgId;
   let customerToken;
   let testOperatorToken;
   let differentOrganizationCustomerToken;
@@ -54,7 +53,6 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       params: courses,
     });
     courseId = course.body.data.id;
-    orgId = course.body.data.orgId;
     const createLesson = async () => {
       const fields = {
         gcId: courseId,
