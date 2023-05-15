@@ -45,7 +45,7 @@ exports.create_contact_lesson = async (req, res) => {
    *       - name: contact_medium
    *         description: contact_medium
    *         in: formData
-   *         enum: ['text', 'call']
+   *         enum: ['phone', 'email']
    *         required: false
    *         type: string
    *     produces:
@@ -74,13 +74,12 @@ exports.create_contact_lesson = async (req, res) => {
     const orgId = course.orgId;
     const reqBody = {
       coachId: lessonId,
-      phone,
-      email,
-      contact_medium,
+      userPhone:phone,
+      userEmail:email,
+      contactMedium:contact_medium,
       gcId: courseId,
       orgId,
     };
-
     const contactCoach = await contactCoachService.createContactCoach(reqBody);
     return apiResponse.success(res, req, contactCoach);
   } catch (error) {
