@@ -26,16 +26,16 @@ async function findLessonById(lessonId) {
   return lesson;
 }
 async function updateCoach(reqBody, lessonId) {
-  const updatedCoach = await Coach.update(
+  const [affectedRows] = await Coach.update(
     {
       ...reqBody,
     },
     { where: { id: lessonId } },
   );
-  if (!updatedCoach[0]) {
+  if (affectedRows === 0) {
     throw new ServiceError("Something Went wrong", 401);
   }
-  return updatedCoach;
+  return affectedRows;
 }
 async function findLessonsByCourseId(courseId) {
   const lessons = await Coach.findAll({

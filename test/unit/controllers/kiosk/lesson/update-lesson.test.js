@@ -119,7 +119,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeApiRequest(lessonId, fields);
-    expect(response.body.data[0]).toEqual(1);
+    expect(response.body.data).toEqual(1);
   });
   it("should create a new course with the customer token who is the part of same organization", async () => {
     const fields = {
@@ -141,7 +141,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeApiRequest(lessonId, fields, customerToken);
-    expect(response.body.data[0]).toEqual(1);
+    expect(response.body.data).toEqual(1);
   });
   it("should return an error if user belongs to different organization access api", async () => {
     const params = {};
