@@ -69,7 +69,7 @@ const makeApiRequest = async (
   token = adminToken,
 ) => {
   const shops = await helper.get_request_with_authorization({
-    endpoint: `course-shops/course/${courseId}`,
+    endpoint: `course-shops/courses/${courseId}`,
     token: token,
   });
   return shops

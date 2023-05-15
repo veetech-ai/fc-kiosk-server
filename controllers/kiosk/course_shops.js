@@ -117,7 +117,7 @@ exports.getCourseShops = async (req, res) => {
   /**
    * @swagger
    *
-   * /course-shops/course/{courseId}:
+   * /course-shops/courses/{courseId}:
    *   get:
    *     security:
    *       - auth: []

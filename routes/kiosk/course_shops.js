@@ -11,7 +11,7 @@ exports.routesConfig = function (app, router) {
     CourseShopsController.createCourseShop,
   ]);
 
-  router.get(courseShops + "/course/:courseId", [
+  router.get(courseShops + "/courses/:courseId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     CourseShopsController.getCourseShops,
