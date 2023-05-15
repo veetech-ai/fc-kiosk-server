@@ -53,7 +53,7 @@ exports.getCourseShopById = async (id) => {
 };
 
 exports.updateCourseShop = async (shopId, reqBody) => {
-  const courseShop = await Shop.update(reqBody, {
+  await Shop.update(reqBody, {
     where: { id: shopId },
   });
   const updatedShop = await this.getCourseShopById(shopId);
