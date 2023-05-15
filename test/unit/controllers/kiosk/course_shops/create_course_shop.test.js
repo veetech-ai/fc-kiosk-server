@@ -2,7 +2,6 @@ const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
 const {
   organizationsInApplication,
-  testOrganizations,
 } = require("../../../../../common/organizations.data");
 
 // Fixtures
@@ -17,7 +16,7 @@ const coursesFixtures = {
     name: "Course 2",
     city: "Test City 2",
     state: "Test State 2",
-    orgId: testOrganizations.zong.id,
+    orgId: organizationsInApplication.zong.id,
   },
 };
 

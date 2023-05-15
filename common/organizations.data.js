@@ -36,5 +36,4 @@ const organizationsData = Object.values(organizationsInApplication);
 module.exports = {
   organizationsInApplication,
   organizationsData,
-  testOrganizations,
 };
