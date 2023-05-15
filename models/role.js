@@ -100,6 +100,18 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
         field: "manage_courses",
       },
+      getCoupons: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        field: "get_coupons",
+      },
+      manageCoupons: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        field: "manage_coupons",
+      },
     },
     {
       defaultScope: {
