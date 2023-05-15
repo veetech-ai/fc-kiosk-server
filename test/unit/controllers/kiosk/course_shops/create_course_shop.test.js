@@ -1,6 +1,9 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
-const { organizationsInApplication, testOrganizations } = require("../../../../../common/organizations.data");
+const {
+  organizationsInApplication,
+  testOrganizations,
+} = require("../../../../../common/organizations.data");
 
 // Fixtures
 const coursesFixtures = {
@@ -15,21 +18,21 @@ const coursesFixtures = {
     city: "Test City 2",
     state: "Test State 2",
     orgId: testOrganizations.zong.id,
-  }
-}
+  },
+};
 
 const shopFixtures = {
-  valid:{
-    gcId : 1,
-    name : "Assistant",
+  valid: {
+    gcId: 1,
+    name: "Assistant",
     subheading: "Sub Heading",
     description: "Extensive Description",
   },
-  inValid:{
-    gcId : 1,
-    name : "Assistant",
+  inValid: {
+    gcId: 1,
+    name: "Assistant",
   },
-}
+};
 
 let adminToken;
 let customerToken;
@@ -44,17 +47,14 @@ async function createGolfCourse(reqBody, token) {
     token: token,
     params: reqBody,
   });
-  return course
+  return course;
 }
 
 function changeFormidableMockedValues(reqBody) {
-  mockedReqBody = reqBody
+  mockedReqBody = reqBody;
 }
 
-const makeApiRequest = async (
-  params,
-  token = adminToken,
-) => {
+const makeApiRequest = async (params, token = adminToken) => {
   return helper.post_request_with_authorization({
     endpoint: `course-shops`,
     token: token,
@@ -69,24 +69,19 @@ jest.mock("formidable", () => {
       return {
         multiples: true,
         parse: (req, cb) => {
-          cb(
-            null,
-            mockedReqBody,
-            {
-              image: {
-                name: "mock-logo.png",
-                type: "image/png",
-                size: 5000, // bytes
-                path: "/mock/path/to/logo.png",
-              },
+          cb(null, mockedReqBody, {
+            image: {
+              name: "mock-logo.png",
+              type: "image/png",
+              size: 5000, // bytes
+              path: "/mock/path/to/logo.png",
             },
-          );
+          });
         },
       };
     }),
   };
 });
-
 
 describe("POST /api/v1/course-shops", () => {
   beforeAll(async () => {
@@ -107,16 +102,16 @@ describe("POST /api/v1/course-shops", () => {
 
     const response = await makeApiRequest(shopFixtures.valid);
     const expectedResponse = {
-      "createdAt": expect.any(String),
-      "description": expect.any(String),
-      "gcId": expect.any(Number),
-      "id": expect.any(Number),
-      "image": expect.any(String),
-      "name": expect.any(String),
-      "orgId": expect.any(Number),
-      "subheading": expect.any(String),
-      "updatedAt": expect.any(String),
-    }
+      createdAt: expect.any(String),
+      description: expect.any(String),
+      gcId: expect.any(Number),
+      id: expect.any(Number),
+      image: expect.any(String),
+      name: expect.any(String),
+      orgId: expect.any(Number),
+      subheading: expect.any(String),
+      updatedAt: expect.any(String),
+    };
     expect(response.body.data).toEqual(expectedResponse);
   });
 
@@ -127,26 +122,29 @@ describe("POST /api/v1/course-shops", () => {
 
     const response = await makeApiRequest(shopFixtures.valid, customerToken);
     const expectedResponse = {
-      "createdAt": expect.any(String),
-      "description": expect.any(String),
-      "gcId": expect.any(Number),
-      "id": expect.any(Number),
-      "image": expect.any(String),
-      "name": expect.any(String),
-      "orgId": expect.any(Number),
-      "subheading": expect.any(String),
-      "updatedAt": expect.any(String),
-    }
+      createdAt: expect.any(String),
+      description: expect.any(String),
+      gcId: expect.any(Number),
+      id: expect.any(Number),
+      image: expect.any(String),
+      name: expect.any(String),
+      orgId: expect.any(Number),
+      subheading: expect.any(String),
+      updatedAt: expect.any(String),
+    };
     expect(response.body.data).toEqual(expectedResponse);
   });
-  
+
   it("should not create a new course shop for different org golf course", async () => {
     jest
       .spyOn(upload_file, "uploadImageForCourse")
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
-    const response = await makeApiRequest(shopFixtures.valid, zongCustomerToken);
-    const expectedResponse = "Course not Found"
+    const response = await makeApiRequest(
+      shopFixtures.valid,
+      zongCustomerToken,
+    );
+    const expectedResponse = "Course not Found";
     expect(response.body.data).toEqual(expectedResponse);
   });
 
@@ -159,18 +157,14 @@ describe("POST /api/v1/course-shops", () => {
   });
 
   it("should return an error if reqBody is invalid", async () => {
-    changeFormidableMockedValues(shopFixtures.inValid) 
-    const response = await makeApiRequest(
-      shopFixtures.inValid,
-      adminToken,
-    );
+    changeFormidableMockedValues(shopFixtures.inValid);
+    const response = await makeApiRequest(shopFixtures.inValid, adminToken);
     const expectedResponse = {
       errors: {
-        description: ["The description field is required."], 
-        subheading: ["The subheading field is required."]
-      }
-    }
+        description: ["The description field is required."],
+        subheading: ["The subheading field is required."],
+      },
+    };
     expect(response.body.data).toEqual(expectedResponse);
   });
-
 });

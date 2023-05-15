@@ -1,6 +1,9 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
-const { organizationsInApplication, testOrganizations } = require("../../../../../common/organizations.data");
+const {
+  organizationsInApplication,
+  testOrganizations,
+} = require("../../../../../common/organizations.data");
 
 // Fixtures
 const coursesFixtures = {
@@ -15,26 +18,26 @@ const coursesFixtures = {
     city: "Test City 2",
     state: "Test State 2",
     orgId: testOrganizations.zong.id,
-  }
-}
+  },
+};
 
 const shopFixtures = {
   test: {
-    name : "Assistant",
+    name: "Assistant",
     subheading: "Sub Heading",
     description: "Extensive Description",
   },
   testUpdated: {
-    name : "Assistant Updated",
+    name: "Assistant Updated",
     subheading: "Sub Heading Updated",
     description: "Extensive Description Updated",
   },
   zong: {
-    name : "Assistant",
+    name: "Assistant",
     subheading: "Sub Heading",
     description: "Extensive Description",
   },
-}
+};
 
 let testCourseId;
 let zongCourseId;
@@ -53,7 +56,7 @@ async function createGolfCourse(reqBody, token = adminToken) {
     token: token,
     params: reqBody,
   });
-  return course
+  return course;
 }
 
 async function createGolfCourseShop(reqBody, token = adminToken) {
@@ -63,21 +66,18 @@ async function createGolfCourseShop(reqBody, token = adminToken) {
     params: reqBody,
   });
 
-  return courseShop
+  return courseShop;
 }
 function changeFormidableMockedValues(reqBody) {
-  mockedReqBody = reqBody
+  mockedReqBody = reqBody;
 }
 
-const makeApiRequest = async (
-  shopId,
-  token = adminToken,
-) => {
+const makeApiRequest = async (shopId, token = adminToken) => {
   const shops = await helper.delete_request_with_authorization({
     endpoint: `course-shops/${shopId}`,
     token: token,
   });
-  return shops
+  return shops;
 };
 
 // mocks
@@ -87,18 +87,14 @@ jest.mock("formidable", () => {
       return {
         multiples: true,
         parse: (req, cb) => {
-          cb(
-            null,
-            mockedReqBody,
-            {
-              image: {
-                name: "mock-logo.png",
-                type: "image/png",
-                size: 5000, // bytes
-                path: "/mock/path/to/logo.png",
-              },
+          cb(null, mockedReqBody, {
+            image: {
+              name: "mock-logo.png",
+              type: "image/png",
+              size: 5000, // bytes
+              path: "/mock/path/to/logo.png",
             },
-          );
+          });
         },
       };
     }),
@@ -106,8 +102,8 @@ jest.mock("formidable", () => {
 });
 
 jest
-.spyOn(upload_file, "uploadImageForCourse")
-.mockImplementation(() => Promise.resolve("mock-logo-url"));
+  .spyOn(upload_file, "uploadImageForCourse")
+  .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
 describe("DELETE /api/v1/course-shops/{shopId}", () => {
   beforeAll(async () => {
@@ -116,43 +112,42 @@ describe("DELETE /api/v1/course-shops/{shopId}", () => {
     customerToken = await helper.get_token_for("testCustomer");
     zongCustomerToken = await helper.get_token_for("zongCustomer");
     testOperatorToken = await helper.get_token_for("testOperator");
-    
+
     const course = await createGolfCourse(coursesFixtures.test, adminToken);
     const zongCourse = await createGolfCourse(coursesFixtures.zong, adminToken);
-    
-    testCourseId = course.body.data.id
-    zongCourseId = zongCourse.body.data.id
-    
-    const reqBodyOne = {...shopFixtures.test, gcId: testCourseId }
-    changeFormidableMockedValues(reqBodyOne) 
+
+    testCourseId = course.body.data.id;
+    zongCourseId = zongCourse.body.data.id;
+
+    const reqBodyOne = { ...shopFixtures.test, gcId: testCourseId };
+    changeFormidableMockedValues(reqBodyOne);
     const courseShop = await createGolfCourseShop(reqBodyOne, adminToken);
     testCourseShopId = courseShop.body.data.id;
 
-    const reqBodyTwo = {...shopFixtures.zong, gcId: zongCourseId }
-    changeFormidableMockedValues(reqBodyTwo) 
+    const reqBodyTwo = { ...shopFixtures.zong, gcId: zongCourseId };
+    changeFormidableMockedValues(reqBodyTwo);
     const zongCourseShop = await createGolfCourseShop(reqBodyTwo, adminToken);
     zongCourseShopId = zongCourseShop.body.data.id;
   });
-  
+
   it("should return an error if the customer is of different org", async () => {
     const response = await makeApiRequest(testCourseShopId, zongCustomerToken);
-    const expectedResponse = "Shop not Found"
+    const expectedResponse = "Shop not Found";
 
     expect(response.body.data).toEqual(expectedResponse);
   });
 
   it("should return an successfully delete a shop with same org customer", async () => {
     const response = await makeApiRequest(testCourseShopId, customerToken);
-    const expectedResponse = "Shop Deleted"
+    const expectedResponse = "Shop Deleted";
 
     expect(response.body.data).toEqual(expectedResponse);
   });
 
   it("should delete shop if the user is admin", async () => {
     const response = await makeApiRequest(zongCourseShopId, adminToken);
-    const expectedResponse = "Shop Deleted"
+    const expectedResponse = "Shop Deleted";
 
     expect(response.body.data).toEqual(expectedResponse);
   });
-
 });
