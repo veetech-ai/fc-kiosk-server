@@ -19,7 +19,7 @@ exports.create_courses = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-courses/create:
+   * /kiosk-courses:
    *   post:
    *     security:
    *       - auth: []

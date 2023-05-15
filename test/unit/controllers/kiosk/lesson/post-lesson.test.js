@@ -73,7 +73,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
     customerToken = await helper.get_token_for("testCustomer");
     testOperatorToken = await helper.get_token_for("testOperator");
     const course = await helper.post_request_with_authorization({
-      endpoint: "kiosk-courses/create",
+      endpoint: "kiosk-courses",
       token: adminToken,
       params: courses,
     });
