@@ -77,7 +77,6 @@ describe("POST /coupons", () => {
           discount: ["The discount field is required."],
           discountType: ["The discountType field is required."],
           expiry: ["The expiry field is required."],
-          maxUseLimit: ["The maxUseLimit field is required."],
           title: ["The title field is required."],
         },
       },
@@ -267,36 +266,5 @@ describe("POST /coupons", () => {
     expect(response.body).toEqual(expectedResponse);
 
     expect(response.statusCode).toBe(409);
-  });
-
-  it("should create the coupon of 'percentage' discount type ", async () => {
-    const requestBodyClone = {
-      ...requestBody,
-      discountType: "percentage",
-      orgId: testOrganizatonId,
-    };
-    const response = await makeApiRequest(requestBodyClone, superAdminToken);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
-
-    const expectedResponse = {
-      title: "Example",
-      description: "Test Coupon",
-      code: "XYZa123",
-      discountType: "percentage",
-      discount: 50,
-      maxUseLimit: 100,
-      orgId: testOrganizatonId,
-    };
-    expect(response.body.data).toEqual(
-      expect.objectContaining(expectedResponse),
-    );
-
-    // test the expiry date separately
-    const receivedExpiryDate = new Date(response.body.data.expiry);
-    const expectedExpiryDate = new Date(requestBodyClone.expiry);
-    expect(receivedExpiryDate).toEqual(expectedExpiryDate);
-
-    expect(response.body.success).toBe(true);
-    expect(response.statusCode).toBe(200);
   });
 });

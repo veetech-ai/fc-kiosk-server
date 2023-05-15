@@ -10,24 +10,6 @@ const ServiceError = require("../utils/serviceError");
 
 const organizationServices = require("./organization");
 const courseServices = require("./kiosk/course");
-function idExists(code) {
-  return Coupon.count({
-    where: {
-      code: code,
-    },
-  })
-    .then((count) => {
-      if (count > 0) {
-        return true;
-      } else {
-        return false;
-      }
-    })
-    .catch((err) => {
-      logger.error(err);
-      return false;
-    });
-}
 
 module.exports.list_available = (perPage, page) => {
   return new Promise((resolve, reject) => {
@@ -206,11 +188,15 @@ exports.getValidParent = async ({ orgId, gcId, loggedInUserOrgId }) => {
     };
   } else if (orgId || loggedInUserOrgId) {
     let organizationIdToFind = orgId;
-    if (loggedInUserOrgId && !organizationIdToFind)
-      organizationIdToFind = loggedInUserOrgId;
 
-    if (loggedInUserOrgId && organizationIdToFind !== loggedInUserOrgId)
+    if (loggedInUserOrgId && !organizationIdToFind) {
+      organizationIdToFind = loggedInUserOrgId;
+    }
+
+    if (loggedInUserOrgId && organizationIdToFind !== loggedInUserOrgId) {
       throw new ServiceError("You are not allowed", 403);
+    }
+
     parent = await organizationServices.findById(organizationIdToFind);
     toReturn = {
       orgId: organizationIdToFind,

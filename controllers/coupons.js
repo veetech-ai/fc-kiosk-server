@@ -166,7 +166,7 @@ exports.create = async (req, res) => {
    *         required: true
    *         type: number
    *       - name: maxUseLimit
-   *         description: Number of times a single coupon can be redeam
+   *         description: Number of times a single coupon can be redeem
    *         in: formData
    *         required: true
    *         type: number
@@ -176,7 +176,7 @@ exports.create = async (req, res) => {
    *         required: false
    *         type: number
    *       - name: gcId
-   *         description: The gold course with which the coupon is going to be attached.
+   *         description: The golf course with which the coupon is going to be attached.
    *         in: formData
    *         required: false
    *         type: number
@@ -195,7 +195,6 @@ exports.create = async (req, res) => {
     code: "required",
     discountType: "required",
     discount: "required",
-    maxUseLimit: "required",
   });
 
   if (validation.fails()) return apiResponse.fail(res, validation.errors);

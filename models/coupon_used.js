@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Coupon_Used.associate = function (models) {
     // associations can be defined here
-    Coupon_Used.belongsTo(models.Coupon, { foreignKey: "gc_id" });
+    Coupon_Used.belongsTo(models.Coupon, { foreignKey: "gcId" });
   };
   return Coupon_Used;
 };

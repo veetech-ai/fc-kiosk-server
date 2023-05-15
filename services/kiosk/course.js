@@ -59,6 +59,7 @@ async function createCourseInfo(reqBody, courseId) {
 async function getOne(where) {
   return await Course.findOne({ where });
 }
+
 async function getCourseById(courseId) {
   const course = await Course.findOne({
     where: {
