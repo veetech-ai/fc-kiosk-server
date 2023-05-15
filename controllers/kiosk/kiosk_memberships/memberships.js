@@ -96,7 +96,7 @@ exports.getMemberships = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-courses/memberships:
+   * /kiosk-courses/memberships/{gcId}:
    *   get:
    *     security:
    *       - auth: []
@@ -116,11 +116,13 @@ exports.getMemberships = async (req, res) => {
    */
 
   try {
-    const orgId = Number(req.params.orgId);
-    if (!orgId) {
-      return apiResponse.fail(res, "orgId must be a valid number");
+
+    console.log(req.params)
+    const gcId = Number(req.params.gcId);
+    if (!gcId) {
+      return apiResponse.fail(res, "gcId must be a valid number");
     }
-    const courses = await courseService.getCoursesByOrganization(orgId);
+    const courses = await courseService.getCoursesByOrganization(gcId);
     return apiResponse.success(res, req, courses);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
