@@ -3,7 +3,7 @@ const ServiceError = require("../../utils/serviceError");
 const Coach = models.Coach;
 const upload_file = require("../../common/upload");
 
-async function createCoach(reqBody, orgId) {
+async function createLesson(reqBody, orgId) {
   const coach = await Coach.create({
     ...reqBody,
     orgId,
@@ -25,7 +25,7 @@ async function findLessonById(lessonId) {
   lesson.image = image;
   return lesson;
 }
-async function updateCoach(reqBody, lessonId) {
+async function updateLesson(reqBody, lessonId) {
   const [affectedRows] = await Coach.update(
     {
       ...reqBody,
@@ -53,9 +53,19 @@ async function findLessonsByCourseId(courseId) {
 
   return lessons;
 }
+async function deleteLessonById(lessonId) {
+  const deletedCoach = await Coach.destroy({
+    where: { id: lessonId },
+  });
+  if (deletedCoach === 0) {
+    throw new ServiceError("Something Went wrong", 401);
+  }
+  return deletedCoach;
+}
 module.exports = {
-  createCoach,
-  updateCoach,
+  createLesson,
+  updateLesson,
   findLessonById,
   findLessonsByCourseId,
+  deleteLessonById
 };

@@ -13,4 +13,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseLessonsController.update_lesson,
   ]);
+  router.delete(lesson + "/:lessonId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CourseLessonsController.delete_lesson,
+  ]);
 };

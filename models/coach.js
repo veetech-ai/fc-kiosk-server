@@ -63,6 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     Coach.hasMany(models.Contact_Coach, {
       as: "ContactCoaches",
       foreignKey: "coach_id",
+      onDelete: "CASCADE",
     });
   };
   return Coach;

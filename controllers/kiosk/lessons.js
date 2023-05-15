@@ -103,7 +103,7 @@ exports.create_lesson = async (req, res) => {
     );
 
     const reqBody = { ...fields, image };
-    const coach = await courseLesson.createCoach(reqBody, orgId);
+    const coach = await courseLesson.createLesson(reqBody, orgId);
     return apiResponse.success(res, req, coach);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -203,8 +203,56 @@ exports.update_lesson = async (req, res) => {
       );
     }
     const reqBody = { ...fields, image };
-    const updatedCoach = await courseLesson.updateCoach(reqBody, lessonId);
+    const updatedCoach = await courseLesson.updateLesson(reqBody, lessonId);
     return apiResponse.success(res, req, updatedCoach);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.delete_lesson = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /course-lesson/{lessonId}:
+   *   delete:
+   *     security:
+   *       - auth: []
+   *     description: delete specific lesson.
+   *     tags: [Courses-Lesson]
+   *     consumes:
+   *       - multipart/form-data
+   *     parameters:
+   *       - name: lessonId
+   *         description: id of lesson
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const lessonId = Number(req.params.lessonId);
+    if (!lessonId) {
+      return apiResponse.fail(res, "lessonId must be a valid number");
+    }
+    const lesson = await courseLesson.findLessonById(lessonId);
+    const isSameOrganizationResource = loggedInUserOrg === lesson.orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
+      return apiResponse.fail(res, "", 403);
+    }
+
+    const deletedLesson = await courseLesson.deleteLessonById(lessonId);
+    return apiResponse.success(res, req, deletedLesson);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
