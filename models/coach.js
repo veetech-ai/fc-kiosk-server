@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Coach.belongsTo(models.Organization, { foreignKey: "org_id" });
     Coach.belongsTo(models.Course, { foreignKey: "gc_id" });
-    Coach.hasMany(models.ContactCoach, {
+    Coach.hasMany(models.Contact_Coach, {
       as: "ContactCoaches",
       foreignKey: "coach_id",
     });

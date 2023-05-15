@@ -69,6 +69,7 @@ const options = {
     "./controllers/roles/index.js",
     "./controllers/kiosk/lessons.js",
     "./controllers/kiosk/kiosk_content/lesson.js",
+    "./controllers/kiosk/kiosk_content/contact_lesson.js",
   ],
 };
 
