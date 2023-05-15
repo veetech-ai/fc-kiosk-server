@@ -13,8 +13,8 @@ const courseShopsService = require("../../services/kiosk/course_shops");
 /**
  * @swagger
  * tags:
- *   name: Kiosk-Courses
- *   description: Courses API's
+ *   name: Kiosk-Shops
+ *   description: Golf Course's Shops API's
  */
 exports.createCourseShop = async (req, res) => {
   /**
