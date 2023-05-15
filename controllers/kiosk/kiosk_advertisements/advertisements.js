@@ -38,11 +38,31 @@ exports.createAdvertisements = async (req, res) => {
    *         in: formData
    *         required: true
    *         type: string
-   *       - name: small_image
-   *         description: Small Image
+   *       - name: image
+   *         description: Image
    *         in: formData
    *         required: false
    *         type: file
+   *       - name: screen
+   *         description: screen
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: title
+   *         description: title
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: tabLink
+   *         description: tabLink
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: alternateLink
+   *         description: alternateLink
+   *         in: formData
+   *         required: false
+   *         type: string
    *     produces:
    *       - application/json
    *     responses:
@@ -55,7 +75,7 @@ exports.createAdvertisements = async (req, res) => {
 
     const courseId  = req.params.gcId;
     console.log(courseId)
-    
+
     const form = new formidable.IncomingForm();
     form.multiples = true;
     const { fields, files } = await new Promise((resolve, reject) => {
