@@ -1,7 +1,7 @@
 const { organizationsInApplication } = require("../../../../../common/organizations.data");
 const helper = require("../../../../helper");
 const moment = require("moment");
-const KioskCouponsServices = require("../../../../../services/kiosk/coupons");
+const CouponServices = require("../../../../../services/coupons");
 
 let testCustomerToken, superAdminToken, testOrganizatonId = organizationsInApplication.test.id, zongOrganizationId = organizationsInApplication.zong.id
 
@@ -19,11 +19,11 @@ let requestBody = {
     discount: 50,
     maxUseLimit: 100
 }
-describe("POST /kiosk-content/coupons", () => {
-
+describe("POST /coupons", () => {
+ 
     const makeApiRequest = async (params, token = superAdminToken) => {
         return helper.post_request_with_authorization({
-            endpoint: "kiosk-content/coupons",
+            endpoint: "coupons",
             token: token,
             params: params,
         });
@@ -116,7 +116,7 @@ describe("POST /kiosk-content/coupons", () => {
 
         const requestBodyClone = {...requestBody}
         const response = await makeApiRequest(requestBodyClone, testCustomerToken)
-        await KioskCouponsServices.deleteAll({ code: requestBodyClone.code })
+        await CouponServices.deleteAll({ code: requestBodyClone.code })
         const expectedResponse = {
             title: "Example",
             description: "Test Coupon",
@@ -144,7 +144,7 @@ describe("POST /kiosk-content/coupons", () => {
         await makeApiRequest(requestBodyClone, superAdminToken)
 
         const response = await makeApiRequest(requestBodyClone, superAdminToken)
-        await KioskCouponsServices.deleteAll({ code: requestBodyClone.code })
+        await CouponServices.deleteAll({ code: requestBodyClone.code })
         const expectedResponse = {
             success: false,
             data: "Coupon already exists"
@@ -159,6 +159,8 @@ describe("POST /kiosk-content/coupons", () => {
 
         const requestBodyClone = {...requestBody, discountType: "percentage", orgId: testOrganizatonId}
         const response = await makeApiRequest(requestBodyClone, superAdminToken)
+        await CouponServices.deleteAll({ code: requestBodyClone.code })
+
         const expectedResponse = {
             title: "Example",
             description: "Test Coupon",
@@ -180,4 +182,5 @@ describe("POST /kiosk-content/coupons", () => {
 
     })
 
+    
 })  

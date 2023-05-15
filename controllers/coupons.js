@@ -1,4 +1,4 @@
-const CouponModel = require("../services/coupons");
+const CouponServices = require("../services/coupons");
 const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
 
@@ -39,7 +39,7 @@ exports.get_all_available = async (req, res) => {
       }
     }
 
-    const result = await CouponModel.list_available(limit, page);
+    const result = await CouponServices.list_available(limit, page);
 
     return apiResponse.success(res, req, result);
   } catch (err) {
@@ -78,7 +78,7 @@ exports.get_all = async (req, res) => {
       }
     }
 
-    const result = await CouponModel.list(limit, page);
+    const result = await CouponServices.list(limit, page);
     return apiResponse.success(res, req, result);
   } catch (err) {
     return apiResponse.fail(res, err.message, 500);
@@ -109,7 +109,7 @@ exports.get_by_id = async (req, res) => {
    *         description: Success
    */
   try {
-    const result = await CouponModel.findByID(req.params.id);
+    const result = await CouponServices.findByID(req.params.id);
 
     return apiResponse.success(res, req, result);
   } catch (err) {
@@ -117,15 +117,15 @@ exports.get_by_id = async (req, res) => {
   }
 };
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   /**
    * @swagger
    *
-   * /coupon/create:
+   * /coupons:
    *   post:
    *     security:
    *      - auth: []
-   *     description: Create new Coupon (Only Super Admin)
+   *     description: Create new Coupon
    *     tags: [Coupons]
    *     consumes:
    *       - application/x-www-form-urlencoded
@@ -152,38 +152,36 @@ exports.create = (req, res) => {
    *         in: formData
    *         required: true
    *         type: string
-   *       - name: discount_type
-   *         description: Coupon discount type (Fixed or Percentage) 0=fixed, 1=percentage
+   *       - name: discountType
+   *         description: Coupon discount type (fixed or percentage)
    *         in: formData
    *         required: true
-   *         type: number
+   *         type: string
+   *         enum: 
+   *           - fixed
+   *           - percentage
    *       - name: discount
    *         description: discount rate
    *         in: formData
    *         required: true
    *         type: number
-   *       - name: max_use_limit
-   *         description: Number of max user to use it
-   *         in: formData
-   *         required: false
-   *         type: number
-   *       - name: coupon_for
-   *         description: Coupon for user or device_type, 0=user, 1=device type
+   *       - name: maxUseLimit
+   *         description: Number of times a single coupon can be redeam
    *         in: formData
    *         required: true
    *         type: number
-   *       - name: users
-   *         description: Comma separated user ids
+   *       - name: orgId
+   *         description: The organization with which the coupon is going to be attached.
    *         in: formData
    *         required: false
-   *         type: string
-   *       - name: device_types
-   *         description: Comma separated device_type ids
+   *         type: number
+   *       - name: gcId
+   *         description: The gold course with which the coupon is going to be attached.
    *         in: formData
    *         required: false
-   *         type: string
+   *         type: number
    *       - name: status
-   *         description: Coupon status, 0=active, 1=in-active
+   *         description: Coupon status, 1=active, 0=in-active
    *         in: formData
    *         required: false
    *         type: number
@@ -191,36 +189,28 @@ exports.create = (req, res) => {
    *       200:
    *         description: success
    */
-  try {
     const validation = new Validator(req.body, {
       title: "required",
       expiry: "required",
       code: "required",
-      discount_type: "required",
+      discountType: "required",
       discount: "required",
-      max_use_limit: "required",
-      coupon_for: "required",
+      maxUseLimit: "required",
     });
 
-    validation.fails(function () {
-      return apiResponse.fail(res, validation.errors);
-    });
+    if (validation.fails()) return apiResponse.fail(res, validation.errors);
 
-    validation.passes(async function () {
-      try {
-        const result = await CouponModel.create(req.body);
+    try {
+        const { orgId, gcId } = req.body
+        const loggedInUserOrgId = req.user.orgId
+        const validParent = await CouponServices.getValidParent({ orgId, gcId, loggedInUserOrgId })
+        const result = await CouponServices.create({ ...req.body, ...validParent });
         return apiResponse.success(res, req, result);
-      } catch (err) {
-        if (err == "exists")
-          return apiResponse.fail(res, "Coupon code already exists");
-        else return apiResponse.fail(res, err.message, 500);
-      }
-    });
-  } catch (err) {
-    return apiResponse.fail(res, err.message, 500);
-  }
-};
+    } catch (error) {
+        return apiResponse.fail(res, error.message, error.statusCode || 500);
+    }
 
+};
 exports.update = (req, res) => {
   /**
    * @swagger
@@ -317,10 +307,10 @@ exports.update = (req, res) => {
           return apiResponse.fail(res, "Coupon not found", 404);
         }
 
-        const coupon = await CouponModel.findByID(coupon_id);
+        const coupon = await CouponServices.findByID(coupon_id);
         if (!coupon) return apiResponse.fail(res, "Coupon not found", 404);
 
-        await CouponModel.update(coupon_id, req.body);
+        await CouponServices.update(coupon_id, req.body);
 
         return apiResponse.success(res, req, "updated");
       } catch (err) {
@@ -375,10 +365,10 @@ exports.update_status = async (req, res) => {
         const coupon_id = req.params.couponId;
         if (!coupon_id) return apiResponse.fail(res, "Coupon not found", 404);
 
-        const coupon = await CouponModel.findByID(coupon_id);
+        const coupon = await CouponServices.findByID(coupon_id);
         if (!coupon) return apiResponse.fail(res, "Coupon not found", 404);
 
-        await CouponModel.update(coupon_id, req.body);
+        await CouponServices.update(coupon_id, req.body);
         return apiResponse.success(res, req, "updated");
       } catch (err) {
         return apiResponse.fail(res, err.message, 500);
@@ -417,7 +407,7 @@ exports.validate = async (req, res) => {
     const code = req.body.code;
     const user_id = req.user.id;
 
-    const coupon = await CouponModel.validate(code);
+    const coupon = await CouponServices.validate(code);
     if (!coupon)
       return apiResponse.fail(res, "Invalid Coupon or coupon may expire");
 
@@ -488,7 +478,7 @@ exports.apply = async (req, res) => {
   try {
     const code = req.body.code;
 
-    const coupon = await CouponModel.validate(code);
+    const coupon = await CouponServices.validate(code);
 
     if (coupon) return apiResponse.success(res, req, coupon);
     else
