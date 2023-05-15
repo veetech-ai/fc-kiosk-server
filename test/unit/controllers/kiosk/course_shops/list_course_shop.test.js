@@ -104,7 +104,7 @@ jest
 .spyOn(upload_file, "uploadImageForCourse")
 .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
-describe("POST /api/v1/course-shops", () => {
+describe("GET /api/v1/course-shops/courses/{courseId}", () => {
   beforeAll(async () => {
     // Create some courses for the test organization
     adminToken = await helper.get_token_for("admin");
