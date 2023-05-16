@@ -15,7 +15,7 @@ exports.redeemCoupon = async (req, res) => {
    * @swagger
    *
    * /kiosk-content/coupons:
-   *   post:
+   *   patch:
    *     security:
    *      - auth: []
    *     description: Redeem Coupon
