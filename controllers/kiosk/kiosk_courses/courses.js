@@ -319,13 +319,16 @@ exports.create_course_info = async (req, res) => {
       uploadedImages.push(courseImages)
       courseImages = [...uploadedImages]
     }
+    if(logoImage){
     const logo = await upload_file.uploadCourseImage(logoImage, courseId, 3);
+    }
+    if(courseImages){
     const images = await upload_file.uploadCourseImages(
       courseImages,
       courseId,
       3,
     );
-
+    }
     const reqBody = { ...fields, logo, images };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
