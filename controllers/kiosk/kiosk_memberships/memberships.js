@@ -116,8 +116,6 @@ exports.getMemberships = async (req, res) => {
    */
 
   try {
-
-    console.log(req.params)
     const gcId = Number(req.params.gcId);
     if (!gcId) {
       return apiResponse.fail(res, "gcId must be a valid number");
