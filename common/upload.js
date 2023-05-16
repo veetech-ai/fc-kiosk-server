@@ -204,7 +204,7 @@ exports.uploadCourseImage = async (
   courseId,
   uploadOn = defaultUploadOn,
 ) => {
-  if (!imageFiles) return null;
+  if (!imageFile) return null;
   try {
     const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
     const fileName = this.rename_file(imageFile.name);
@@ -240,7 +240,7 @@ exports.uploadCourseImages = async (
   courseId,
   uploadOn = defaultUploadOn,
 ) => {
-  if (!imageFiles) return null;
+  if (!imageFiles[0]) return null;
   try {
     const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
