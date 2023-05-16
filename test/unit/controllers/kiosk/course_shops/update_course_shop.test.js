@@ -115,7 +115,7 @@ describe("PATCH /api/v1/course-shops/{shopId}", () => {
 
     const course = await createGolfCourse(coursesFixtures.test, adminToken);
     const zongCourse = await createGolfCourse(coursesFixtures.zong, adminToken);
-console.log("ssssssssssssssssss",zongCourse);
+    console.log("ssssssssssssssssss", zongCourse);
     testCourseId = course.body.data.id;
     zongCourseId = zongCourse.body.data.id;
 

@@ -21,12 +21,15 @@ async function getContactCoachesByLessonId(lessonId) {
   return contactCoaches;
 }
 
-async function updateContactCoachIsAddressable(contactCoachId, isAddressedBoolean) {
+async function updateContactCoachIsAddressable(
+  contactCoachId,
+  isAddressedBoolean,
+) {
   const [affectedRows] = await ContactCoach.update(
-    {isAddressed:isAddressedBoolean} ,
+    { isAddressed: isAddressedBoolean },
     { where: { id: contactCoachId } },
   );
- 
+
   return affectedRows;
 }
 

@@ -50,7 +50,6 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
       pin_code: 1111,
       device_type: productId,
     };
-  
 
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
@@ -106,55 +105,60 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
         token: adminToken,
         params: fields,
       });
-      return lesson.body.data.id
+      return lesson.body.data.id;
     };
     lessonId = await createLesson();
-    reqBodyForContactLesson={
-        lessonId:lessonId,
-         phone:"+92111111",
-         contact_medium:"phone"
-     }
- const contactCoach= await helper.post_request_with_authorization({
-        endpoint: `kiosk-content/lessons/contacts`,
-        token: deviceToken,
-        params:reqBodyForContactLesson
-      });
-      contactCoachId=contactCoach.body.data.id
-      console.log("contactCoachId :",contactCoachId);
+    reqBodyForContactLesson = {
+      lessonId: lessonId,
+      phone: "+92111111",
+      contact_medium: "phone",
+    };
+    const contactCoach = await helper.post_request_with_authorization({
+      endpoint: `kiosk-content/lessons/contacts`,
+      token: deviceToken,
+      params: reqBodyForContactLesson,
+    });
+    contactCoachId = contactCoach.body.data.id;
+    console.log("contactCoachId :", contactCoachId);
   });
 
-
-
-  
-  const makeApiRequest = async (contactCoachId,reqBody,token = adminToken) => {
+  const makeApiRequest = async (
+    contactCoachId,
+    reqBody,
+    token = adminToken,
+  ) => {
     return await helper.patch_request_with_authorization({
       endpoint: `course-lesson/contacts/${contactCoachId}`,
       token: token,
-      params:reqBody
+      params: reqBody,
     });
   };
 
-
   it("should successfully return contact lesson response", async () => {
-    const reqBody={
-      isAddressed:true
-    }
-    const response = await makeApiRequest(contactCoachId,reqBody);
-    expect(response.body.data).toBe(1)
+    const reqBody = {
+      isAddressed: true,
+    };
+    const response = await makeApiRequest(contactCoachId, reqBody);
+    expect(response.body.data).toBe(1);
   });
   it("should successfully return contact lesson response with customer of same organization", async () => {
-    const reqBody={
-      isAddressed:false
-    }
-    const response = await makeApiRequest(contactCoachId,reqBody,customerToken);
-    expect(response.body.data).toBe(1)
-
-
+    const reqBody = {
+      isAddressed: false,
+    };
+    const response = await makeApiRequest(
+      contactCoachId,
+      reqBody,
+      customerToken,
+    );
+    expect(response.body.data).toBe(1);
   });
 
   it("should successfully return not allowed errro with customer with different organization", async () => {
-    const response = await makeApiRequest(contactCoachId,{},differentOrganizationCustomerToken);
-    expect(response.body.data).toBe("You are not allowed")
+    const response = await makeApiRequest(
+      contactCoachId,
+      {},
+      differentOrganizationCustomerToken,
+    );
+    expect(response.body.data).toBe("You are not allowed");
   });
-
 });

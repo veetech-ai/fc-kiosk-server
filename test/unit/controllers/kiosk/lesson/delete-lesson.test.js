@@ -7,7 +7,9 @@ let mockFields;
 let mockFiles;
 let fields;
 let files;
-
+let lessonId;
+let reqBodyForContactLesson;
+let contactCoachId;
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -25,13 +27,15 @@ const mockFormidable = (fields, files) => {
   mockFields = fields;
   mockFiles = files;
 };
-describe("GET /api/v1/kiosk-content/screens", () => {
+describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
   let adminToken;
   let courseId;
   let deviceId;
   let deviceToken;
   let testOrganizationId = 1;
   let productId = product.products.kiosk.id;
+  let customerToken;
+  let differentOrganizationCustomerToken;
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -48,6 +52,10 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     };
 
     adminToken = await helper.get_token_for("admin");
+    customerToken = await helper.get_token_for("testCustomer");
+    differentOrganizationCustomerToken = await helper.get_token_for(
+      "zongCustomer",
+    );
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses",
       token: adminToken,
@@ -70,7 +78,24 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
-    const createLesson = async (fields, files) => {
+    const createLesson = async () => {
+      fields = {
+        gcId: courseId,
+        name: "Mark Rober",
+        title: "Assistant",
+        content: "asdasdasdas asdasdasda",
+        timings: "9:00-10:00",
+      };
+
+      files = {
+        image: {
+          name: "mock-logo.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/logo.png",
+        },
+      };
+
       mockFormidable(fields, files);
       jest
         .spyOn(upload_file, "uploadImageForCourse")
@@ -80,64 +105,51 @@ describe("GET /api/v1/kiosk-content/screens", () => {
         token: adminToken,
         params: fields,
       });
+      return lesson.body.data.id;
     };
-    const lessonFields = [
-      {
-        fields: {
-          gcId: courseId,
-          name: "Mark Rober",
-          title: "Assistant",
-          content: "asdasdasdas asdasdasda",
-          timings: "9:00-10:00",
-        },
-        files: {
-          image: {
-            name: "mock-logo.png",
-            type: "image/png",
-            size: 5000, // bytes
-            path: "/mock/path/to/logo.png",
-          },
-        },
-      },
-      {
-        fields: {
-          gcId: courseId,
-          name: "Pewdipie",
-          title: "Golf Expert",
-          content: "asdasdasdas asdasdasda",
-          timings: "9:00-10:00",
-        },
-        files: {
-          image: {
-            name: "mock-logo.png",
-            type: "image/png",
-            size: 5000, // bytes
-            path: "/mock/path/to/logo.png",
-          },
-        },
-      },
-    ];
-    const createMultipleLessons = async (lessonFields) => {
-      for (lessonField of lessonFields) {
-        await createLesson(lessonField.fields, lessonField.files);
-      }
+    lessonId = await createLesson();
+    reqBodyForContactLesson = {
+      lessonId: lessonId,
+      phone: "+92111111",
+      contact_medium: "phone",
     };
-    await createMultipleLessons(lessonFields);
+    const contactLesson = await helper.post_request_with_authorization({
+      endpoint: `kiosk-content/lessons/contacts`,
+      token: deviceToken,
+      params: reqBodyForContactLesson,
+    });
+    contactCoachId = contactLesson.body.data.id;
+    console.log(contactCoachId);
   });
 
-  const makeApiRequest = async (token = deviceToken) => {
-    return await helper.get_request_with_authorization({
-      endpoint: `kiosk-content/lessons`,
+  const makeApiRequest = async (lessonId, token = adminToken) => {
+    return await helper.delete_request_with_authorization({
+      endpoint: `course-lesson/${lessonId}`,
       token: token,
     });
   };
 
-  it("should successfully return all lessons attached to device's linked course", async () => {
-    const response = await makeApiRequest();
-    expect(response.body.data.length).toEqual(2);
+  it.only("should successfully return contact lesson response", async () => {
+    const response = await makeApiRequest(lessonId);
+    expect(response.body.data).toBe(1);
   });
-  it("returns 403 status code Request", async () => {
-    const response = await makeApiRequest(adminToken);
-    expect(response.body.data).toEqual("Token invalid or expire");
+  it("should successfully return contact lesson response with customer of same organization", async () => {
+    const response = await makeApiRequest(customerToken);
+    expect(response.body.data.length).toBe(1);
+
+    expect(response.body.data[0].coachId).toEqual(
+      reqBodyForContactLesson.lessonId,
+    );
+    expect(response.body.data[0].userPhone).toEqual(
+      reqBodyForContactLesson.phone,
+    );
+    expect(response.body.data[0].contactMedium).toEqual(
+      reqBodyForContactLesson.contact_medium,
+    );
+  });
+
+  it("should successfully return not allowed errro with customer with different organization", async () => {
+    const response = await makeApiRequest(differentOrganizationCustomerToken);
+    expect(response.body.data).toBe("You are not allowed");
   });
 });

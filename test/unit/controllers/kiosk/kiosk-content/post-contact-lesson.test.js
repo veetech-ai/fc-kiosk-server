@@ -97,7 +97,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
         token: adminToken,
         params: fields,
       });
-      return lesson.body.data.id
+      return lesson.body.data.id;
     };
     lessonId = await createLesson();
   });
@@ -106,16 +106,16 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     return await helper.post_request_with_authorization({
       endpoint: `kiosk-content/lessons/contacts`,
       token: token,
-      params:reqBody
+      params: reqBody,
     });
   };
 
   it("should successfully return contact lesson response", async () => {
-    const reqBody={
-       lessonId:lessonId,
-        phone:"+92111111",
-        contact_medium:"phone"
-    }
+    const reqBody = {
+      lessonId: lessonId,
+      phone: "+92111111",
+      contact_medium: "phone",
+    };
     const response = await makeApiRequest(reqBody);
     expect(response.body.data.coachId).toEqual(reqBody.lessonId);
     expect(response.body.data.userPhone).toEqual(reqBody.phone);

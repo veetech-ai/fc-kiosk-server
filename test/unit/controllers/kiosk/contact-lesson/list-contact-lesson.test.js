@@ -49,7 +49,6 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
       pin_code: 1111,
       device_type: productId,
     };
-  
 
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
@@ -105,24 +104,21 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
         token: adminToken,
         params: fields,
       });
-      return lesson.body.data.id
+      return lesson.body.data.id;
     };
     lessonId = await createLesson();
-    reqBodyForContactLesson={
-        lessonId:lessonId,
-         phone:"+92111111",
-         contact_medium:"phone"
-     }
-   const contactLesson= await helper.post_request_with_authorization({
-        endpoint: `kiosk-content/lessons/contacts`,
-        token: deviceToken,
-        params:reqBodyForContactLesson
-      });
+    reqBodyForContactLesson = {
+      lessonId: lessonId,
+      phone: "+92111111",
+      contact_medium: "phone",
+    };
+    const contactLesson = await helper.post_request_with_authorization({
+      endpoint: `kiosk-content/lessons/contacts`,
+      token: deviceToken,
+      params: reqBodyForContactLesson,
+    });
   });
 
-
-
-  
   const makeApiRequest = async (token = adminToken) => {
     return await helper.get_request_with_authorization({
       endpoint: `course-lesson/${lessonId}/contacts`,
@@ -130,29 +126,37 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
     });
   };
 
-
   it("should successfully return contact lesson response", async () => {
-
     const response = await makeApiRequest();
-    expect(response.body.data.length).toBe(1)
+    expect(response.body.data.length).toBe(1);
 
-    expect(response.body.data[0].coachId).toEqual(reqBodyForContactLesson.lessonId);
-    expect(response.body.data[0].userPhone).toEqual(reqBodyForContactLesson.phone);
-    expect(response.body.data[0].contactMedium).toEqual(reqBodyForContactLesson.contact_medium);
+    expect(response.body.data[0].coachId).toEqual(
+      reqBodyForContactLesson.lessonId,
+    );
+    expect(response.body.data[0].userPhone).toEqual(
+      reqBodyForContactLesson.phone,
+    );
+    expect(response.body.data[0].contactMedium).toEqual(
+      reqBodyForContactLesson.contact_medium,
+    );
   });
   it("should successfully return contact lesson response with customer of same organization", async () => {
-
     const response = await makeApiRequest(customerToken);
-    expect(response.body.data.length).toBe(1)
+    expect(response.body.data.length).toBe(1);
 
-    expect(response.body.data[0].coachId).toEqual(reqBodyForContactLesson.lessonId);
-    expect(response.body.data[0].userPhone).toEqual(reqBodyForContactLesson.phone);
-    expect(response.body.data[0].contactMedium).toEqual(reqBodyForContactLesson.contact_medium);
+    expect(response.body.data[0].coachId).toEqual(
+      reqBodyForContactLesson.lessonId,
+    );
+    expect(response.body.data[0].userPhone).toEqual(
+      reqBodyForContactLesson.phone,
+    );
+    expect(response.body.data[0].contactMedium).toEqual(
+      reqBodyForContactLesson.contact_medium,
+    );
   });
 
   it("should successfully return not allowed errro with customer with different organization", async () => {
     const response = await makeApiRequest(differentOrganizationCustomerToken);
-    expect(response.body.data).toBe("You are not allowed")
+    expect(response.body.data).toBe("You are not allowed");
   });
-
 });

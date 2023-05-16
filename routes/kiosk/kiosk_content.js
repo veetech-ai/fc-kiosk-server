@@ -36,8 +36,8 @@ exports.routesConfig = function (app, router) {
   router.post(kioskContentBaseUrl + "/lessons/contacts", [
     validation_middleware.onlyDeviceAccess,
     ContactLessonController.create_contact_lesson,
-  ])  
-  
+  ]);
+
   router.get(kioskContentBaseUrl + "/shops", [
     validation_middleware.onlyDeviceAccess,
     ShopsController.getShops,

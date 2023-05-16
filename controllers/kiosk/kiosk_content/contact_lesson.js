@@ -74,9 +74,9 @@ exports.create_contact_lesson = async (req, res) => {
     const orgId = course.orgId;
     const reqBody = {
       coachId: lessonId,
-      userPhone:phone,
-      userEmail:email,
-      contactMedium:contact_medium,
+      userPhone: phone,
+      userEmail: email,
+      contactMedium: contact_medium,
       gcId: courseId,
       orgId,
     };
