@@ -10,9 +10,9 @@ const CouponServices = require("../../../../../services/coupons");
 const CouponUsedServices = require("../../../../../services/coupon_used");
 
 let superAdminToken,
+  testCustomerToken,
   testOrganizationDeviceToken,
   testOrganizatonId = organizationsInApplication.test.id,
-  zongOrganizationId = organizationsInApplication.zong.id,
   testOrganizationDeviceId,
   testGolfCourseId;
 
