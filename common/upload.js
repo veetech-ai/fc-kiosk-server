@@ -8,7 +8,6 @@ const server_upload = require("../common/server_upload");
 const awsS3 = require("./external_services/aws-s3");
 const uploadPath = "./public/uploads/";
 const publicPath = "./public/";
-
 /**
  * setting default uploading cloud from env
  *
@@ -18,10 +17,8 @@ let defaultUploadOn;
 if (config.isCloudUpload) {
   defaultUploadOn = config.aws.upload ? 3 : 2; // AWS has privilige if both clouds uploads are true
 } else defaultUploadOn = 1; // self local server
-
 exports.upload_path = uploadPath;
 exports.public_path = publicPath;
-
 const validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
   const fileExtension = this.get_file_extension(file.name)
     .toLowerCase()
@@ -41,7 +38,6 @@ const validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
         " MB",
     };
   }
-
   return true;
 };
 exports.uploadProfileImage = async (
@@ -58,7 +54,6 @@ exports.uploadProfileImage = async (
       ["jpg", "jpeg", "png"],
       settings.get("profile_image_max_size"),
     );
-
     switch (uploadOn) {
       case 1:
         return await server_upload.upload(imageFile, `${newpath}/${fileName}`);
@@ -79,14 +74,12 @@ exports.uploadProfileImage = async (
     throw err.status ? err : { message: err.message };
   }
 };
-
 exports.upload_binary = async (file, uploadOn = defaultUploadOn) => {
   try {
     const newPath = `${this.upload_path}fw`;
     const fileName = file.name;
     if (!fs.existsSync(newPath)) fs.mkdirSync(newPath, { recursive: true });
     validateFile(file, ["bin"], settings.get("binary_file_max_size"));
-
     switch (uploadOn) {
       case 1:
         return await server_upload.upload(file, `${newPath}/${fileName}`);
@@ -104,7 +97,6 @@ exports.upload_binary = async (file, uploadOn = defaultUploadOn) => {
     throw err.status ? err : { message: err.message };
   }
 };
-
 exports.upload_file = async (
   file,
   path = "uploads/mix",
@@ -116,7 +108,6 @@ exports.upload_file = async (
     const fileName = file.name;
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
     validateFile(file, allowed_extension, settings.get("upload_file_max_size"));
-
     switch (defaultUploadOn) {
       case 1:
         return await server_upload.upload(file, `${newpath}/${fileName}`);
@@ -134,16 +125,13 @@ exports.upload_file = async (
     throw err.status ? err : { message: err.message };
   }
 };
-
 exports.rename_file = (filename) => {
   const extension = path.extname(filename);
   return `${Date.now()}${extension}`;
 };
-
 exports.get_file_extension = (filename) => {
   return path.extname(filename);
 };
-
 exports.getHost = () => {
   if (config.azure.upload) {
     return config.azure.storageURL;
@@ -151,12 +139,9 @@ exports.getHost = () => {
     return config.app.backendURL;
   }
 };
-
 exports.getFileURL = (key) => {
   const imagesWithCompleteUrl = [];
-
   if (!key) return null; // Return null if no key found
-
   if (typeof key === "string") {
     switch (defaultUploadOn) {
       case 1:
@@ -172,7 +157,6 @@ exports.getFileURL = (key) => {
         };
     }
   }
-
   if (Array.isArray(key)) {
     for (const data of key) {
       switch (defaultUploadOn) {
@@ -198,7 +182,6 @@ exports.getFileURL = (key) => {
     return imagesWithCompleteUrl;
   }
 };
-
 exports.uploadCourseImage = async (
   imageFile,
   courseId,
@@ -214,7 +197,6 @@ exports.uploadCourseImage = async (
       ["jpg", "jpeg", "png"],
       settings.get("profile_image_max_size"),
     );
-
     switch (uploadOn) {
       case 1:
         return await server_upload.upload(imageFile, `${newpath}/${fileName}`);
@@ -244,9 +226,7 @@ exports.uploadCourseImages = async (
   try {
     const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
-
     const uploadedFiles = [];
-   
     for (const imageFile of imageFiles) {
       validateFile(
         imageFile,
@@ -284,7 +264,6 @@ exports.uploadCourseImages = async (
     throw err.status ? err : { message: err.message };
   }
 };
-
 exports.uploadImageForCourse = async (
   imageFile,
   courseId,
@@ -301,7 +280,6 @@ exports.uploadImageForCourse = async (
       ["jpg", "jpeg", "png"],
       settings.get("profile_image_max_size"),
     );
-
     switch (uploadOn) {
       case 1:
         return await server_upload.upload(imageFile, `${newpath}/${fileName}`);
