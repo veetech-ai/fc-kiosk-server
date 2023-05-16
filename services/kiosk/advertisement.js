@@ -2,23 +2,21 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
 const membershipService = require("./membership");
+const organizationService = require("../organization")
 
 const Course = models.Course;
 const Organization = models.Organization;
-const Advertisements = models.Ads;
+const AdModel = models.Ad;
 
-async function createAdvertisement(reqBody, orgId) {
-  // Check if organization exists with the specified org_id
-  const organization = await Organization.findOne({ where: { id: orgId } });
-  if (!organization) {
-    throw new ServiceError(`Organization not found`, 404);
-  }
+async function createAdvertisement(reqBody, orgId , gcId) {
 
-  // Create a new course record
-  const course = await Course.create({
+
+  const course = await AdModel.create({
     ...reqBody,
-    orgId,
+    gcId
   });
+
+  console.log(course)
 
 
 
@@ -71,7 +69,7 @@ async function getCourseById(courseId) {
 }
 
 module.exports = {
-
+  createAdvertisement,
   getCoursesByOrganization,
   createCourseInfo,
   getCourseById,

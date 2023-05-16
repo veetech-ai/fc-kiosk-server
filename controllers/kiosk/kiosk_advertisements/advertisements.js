@@ -10,7 +10,7 @@ const upload_file = require("../../../common/upload");
 const courseService = require("../../../services/kiosk/course");
 const adScreenService = require("../../../services/kiosk/advertisement_screen");
 const adService = require("../../../services/kiosk/advertisement");
-
+const organizationService = require("../../../services/organization")
 
 /**
  * @swagger
@@ -34,6 +34,11 @@ exports.createAdvertisements = async (req, res) => {
    *       - name: gcId
    *         description: ID of the golf course
    *         in: path
+   *         required: true
+   *         type: integer
+   *       - name: orgId
+   *         description: orgId of the golf course
+   *         in: formData
    *         required: true
    *         type: integer
    *       - name: name
@@ -73,9 +78,8 @@ exports.createAdvertisements = async (req, res) => {
    *         description: success
    */
 
-  console.log("RESOLVED")
-  const courseId = req.params.gcId;
-  await courseService.getCourseById(courseId);
+  const gcId = req.params.gcId;
+  await courseService.getCourseById(gcId);
 
   const form = new formidable.IncomingForm();
   form.multiples = true;
@@ -85,45 +89,58 @@ exports.createAdvertisements = async (req, res) => {
       resolve({ fields, files });
     });
   });
+
   const validation = new Validator(fields, {
     name: "required|string",
+    orgId: "required|integer",
     screenId: "required|integer",
     tabLink: "string",
-    alternateLink: "string",
+    alternateLink: "string"
   });
 
+  
   validation.fails(function () {
     return apiResponse.fail(res, validation.errors);
   });
 
   validation.passes(async function () {
     try {
+      console.log("reqBody")
       const smallImage = files?.smallImage;
       const bigImage = files?.bigImage;
       const smallImageLink = await upload_file.uploadImageForCourse(
         smallImage,
-        courseId,
+        gcId,
         "advertisement-images/",
         3,
       );
       const bigImageLink = await upload_file.uploadImageForCourse(
         bigImage,
-        courseId,
+        gcId,
         "advertisement-images/",
-        3,
+        3
       );
 
       const reqBody = { ...fields, smallImageLink, bigImageLink };
 
+      await adScreenService.getAdScreenById(reqBody.screenId)
+
+      const organization = await organizationService.findById(reqBody.orgId);
+      if (!organization)
+        return apiResponse.fail(res, "Organization not found", 404);
+
       console.log("REQ",reqBody)
 
-      const updatedCourse = await courseService.createCourseInfo(
-        reqBody,
-        courseId,
-      );
-      return apiResponse.success(res, req, updatedCourse);
+      await adService.createAdvertisement(reqBody,reqBody.orgId,gcId)
+
+      // const updatedCourse = await courseService.createCourseInfo(
+      //   reqBody,
+      //   gcId,
+      // );
+
+      return apiResponse.success(res, req, reqBody);
     } catch (err) {
-      return apiResponse.fail(res, err.message, 500);
+      return apiResponse.fail(res, err.message, err.statusCode || 500);
     }
   });
 };
