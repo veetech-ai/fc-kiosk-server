@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      title: {
+        field: "title",
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       smallImage: {
         field: "small_image",
         type: DataTypes.STRING,

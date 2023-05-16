@@ -7,10 +7,9 @@ module.exports = {
       type: Sequelize.STRING
     });
     await queryInterface.renameColumn('Ads', 'state_id', 'state');
-    await queryInterface.renameColumn('Ads', 'state_id', 'state');
-
     await queryInterface.addColumn('Ads', 'title', {
       type: Sequelize.STRING,
+      allowNull: true,
     });
 
 
