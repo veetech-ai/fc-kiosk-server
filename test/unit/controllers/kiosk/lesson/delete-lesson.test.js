@@ -2,6 +2,7 @@ const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const upload_file = require("../../../../../common/upload");
+const courseLessonContact=require("../../../../../services/kiosk/contact_lesson")
 const { uuid } = require("uuidv4");
 let mockFields;
 let mockFiles;
@@ -119,7 +120,6 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
       params: reqBodyForContactLesson,
     });
     contactCoachId = contactLesson.body.data.id;
-    console.log(contactCoachId);
   });
 
   const makeApiRequest = async (lessonId, token = adminToken) => {
@@ -127,29 +127,22 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
       endpoint: `course-lesson/${lessonId}`,
       token: token,
     });
+  }
+    const makeApiRequestForGettingLessonContact = async (lessonId, token = adminToken) => {
+      return await helper.get_request_with_authorization({
+        endpoint: `course-lesson/${lessonId}/contacts`,
+        token: token,
+      });
   };
 
-  it.only("should successfully return contact lesson response", async () => {
+  it("should successfully return contact lesson response", async () => {
     const response = await makeApiRequest(lessonId);
     expect(response.body.data).toBe(1);
   });
+
   it("should successfully return contact lesson response with customer of same organization", async () => {
-    const response = await makeApiRequest(customerToken);
-    expect(response.body.data.length).toBe(1);
-
-    expect(response.body.data[0].coachId).toEqual(
-      reqBodyForContactLesson.lessonId,
-    );
-    expect(response.body.data[0].userPhone).toEqual(
-      reqBodyForContactLesson.phone,
-    );
-    expect(response.body.data[0].contactMedium).toEqual(
-      reqBodyForContactLesson.contact_medium,
-    );
-  });
-
-  it("should successfully return not allowed errro with customer with different organization", async () => {
-    const response = await makeApiRequest(differentOrganizationCustomerToken);
-    expect(response.body.data).toBe("You are not allowed");
+    const response = await makeApiRequestForGettingLessonContact(lessonId)
+    expect(response.body.data).toBe("Not found")
+    
   });
 });

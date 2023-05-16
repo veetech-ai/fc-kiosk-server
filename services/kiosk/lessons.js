@@ -18,7 +18,7 @@ async function findLessonById(lessonId) {
     where: { id: lessonId },
   });
   if (!lesson) {
-    throw new ServiceError("Something Went wrong", 401);
+    throw new ServiceError("Not found", 404);
   }
   if (!lesson?.image) return;
   const image = upload_file.getFileURL(lesson.image);
