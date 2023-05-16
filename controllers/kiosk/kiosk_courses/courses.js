@@ -334,9 +334,7 @@ exports.create_course_info = async (req, res) => {
       );
       reqBody.images = images;
     }
-    console.log(existingImages);
     if(existingImages&&courseImages){
-      console.log("both exists")
       reqBody.images=[...existingImages,...reqBody.images]
     }
     const updatedCourse = await courseService.createCourseInfo(
