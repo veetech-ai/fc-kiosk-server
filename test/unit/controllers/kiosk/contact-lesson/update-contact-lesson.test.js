@@ -119,7 +119,6 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
       params: reqBodyForContactLesson,
     });
     contactCoachId = contactCoach.body.data.id;
-    console.log("contactCoachId :", contactCoachId);
   });
 
   const makeApiRequest = async (
