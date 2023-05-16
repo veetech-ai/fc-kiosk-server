@@ -96,8 +96,6 @@ exports.createAdvertisements = async (req, res) => {
     
     );
 
-
-
     const validation = new Validator(fields, {
       title: "required|string",
       screenId: "required|integer",
@@ -125,13 +123,13 @@ exports.createAdvertisements = async (req, res) => {
         "advertisement-images/",
         3,
       );
-
       const reqBody = {
          ...fields,
-         smallImageLink,
-         bigImageLink,
+         smallImage: smallImageLink,
+         bigImage: bigImageLink,
          orgId: course.orgId
         };
+
       await adScreenService.getAdScreenById(reqBody.screenId);
       const ad = await adService.createAdvertisement(reqBody, gcId );
       return apiResponse.success(res, req, ad);
