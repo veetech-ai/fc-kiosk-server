@@ -90,7 +90,6 @@ exports.updateContactLesson = async (req, res) => {
    */
 
   try {
-    console.log("in controller");
     const contactCoachId = Number(req.params.contactCoachId);
     if (!contactCoachId) {
       return apiResponse.fail(res, "contactCoachId must be a valid number");
@@ -115,13 +114,11 @@ exports.updateContactLesson = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
-
-    const reqBody = { is_addressed: req.body.isAddressed };
-    console.log("ssss", reqBody);
+    const isAddressedBoolean = JSON.parse(req.body.isAddressed);
     const updatedCoach =
       await contactCoachService.updateContactCoachIsAddressable(
         contactCoachId,
-        reqBody,
+        isAddressedBoolean,
       );
     return apiResponse.success(res, req, updatedCoach);
   } catch (error) {

@@ -21,14 +21,12 @@ async function getContactCoachesByLessonId(lessonId) {
   return contactCoaches;
 }
 
-async function updateContactCoachIsAddressable(contactCoachId, reqBody) {
+async function updateContactCoachIsAddressable(contactCoachId, isAddressedBoolean) {
   const [affectedRows] = await ContactCoach.update(
-    { isAddressed: true },
+    {isAddressed:isAddressedBoolean} ,
     { where: { id: contactCoachId } },
   );
-  if (affectedRows === 0) {
-    throw new ServiceError("Something went wrong", 401);
-  }
+ 
   return affectedRows;
 }
 
