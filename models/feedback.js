@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const Feedback = sequelize.define(
     "Feedback",
     {
-      gc_id: {
+      gcId: {
+        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {

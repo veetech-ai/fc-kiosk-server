@@ -73,13 +73,29 @@ async function getOne(where) {
   return await Course.findOne({ where });
 }
 
-async function getCourseById(courseId) {
+async function getCourseInfoById(courseId) {
   const course = await Course.findOne({
     where: {
       id: courseId,
     },
     attributes: {
       exclude: ["org_id"],
+    },
+  });
+
+  if (!course) {
+    throw new ServiceError("Course not found", 404);
+  }
+  return course;
+}
+
+async function getCourseById(courseId) {
+  const course = await Course.findOne({
+    where: {
+      id: courseId,
+    },
+    attributes: {
+      exclude: ["org_id", "gc_id"],
     },
   });
 

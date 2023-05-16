@@ -114,6 +114,7 @@ const DeviceOnboardingCode = require("./routes/kiosk/device_onboarding_code");
 const LessonRouteController = require("./routes/kiosk/lesson");
 const ContactLessonRouteController = require("./routes/kiosk/contact_lesson");
 const CourseShops = require("./routes/kiosk/course_shops");
+const CourseFeedBacks = require("./routes/kiosk/course_feedbacks");
 
 swaggerDoc(router);
 
@@ -193,6 +194,7 @@ DeviceOnboardingCode.routesConfig(app, router);
 LessonRouteController.routesConfig(app, router);
 ContactLessonRouteController.routesConfig(app, router);
 CourseShops.routesConfig(app, router);
+CourseFeedBacks.routesConfig(app, router);
 
 if (config.env === "test") {
   // for test case server
