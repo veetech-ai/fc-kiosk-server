@@ -5,8 +5,7 @@ const { Sequelize } = require("sequelize");
 const Feedback = models.Feedback;
 
 async function createFeedback(reqBody) {
-  const feedback = await Feedback.create(reqBody);
-
+  const feedback = await Feedback.create({ ...reqBody });
   return feedback;
 }
 async function getCourseFeedBacks(courseId) {

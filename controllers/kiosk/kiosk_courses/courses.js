@@ -386,6 +386,14 @@ exports.getCourseInfo = async (req, res) => {
     if (averageRating) {
       course.setDataValue("averageRating", averageRating);
     }
+    if (course.logo) {
+      const logo = upload_file.getFileURL(course.logo);
+      course.setDataValue("logo", logo);
+    }
+    if (course.images) {
+      const images = upload_file.getFileURL(course.images);
+      course.setDataValue("images", images);
+    }
     return apiResponse.success(res, req, course);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
