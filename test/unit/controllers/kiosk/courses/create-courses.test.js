@@ -1,6 +1,6 @@
 const helper = require("../../../../helper");
 
-describe("POST /api/v1/kiosk-courses/create", () => {
+describe("POST /api/v1/kiosk-courses", () => {
   let adminToken;
   let customerToken;
   beforeAll(async () => {
@@ -27,7 +27,7 @@ describe("POST /api/v1/kiosk-courses/create", () => {
 
   const makeApiRequest = async (params, token = adminToken) => {
     return helper.post_request_with_authorization({
-      endpoint: "kiosk-courses/create",
+      endpoint: "kiosk-courses",
       token: token,
       params: params,
     });

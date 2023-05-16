@@ -97,7 +97,7 @@ module.exports = (sequelize, DataTypes) => {
       as: "Contact_Careers",
       foreignKey: "gc_id",
     });
-    Course.hasMany(models.ContactCoach, {
+    Course.hasMany(models.Contact_Coach, {
       as: "ContactCoaches",
       foreignKey: "gc_id",
     });
