@@ -317,7 +317,7 @@ exports.create_course_info = async (req, res) => {
     const isIterable = Symbol.iterator in Object(courseImages);
     if(!isIterable){
       uploadedImages.push(courseImages)
-      courseImages=uploadedImages
+      courseImages = [...uploadedImages]
     }
     const logo = await upload_file.uploadCourseImage(logoImage, courseId, 3);
     const images = await upload_file.uploadCourseImages(
