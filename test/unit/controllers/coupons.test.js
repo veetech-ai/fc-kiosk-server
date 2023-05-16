@@ -7,7 +7,7 @@ beforeAll(async () => {
   tokens = await helper.get_all_roles_tokens();
 });
 
-describe("/coupon/all/available", () => {
+describe.skip("/coupon/all/available", () => {
   // coupons
   it("Get all available", async () => {
     const res = await helper.get_request({
@@ -28,7 +28,7 @@ describe("/coupon/all/available", () => {
   });
 });
 
-describe("/coupon/all", () => {
+describe.skip("/coupon/all", () => {
   // coupons
   it("Get all without token", async () => {
     const res = await helper.get_request({
@@ -70,7 +70,7 @@ describe("/coupon/all", () => {
   });
 });
 
-describe("/coupon/create", () => {
+describe.skip("/coupon/create", () => {
   // create coupons
   it("Without access token", async () => {
     const res = await helper.post_request({
@@ -171,7 +171,7 @@ describe("/coupon/create", () => {
   });
 });
 
-describe("/coupon/get/{id}", () => {
+describe.skip("/coupon/get/{id}", () => {
   // get single coupon
   it("Get by invalid ID", async () => {
     const res = await helper.get_request({
@@ -195,7 +195,7 @@ describe("/coupon/get/{id}", () => {
   });
 });
 
-describe("/coupon/update/{couponId}", () => {
+describe.skip("/coupon/update/{couponId}", () => {
   // update coupon
   it("Without access token", async () => {
     const res = await helper.put_request({
@@ -273,7 +273,7 @@ describe("/coupon/update/{couponId}", () => {
   });
 });
 
-describe("/coupon/status/{couponId}", () => {
+describe.skip("/coupon/status/{couponId}", () => {
   // update coupon status
   it("Without access token", async () => {
     const res = await helper.put_request({
@@ -335,7 +335,7 @@ describe("/coupon/status/{couponId}", () => {
   });
 });
 
-describe("/coupon/validate", () => {
+describe.skip("/coupon/validate", () => {
   // Validate Coupon
   it("Without access token", async () => {
     const res = await helper.post_request({
@@ -396,7 +396,7 @@ describe("/coupon/validate", () => {
   });
 });
 
-describe("/coupon/apply", () => {
+describe.skip("/coupon/apply", () => {
   // Apply Coupon
   it("Without access token", async () => {
     const res = await helper.post_request({

@@ -56,6 +56,10 @@ async function createCourseInfo(reqBody, courseId) {
   return updatedCourse;
 }
 
+async function getOne(where) {
+  return await Course.findOne({ where });
+}
+
 async function getCourseById(courseId) {
   const course = await Course.findOne({
     where: {
@@ -76,5 +80,6 @@ module.exports = {
   createCourse,
   getCoursesByOrganization,
   createCourseInfo,
+  getOne,
   getCourseById,
 };

@@ -109,6 +109,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "Screen_Configs",
       foreignKey: "gc_id",
     });
+    Course.hasMany(models.Coupon, {
+      as: "Course_Coupons",
+      foreignKey: "gcId",
+    });
   };
   return Course;
 };

@@ -1,29 +1,59 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const Coupons = sequelize.define(
-    "Coupons",
+  const Coupon = sequelize.define(
+    "Coupon",
     {
       title: DataTypes.STRING,
       description: DataTypes.STRING,
       expiry: DataTypes.DATE,
-      code: DataTypes.STRING,
-      discount_type: DataTypes.INTEGER,
+      code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      discountType: DataTypes.ENUM("fixed", "percentage"),
       discount: DataTypes.FLOAT,
-      max_use_limit: DataTypes.INTEGER,
-      used_by: DataTypes.INTEGER,
-      coupon_for: DataTypes.INTEGER,
-      users: DataTypes.STRING,
-      device_types: DataTypes.STRING,
+      maxUseLimit: DataTypes.INTEGER,
+      usedBy: DataTypes.INTEGER,
       status: DataTypes.BOOLEAN,
+      orgId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Organization",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      gcId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "Course",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
     },
-    {},
+    {
+      timestamps: true,
+    },
   );
-  Coupons.associate = function (models) {
+  Coupon.associate = function (models) {
     // associations can be defined here
-    models.Coupons.hasMany(models.Coupon_Used, {
+    models.Coupon.hasMany(models.Coupon_Used, {
       as: "Coupon_Used",
-      foreignKey: "coupon_id",
+      foreignKey: "couponId",
+    });
+    models.Coupon.belongsTo(models.Organization, {
+      as: "Organization",
+      foreignKey: "orgId",
+    });
+
+    models.Coupon.belongsTo(models.Course, {
+      as: "Course",
+      foreignKey: "gcId",
     });
   };
-  return Coupons;
+  return Coupon;
 };

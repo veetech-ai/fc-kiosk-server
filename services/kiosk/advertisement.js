@@ -2,7 +2,6 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
 const membershipService = require("./membership");
-const courseService = require("../../services/cou")
 
 const Course = models.Course;
 const Organization = models.Organization;
@@ -72,7 +71,7 @@ async function getCourseById(courseId) {
 }
 
 module.exports = {
-  createCourse,
+
   getCoursesByOrganization,
   createCourseInfo,
   getCourseById,
