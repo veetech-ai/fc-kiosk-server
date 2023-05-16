@@ -244,10 +244,6 @@ exports.uploadCourseImages = async (
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
 
     const uploadedFiles = [];
-    const isIterable = Symbol.iterator in Object(imageFiles);
-    if (!isIterable) {
-      return await this.uploadCourseImage(imageFiles, courseId, 3);
-    }
     for (const imageFile of imageFiles) {
       validateFile(
         imageFile,

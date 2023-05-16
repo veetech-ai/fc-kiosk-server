@@ -310,9 +310,15 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
-
+    const uploadedImages=[]
+ 
     const logoImage = files?.logo;
-    const courseImages = files?.course_images;
+    let courseImages = files?.course_images;
+    const isIterable = Symbol.iterator in Object(courseImages);
+    if(!isIterable){
+      uploadedImages.push(courseImages)
+      courseImages=uploadedImages
+    }
     const logo = await upload_file.uploadCourseImage(logoImage, courseId, 3);
     const images = await upload_file.uploadCourseImages(
       courseImages,
