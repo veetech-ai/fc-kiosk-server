@@ -1788,3 +1788,9 @@ exports.getCourse = async (deviceId) => {
   const { gcId } = device;
   return gcId;
 };
+
+exports.findOne = async (where) => {
+  const device = await Device.findOne({ where });
+  if (!device) throw new ServiceError("Device not found", 404);
+  return device;
+};

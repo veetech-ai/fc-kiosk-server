@@ -25,7 +25,7 @@ const options = {
     "./controllers/golfbert/golfbert.js",
     "./controllers/kiosk/kiosk_courses/courses.js",
     "./controllers/kiosk/kiosk_content/kiosk_content.js",
-    // "./controllers/kiosk/kiosk_content/coupons.js",
+    "./controllers/kiosk/kiosk_content/coupons.js",
     "./controllers/kiosk/kiosk_content/feedback.js",
     "./controllers/kiosk/kiosk_content/shops.js",
     "./controllers/kiosk/course_shops.js",
