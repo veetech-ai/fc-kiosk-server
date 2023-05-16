@@ -45,7 +45,7 @@ exports.create_contact_lesson = async (req, res) => {
    *       - name: contact_medium
    *         description: contact_medium
    *         in: formData
-   *         enum: ['phone', 'email']
+   *         enum: ['text', 'call']
    *         required: false
    *         type: string
    *     produces:
