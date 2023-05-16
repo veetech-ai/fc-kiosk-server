@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
     Ad.belongsTo(models.Organization, { foreignKey: "org_id" });
     Ad.belongsTo(models.Course, { foreignKey: "gc_id" });
     Ad.belongsTo(models.CountryState, { foreignKey: "state_id" });
-    Ad.belongsTo(models.AdScreen, { foreignKey: "screen_id" });
+    Ad.belongsTo(models.Ad_screen, { foreignKey: "screen_id" });
   };
   return Ad;
 };

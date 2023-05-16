@@ -8,7 +8,7 @@ const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
-
+const advertisementScreenService = require("../../../services/kiosk/advertisement_screen")
 /**
  * @swagger
  * tags:
@@ -72,10 +72,11 @@ exports.createAdvertisements = async (req, res) => {
 
   try {
 
+    advertisementScreenService.getAllAdScreens()
+    const adScreen = await advertisementScreenService.getAdScreenById(1)
 
-    const courseId  = req.params.gcId;
-    console.log(courseId)
-
+    const courseId = req.params.gcId;
+    // console.log(courseId);
     const form = new formidable.IncomingForm();
     form.multiples = true;
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -85,20 +86,17 @@ exports.createAdvertisements = async (req, res) => {
       });
     });
 
-    console.log(fields,files)
+    // console.log(fields, files);
 
-
-    const orgId = Number(req.body.gcId);
-    if (!orgId) {
-      return apiResponse.fail(res, "orgId must be a valid number");
-    }
-    const courses = await courseService.getCoursesByOrganization(orgId);
-    return apiResponse.success(res, req, courses);
+    // const orgId = Number(req.body.gcId);
+    // if (!orgId) {
+    //   return apiResponse.fail(res, "orgId must be a valid number");
+    // }
+    return apiResponse.success(res, req, adScreen);
   } catch (error) {
+    console.log("MESS", error)
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
-
-
 };
 exports.get_courses_for_organization = async (req, res) => {
   /**
