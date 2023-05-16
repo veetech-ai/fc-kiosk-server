@@ -41,6 +41,11 @@ exports.createAdvertisements = async (req, res) => {
    *         in: formData
    *         required: true
    *         type: string
+   *       - name: state
+   *         description: state
+   *         in: formData
+   *         required: true
+   *         type: string
    *       - name: smallImage
    *         description: Small Image
    *         in: formData
@@ -86,9 +91,12 @@ exports.createAdvertisements = async (req, res) => {
       });
     });
 
+
+
     const validation = new Validator(fields, {
       title: "required|string",
       screenId: "required|integer",
+      state: "required|string",
       tabLink: "string",
       alternateLink: "string",
     });
@@ -149,8 +157,9 @@ exports.getAllAdvertisements = async (req, res) => {
 
   try {
 
-
     const allAds = await adService.getAllAdvertisements();
+
+   
 
     return apiResponse.success(res, req, allAds);
   } catch (err) {

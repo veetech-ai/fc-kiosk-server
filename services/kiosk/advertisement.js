@@ -19,6 +19,7 @@ async function createAdvertisement(reqBody, gcId) {
 async function getAllAdvertisements() {
 
  const ads = await AdModel.findAll();
+ if(!ads)   throw new ServiceError("Found No data!", 404);
  return ads;
 
 }
