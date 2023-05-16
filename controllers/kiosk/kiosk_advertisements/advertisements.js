@@ -73,6 +73,7 @@ exports.createAdvertisements = async (req, res) => {
    *         description: success
    */
 
+  console.log("RESOLVED")
   const courseId = req.params.gcId;
   await courseService.getCourseById(courseId);
 

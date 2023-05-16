@@ -9,14 +9,5 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin"]),
     AdvertisementsController.createAdvertisements,
   ]);
-  router.get(advertisements + "/:orgId", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
-    AdvertisementsController.get_courses_for_organization,
-  ]);
-  router.patch(advertisements + "/:courseId/course-info", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
-    AdvertisementsController.create_course_info,
-  ]);
+
 };
