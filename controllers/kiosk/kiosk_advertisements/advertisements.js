@@ -88,13 +88,11 @@ exports.createAdvertisements = async (req, res) => {
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) {
-          reject(err)
+          reject(err);
         }
         resolve({ fields, files });
       });
-    }
-    
-    );
+    });
 
     const validation = new Validator(fields, {
       title: "required|string",
@@ -124,16 +122,16 @@ exports.createAdvertisements = async (req, res) => {
         3,
       );
       const reqBody = {
-         ...fields,
-         smallImage: smallImageLink,
-         bigImage: bigImageLink,
-         orgId: course.orgId
-        };
+        ...fields,
+        smallImage: smallImageLink,
+        bigImage: bigImageLink,
+        orgId: course.orgId,
+      };
 
-        console.log(reqBody.alternateLink)
+      console.log(reqBody.alternateLink);
 
       await adScreenService.getAdScreenById(reqBody.screenId);
-      const ad = await adService.createAdvertisement(reqBody, gcId );
+      const ad = await adService.createAdvertisement(reqBody, gcId);
       return apiResponse.success(res, req, ad);
     });
   } catch (err) {
@@ -161,11 +159,11 @@ exports.getAllAdvertisements = async (req, res) => {
    */
 
   try {
-
-    const allAds = await adService.getAllAdvertisements();
-
-   
-
+    let allAds = await adService.getAllAdvertisements();
+    allAds.map((ad) => {
+      const imageUrl = upload_file.getFileURL(ad.smallImage);
+       ad.setDataValue("smallImage", imageUrl);
+    });
     return apiResponse.success(res, req, allAds);
   } catch (err) {
     return apiResponse.fail(res, err.message, err.statusCode || 500);
