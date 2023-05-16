@@ -115,6 +115,7 @@ const LessonRouteController = require("./routes/kiosk/lesson");
 const ContactLessonRouteController = require("./routes/kiosk/contact_lesson");
 const CourseShops = require("./routes/kiosk/course_shops");
 
+const CourseMemberships = require("./routes/kiosk/membership");
 swaggerDoc(router);
 
 router.use(function (req, res, next) {
@@ -194,6 +195,7 @@ LessonRouteController.routesConfig(app, router);
 ContactLessonRouteController.routesConfig(app, router);
 CourseShops.routesConfig(app, router);
 
+CourseMemberships.routesConfig(app, router);
 if (config.env === "test") {
   // for test case server
   app.use(router);
