@@ -25,7 +25,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
       "zongCustomer",
     );
     const course = await helper.post_request_with_authorization({
-      endpoint: "kiosk-courses/create",
+      endpoint: "kiosk-courses",
       token: adminToken,
       params: courses,
     });

@@ -1,8 +1,30 @@
 const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
+const upload_file = require("../../../../../common/upload");
 const { uuid } = require("uuidv4");
+let mockFields;
+let mockFiles;
+let fields;
+let files;
+let lessonId;
+jest.mock("formidable", () => {
+  return {
+    IncomingForm: jest.fn().mockImplementation(() => {
+      return {
+        multiples: true,
+        parse: (req, cb) => {
+          cb(null, mockFields, mockFiles);
+        },
+      };
+    }),
+  };
+});
 
+const mockFormidable = (fields, files) => {
+  mockFields = fields;
+  mockFiles = files;
+};
 describe("GET /api/v1/kiosk-content/screens", () => {
   let adminToken;
   let courseId;
@@ -48,37 +70,56 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
+    const createLesson = async () => {
+      fields = {
+        gcId: courseId,
+        name: "Mark Rober",
+        title: "Assistant",
+        content: "asdasdasdas asdasdasda",
+        timings: "9:00-10:00",
+      };
+
+      files = {
+        image: {
+          name: "mock-logo.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/logo.png",
+        },
+      };
+
+      mockFormidable(fields, files);
+      jest
+        .spyOn(upload_file, "uploadImageForCourse")
+        .mockImplementation(() => Promise.resolve("mock-logo-url"));
+      const lesson = await helper.post_request_with_authorization({
+        endpoint: `course-lesson`,
+        token: adminToken,
+        params: fields,
+      });
+      return lesson.body.data.id;
+    };
+    lessonId = await createLesson();
   });
 
-  const makeApiRequest = async (params, token = deviceToken) => {
+  const makeApiRequest = async (reqBody, token = deviceToken) => {
     return await helper.post_request_with_authorization({
-      endpoint: `kiosk-content/feedback`,
+      endpoint: `kiosk-content/lessons/contacts`,
       token: token,
-      params: params,
+      params: reqBody,
     });
   };
 
-  it("should successfully return registered feedback with valid input", async () => {
+  it("should successfully return contact lesson response", async () => {
     const reqBody = {
-      phoneNumber: "",
-      rating: 3,
-      contact_medium: "text",
+      lessonId: lessonId,
+      phone: "+92111111",
+      contact_medium: "phone",
     };
     const response = await makeApiRequest(reqBody);
-    expect(response.body.data.rating).toEqual(reqBody.rating);
-    expect(response.body.data.contact_medium).toEqual(reqBody.contact_medium);
-    expect(response.body.data.phoneNumber).toEqual(undefined);
-  });
-  it("should return validation error invalid input", async () => {
-    const reqBody = {
-      phoneNumber: "12312312",
-      rating: 3,
-      contact_medium: 12,
-    };
-    const response = await makeApiRequest(reqBody);
-    expect(response.body.data.errors).toEqual({
-      contact_medium: ["The contact medium must be a string."],
-    });
+    expect(response.body.data.coachId).toEqual(reqBody.lessonId);
+    expect(response.body.data.userPhone).toEqual(reqBody.phone);
+    expect(response.body.data.contactMedium).toEqual(reqBody.contact_medium);
   });
   it("returns 403 status code Request", async () => {
     const response = await makeApiRequest({}, adminToken);

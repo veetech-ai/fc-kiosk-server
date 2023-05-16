@@ -45,7 +45,7 @@ describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
 
   const createGolfCourse = async (params, token = superAdminToken) => {
     const linkedDevice = await helper.post_request_with_authorization({
-      endpoint: `kiosk-courses/create`,
+      endpoint: `kiosk-courses`,
       params,
       token: token,
     });

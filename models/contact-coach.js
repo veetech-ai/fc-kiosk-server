@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const ContactCoach = sequelize.define(
-    "ContactCoach",
+  const Contact_Coach = sequelize.define(
+    "Contact_Coach",
     {
       gcId: {
         field: "gc_id",
@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("phone", "email"),
         allowNull: true,
       },
+      isAddressed: {
+        field: "is_addressed",
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -44,14 +49,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  ContactCoach.associate = function (models) {
+  Contact_Coach.associate = function (models) {
     // associations can be defined here
-    ContactCoach.belongsTo(models.Organization, {
+    Contact_Coach.belongsTo(models.Organization, {
       foreignKey: "org_id",
     });
-    ContactCoach.belongsTo(models.Course, { foreignKey: "gc_id" });
-    ContactCoach.belongsTo(models.Coach, { foreignKey: "coach_id" });
+    Contact_Coach.belongsTo(models.Course, { foreignKey: "gc_id" });
+    Contact_Coach.belongsTo(models.Coach, { foreignKey: "coach_id" });
   };
 
-  return ContactCoach;
+  return Contact_Coach;
 };
