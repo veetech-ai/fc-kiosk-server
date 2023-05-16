@@ -46,7 +46,7 @@ let mockedReqBody = shopFixtures.test;
 // Helper Functions for this test
 async function createGolfCourse(reqBody, token = adminToken) {
   const course = await helper.post_request_with_authorization({
-    endpoint: "kiosk-courses/create",
+    endpoint: "kiosk-courses",
     token: token,
     params: reqBody,
   });

@@ -111,6 +111,8 @@ const ScreenConfigRouter = require("./routes/screenConfig/screens");
 const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
 const DeviceOnboardingCode = require("./routes/kiosk/device_onboarding_code");
+const LessonRouteController = require("./routes/kiosk/lesson");
+const ContactLessonRouteController = require("./routes/kiosk/contact_lesson");
 const CourseShops = require("./routes/kiosk/course_shops");
 const CourseFaqs = require("./routes/kiosk/course-faqs");
 
@@ -189,6 +191,8 @@ KioskCoursesRouter.routesConfig(app, router);
 ScreenConfigRouter.routesConfig(app, router);
 KioskCoursesContentRouter.routesConfig(app, router);
 DeviceOnboardingCode.routesConfig(app, router);
+LessonRouteController.routesConfig(app, router);
+ContactLessonRouteController.routesConfig(app, router);
 CourseShops.routesConfig(app, router);
 CourseFaqs.routesConfig(app, router);
 

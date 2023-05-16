@@ -53,6 +53,21 @@ async function createCourseInfo(reqBody, courseId) {
   );
   return updatedCourse;
 }
+async function getLinkedCourse(courseId, orgId) {
+  const course = await Course.findOne({
+    where: {
+      id: courseId,
+      orgId,
+    },
+    attributes: {
+      exclude: ["org_id"],
+    },
+  });
+  if (!course) {
+    throw new ServiceError("Not found", 404);
+  }
+  return course;
+}
 
 async function getOne(where) {
   return await Course.findOne({ where });
@@ -98,6 +113,7 @@ module.exports = {
   createCourse,
   getCoursesByOrganization,
   createCourseInfo,
+  getLinkedCourse,
   getOne,
   getCourseById,
 };

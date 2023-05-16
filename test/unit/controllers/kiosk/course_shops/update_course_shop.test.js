@@ -51,7 +51,7 @@ let mockedReqBody = shopFixtures.test;
 // Helper Functions for this test
 async function createGolfCourse(reqBody, token = adminToken) {
   const course = await helper.post_request_with_authorization({
-    endpoint: "kiosk-courses/create",
+    endpoint: "kiosk-courses",
     token: token,
     params: reqBody,
   });
@@ -115,7 +115,6 @@ describe("PATCH /api/v1/course-shops/{shopId}", () => {
 
     const course = await createGolfCourse(coursesFixtures.test, adminToken);
     const zongCourse = await createGolfCourse(coursesFixtures.zong, adminToken);
-
     testCourseId = course.body.data.id;
     zongCourseId = zongCourse.body.data.id;
 

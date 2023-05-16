@@ -34,7 +34,7 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
       "zongCustomer",
     );
     const course = await helper.post_request_with_authorization({
-      endpoint: "kiosk-courses/create",
+      endpoint: "kiosk-courses",
       token: adminToken,
       params: courses,
     });

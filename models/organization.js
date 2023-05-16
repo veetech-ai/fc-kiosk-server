@@ -60,11 +60,11 @@ module.exports = (sequelize, DataTypes) => {
       as: "Ads",
       foreignKey: "org_id",
     });
-    models.Course.hasMany(models.ContactCareer, {
-      as: "ContactCareers",
-      foreignKey: "org_id",
+    models.Organization.hasMany(models.Contact_Career, {
+      as: "Contact_Careers",
+      foreignKey: "orgId",
     });
-    models.Organization.hasMany(models.ContactCoach, {
+    models.Organization.hasMany(models.Contact_Coach, {
       as: "ContactCoaches",
       foreignKey: "org_id",
     });

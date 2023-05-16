@@ -37,7 +37,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
 
     adminToken = await helper.get_token_for("admin");
     const course = await helper.post_request_with_authorization({
-      endpoint: "kiosk-courses/create",
+      endpoint: "kiosk-courses",
       token: adminToken,
       params: courses,
     });
