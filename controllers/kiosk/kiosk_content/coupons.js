@@ -28,6 +28,11 @@ exports.redeemCoupon = async (req, res) => {
    *         description: success
    */
   try {
+    const validation = new Validator(req.body, {
+      code: "required",
+    });
+
+    if (validation.fails()) return apiResponse.fail(res, validation.errors);
     const code = req.body.code;
     const deviceId = req.device.id;
 
