@@ -13,15 +13,14 @@ async function createAdvertisement(reqBody, gcId) {
     ...reqBody,
     gcId,
   });
+  if(!ad)   throw new ServiceError("Could not add, Please try again!", 500);
   return ad;
 }
-async function getAllAdvertisements(orgId) {
-  
-  // const ad = await AdModel.create({
-  //   ...reqBody,
-  //   gcId,
-  // });
-  // return ad;
+async function getAllAdvertisements() {
+
+ const ads = await AdModel.findAll();
+ return ads;
+
 }
 
 

@@ -10,7 +10,7 @@ const upload_file = require("../../../common/upload");
 const courseService = require("../../../services/kiosk/course");
 const adScreenService = require("../../../services/kiosk/advertisement_screen");
 const adService = require("../../../services/kiosk/advertisement");
-const organizationService = require("../../../services/organization")
+const organizationService = require("../../../services/organization");
 
 /**
  * @swagger
@@ -34,11 +34,6 @@ exports.createAdvertisements = async (req, res) => {
    *       - name: gcId
    *         description: ID of the golf course
    *         in: path
-   *         required: true
-   *         type: integer
-   *       - name: orgId
-   *         description: orgId of the golf course
-   *         in: formData
    *         required: true
    *         type: integer
    *       - name: title
@@ -79,34 +74,30 @@ exports.createAdvertisements = async (req, res) => {
    */
 
   try {
-  const gcId = req.params.gcId;
-  await courseService.getCourseById(gcId);
+    const gcId = req.params.gcId;
+    const course = await courseService.getCourseById(gcId);
 
-  const form = new formidable.IncomingForm();
-  form.multiples = true;
-  const { fields, files } = await new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
+    const form = new formidable.IncomingForm();
+    form.multiples = true;
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        resolve({ fields, files });
+      });
     });
-  });
 
-  const validation = new Validator(fields, {
-    title: "required|string",
-    orgId: "required|integer",
-    screenId: "required|integer",
-    tabLink: "string",
-    alternateLink: "string"
-  });
+    const validation = new Validator(fields, {
+      title: "required|string",
+      screenId: "required|integer",
+      tabLink: "string",
+      alternateLink: "string",
+    });
 
-  
-  validation.fails(function () {
-    return apiResponse.fail(res, validation.errors);
-  });
+    validation.fails(function () {
+      return apiResponse.fail(res, validation.errors);
+    });
 
-  validation.passes(async function () {
-    
-      console.log("reqBody")
+    validation.passes(async function () {
       const smallImage = files?.smallImage;
       const bigImage = files?.bigImage;
       const smallImageLink = await upload_file.uploadImageForCourse(
@@ -119,29 +110,23 @@ exports.createAdvertisements = async (req, res) => {
         bigImage,
         gcId,
         "advertisement-images/",
-        3
+        3,
       );
 
-      const reqBody = { ...fields, smallImageLink, bigImageLink };
-
-      await adScreenService.getAdScreenById(reqBody.screenId)
-
-      const organization = await organizationService.findById(reqBody.orgId);
-      if (!organization)
-        return apiResponse.fail(res, "Organization not found", 404);
-
-      const ad = await adService.createAdvertisement(reqBody,gcId)
-
+      const reqBody = {
+         ...fields,
+         smallImageLink,
+         bigImageLink,
+         orgId: course.orgId
+        };
+      await adScreenService.getAdScreenById(reqBody.screenId);
+      const ad = await adService.createAdvertisement(reqBody, gcId );
       return apiResponse.success(res, req, ad);
-  
-  });
-
-} catch (err) {
-  return apiResponse.fail(res, err.message, err.statusCode || 500);
-}
-
+    });
+  } catch (err) {
+    return apiResponse.fail(res, err.message, err.statusCode || 500);
+  }
 };
-
 
 exports.getAllAdvertisements = async (req, res) => {
   /**
@@ -163,11 +148,12 @@ exports.getAllAdvertisements = async (req, res) => {
    */
 
   try {
-    const allAds = adService.getAllAdvertisements()
+
+
+    const allAds = await adService.getAllAdvertisements();
+
     return apiResponse.success(res, req, allAds);
-
-} catch (err) {
-  return apiResponse.fail(res, err.message, err.statusCode || 500);
-}
-
+  } catch (err) {
+    return apiResponse.fail(res, err.message, err.statusCode || 500);
+  }
 };
