@@ -114,7 +114,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     const reqBody = {
       lessonId: lessonId,
       phone: "+92111111",
-      contact_medium: "phone",
+      contact_medium: "call",
     };
     const response = await makeApiRequest(reqBody);
     expect(response.body.data.coachId).toEqual(reqBody.lessonId);
