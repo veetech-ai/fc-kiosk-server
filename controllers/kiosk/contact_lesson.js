@@ -90,10 +90,19 @@ exports.updateContactLesson = async (req, res) => {
    */
 
   try {
+    const validation = new Validator(req.body, {
+      isAddressed: "boolean",
+    });
+
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
     const contactCoachId = Number(req.params.contactCoachId);
     if (!contactCoachId) {
       return apiResponse.fail(res, "contactCoachId must be a valid number");
     }
+
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
       "super",
@@ -107,13 +116,7 @@ exports.updateContactLesson = async (req, res) => {
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
-    const validation = new Validator(req.body, {
-      isAddressed: "boolean",
-    });
 
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
     const isAddressedBoolean = JSON.parse(req.body.isAddressed);
     const updatedCoach =
       await contactCoachService.updateContactCoachIsAddressable(

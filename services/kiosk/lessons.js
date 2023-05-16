@@ -11,6 +11,10 @@ async function createLesson(reqBody, orgId) {
   if (!coach) {
     throw new ServiceError("Something Went wrong", 401);
   }
+  if (coach?.image) {
+    const image = upload_file.getFileURL(coach.image);
+    coach.image = image;
+  }
   return coach;
 }
 async function findLessonById(lessonId) {
@@ -20,9 +24,10 @@ async function findLessonById(lessonId) {
   if (!lesson) {
     throw new ServiceError("Not found", 404);
   }
-  if (!lesson?.image) return;
-  const image = upload_file.getFileURL(lesson.image);
-  lesson.image = image;
+  if (lesson?.image) {
+    const image = upload_file.getFileURL(lesson.image);
+    lesson.image = image;
+  }
   return lesson;
 }
 async function updateLesson(reqBody, lessonId) {
@@ -32,9 +37,7 @@ async function updateLesson(reqBody, lessonId) {
     },
     { where: { id: lessonId } },
   );
-  if (affectedRows === 0) {
-    throw new ServiceError("Something Went wrong", 401);
-  }
+
   return affectedRows;
 }
 async function findLessonsByCourseId(courseId) {

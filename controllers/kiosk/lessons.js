@@ -69,7 +69,7 @@ exports.create_lesson = async (req, res) => {
       "admin",
     ]).success;
     const form = new formidable.IncomingForm();
-    form.multiples = true;
+
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);
@@ -77,7 +77,7 @@ exports.create_lesson = async (req, res) => {
       });
     });
     const validation = new Validator(fields, {
-      gcId: "integer",
+      gcId: "required|integer",
       name: "string",
       title: "string",
       content: "string",
@@ -95,12 +95,7 @@ exports.create_lesson = async (req, res) => {
     }
     const coachImage = files.coachImage;
 
-    const image = await upload_file.uploadImageForCourse(
-      coachImage,
-      courseId,
-      "coach-images/",
-      3,
-    );
+    const image = await upload_file.uploadImageForCourse(coachImage, courseId);
 
     const reqBody = { ...fields, image };
     const coach = await courseLesson.createLesson(reqBody, orgId);
@@ -175,7 +170,7 @@ exports.update_lesson = async (req, res) => {
       return apiResponse.fail(res, "", 403);
     }
     const form = new formidable.IncomingForm();
-    form.multiples = true;
+
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);

@@ -5,7 +5,7 @@ exports.routesConfig = function (app, router) {
   const lesson = `${config.app.apiPath}course-lesson`;
   router.get(lesson + `/:lessonId/contacts`, [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     ContactLessonController.getLessonContacts,
   ]);
   router.patch(lesson + `/contacts/:contactCoachId`, [
