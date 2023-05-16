@@ -7,6 +7,13 @@ module.exports = {
       type: Sequelize.STRING
     });
     await queryInterface.renameColumn('Ads', 'state_id', 'state');
+    await queryInterface.renameColumn('Ads', 'state_id', 'state');
+
+    await queryInterface.addColumn('Ads', 'title', {
+      type: Sequelize.STRING,
+    });
+
+
  
   },
   down: async (queryInterface, Sequelize) => {
@@ -14,6 +21,7 @@ module.exports = {
     await queryInterface.changeColumn('Ads', 'state_id', {
       type: Sequelize.INTEGER
     });
+    await queryInterface.removeColumn('Ads', 'title');
     await queryInterface.addConstraint('Ads', {
       fields: ['state_id'],
       type: 'foreign key',
