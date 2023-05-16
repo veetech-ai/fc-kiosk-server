@@ -13,11 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      stateId: {
-        field: "state_id",
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       screenId: {
         field: "screen_id",
         type: DataTypes.INTEGER,
