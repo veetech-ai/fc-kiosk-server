@@ -9,8 +9,7 @@ const { uuid } = require("uuidv4");
 const CouponServices = require("../../../../../services/coupons");
 const CouponUsedServices = require("../../../../../services/coupon_used");
 
-let testCustomerToken,
-  superAdminToken,
+let superAdminToken,
   testOrganizationDeviceToken,
   testOrganizatonId = organizationsInApplication.test.id,
   zongOrganizationId = organizationsInApplication.zong.id,
@@ -29,7 +28,6 @@ let couponCreationBody = {
 beforeAll(async () => {
   testCustomerToken = await helper.get_token_for("testCustomer");
   superAdminToken = await helper.get_token_for("superadmin");
-  zongCustomerToken = await helper.get_token_for("zongCustomer");
 });
 
 describe("PATCH /kisok-content/coupons - Redeem Coupons", () => {
@@ -99,15 +97,6 @@ describe("PATCH /kisok-content/coupons - Redeem Coupons", () => {
     });
     testGolfCourseId = testGolfCourseCreationResponse.body.data.id;
 
-    const zongGolfCourseCreationResponse = await createGolfCourse({
-      name: "ZONG COURSE",
-      orgId: zongOrganizationId,
-      state: "Albama",
-      city: "Abbeville",
-    });
-
-    zongGolfCourseId = zongGolfCourseCreationResponse.body.data.id;
-
     // Create a device under test organization
     const testOrganizationDevice = await createDevice({
       serial: uuid(),
@@ -120,7 +109,7 @@ describe("PATCH /kisok-content/coupons - Redeem Coupons", () => {
       testOrganizationDevice?.body?.data?.device_token.split(" ")[1];
 
     // Link device with the test organization golf course
-    const linkedDevice = await linkDeviceToCourse(
+    await linkDeviceToCourse(
       testOrganizationDevice?.body?.data.id,
       testGolfCourseId,
     );
