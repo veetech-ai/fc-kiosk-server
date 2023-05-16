@@ -38,6 +38,9 @@ module.exports = (sequelize, DataTypes) => {
       timings: {
         type: DataTypes.JSON,
         allowNull: false,
+        get() {
+          return JSON.parse(this.getDataValue("timings"));
+        },
       },
       link: {
         type: DataTypes.STRING,
