@@ -30,7 +30,7 @@ beforeAll(async () => {
   superAdminToken = await helper.get_token_for("superadmin");
 });
 
-describe("PATCH /kisok-content/coupons - Redeem Coupons", () => {
+describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
   const makeApiRequest = async (
     params,
     token = testOrganizationDeviceToken,

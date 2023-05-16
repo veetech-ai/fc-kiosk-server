@@ -38,7 +38,6 @@ describe("POST /coupons", () => {
       params: params,
     });
   };
-
   beforeAll(async () => {
     // create golf courses
 
@@ -66,8 +65,6 @@ describe("POST /coupons", () => {
     );
 
     zongGolfCourseId = zongGolfCourseCreationResponse.body.data.id;
-
-    const response = await makeApiRequest({});
   });
 
   it("should return 400 and validation errors for the corresponding required fields", async () => {

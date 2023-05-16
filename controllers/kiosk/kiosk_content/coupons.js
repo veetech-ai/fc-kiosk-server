@@ -3,6 +3,13 @@ const apiResponse = require("../../../common/api.response");
 const Validator = require("validatorjs");
 
 const DeviceServices = require("../../../services/device");
+
+/**
+ * @swagger
+ * tags:
+ *   name: Kiosk-Courses-Content
+ *   description: Courses API's for Device
+ */
 exports.redeemCoupon = async (req, res) => {
   /**
    * @swagger
@@ -12,7 +19,7 @@ exports.redeemCoupon = async (req, res) => {
    *     security:
    *      - auth: []
    *     description: Redeem Coupon
-   *     tags: [Coupons]
+   *     tags: [Kiosk-Courses-Content]
    *     consumes:
    *       - application/x-www-form-urlencoded
    *     produces:
@@ -29,7 +36,7 @@ exports.redeemCoupon = async (req, res) => {
    */
   try {
     const validation = new Validator(req.body, {
-      code: "required",
+      code: "required|string",
     });
 
     if (validation.fails()) return apiResponse.fail(res, validation.errors);

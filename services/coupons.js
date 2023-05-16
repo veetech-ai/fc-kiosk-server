@@ -94,8 +94,10 @@ exports.validate = async ({ code, gcId, orgId }) => {
     where,
   });
 
-  if (!coupon)
+  if (!coupon) {
     throw new ServiceError("Invalid Coupon or coupon may expire", 404);
+  }
+
   return coupon;
 };
 
