@@ -129,16 +129,9 @@ exports.createAdvertisements = async (req, res) => {
       if (!organization)
         return apiResponse.fail(res, "Organization not found", 404);
 
-      console.log("REQ",reqBody)
+      const ad = await adService.createAdvertisement(reqBody,gcId)
 
-      await adService.createAdvertisement(reqBody,reqBody.orgId,gcId)
-
-      // const updatedCourse = await courseService.createCourseInfo(
-      //   reqBody,
-      //   gcId,
-      // );
-
-      return apiResponse.success(res, req, reqBody);
+      return apiResponse.success(res, req, ad);
     } catch (err) {
       return apiResponse.fail(res, err.message, err.statusCode || 500);
     }

@@ -2,25 +2,19 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
 const membershipService = require("./membership");
-const organizationService = require("../organization")
+const organizationService = require("../organization");
 
 const Course = models.Course;
 const Organization = models.Organization;
 const AdModel = models.Ad;
 
-async function createAdvertisement(reqBody, orgId , gcId) {
-
-
-  const course = await AdModel.create({
+async function createAdvertisement(reqBody, gcId) {
+  const ad = await AdModel.create({
     ...reqBody,
-    gcId
+    gcId,
   });
 
-  console.log(course)
-
-
-
-  return course;
+  return ad;
 }
 async function getCoursesByOrganization(orgId) {
   // Check if organization exists with the specified org_id
