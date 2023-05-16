@@ -84,12 +84,17 @@ exports.createAdvertisements = async (req, res) => {
 
     const form = new formidable.IncomingForm();
     form.multiples = true;
+
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
+        if (err) {
+          reject(err)
+        }
         resolve({ fields, files });
       });
-    });
+    }
+    
+    );
 
 
 
