@@ -59,10 +59,10 @@ describe("GET /api/v1/kiosk-content/course-info", () => {
 
   beforeAll(async () => {
     jest
-      .spyOn(upload_file, "uploadImageForCourse")
+      .spyOn(upload_file, "uploadCourseImage")
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
     jest
-      .spyOn(upload_file, "uploadImagesForCourse")
+      .spyOn(upload_file, "uploadCourseImages")
       .mockImplementation(() => Promise.resolve("mock-images-url"));
 
     const courseInfoReqBody = {

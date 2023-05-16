@@ -198,15 +198,14 @@ exports.getFileURL = (key) => {
     return imagesWithCompleteUrl;
   }
 };
-exports.uploadImageForCourse = async (
+
+exports.uploadCourseImage = async (
   imageFile,
   courseId,
-  path = "golf-courses-images/",
   uploadOn = defaultUploadOn,
 ) => {
-  if (!imageFile) return null;
   try {
-    const newpath = `${this.upload_path}${path}${courseId}`;
+    const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
     const fileName = this.rename_file(imageFile.name);
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
     validateFile(
@@ -235,22 +234,15 @@ exports.uploadImageForCourse = async (
     throw err.status ? err : { message: err.message };
   }
 };
-exports.uploadImagesForCourse = async (
+exports.uploadCourseImages = async (
   imageFiles,
   courseId,
-  path,
   uploadOn = defaultUploadOn,
 ) => {
-  if (!imageFiles) return null;
   try {
-    const newpath = `${this.upload_path}${path}${courseId}`;
+    const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
-
     const uploadedFiles = [];
-    const isIterable = Symbol.iterator in Object(imageFiles);
-    if (!isIterable) {
-      return await this.uploadImageForCourse(imageFiles, courseId, 3);
-    }
     for (const imageFile of imageFiles) {
       validateFile(
         imageFile,

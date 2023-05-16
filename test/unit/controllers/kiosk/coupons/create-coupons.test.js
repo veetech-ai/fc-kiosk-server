@@ -65,7 +65,6 @@ describe("POST /coupons", () => {
     );
 
     zongGolfCourseId = zongGolfCourseCreationResponse.body.data.id;
-    console.log(testGolfCourseId, zongGolfCourseId);
   });
 
   it("should return 400 and validation errors for the corresponding required fields", async () => {

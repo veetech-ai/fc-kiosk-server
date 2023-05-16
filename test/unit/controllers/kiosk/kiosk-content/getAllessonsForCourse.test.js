@@ -118,7 +118,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       },
     ];
     const createMultipleLessons = async (lessonFields) => {
-      for (lessonField of lessonFields) {
+      for (const lessonField of lessonFields) {
         await createLesson(lessonField.fields, lessonField.files);
       }
     };

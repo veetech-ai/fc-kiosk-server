@@ -2,7 +2,7 @@ const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const upload_file = require("../../../../../common/upload");
-const courseLessonContact=require("../../../../../services/kiosk/contact_lesson")
+const courseLessonContact = require("../../../../../services/kiosk/contact_lesson");
 const { uuid } = require("uuidv4");
 let mockFields;
 let mockFiles;
@@ -127,12 +127,15 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
       endpoint: `course-lesson/${lessonId}`,
       token: token,
     });
-  }
-    const makeApiRequestForGettingLessonContact = async (lessonId, token = adminToken) => {
-      return await helper.get_request_with_authorization({
-        endpoint: `course-lesson/${lessonId}/contacts`,
-        token: token,
-      });
+  };
+  const makeApiRequestForGettingLessonContact = async (
+    lessonId,
+    token = adminToken,
+  ) => {
+    return await helper.get_request_with_authorization({
+      endpoint: `course-lesson/${lessonId}/contacts`,
+      token: token,
+    });
   };
 
   it("should successfully return contact lesson response", async () => {
@@ -141,8 +144,7 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
   });
 
   it("should successfully return contact lesson response with customer of same organization", async () => {
-    const response = await makeApiRequestForGettingLessonContact(lessonId)
-    expect(response.body.data).toBe("Not found")
-    
+    const response = await makeApiRequestForGettingLessonContact(lessonId);
+    expect(response.body.data).toBe("Not found");
   });
 });

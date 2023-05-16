@@ -310,17 +310,29 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
+    const uploadedImages = [];
 
     const logoImage = files?.logo;
-    const courseImages = files?.course_images;
-    const logo = await upload_file.uploadImageForCourse(logoImage, courseId, 3);
-    const images = await upload_file.uploadImagesForCourse(
-      courseImages,
-      courseId,
-      3,
-    );
-
-    const reqBody = { ...fields, logo, images };
+    let courseImages = files?.course_images;
+    if (courseImages) {
+      const isIterable = Symbol.iterator in Object(courseImages);
+      if (!isIterable) {
+        uploadedImages.push(courseImages);
+        courseImages = [...uploadedImages];
+      }
+    }
+    const reqBody = { ...fields };
+    if (logoImage) {
+      const logo = await upload_file.uploadCourseImage(logoImage, courseId);
+      reqBody.logo = logo;
+    }
+    if (courseImages) {
+      const images = await upload_file.uploadCourseImages(
+        courseImages,
+        courseId,
+      );
+      reqBody.images = images;
+    }
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
