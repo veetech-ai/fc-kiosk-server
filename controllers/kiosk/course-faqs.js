@@ -8,7 +8,7 @@ const helper = require("../../common/helper");
 const upload_file = require("../../common/upload");
 // Logger Imports
 const courseService = require("../../services/kiosk/course");
-const courseFaqsService = require("../../services/kiosk/course_faqs");
+const courseFaqsService = require("../../services/kiosk/course-faqs");
 
 /**
  * @swagger
@@ -16,7 +16,7 @@ const courseFaqsService = require("../../services/kiosk/course_faqs");
  *   name: Course-Faqs
  *   description: Golf Course's FAQs API's
  */
-exports.createCourseShop = async (req, res) => {
+exports.createCourseFaq = async (req, res) => {
   /**
    * @swagger
    *
@@ -24,36 +24,26 @@ exports.createCourseShop = async (req, res) => {
    *   post:
    *     security:
    *       - auth: []
-   *     description: create golf course Shop.
+   *     description: create golf course Faq.
    *     tags: [Course-Faqs]
    *     consumes:
    *       - application/x-www-form-urlencoded
    *     parameters:
    *       - name: gcId
-   *         description: golf course for which shop is being created
+   *         description: golf course for which faq is being created
    *         in: formData
    *         required: true
    *         type: integer
-   *       - name: name
-   *         description: name of the shop
+   *       - name: question
+   *         description: Question
    *         in: formData
    *         required: true
    *         type: string
-   *       - name: subheading
-   *         description: subheading briefly describing the shop
+   *       - name: answer
+   *         description: Answer for the question
    *         in: formData
    *         required: true
    *         type: string
-   *       - name: description
-   *         description: description of the shop
-   *         in: formData
-   *         required: true
-   *         type: string
-   *       - name: image
-   *         in: formData
-   *         description: Upload image of Golf course shop
-   *         required: true
-   *         type: file
    *     produces:
    *       - application/json
    *     responses:
@@ -61,20 +51,10 @@ exports.createCourseShop = async (req, res) => {
    *         description: success
    */
   try {
-    const form = new formidable.IncomingForm();
-
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
-      });
-    });
-
-    const validation = new Validator(fields, {
+    const validation = new Validator(req.body, {
       gcId: "required|integer",
-      name: "required|string",
-      subheading: "required|string",
-      description: "required|string",
+      question: "required|string",
+      answer: "required|string",
     });
 
     if (validation.fails()) {
@@ -93,21 +73,12 @@ exports.createCourseShop = async (req, res) => {
       return apiResponse.fail(res, "Course not Found", 404);
     }
 
-    const shopImage = files?.image;
-    const imageIdentifier = await upload_file.uploadImageForCourse(
-      shopImage,
-      courseId,
-    );
-    const reqBody = { ...fields, image: imageIdentifier };
-    const courseShop = await courseFaqsService.createCourseShop(
-      reqBody,
+    const courseFaq = await courseFaqsService.createCourseFaq(
+      req.body,
       course.orgId,
     );
 
-    const imageUrl = upload_file.getFileURL(courseShop.image);
-    courseShop.setDataValue("image", imageUrl);
-
-    return apiResponse.success(res, req, courseShop);
+    return apiResponse.success(res, req, courseFaq);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -161,41 +132,41 @@ exports.getCourseFaqs = async (req, res) => {
   }
 };
 
-exports.updateCourseShop = async (req, res) => {
+exports.updateCourseFaq = async (req, res) => {
   /**
    * @swagger
-   * /course-faqs/{shopId}:
+   * /course-faqs/{faqId}:
    *   patch:
    *     security:
    *       - auth: []
-   *     description: update shop for a golf course.
+   *     description: update faq for a golf course.
    *     tags: [Course-Faqs]
    *     consumes:
    *       - multipart/form-data
    *     parameters:
    *       - in: path
-   *         name: shopId
+   *         name: faqId
    *         description: id of course
    *         required: true
    *         type: integer
    *       - name: name
-   *         description: name of the shop
+   *         description: name of the faq
    *         in: formData
    *         required: false
    *         type: string
    *       - name: subheading
-   *         description: subheading briefly describing the shop
+   *         description: subheading briefly describing the faq
    *         in: formData
    *         required: false
    *         type: string
    *       - name: description
-   *         description: description of the shop
+   *         description: description of the faq
    *         in: formData
    *         required: false
    *         type: string
    *       - name: image
    *         in: formData
-   *         description: Upload image of Golf course shop
+   *         description: Upload image of Golf course faq
    *         required: false
    *         type: file
    *     produces:
@@ -225,57 +196,57 @@ exports.updateCourseShop = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const shopId = req.params.shopId;
-    const courseShop = await courseFaqsService.getCourseShopById(shopId);
+    const faqId = req.params.faqId;
+    const courseFaq = await courseFaqsService.getCourseFaqById(faqId);
 
     const loggedInUserOrgId = req.user.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
       "super",
       "admin",
     ]).success;
-    if (!isSuperOrAdmin && loggedInUserOrgId !== courseShop.orgId) {
-      return apiResponse.fail(res, "Shop not Found", 404);
+    if (!isSuperOrAdmin && loggedInUserOrgId !== courseFaq.orgId) {
+      return apiResponse.fail(res, "Faq not Found", 404);
     }
 
     const reqBody = { ...fields };
-    const shopImage = files?.image;
-    if (shopImage) {
+    const faqImage = files?.image;
+    if (faqImage) {
       const imageIdentifier = await upload_file.uploadImageForCourse(
-        shopImage,
-        courseShop.gcId,
+        faqImage,
+        courseFaq.gcId,
       );
       reqBody.image = imageIdentifier;
     }
-    const updatedCourseShop = await courseFaqsService.updateCourseShop(
-      shopId,
+    const updatedCourseFaq = await courseFaqsService.updateCourseFaq(
+      faqId,
       reqBody,
     );
 
-    if (updatedCourseShop) {
-      const imageUrl = upload_file.getFileURL(updatedCourseShop.image);
-      updatedCourseShop.setDataValue("image", imageUrl);
+    if (updatedCourseFaq) {
+      const imageUrl = upload_file.getFileURL(updatedCourseFaq.image);
+      updatedCourseFaq.setDataValue("image", imageUrl);
     }
 
-    return apiResponse.success(res, req, updatedCourseShop);
+    return apiResponse.success(res, req, updatedCourseFaq);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
 
-exports.deleteCourseShop = async (req, res) => {
+exports.deleteCourseFaq = async (req, res) => {
   /**
    * @swagger
    *
-   * /course-faqs/{shopId}:
+   * /course-faqs/{faqId}:
    *   delete:
    *     security:
    *       - auth: []
-   *     description: Delete shop.
+   *     description: Delete faq.
    *     tags: [Course-Faqs]
    *     produces:
    *       - application/json
    *     parameters:
-   *       - name: shopId
+   *       - name: faqId
    *         description: Organization ID
    *         in: path
    *         required: true
@@ -286,24 +257,24 @@ exports.deleteCourseShop = async (req, res) => {
    */
 
   try {
-    const shopId = Number(req.params.shopId);
-    if (!shopId) {
-      return apiResponse.fail(res, "shopId must be a valid number");
+    const faqId = Number(req.params.faqId);
+    if (!faqId) {
+      return apiResponse.fail(res, "faqId must be a valid number");
     }
 
-    const courseShop = await courseFaqsService.getCourseShopById(shopId);
+    const courseFaq = await courseFaqsService.getCourseFaqById(faqId);
 
     const loggedInUserOrgId = req.user.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
       "super",
       "admin",
     ]).success;
-    if (!isSuperOrAdmin && loggedInUserOrgId !== courseShop.orgId) {
-      return apiResponse.fail(res, "Shop not Found", 404);
+    if (!isSuperOrAdmin && loggedInUserOrgId !== courseFaq.orgId) {
+      return apiResponse.fail(res, "Faq not Found", 404);
     }
 
-    await courseFaqsService.deleteCourseShop(shopId);
-    return apiResponse.success(res, req, "Shop Deleted");
+    await courseFaqsService.deleteCourseFaq(faqId);
+    return apiResponse.success(res, req, "Faq Deleted");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

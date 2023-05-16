@@ -113,6 +113,7 @@ const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
 const DeviceOnboardingCode = require("./routes/kiosk/device_onboarding_code");
 const CourseShops = require("./routes/kiosk/course_shops");
+const CourseFaqs = require("./routes/kiosk/course-faqs");
 
 swaggerDoc(router);
 
@@ -191,6 +192,7 @@ KioskCoursesContentRouter.routesConfig(app, router);
 // KioskCoursesContentCouponsRouter.routesConfig(app, router);
 DeviceOnboardingCode.routesConfig(app, router);
 CourseShops.routesConfig(app, router);
+CourseFaqs.routesConfig(app, router);
 
 if (config.env === "test") {
   // for test case server
