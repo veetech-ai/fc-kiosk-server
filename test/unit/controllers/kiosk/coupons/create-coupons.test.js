@@ -49,7 +49,7 @@ describe("POST /coupons", () => {
         city: "Abbeville",
       },
       superAdminToken,
-      "kiosk-courses/create",
+      "kiosk-courses",
     );
     testGolfCourseId = testGolfCourseCreationResponse.body.data.id;
 
@@ -61,7 +61,7 @@ describe("POST /coupons", () => {
         city: "Abbeville",
       },
       superAdminToken,
-      "kiosk-courses/create",
+      "kiosk-courses",
     );
 
     zongGolfCourseId = zongGolfCourseCreationResponse.body.data.id;
