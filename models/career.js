@@ -25,19 +25,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       title: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       content: {
         type: DataTypes.TEXT,
-        allowNull: true,
+        allowNull: false,
       },
       type: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       timings: {
         type: DataTypes.JSON,
-        allowNull: true,
+        allowNull: false,
       },
       link: {
         type: DataTypes.STRING,
@@ -56,11 +56,11 @@ module.exports = (sequelize, DataTypes) => {
   );
   Career.associate = function (models) {
     // associations can be defined here
-    models.Career.belongsTo(models.Organization, { foreignKey: "org_id" });
-    models.Career.belongsTo(models.Course, { foreignKey: "gc_id" });
-    models.Career.hasMany(models.ContactCareer, {
-      as: "ContactCareers",
-      foreignKey: "career_id",
+    models.Career.belongsTo(models.Organization, { foreignKey: "orgId" });
+    models.Career.belongsTo(models.Course, { foreignKey: "gcId" });
+    models.Career.hasMany(models.Contact_Career, {
+      as: "Contact_Careers",
+      foreignKey: "careerId",
     });
   };
   return Career;

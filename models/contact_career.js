@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const ContactCareer = sequelize.define(
-    "ContactCareer",
+  const Contact_Career = sequelize.define(
+    "Contact_Career",
     {
       gcId: {
         type: DataTypes.INTEGER,
@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       orgId: {
-        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -25,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       careerId: {
-        field: "career_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -35,19 +33,17 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      userPhone: {
-        field: "user_phone",
+      phone: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      userEmail: {
-        field: "user_email",
+      email: {
         type: DataTypes.STRING,
         allowNull: true,
       },
       contactMedium: {
         field: "contact_medium",
-        type: DataTypes.ENUM("phone", "email"),
+        type: DataTypes.ENUM("text", "call"),
         allowNull: true,
       },
       createdAt: {
@@ -61,14 +57,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  ContactCareer.associate = function (models) {
+  Contact_Career.associate = function (models) {
     // associations can be defined here
-    models.ContactCareer.belongsTo(models.Organization, {
-      foreignKey: "org_id",
+    models.Contact_Career.belongsTo(models.Organization, {
+      foreignKey: "orgId",
     });
-    models.ContactCareer.belongsTo(models.Course, { foreignKey: "gc_id" });
-    models.ContactCareer.belongsTo(models.Career, { foreignKey: "career_id" });
+    models.Contact_Career.belongsTo(models.Course, { foreignKey: "gcId" });
+    models.Contact_Career.belongsTo(models.Career, { foreignKey: "careerId" });
   };
 
-  return ContactCareer;
+  return Contact_Career;
 };
