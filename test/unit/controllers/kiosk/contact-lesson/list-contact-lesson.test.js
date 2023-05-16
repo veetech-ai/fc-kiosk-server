@@ -110,7 +110,7 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
     reqBodyForContactLesson = {
       lessonId: lessonId,
       phone: "+92111111",
-      contact_medium: "phone",
+      contact_medium: "call",
     };
     const contactLesson = await helper.post_request_with_authorization({
       endpoint: `kiosk-content/lessons/contacts`,
