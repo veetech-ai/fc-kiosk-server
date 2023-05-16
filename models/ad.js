@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       alternateLink: {
-        field: "alterLink",
+        field: "alternateLink",
         type: DataTypes.STRING,
         allowNull: true,
       },

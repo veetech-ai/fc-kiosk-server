@@ -130,6 +130,8 @@ exports.createAdvertisements = async (req, res) => {
          orgId: course.orgId
         };
 
+        console.log(reqBody.alternateLink)
+
       await adScreenService.getAdScreenById(reqBody.screenId);
       const ad = await adService.createAdvertisement(reqBody, gcId );
       return apiResponse.success(res, req, ad);
