@@ -8,7 +8,7 @@ const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
-const FeedbackService=require("../../../services/kiosk/feedback")
+const FeedbackService = require("../../../services/kiosk/feedback");
 
 /**
  * @swagger
@@ -372,7 +372,7 @@ exports.getCourseInfo = async (req, res) => {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
     const course = await courseService.getCourseById(courseId);
-    const orgId=course.orgId
+    const orgId = course.orgId;
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
       "super",
@@ -382,9 +382,9 @@ exports.getCourseInfo = async (req, res) => {
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
-    const averageRating=await FeedbackService.getAverageRating(courseId)
-    if(averageRating){
-      course.setDataValue("averageRating",averageRating)
+    const averageRating = await FeedbackService.getAverageRating(courseId);
+    if (averageRating) {
+      course.setDataValue("averageRating", averageRating);
     }
     return apiResponse.success(res, req, course);
   } catch (error) {
