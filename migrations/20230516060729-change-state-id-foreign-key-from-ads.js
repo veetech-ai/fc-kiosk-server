@@ -11,6 +11,14 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: true,
     });
+    await queryInterface.addColumn('Ads', 'tabLink', {
+      type: Sequelize.STRING,
+      allowNull: true,
+    });
+    await queryInterface.addColumn('Ads', 'alternateLink', {
+      type: Sequelize.STRING,
+      allowNull: true,
+    });
 
 
  
@@ -21,6 +29,8 @@ module.exports = {
       type: Sequelize.INTEGER
     });
     await queryInterface.removeColumn('Ads', 'title');
+    await queryInterface.removeColumn('Ads', 'tabLink');
+    await queryInterface.removeColumn('Ads', 'alternateLink');
     await queryInterface.addConstraint('Ads', {
       fields: ['state_id'],
       type: 'foreign key',

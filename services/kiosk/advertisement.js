@@ -13,20 +13,28 @@ async function createAdvertisement(reqBody, gcId) {
     ...reqBody,
     gcId,
   });
-  if(!ad)   throw new ServiceError("Could not add, Please try again!", 500);
+  if (!ad) throw new ServiceError("Could not add, Please try again!", 500);
   return ad;
 }
+
 async function getAllAdvertisements() {
-
- const ads = await AdModel.findAll();
- if(!ads)   throw new ServiceError("Found No data!", 404);
- return ads;
-
+  try {
+    const advertisements = await AdModel.findAll({
+      include: [
+        {
+          model: Course,
+          attributes: ['name'], 
+        },
+      ],
+    });
+    if (!advertisements) throw new ServiceError("Found No data!", 404);
+    return advertisements;
+  } catch (error) {
+    throw new Error(error);
+  }
 }
-
-
 
 module.exports = {
   createAdvertisement,
-  getAllAdvertisements
+  getAllAdvertisements,
 };

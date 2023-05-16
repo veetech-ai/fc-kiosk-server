@@ -65,7 +65,7 @@ exports.createAdvertisements = async (req, res) => {
    *         description: tabLink
    *         in: formData
    *         required: false
-   *         type: integer
+   *         type: string
    *       - name: alternateLink
    *         description: alternateLink
    *         in: formData

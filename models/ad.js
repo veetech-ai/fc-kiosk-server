@@ -51,6 +51,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
       },
+      tabLink: {
+        field: "tabLink",
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      alternateLink: {
+        field: "alterLink",
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {},
   );
