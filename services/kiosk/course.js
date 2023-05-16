@@ -51,8 +51,6 @@ async function createCourseInfo(reqBody, courseId) {
     },
     { where: { id: courseId } },
   );
-  if (!updatedCourse[0])
-    throw new ServiceError("There is a problem. Please try later.");
   return updatedCourse;
 }
 
