@@ -10,6 +10,7 @@ const ServiceError = require("../utils/serviceError");
 
 const organizationServices = require("./organization");
 const courseServices = require("./kiosk/course");
+const couponUsedServices = require("./coupon_used");
 
 module.exports.list_available = (perPage, page) => {
   return new Promise((resolve, reject) => {
@@ -77,33 +78,27 @@ exports.findByID = (id) => {
   });
 };
 
-exports.validate = (code) => {
-  return new Promise((resolve, reject) => {
-    Coupon.findOne({
-      where: {
-        code: code,
-        status: 1,
-        expiry: { [Op.gt]: new Date() },
-        max_use_limit: { [Op.gt]: { [Sequelize.Op.col]: "Coupon.used_by" } },
-      },
-      include: [
-        {
-          as: "Coupon_Used",
-          model: models.Coupon_Used,
-          attributes: ["user_id"],
-          require: false,
-        },
-      ],
-    })
-      .then((data) => {
-        resolve(data);
-      })
-      .catch((err) => {
-        reject({
-          message: err,
-        });
-      });
+exports.validate = async ({ code, gcId, orgId }) => {
+  const where = {
+    code: code,
+    status: 1,
+    expiry: { [Op.gt]: new Date() },
+    maxUseLimit: { [Op.gt]: { [Sequelize.Op.col]: "Coupon.usedBy" } },
+    [Op.or]: [],
+  };
+
+  if (gcId) where[Op.or].push({ gcId });
+  if (orgId) where[Op.or].push({ orgId });
+
+  const coupon = await Coupon.findOne({
+    where,
   });
+
+  if (!coupon) {
+    throw new ServiceError("Invalid Coupon or coupon may expire", 404);
+  }
+
+  return coupon;
 };
 
 exports.create = async (params) => {
@@ -116,24 +111,14 @@ exports.create = async (params) => {
   return await Coupon.create(params);
 };
 
-exports.update = (id, params) => {
-  return new Promise((resolve, reject) => {
-    if (params.code) {
-      delete params.code;
-    }
-    Coupon.update(params, {
-      where: {
-        id: id,
-      },
-    })
-      .then((result) => {
-        resolve(result);
-      })
-      .catch((err) => {
-        reject({
-          message: err,
-        });
-      });
+exports.update = async (id, params) => {
+  if (params.code) {
+    delete params.code;
+  }
+  return await Coupon.update(params, {
+    where: {
+      id: id,
+    },
   });
 };
 
@@ -210,4 +195,23 @@ exports.getValidParent = async ({ orgId, gcId, loggedInUserOrgId }) => {
 
 exports.deleteAll = async (where) => {
   return await Coupon.destroy({ where });
+};
+
+exports.redeemCoupon = async (coupon, deviceId) => {
+  const body = {
+    deviceId,
+    couponId: coupon.id,
+  };
+
+  if (coupon.gcId) body.gcId = coupon.gcId;
+  await couponUsedServices.create(body);
+
+  await Coupon.update(
+    { usedBy: coupon.usedBy + 1 },
+    {
+      where: {
+        id: coupon.id,
+      },
+    },
+  );
 };
