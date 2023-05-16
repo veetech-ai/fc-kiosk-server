@@ -2,12 +2,13 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
 const membershipService = require("./membership");
+const courseService = require("../../services/cou")
 
 const Course = models.Course;
 const Organization = models.Organization;
 const Advertisements = models.Ads;
 
-async function createCourse(reqBody, orgId) {
+async function createAdvertisement(reqBody, orgId) {
   // Check if organization exists with the specified org_id
   const organization = await Organization.findOne({ where: { id: orgId } });
   if (!organization) {
@@ -20,10 +21,7 @@ async function createCourse(reqBody, orgId) {
     orgId,
   });
 
-  // Create Screen Config to allow toggling visibility of content sections on kiosk
-  const gcId = course.id;
-  await screenConfigServices.createScreenConfig(gcId, orgId);
-  await membershipService.createMembership(gcId, orgId);
+
 
   return course;
 }

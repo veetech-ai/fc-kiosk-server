@@ -198,14 +198,15 @@ exports.getFileURL = (key) => {
     return imagesWithCompleteUrl;
   }
 };
-
-exports.uploadCourseImage = async (
+exports.uploadImageForCourse = async (
   imageFile,
   courseId,
+  path = "golf-courses-images/",
   uploadOn = defaultUploadOn,
 ) => {
+  if (!imageFile) return null;
   try {
-    const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
+    const newpath = `${this.upload_path}${path}${courseId}`;
     const fileName = this.rename_file(imageFile.name);
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
     validateFile(
@@ -234,19 +235,21 @@ exports.uploadCourseImage = async (
     throw err.status ? err : { message: err.message };
   }
 };
-exports.uploadCourseImages = async (
+exports.uploadImagesForCourse = async (
   imageFiles,
   courseId,
+  path,
   uploadOn = defaultUploadOn,
 ) => {
+  if (!imageFiles) return null;
   try {
-    const newpath = `${this.upload_path}golf-courses-images/${courseId}`;
+    const newpath = `${this.upload_path}${path}${courseId}`;
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
 
     const uploadedFiles = [];
     const isIterable = Symbol.iterator in Object(imageFiles);
     if (!isIterable) {
-      return await this.uploadCourseImage(imageFiles, courseId, 3);
+      return await this.uploadImageForCourse(imageFiles, courseId, 3);
     }
     for (const imageFile of imageFiles) {
       validateFile(
@@ -281,6 +284,44 @@ exports.uploadCourseImages = async (
       }
     }
     return uploadedFiles;
+  } catch (err) {
+    throw err.status ? err : { message: err.message };
+  }
+};
+
+exports.uploadImageForCourse = async (
+  imageFile,
+  courseId,
+  path = "golf-courses-images/",
+  uploadOn = defaultUploadOn,
+) => {
+  if (!imageFile) return null;
+  try {
+    const newpath = `${this.upload_path}${path}${courseId}`;
+    const fileName = this.rename_file(imageFile.name);
+    if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
+    validateFile(
+      imageFile,
+      ["jpg", "jpeg", "png"],
+      settings.get("profile_image_max_size"),
+    );
+
+    switch (uploadOn) {
+      case 1:
+        return await server_upload.upload(imageFile, `${newpath}/${fileName}`);
+      // case 2:
+      //   return await azureUpload.upload(
+      //     imageFile,
+      //     `users-profile-images/${userId}/${fileName}`,
+      //   );
+      case 3:
+        return await awsS3.uploadFile(imageFile.path, uuid());
+      default:
+        throw {
+          message:
+            "The uploadOn parameter is not correct please correct it in params ",
+        };
+    }
   } catch (err) {
     throw err.status ? err : { message: err.message };
   }

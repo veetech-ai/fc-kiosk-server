@@ -8,7 +8,10 @@ const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
-const advertisementScreenService = require("../../../services/kiosk/advertisement_screen")
+const adScreenService = require("../../../services/kiosk/advertisement_screen");
+const adService = require("../../../services/kiosk/advertisement");
+
+
 /**
  * @swagger
  * tags:
@@ -38,26 +41,26 @@ exports.createAdvertisements = async (req, res) => {
    *         in: formData
    *         required: true
    *         type: string
-   *       - name: image
-   *         description: Image
+   *       - name: smallImage
+   *         description: Small Image
    *         in: formData
    *         required: false
    *         type: file
-   *       - name: screen
-   *         description: screen
+   *       - name: bigImage
+   *         description: Big Image
    *         in: formData
    *         required: false
-   *         type: string
-   *       - name: title
-   *         description: title
+   *         type: file
+   *       - name: screenId
+   *         description: screen id
    *         in: formData
    *         required: false
-   *         type: string
+   *         type: integer
    *       - name: tabLink
    *         description: tabLink
    *         in: formData
    *         required: false
-   *         type: string
+   *         type: integer
    *       - name: alternateLink
    *         description: alternateLink
    *         in: formData
@@ -70,33 +73,58 @@ exports.createAdvertisements = async (req, res) => {
    *         description: success
    */
 
-  try {
+  const courseId = req.params.gcId;
+  await courseService.getCourseById(courseId);
 
-    advertisementScreenService.getAllAdScreens()
-    const adScreen = await advertisementScreenService.getAdScreenById(1)
-
-    const courseId = req.params.gcId;
-    // console.log(courseId);
-    const form = new formidable.IncomingForm();
-    form.multiples = true;
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
-      });
+  const form = new formidable.IncomingForm();
+  form.multiples = true;
+  const { fields, files } = await new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      resolve({ fields, files });
     });
+  });
+  const validation = new Validator(fields, {
+    name: "required|string",
+    screenId: "required|integer",
+    tabLink: "string",
+    alternateLink: "string",
+  });
 
-    // console.log(fields, files);
+  validation.fails(function () {
+    return apiResponse.fail(res, validation.errors);
+  });
 
-    // const orgId = Number(req.body.gcId);
-    // if (!orgId) {
-    //   return apiResponse.fail(res, "orgId must be a valid number");
-    // }
-    return apiResponse.success(res, req, adScreen);
-  } catch (error) {
-    console.log("MESS", error)
-    return apiResponse.fail(res, error.message, error.statusCode || 500);
-  }
+  validation.passes(async function () {
+    try {
+      const smallImage = files?.smallImage;
+      const bigImage = files?.bigImage;
+      const smallImageLink = await upload_file.uploadImageForCourse(
+        smallImage,
+        courseId,
+        "advertisement-images/",
+        3,
+      );
+      const bigImageLink = await upload_file.uploadImageForCourse(
+        bigImage,
+        courseId,
+        "advertisement-images/",
+        3,
+      );
+
+      const reqBody = { ...fields, smallImageLink, bigImageLink };
+
+      console.log("REQ",reqBody)
+
+      const updatedCourse = await courseService.createCourseInfo(
+        reqBody,
+        courseId,
+      );
+      return apiResponse.success(res, req, updatedCourse);
+    } catch (err) {
+      return apiResponse.fail(res, err.message, 500);
+    }
+  });
 };
 exports.get_courses_for_organization = async (req, res) => {
   /**
