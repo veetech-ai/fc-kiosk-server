@@ -303,7 +303,7 @@ exports.getSpecificLesson = async (req, res) => {
   /**
    * @swagger
    *
-   * /course-lessons/{lessonId}:
+   * /course-lesson/{lessonId}:
    *   get:
    *     security:
    *       - auth: []
@@ -312,7 +312,7 @@ exports.getSpecificLesson = async (req, res) => {
    *     produces:
    *       - application/json
    *     parameters:
-   *       - name: courseId
+   *       - name: lessonId
    *         description: id of course
    *         in: path
    *         required: true
