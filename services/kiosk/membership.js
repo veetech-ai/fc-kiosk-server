@@ -10,9 +10,9 @@ async function createMembership(gcId, orgId) {
   return membership;
 }
 
-async function updateMembershipLink(membershipId,reqBody) {
+async function updateMembershipLink(membershipId, reqBody) {
   const [affectedRows] = await Membership.update(
-    {...reqBody},
+    { ...reqBody },
     { where: { id: membershipId } },
   );
 

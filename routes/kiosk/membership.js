@@ -6,7 +6,7 @@ exports.routesConfig = function (app, router) {
   const membership = `${config.app.apiPath}course-membership`;
   router.patch(membership + `/:id`, [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin","manageCourses"]),
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseMembershipController.update_membership,
   ]);
 };

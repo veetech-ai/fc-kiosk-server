@@ -1,7 +1,7 @@
 const Validator = require("validatorjs");
 const apiResponse = require("../../common/api.response");
 const helper = require("../../common/helper");
-const membershipService=require("../../services/kiosk/membership")
+const membershipService = require("../../services/kiosk/membership");
 
 /**
  * @swagger
@@ -50,8 +50,8 @@ exports.update_membership = async (req, res) => {
     if (!id) {
       return apiResponse.fail(res, "id must be a valid number");
     }
-    const membership = await membershipService.getMembershipById(id)
-    const orgId=membership.orgId
+    const membership = await membershipService.getMembershipById(id);
+    const orgId = membership.orgId;
     const isSameOrganizationResource = loggedInUserOrg === orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
@@ -63,13 +63,16 @@ exports.update_membership = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
-    let reqBody={}
-    if(req.body.link){
-      const link=req.body.link
-      reqBody =  {link}
+    let reqBody = {};
+    if (req.body.link) {
+      const link = req.body.link;
+      reqBody = { link };
     }
-    
-    const updatedMembership = await membershipService.updateMembershipLink(id,reqBody)
+
+    const updatedMembership = await membershipService.updateMembershipLink(
+      id,
+      reqBody,
+    );
     return apiResponse.success(res, req, updatedMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
