@@ -28,6 +28,7 @@ const options = {
     "./controllers/kiosk/kiosk_content/coupons.js",
     "./controllers/kiosk/kiosk_content/feedback.js",
     "./controllers/kiosk/course-faqs.js",
+    "./controllers/kiosk/kiosk_content/faqs.js",
     "./controllers/kiosk/kiosk_content/shops.js",
     "./controllers/kiosk/course_shops.js",
     "./controllers/mobile/courses.js",

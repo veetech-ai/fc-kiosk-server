@@ -34,6 +34,15 @@ exports.getCourseFaq = async (where, loggedInUserOrgId) => {
   return faq;
 };
 
+exports.getCourseFaqByCourseId = async (courseId) => {
+  
+  const faq = await FAQ.findAll({
+    where: { gcId: courseId },
+  });
+
+  return faq;
+};
+
 exports.updateCourseFaq = async (faqId, reqBody) => {
   const updatedFaq = await FAQ.update(reqBody, {
     where: { id: faqId },
