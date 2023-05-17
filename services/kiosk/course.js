@@ -102,6 +102,18 @@ async function getCourse(where, loggedInUserOrgId) {
   return course;
 }
 
+async function getCourseImages(courseId) {
+  const course = await Course.findByPk(courseId, {
+    attributes: ["images"], // only fetch the 'images' column
+  });
+
+  if (!course) {
+    throw new Error("Course not found");
+  }
+
+  return course.images;
+}
+
 module.exports = {
   createCourse,
   getCoursesByOrganization,
@@ -110,4 +122,5 @@ module.exports = {
   getOne,
   getCourseById,
   getCourse,
+  getCourseImages,
 };
