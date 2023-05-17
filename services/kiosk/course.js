@@ -89,24 +89,16 @@ async function getCourseById(courseId) {
   return course;
 }
 
-async function getCourseById(courseId, orgId = null) {
-  const where = {
-    id: courseId,
-  }
-  
-  if(orgId) where.orgId = orgId;
-
-  const course = await Course.findOne({
-    where,
-    attributes: {
-      exclude: ["org_id"],
-    },
+async function getCourseImages(courseId) {
+  const course = await Course.findByPk(courseId, {
+    attributes: ["images"], // only fetch the 'images' column
   });
 
   if (!course) {
-    throw new ServiceError("Course not found", 404);
+    throw new Error("Course not found");
   }
-  return course;
+
+  return course.images;
 }
 
 module.exports = {
@@ -116,4 +108,5 @@ module.exports = {
   getLinkedCourse,
   getOne,
   getCourseById,
+  getCourseImages,
 };
