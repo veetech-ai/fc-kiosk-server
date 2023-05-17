@@ -56,11 +56,6 @@ exports.createAdvertisements = async (req, res) => {
    *         in: formData
    *         required: false
    *         type: file
-   *       - name: screenId
-   *         description: screen id
-   *         in: formData
-   *         required: false
-   *         type: integer
    *       - name: tabLink
    *         description: tabLink
    *         in: formData
@@ -96,7 +91,6 @@ exports.createAdvertisements = async (req, res) => {
 
     const validation = new Validator(fields, {
       title: "required|string",
-      screenId: "required|integer",
       state: "required|string",
       tabLink: "string",
       alternateLink: "string",
@@ -126,6 +120,7 @@ exports.createAdvertisements = async (req, res) => {
         smallImage: smallImageLink,
         bigImage: bigImageLink,
         orgId: course.orgId,
+        screenId: 1
       };
 
       console.log(reqBody.alternateLink);

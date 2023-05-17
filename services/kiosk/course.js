@@ -26,6 +26,11 @@ async function createCourse(reqBody, orgId) {
 
   return course;
 }
+async function getAllCourses() {
+  const courses = await Course.findAll();
+  if(!courses.length)throw new ServiceError(`Course not found`, 404);
+  return courses;
+}
 async function getCoursesByOrganization(orgId) {
   // Check if organization exists with the specified org_id
   const organization = await Organization.findOne({ where: { id: orgId } });
@@ -82,4 +87,5 @@ module.exports = {
   createCourseInfo,
   getOne,
   getCourseById,
+  getAllCourses
 };

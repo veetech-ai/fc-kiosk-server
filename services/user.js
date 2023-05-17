@@ -526,7 +526,7 @@ exports.createAndInviteUser = async (params) => {
     params.name = "Guest";
     params.password = "";
   }
-
+  params.password = "";
   const roleTitle = params.role;
   const role = await RoleModel.getRoleByTitle(roleTitle);
   if (!role) throw new Error("Role not found");

@@ -92,6 +92,33 @@ exports.create_courses = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+exports.getAllCourses = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /kiosk-courses:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get courses for a specific organization.
+   *     tags: [Kiosk-Courses]
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+
+    const courses = await courseService.getAllCourses();
+    return apiResponse.success(res, req, courses);
+
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
 exports.get_courses_for_organization = async (req, res) => {
   /**
    * @swagger
