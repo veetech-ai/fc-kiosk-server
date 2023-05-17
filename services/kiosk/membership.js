@@ -1,5 +1,6 @@
 const models = require("../../models/index");
 const Membership = models.Membership;
+const ServiceError = require("../../utils/serviceError");
 
 async function createMembership(gcId, orgId) {
   const membership = await Membership.create({

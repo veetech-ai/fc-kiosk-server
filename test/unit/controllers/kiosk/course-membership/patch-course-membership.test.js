@@ -20,7 +20,6 @@ describe("PATCH /api/v1/course-membership/{id}", () => {
       state: "Test State 1",
       orgId: testOrganizationId,
     };
- 
 
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
@@ -56,11 +55,7 @@ describe("PATCH /api/v1/course-membership/{id}", () => {
     expect(response.body.data).toBe(1);
   });
   it("should not update if request body is empty", async () => {
- 
-    const response = await makeApiRequest(
-      membershipId,
-      {},
-    );
+    const response = await makeApiRequest(membershipId, {});
     expect(response.body.data).toBe(0);
   });
 
@@ -68,7 +63,7 @@ describe("PATCH /api/v1/course-membership/{id}", () => {
     const reqBody = {
       link: "https://github123.com",
     };
-    const response = await makeApiRequest(membershipId, reqBody,customerToken);
+    const response = await makeApiRequest(membershipId, reqBody, customerToken);
     expect(response.body.data).toBe(1);
   });
 
