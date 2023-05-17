@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return await Promise.all([
+    return Promise.all([
       queryInterface.removeColumn("Contact_Careers", "gc_id"),
       queryInterface.addColumn("Contact_Careers", "gcId", {
         type: Sequelize.INTEGER,
@@ -53,7 +53,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return await Promise.all([
+    return Promise.all([
       queryInterface.addColumn("Contact_Careers", "gc_id", {
         type: Sequelize.INTEGER,
         allowNull: false,

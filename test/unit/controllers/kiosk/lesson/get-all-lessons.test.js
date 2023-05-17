@@ -132,8 +132,6 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       ...fields,
     };
     const response = await makeApiRequest("dasd", customerToken);
-    expect(response.body.data).toBe(
-        "courseId must be a valid number"
-      );
+    expect(response.body.data).toBe("courseId must be a valid number");
   });
 });

@@ -83,7 +83,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       });
       return lesson.body.data.id;
     };
-    lessonId=await createLesson();
+    lessonId = await createLesson();
   });
 
   const makeApiRequest = async (id, token = adminToken) => {
@@ -98,9 +98,7 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       ...fields,
     };
     const response = await makeApiRequest(lessonId);
-    expect(response.body.data).toEqual(
-      expect.objectContaining(expectedObject),
-    );
+    expect(response.body.data).toEqual(expect.objectContaining(expectedObject));
   });
   it("should return error if courseId is not valid", async () => {
     const invalidLessonId = 99;
@@ -112,18 +110,14 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       ...fields,
     };
     const response = await makeApiRequest(lessonId, customerToken);
-    expect(response.body.data).toEqual(
-        expect.objectContaining(expectedObject),
-      );
+    expect(response.body.data).toEqual(expect.objectContaining(expectedObject));
   });
   it("should return validation error for lessonId", async () => {
     const expectedObject = {
       ...fields,
     };
     const response = await makeApiRequest("dasd", customerToken);
-    expect(response.body.data).toBe(
-        "lessonId must be a valid number"
-      );
+    expect(response.body.data).toBe("lessonId must be a valid number");
   });
   it("should return error if api is accessd by customer of different organization", async () => {
     const expectedObject = {
