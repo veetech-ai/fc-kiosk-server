@@ -280,7 +280,7 @@ exports.getLessons = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const course=await courseService.getCourseById(courseId)
+    const course = await courseService.getCourseById(courseId);
     const orgId = course.orgId;
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
@@ -327,7 +327,7 @@ exports.getSpecificLesson = async (req, res) => {
     if (!lessonId) {
       return apiResponse.fail(res, "lessonId must be a valid number");
     }
-    const lesson=await courseLesson.findLessonById(lessonId)
+    const lesson = await courseLesson.findLessonById(lessonId);
     const orgId = lesson.orgId;
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
