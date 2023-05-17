@@ -61,24 +61,17 @@ exports.createCourseFaq = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const courseId = fields.gcId;
-    const course = await courseService.getCourseById(courseId);
-
+    const faqBody = req.body;
     const loggedInUserOrgId = req.user.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    if (!isSuperOrAdmin && loggedInUserOrgId !== course.orgId) {
-      return apiResponse.fail(res, "Course not Found", 404);
-    }
-
-    const courseFaq = await courseFaqsService.createCourseFaq(
-      req.body,
-      course.orgId,
+    const course = await courseService.getCourse(
+      { id: faqBody.gcId },
+      loggedInUserOrgId,
     );
+    faqBody.orgId = course.orgId;
 
-    return apiResponse.success(res, req, courseFaq);
+    const faq = await courseFaqsService.create(faqBody);
+
+    return apiResponse.success(res, req, faq);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

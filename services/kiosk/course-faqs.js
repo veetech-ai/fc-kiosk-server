@@ -7,21 +7,9 @@ const upload_file = require("../../common/upload");
 const FAQ = models.FAQ;
 const Organization = models.Organization;
 
-exports.createCourseShop = async (reqBody, orgId) => {
-  // Check if organization exists with the specified org_id
-  const organization = await Organization.findOne({ where: { id: orgId } });
-  if (!organization) {
-    throw new ServiceError(`Organization not found`, 404);
-  }
-
-  // Create a new course shop record
-  const courseShop = await FAQ.create({
-    ...reqBody,
-    orgId,
-  });
-
-  return courseShop;
-};
+exports.create = async (body) => {
+  return await FAQ.create(body);
+}
 
 exports.getCourseFaqs = async (gcId) => {
   const faqs = await FAQ.findAll({
@@ -60,14 +48,6 @@ exports.updateCourseShop = async (shopId, reqBody) => {
   return updatedShop;
 };
 
-exports.deleteCourseShop = async (shopId) => {
-  const courseShop = await FAQ.destroy({
-    where: { id: shopId },
-  });
-
-  if (!courseShop) {
-    throw new ServiceError(`Error deleting shop`, 500);
-  }
-
-  return courseShop;
+exports.deleteCourseFaq = async (shopId) => {
+  return await Career.destroy({ where });
 };
