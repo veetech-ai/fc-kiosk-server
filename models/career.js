@@ -1,6 +1,6 @@
 "use strict";
 
-const ServiceError = require("../utils/serviceError")
+const ServiceError = require("../utils/serviceError");
 module.exports = (sequelize, DataTypes) => {
   const Career = sequelize.define(
     "Career",
@@ -42,18 +42,20 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         set(value) {
           try {
-            JSON.parse(value)
-            this.setDataValue("timings", value)
+            JSON.parse(value);
+            this.setDataValue("timings", value);
           } catch (error) {
-            throw new ServiceError("Set: The timings field format is invalid", 400)
+            throw new ServiceError(
+              "Set: The timings field format is invalid",
+              400,
+            );
           }
         },
         get() {
           try {
-            
-           return JSON.parse(this.getDataValue("timings"));
+            return JSON.parse(this.getDataValue("timings"));
           } catch (error) {
-            throw new Error("Get: The timings field format is invalid", 400)
+            throw new Error("Get: The timings field format is invalid", 400);
           }
         },
       },
@@ -61,8 +63,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
         validate: {
-          isUrl: true
-        }
+          isUrl: true,
+        },
       },
       createdAt: {
         type: DataTypes.DATE,

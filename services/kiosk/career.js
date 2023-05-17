@@ -8,10 +8,10 @@ async function create(body) {
 }
 
 async function deleteWhere(where) {
-  return await Career.destroy({where})
+  return await Career.destroy({ where });
 }
 
 module.exports = {
   create,
-  deleteWhere
+  deleteWhere,
 };
