@@ -83,12 +83,12 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       });
       return lesson.body.data.id;
     };
-    await createLesson();
+    lessonId=await createLesson();
   });
 
-  const makeApiRequest = async (courseId, token = adminToken) => {
+  const makeApiRequest = async (id, token = adminToken) => {
     return await helper.get_request_with_authorization({
-      endpoint: `course-lesson/courses/${courseId}`,
+      endpoint: `course-lesson/${id}`,
       token: token,
     });
   };
@@ -97,24 +97,33 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
     const expectedObject = {
       ...fields,
     };
-    const response = await makeApiRequest(courseId);
+    const response = await makeApiRequest(lessonId);
     expect(response.body.data).toEqual(
-      expect.arrayContaining([expect.objectContaining(expectedObject)]),
+      expect.objectContaining(expectedObject),
     );
   });
   it("should return error if courseId is not valid", async () => {
-    const invalidCoureId = 99;
-    const response = await makeApiRequest(invalidCoureId);
-    expect(response.body.data).toBe("Course not found");
+    const invalidLessonId = 99;
+    const response = await makeApiRequest(invalidLessonId);
+    expect(response.body.data).toBe("Not found");
   });
   it("should successfully return lessons of specific courses with valid input while api is accessd by customer of same organization", async () => {
     const expectedObject = {
       ...fields,
     };
-    const response = await makeApiRequest(courseId, customerToken);
+    const response = await makeApiRequest(lessonId, customerToken);
     expect(response.body.data).toEqual(
-      expect.arrayContaining([expect.objectContaining(expectedObject)]),
-    );
+        expect.objectContaining(expectedObject),
+      );
+  });
+  it("should return validation error for lessonId", async () => {
+    const expectedObject = {
+      ...fields,
+    };
+    const response = await makeApiRequest("dasd", customerToken);
+    expect(response.body.data).toBe(
+        "lessonId must be a valid number"
+      );
   });
   it("should return error if api is accessd by customer of different organization", async () => {
     const expectedObject = {
@@ -125,15 +134,5 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
       differentOrganizationCustomerToken,
     );
     expect(response.body.data).toBe("You are not allowed");
-  });
-
-  it("should return validation error for courseId", async () => {
-    const expectedObject = {
-      ...fields,
-    };
-    const response = await makeApiRequest("dasd", customerToken);
-    expect(response.body.data).toBe(
-        "courseId must be a valid number"
-      );
   });
 });
