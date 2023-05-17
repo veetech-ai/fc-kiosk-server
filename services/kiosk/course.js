@@ -1,4 +1,3 @@
-const { hasProvidedRoleRights } = require("../../common/helper");
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
@@ -91,8 +90,6 @@ async function getCourseById(courseId) {
 }
 
 async function getCourse(where, loggedInUserOrgId) {
-  // !where.orgId && delete where.orgId // orgId would be the logged in user org id
-
   if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
 
   const course = await Course.findOne({

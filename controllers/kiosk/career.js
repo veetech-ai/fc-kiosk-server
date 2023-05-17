@@ -31,10 +31,10 @@ exports.create = async (req, res) => {
    *         required: true
    *         type: string
    *       - name: gcId
-   *         description: Gold course id, career to be attached with
+   *         description: Golf course id, career to be attached with
    *         in: formData
    *         required: true
-   *         type: string
+   *         type: number
    *       - name: content
    *         description: Career's content - Html in textual form
    *         in: formData
@@ -53,7 +53,7 @@ exports.create = async (req, res) => {
    *       - name: link
    *         description: Link to the third party career/job post e.g., indeed.com
    *         in: formData
-   *         required: true
+   *         required: false
    *         type: string
    *     responses:
    *       200:
@@ -61,7 +61,7 @@ exports.create = async (req, res) => {
    */
   Validator.register(
     "json",
-    function (value, requirement, attribute) {
+    function (value) {
       try {
         JSON.parse(value);
       } catch (e) {
