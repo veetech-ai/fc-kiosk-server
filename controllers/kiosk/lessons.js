@@ -5,7 +5,6 @@ const upload_file = require("../../common/upload");
 const courseLesson = require("../../services/kiosk/lessons");
 const courseService = require("../../services/kiosk/course");
 const helper = require("../../common/helper");
-
 /**
  * @swagger
  * tags:
@@ -248,6 +247,99 @@ exports.delete_lesson = async (req, res) => {
 
     const deletedLesson = await courseLesson.deleteLessonById(lessonId);
     return apiResponse.success(res, req, deletedLesson);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.getLessons = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /course-lesson/courses/{courseId}:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get lessons for a specific course.
+   *     tags: [Courses-Lesson]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: courseId
+   *         description: id of course
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const courseId = Number(req.params.courseId);
+    if (!courseId) {
+      return apiResponse.fail(res, "courseId must be a valid number");
+    }
+    const course=await courseService.getCourseById(courseId)
+    const orgId = course.orgId;
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
+      return apiResponse.fail(res, "", 403);
+    }
+    const lessons = await courseLesson.findLessonsByCourseId(courseId);
+
+    return apiResponse.success(res, req, lessons);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.getSpecificLesson = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /course-lessons/{lessonId}:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get lessons for a specific course.
+   *     tags: [Courses-Lesson]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: courseId
+   *         description: id of course
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const lessonId = Number(req.params.lessonId);
+    if (!lessonId) {
+      return apiResponse.fail(res, "lessonId must be a valid number");
+    }
+    const lesson=await courseLesson.findLessonById(lessonId)
+    const orgId = lesson.orgId;
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
+      return apiResponse.fail(res, "", 403);
+    }
+
+    return apiResponse.success(res, req, lesson);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

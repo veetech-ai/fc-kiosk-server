@@ -45,7 +45,7 @@ async function findLessonsByCourseId(courseId) {
     where: { gcId: courseId },
   });
   if (!lessons.length) {
-    throw new ServiceError("Something Went wrong", 401);
+    throw new ServiceError("Not found", 401);
   }
 
   lessons.forEach((lesson) => {
