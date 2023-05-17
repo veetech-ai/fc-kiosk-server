@@ -55,4 +55,3 @@ exports.getCourseFeedBacks = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-
