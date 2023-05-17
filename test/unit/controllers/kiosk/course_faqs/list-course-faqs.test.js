@@ -1,5 +1,4 @@
 const helper = require("../../../../helper");
-const upload_file = require("../../../../../common/upload");
 const {
   organizationsInApplication,
 } = require("../../../../../common/organizations.data");
@@ -20,28 +19,25 @@ const coursesFixtures = {
   },
 };
 
-const shopFixtures = {
+const FaqFixtures = {
   test: {
-    name: "Assistant",
-    subheading: "Sub Heading",
-    description: "Extensive Description",
+    question: "Test Question",
+    answer: "Test Answer",
   },
   zong: {
-    name: "Assistant",
-    subheading: "Sub Heading",
-    description: "Extensive Description",
+    question: "Zong Question",
+    answer: "Zong Answer",
   },
 };
 
 let testCourseId;
 let zongCourseId;
-let testCourseShopId;
-let zongCourseShopId;
+let testCourseFaqId;
+let zongCourseFaqId;
 let adminToken;
 let customerToken;
 let zongCustomerToken;
 let testOperatorToken;
-let mockedReqBody = shopFixtures.test;
 
 // Helper Functions for this test
 async function createGolfCourse(reqBody, token = adminToken) {
@@ -53,53 +49,28 @@ async function createGolfCourse(reqBody, token = adminToken) {
   return course;
 }
 
-async function createGolfCourseShop(reqBody, token = adminToken) {
-  const courseShop = await helper.post_request_with_authorization({
-    endpoint: "course-shops",
+async function createGolfCourseFaq(reqBody, token = adminToken) {
+  const courseFaq = await helper.post_request_with_authorization({
+    endpoint: "course-faqs",
     token: token,
     params: reqBody,
   });
 
-  return courseShop;
+  return courseFaq;
 }
-function changeFormidableMockedValues(reqBody) {
-  mockedReqBody = reqBody;
-}
+
 
 const makeApiRequest = async (courseId, token = adminToken) => {
-  const shops = await helper.get_request_with_authorization({
-    endpoint: `course-shops/courses/${courseId}`,
+  const faqs = await helper.get_request_with_authorization({
+    endpoint: `course-faqs/courses/${courseId}`,
     token: token,
   });
-  return shops;
+  return faqs;
 };
 
-// mocks
-jest.mock("formidable", () => {
-  return {
-    IncomingForm: jest.fn().mockImplementation(() => {
-      return {
-        multiples: true,
-        parse: (req, cb) => {
-          cb(null, mockedReqBody, {
-            image: {
-              name: "mock-logo.png",
-              type: "image/png",
-              size: 5000, // bytes
-              path: "/mock/path/to/logo.png",
-            },
-          });
-        },
-      };
-    }),
-  };
-});
 
-jest
-  .spyOn(upload_file, "uploadImageForCourse")
-  .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
-describe("GET /api/v1/course-shops/courses/{courseId}", () => {
+describe("GET /api/v1/course-faqs/courses/{courseId}", () => {
   beforeAll(async () => {
     // Create some courses for the test organization
     adminToken = await helper.get_token_for("admin");
@@ -113,18 +84,18 @@ describe("GET /api/v1/course-shops/courses/{courseId}", () => {
     testCourseId = course.body.data.id;
     zongCourseId = zongCourse.body.data.id;
 
-    const reqBodyOne = { ...shopFixtures.test, gcId: testCourseId };
-    changeFormidableMockedValues(reqBodyOne);
-    const courseShop = await createGolfCourseShop(reqBodyOne, adminToken);
-    testCourseShopId = courseShop.body.data.id;
+    const reqBodyOne = { ...FaqFixtures.test, gcId: testCourseId };
 
-    const reqBodyTwo = { ...shopFixtures.zong, gcId: zongCourseId };
-    changeFormidableMockedValues(reqBodyTwo);
-    const zongCourseShop = await createGolfCourseShop(reqBodyTwo, adminToken);
-    zongCourseShopId = zongCourseShop.body.data.id;
+    const courseFaq = await createGolfCourseFaq(reqBodyOne, adminToken);
+    testCourseFaqId = courseFaq.body.data.id;
+
+    const reqBodyTwo = { ...FaqFixtures.zong, gcId: zongCourseId };
+
+    const zongCourseFaq = await createGolfCourseFaq(reqBodyTwo, adminToken);
+    zongCourseFaqId = zongCourseFaq.body.data.id;
   });
 
-  it("should return a list shops for the golf course", async () => {
+  it("should return a list faqs for the golf course", async () => {
     const response = await makeApiRequest(testCourseId);
     const expectedResponse = {
       createdAt: expect.any(String),
@@ -142,7 +113,7 @@ describe("GET /api/v1/course-shops/courses/{courseId}", () => {
     );
   });
 
-  it("should return shops for courses to the same org customer", async () => {
+  it("should return faqs for courses to the same org customer", async () => {
     const response = await makeApiRequest(testCourseId, customerToken);
     const expectedResponse = {
       createdAt: expect.any(String),
