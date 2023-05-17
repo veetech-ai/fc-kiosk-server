@@ -25,8 +25,17 @@ async function getMembershipById(membershipId) {
   return membership;
 }
 
+async function getMembershipByCourseId(courseId) {
+  const membership = await Membership.findOne({
+    where: { gcId: courseId },
+  });
+  if (!membership) throw new ServiceError("Not found", 404);
+  return membership;
+}
+
 module.exports = {
   createMembership,
   updateMembershipLink,
   getMembershipById,
+  getMembershipByCourseId,
 };
