@@ -7,6 +7,7 @@ const FeedbackController = require("../../controllers/kiosk/kiosk_content/feedba
 const LessonController = require("../../controllers/kiosk/kiosk_content/lesson");
 const ContactLessonController = require("../../controllers/kiosk/kiosk_content/contact_lesson");
 const ShopsController = require("../../controllers/kiosk/kiosk_content/shops");
+const CareersController = require("../../controllers/kiosk/kiosk_content/careers");
 
 exports.routesConfig = function (app, router) {
   const kioskContentBaseUrl = `${config.app.apiPath}kiosk-content`;
@@ -48,5 +49,10 @@ exports.routesConfig = function (app, router) {
   router.patch(kioskContentBaseUrl + "/coupons", [
     validation_middleware.onlyDeviceAccess,
     KioskContentCouponController.redeemCoupon,
+  ]);
+
+  router.get(kioskContentBaseUrl + "/careers", [
+    validation_middleware.onlyDeviceAccess,
+    CareersController.getAll,
   ]);
 };
