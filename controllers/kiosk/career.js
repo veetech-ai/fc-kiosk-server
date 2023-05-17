@@ -46,7 +46,7 @@ exports.create = async (req, res) => {
    *         required: true
    *         type: string
    *       - name: timings
-   *         description: Career timings - string representation of the object e.g., '{"startTime": "10:00", "endTime": "16:00"}'
+   *         description: Career timings - string representation of the object
    *         in: formData
    *         required: true
    *         type: string
@@ -59,19 +59,30 @@ exports.create = async (req, res) => {
    *       200:
    *         description: success
    */
+  Validator.register(
+    "json",
+    function (value, requirement, attribute) {
+      try {
+        JSON.parse(value);
+      } catch (e) {
+        return false;
+      }
+      return true;
+    },
+    "The :attribute must be a JSON string.",
+  );
   const validation = new Validator(req.body, {
     title: "required|string",
     gcId: "required|integer",
     content: "required|string",
     type: "required|string",
-    timings: "required|string",
+    timings: "required|json",
   });
 
   if (validation.fails()) return apiResponse.fail(res, validation.errors);
 
   try {
     const careerBody = req.body;
-
     const loggedInUserOrgId = req.user.orgId;
     const course = await CoursesServices.getCourse(
       { id: careerBody.gcId },
