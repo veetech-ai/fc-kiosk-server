@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       contactMedium: {
         field: "contact_medium",
-        type: DataTypes.ENUM("phone", "email"),
+        type: DataTypes.ENUM("text", "call"),
         allowNull: true,
       },
       isAddressed: {
