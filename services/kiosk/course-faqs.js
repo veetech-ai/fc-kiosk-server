@@ -17,37 +17,31 @@ exports.getCourseFaqs = async (gcId) => {
     raw: true,
   });
 
-  if (faqs.length) {
-    faqs.forEach((shop) => {
-      if (!shop?.image) return;
-      const image = upload_file.getFileURL(shop.image);
-      shop.image = image;
-    });
-  }
-
   return faqs;
 };
 
-exports.getCourseShopById = async (id) => {
-  const courseShop = await FAQ.findOne({
-    where: { id },
+exports.getCourseFaq = async (where, loggedInUserOrgId) => {
+  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
+  
+  const faq = await FAQ.findOne({
+    where,
   });
 
-  if (!courseShop) {
+  if (!faq) {
     throw new ServiceError(`Faq not found`, 404);
   }
 
-  return courseShop;
+  return faq;
 };
 
-exports.updateCourseShop = async (shopId, reqBody) => {
-  await FAQ.update(reqBody, {
-    where: { id: shopId },
+exports.updateCourseFaq = async (faqId, reqBody) => {
+  const updatedFaq = await FAQ.update(reqBody, {
+    where: { id: faqId },
   });
-  const updatedShop = await this.getCourseShopById(shopId);
-  return updatedShop;
+
+  return updatedFaq;
 };
 
-exports.deleteCourseFaq = async (shopId) => {
-  return await Career.destroy({ where });
+exports.deleteCourseFaq = async (where) => {
+  return await FAQ.destroy({ where });
 };

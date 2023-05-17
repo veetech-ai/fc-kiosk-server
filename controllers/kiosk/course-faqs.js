@@ -106,16 +106,11 @@ exports.getCourseFaqs = async (req, res) => {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
 
-    const course = await courseService.getCourseById(courseId);
-
     const loggedInUserOrgId = req.user.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    if (!isSuperOrAdmin && loggedInUserOrgId !== course.orgId) {
-      return apiResponse.fail(res, "Course not Found", 404);
-    }
+    await courseService.getCourse(
+      { id: req.params.courseId },
+      loggedInUserOrgId,
+    );
 
     const courseFaqs = await courseFaqsService.getCourseFaqs(courseId);
 
@@ -135,51 +130,32 @@ exports.updateCourseFaq = async (req, res) => {
    *     description: update faq for a golf course.
    *     tags: [Course-Faqs]
    *     consumes:
-   *       - multipart/form-data
+   *       - application/x-www-form-urlencoded
+   *     produces:
+   *       - application/json
    *     parameters:
    *       - in: path
    *         name: faqId
    *         description: id of course
    *         required: true
    *         type: integer
-   *       - name: name
-   *         description: name of the faq
+   *       - name: question
+   *         description: Question
    *         in: formData
    *         required: false
    *         type: string
-   *       - name: subheading
-   *         description: subheading briefly describing the faq
+   *       - name: answer
+   *         description: Answer for the question
    *         in: formData
    *         required: false
    *         type: string
-   *       - name: description
-   *         description: description of the faq
-   *         in: formData
-   *         required: false
-   *         type: string
-   *       - name: image
-   *         in: formData
-   *         description: Upload image of Golf course faq
-   *         required: false
-   *         type: file
-   *     produces:
-   *       - application/json
    *     responses:
    *       200:
    *         description: success
    */
 
   try {
-    const form = new formidable.IncomingForm();
-
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
-      });
-    });
-
-    const validation = new Validator(fields, {
+    const validation = new Validator(req.body, {
       name: "string",
       subheading: "string",
       description: "string",
@@ -190,35 +166,14 @@ exports.updateCourseFaq = async (req, res) => {
     }
 
     const faqId = req.params.faqId;
-    const courseFaq = await courseFaqsService.getCourseFaqById(faqId);
-
     const loggedInUserOrgId = req.user.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    if (!isSuperOrAdmin && loggedInUserOrgId !== courseFaq.orgId) {
-      return apiResponse.fail(res, "Faq not Found", 404);
-    }
+    await courseFaqsService.getCourseFaq({id: faqId}, loggedInUserOrgId);
 
-    const reqBody = { ...fields };
-    const faqImage = files?.image;
-    if (faqImage) {
-      const imageIdentifier = await upload_file.uploadImageForCourse(
-        faqImage,
-        courseFaq.gcId,
-      );
-      reqBody.image = imageIdentifier;
-    }
+
     const updatedCourseFaq = await courseFaqsService.updateCourseFaq(
       faqId,
-      reqBody,
+      req.body,
     );
-
-    if (updatedCourseFaq) {
-      const imageUrl = upload_file.getFileURL(updatedCourseFaq.image);
-      updatedCourseFaq.setDataValue("image", imageUrl);
-    }
 
     return apiResponse.success(res, req, updatedCourseFaq);
   } catch (error) {
@@ -254,19 +209,11 @@ exports.deleteCourseFaq = async (req, res) => {
     if (!faqId) {
       return apiResponse.fail(res, "faqId must be a valid number");
     }
-
-    const courseFaq = await courseFaqsService.getCourseFaqById(faqId);
-
+ 
     const loggedInUserOrgId = req.user.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    if (!isSuperOrAdmin && loggedInUserOrgId !== courseFaq.orgId) {
-      return apiResponse.fail(res, "Faq not Found", 404);
-    }
+    await courseFaqsService.getCourseFaq({id: faqId}, loggedInUserOrgId);
 
-    await courseFaqsService.deleteCourseFaq(faqId);
+    await courseFaqsService.deleteCourseFaq({ id: faqId });
     return apiResponse.success(res, req, "Faq Deleted");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
