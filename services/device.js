@@ -1794,3 +1794,11 @@ exports.findOne = async (where) => {
   if (!device) throw new ServiceError("Device not found", 404);
   return device;
 };
+
+exports.unlinkDevice = async (deviceId) => {
+  const [affectedRows] = await Device.update(
+    { where: { id: deviceId } },
+    { gcId: null },
+  );
+  return affectedRows;
+};

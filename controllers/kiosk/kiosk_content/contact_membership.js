@@ -7,6 +7,7 @@ const apiResponse = require("../../../common/api.response");
 const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
 const contactMembershipService = require("../../../services/kiosk/contact_membership");
+const membershipService = require("../../../services/kiosk/membership");
 
 /**
  * @swagger
@@ -67,7 +68,7 @@ exports.create_contact_membership = async (req, res) => {
     }
 
     const { membershipId, phone, email, contact_medium } = req.body;
-
+    await membershipService.getMembershipById(membershipId);
     const deviceId = req.device.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const course = await courseService.getCourseById(courseId);
