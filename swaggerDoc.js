@@ -76,6 +76,7 @@ const options = {
     "./controllers/kiosk/contact_lesson.js",
     "./controllers/kiosk/kiosk_content/contact_membership.js",
     "./controllers/kiosk/career.js",
+    "./controllers/kiosk/kiosk_content/membership.js",
   ],
 };
 
