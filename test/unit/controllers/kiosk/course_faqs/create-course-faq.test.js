@@ -77,8 +77,8 @@ describe("POST /api/v1/course-faqs", () => {
       id: expect.any(Number),
       orgId: expect.any(Number),
       updatedAt: expect.any(String),
-      question: "Question",
-      answer: "Answer",
+      question: faqFixtures.valid.question,
+      answer: faqFixtures.valid.answer,
     };
     expect(response.body.data).toEqual(expectedResponse);
   });
@@ -92,8 +92,8 @@ describe("POST /api/v1/course-faqs", () => {
       id: expect.any(Number),
       orgId: expect.any(Number),
       updatedAt: expect.any(String),
-      question: "Question",
-      answer: "Answer",
+      question: faqFixtures.valid.question,
+      answer: faqFixtures.valid.answer,
     };
     expect(response.body.data).toEqual(expectedResponse);
   });
