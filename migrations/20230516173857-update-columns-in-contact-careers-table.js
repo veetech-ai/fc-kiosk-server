@@ -4,41 +4,50 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     return Promise.all([
-      queryInterface.removeColumn("Contact_Careers", "gc_id"),
-      queryInterface.addColumn("Contact_Careers", "gcId", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Courses",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
+      queryInterface
+        .addColumn("Contact_Careers", "gcId", {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Courses",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
+        })
+        .then(() => {
+          queryInterface.removeColumn("Contact_Careers", "gc_id");
+        }),
 
-      queryInterface.removeColumn("Contact_Careers", "org_id"),
-      queryInterface.addColumn("Contact_Careers", "orgId", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Organizations",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
+      queryInterface
+        .addColumn("Contact_Careers", "orgId", {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Organizations",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
+        })
+        .then(() => {
+          queryInterface.removeColumn("Contact_Careers", "org_id");
+        }),
 
-      queryInterface.removeColumn("Contact_Careers", "career_id"),
-      queryInterface.addColumn("Contact_Careers", "careerId", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Careers",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
+      queryInterface
+        .addColumn("Contact_Careers", "careerId", {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "Careers",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+          onDelete: "CASCADE",
+        })
+        .then(() => {
+          queryInterface.removeColumn("Contact_Careers", "career_id");
+        }),
 
       queryInterface.renameColumn("Contact_Careers", "user_phone", "phone"),
 
