@@ -4,29 +4,9 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     return Promise.all([
-      queryInterface.removeColumn("Careers", "gc_id"),
-      queryInterface.addColumn("Careers", "gcId", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Courses",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
+      queryInterface.renameColumn("Careers", "gc_id", "gcId"),
 
-      queryInterface.removeColumn("Careers", "org_id"),
-      queryInterface.addColumn("Careers", "orgId", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Organizations",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
+      queryInterface.renameColumn("Careers", "org_id", "orgId"),
 
       queryInterface.changeColumn("Careers", "title", {
         type: Sequelize.STRING,
@@ -52,29 +32,8 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return Promise.all([
-      queryInterface.addColumn("Careers", "gc_id", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Courses",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
-      queryInterface.removeColumn("Careers", "gcId"),
-
-      queryInterface.addColumn("Careers", "org_id", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Organizations",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
-      queryInterface.removeColumn("Careers", "orgId"),
+      queryInterface.renameColumn("Careers", "gcId", "gc_id"),
+      queryInterface.renameColumn("Careers", "orgId", "org_id"),
 
       queryInterface.changeColumn("Careers", "title", {
         type: Sequelize.STRING,
