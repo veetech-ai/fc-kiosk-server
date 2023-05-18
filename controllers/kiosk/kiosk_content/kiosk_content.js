@@ -7,6 +7,7 @@ const screenService = require("../../../services/screenConfig/screens");
 const deviceService = require("../../../services/device");
 const courseService = require("../../../services/kiosk/course");
 const upload_file = require("../../../common/upload");
+const FeedbackService = require("../../../services/kiosk/feedback");
 // Logger Imports
 
 /**
@@ -63,11 +64,19 @@ exports.getCourseInfo = async (req, res) => {
     const deviceId = req.device.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const courseInfo = await courseService.getCourseById(courseId);
-    const logo = upload_file.getFileURL(courseInfo.logo);
-    const images = upload_file.getFileURL(courseInfo.images);
 
-    courseInfo.setDataValue("logo", logo);
-    courseInfo.setDataValue("images", images);
+    const averageRating = await FeedbackService.getAverageRating(courseId);
+    if (averageRating) {
+      courseInfo.setDataValue("averageRating", averageRating);
+    }
+    if (courseInfo.logo) {
+      const logo = upload_file.getFileURL(course.logo);
+      courseInfo.setDataValue("logo", logo);
+    }
+    if (courseInfo.images) {
+      const images = upload_file.getFileURL(course.images);
+      courseInfo.setDataValue("images", images);
+    }
 
     return apiResponse.success(res, req, courseInfo);
   } catch (error) {
