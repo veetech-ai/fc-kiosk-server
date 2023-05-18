@@ -1,6 +1,6 @@
 const models = require("../../models/index");
-const ServiceError = require("../../utils/serviceError");
 const Membership = models.Membership;
+const ServiceError = require("../../utils/serviceError");
 
 async function createMembership(gcId, orgId) {
   const membership = await Membership.create({
@@ -27,18 +27,19 @@ async function getMembershipByCourseId(courseId) {
   return membership;
 }
 
-async function getMembershipLinkByCourseId(courseId) {
-  const membership = await Membership.findOne({
-    where: { gcId: courseId },
-    attributes: { exclude: ["gc_id", "org_id"] },
-  });
-  if (!membership) throw new ServiceError("Not found", 404);
-  return membership;
+async function updateMembershipLink(membershipId, reqBody) {
+  const [affectedRows] = await Membership.update(
+    { ...reqBody },
+    { where: { id: membershipId } },
+  );
+
+  return affectedRows;
 }
+
 
 module.exports = {
   createMembership,
-  getMembershipById,
   getMembershipByCourseId,
-  getMembershipLinkByCourseId,
+  updateMembershipLink,
+  getMembershipById,
 };
