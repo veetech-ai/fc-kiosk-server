@@ -111,7 +111,6 @@ exports.updateFeedBack = async (req, res) => {
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
-
     const isAddressedBoolean = JSON.parse(req.body.isAddressed);
     const updatedFeedBack = await FeedbackService.updateFeedBackIsAddressable(
       feedbackId,

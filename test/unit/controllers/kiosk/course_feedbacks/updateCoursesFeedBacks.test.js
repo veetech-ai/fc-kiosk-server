@@ -2,7 +2,6 @@ const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
-const { async } = require("crypto-random-string");
 
 describe("PATCH /api/v1/course-feedbacks/{id}", () => {
   let adminToken;
@@ -11,6 +10,7 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
   let deviceToken;
   let testOrganizationId = 1;
   let differentOrganizationCustomerToken;
+  let customerToken;
   let productId = product.products.kiosk.id;
   const FeedbackParams = [
     {
@@ -24,7 +24,7 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
       contact_medium: "call",
     },
   ];
-  let feedBackId
+  let feedBackId;
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -43,6 +43,7 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
     differentOrganizationCustomerToken = await helper.get_token_for(
       "zongCustomer",
     );
+    customerToken = await helper.get_token_for("testCustomer");
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses",
       token: adminToken,
@@ -67,46 +68,58 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
     const postMultipleFeedbcks = async () => {
       for (const feedbackParam of FeedbackParams) {
-         return await helper.post_request_with_authorization({
+        return await helper.post_request_with_authorization({
           endpoint: `kiosk-content/feedbacks`,
           token: deviceToken,
           params: feedbackParam,
         });
       }
-      
     };
-    const response=await postMultipleFeedbcks();
-    feedBackId=response.body
+    const response = await postMultipleFeedbcks();
+    feedBackId = response.body.data.id;
   });
-  const makeApiRequest = async (id, token = adminToken) => {
+  const makeApiRequest = async (id, reqBody, token = adminToken) => {
     return await helper.patch_request_with_authorization({
       endpoint: `course-feedback/${id}`,
       token: token,
+      params: reqBody,
     });
   };
 
-  it("should successfully return registered feedback with valid input", async () => {
-    const expectedObject = {
-      phone: FeedbackParams[0].phone,
-      rating: FeedbackParams[0].rating,
-      contact_medium: FeedbackParams[0].contact_medium,
+  it("should successfully update with valid input", async () => {
+    const reqBody = {
+      isAddressed: true,
     };
 
-    const response = await makeApiRequest(courseId);
-    expect(response.body.data).toEqual(
-      expect.arrayContaining([expect.objectContaining(expectedObject)]),
-    );
+    const response = await makeApiRequest(feedBackId, reqBody);
+    expect(response.body.data).toBe(1);
   });
-  it("should return validation error invalid input", async () => {
-    const response = await makeApiRequest();
-    console.log("response :", response.body.data);
-    expect(response.body.data).toEqual("courseId must be a valid number");
+  it("should not update the record if the request body is same as before", async () => {
+    const reqBody = {
+      isAddressed: true,
+    };
+
+    const response = await makeApiRequest(feedBackId, reqBody);
+    expect(response.body.data).toBe(0);
   });
   it("should return error while the api is being accessed by the customer of differnet organization", async () => {
+    const reqBody = {
+      isAddressed: true,
+    };
+
+    const response = await makeApiRequest(feedBackId, reqBody, customerToken);
+    expect(response.body.data).toBe(0);
+  });
+  it("should return error while the api is being accessed by the customer of differnet organization", async () => {
+    const reqBody = {
+      isAddressed: true,
+    };
+
     const response = await makeApiRequest(
-      courseId,
+      feedBackId,
+      reqBody,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.data).toBe("You are not allowed");
   });
 });
