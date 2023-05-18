@@ -70,11 +70,11 @@ exports.getCourseInfo = async (req, res) => {
       courseInfo.setDataValue("averageRating", averageRating);
     }
     if (courseInfo.logo) {
-      const logo = upload_file.getFileURL(course.logo);
+      const logo = upload_file.getFileURL(courseInfo.logo);
       courseInfo.setDataValue("logo", logo);
     }
     if (courseInfo.images) {
-      const images = upload_file.getFileURL(course.images);
+      const images = upload_file.getFileURL(courseInfo.images);
       courseInfo.setDataValue("images", images);
     }
 
