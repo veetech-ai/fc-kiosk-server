@@ -99,14 +99,12 @@ describe("GET /api/v1/course-faqs/courses/{courseId}", () => {
     const response = await makeApiRequest(testCourseId);
     const expectedResponse = {
       createdAt: expect.any(String),
-      description: expect.any(String),
       gcId: expect.any(Number),
       id: expect.any(Number),
-      image: expect.any(String),
-      name: expect.any(String),
       orgId: expect.any(Number),
-      subheading: expect.any(String),
       updatedAt: expect.any(String),
+      question: "Test Question", 
+      answer: "Test Answer",
     };
     expect(response.body.data).toEqual(
       expect.arrayContaining([expect.objectContaining(expectedResponse)]),
@@ -117,14 +115,12 @@ describe("GET /api/v1/course-faqs/courses/{courseId}", () => {
     const response = await makeApiRequest(testCourseId, customerToken);
     const expectedResponse = {
       createdAt: expect.any(String),
-      description: expect.any(String),
       gcId: expect.any(Number),
       id: expect.any(Number),
-      image: expect.any(String),
-      name: expect.any(String),
       orgId: expect.any(Number),
-      subheading: expect.any(String),
       updatedAt: expect.any(String),
+      question: "Test Question", 
+      answer: "Test Answer",
     };
 
     expect(response.body.data).toEqual(
@@ -134,7 +130,7 @@ describe("GET /api/v1/course-faqs/courses/{courseId}", () => {
 
   it("should return an error if the golf course is of different org", async () => {
     const response = await makeApiRequest(testCourseId, zongCustomerToken);
-    const expectedResponse = "Course not Found";
+    const expectedResponse = "Course not found";
 
     expect(response.body.data).toEqual(expectedResponse);
   });

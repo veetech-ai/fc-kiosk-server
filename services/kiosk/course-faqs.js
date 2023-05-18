@@ -14,6 +14,7 @@ exports.create = async (body) => {
 exports.getCourseFaqs = async (gcId) => {
   const faqs = await FAQ.findAll({
     where: { gcId },
+    attributes: { exclude: ["gc_id", "org_id"] },
     raw: true,
   });
 
