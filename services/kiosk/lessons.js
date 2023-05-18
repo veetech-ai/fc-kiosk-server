@@ -9,7 +9,7 @@ async function createLesson(reqBody, orgId) {
     orgId,
   });
   if (!coach) {
-    throw new ServiceError("Something Went wrong", 401);
+    throw new ServiceError("Something Went wrong", 400);
   }
   if (coach?.image) {
     const image = upload_file.getFileURL(coach.image);
@@ -45,7 +45,7 @@ async function findLessonsByCourseId(courseId) {
     where: { gcId: courseId },
   });
   if (!lessons.length) {
-    throw new ServiceError("Not found", 401);
+    throw new ServiceError("Not found", 404);
   }
 
   lessons.forEach((lesson) => {
@@ -61,7 +61,7 @@ async function deleteLessonById(lessonId) {
     where: { id: lessonId },
   });
   if (deletedCoach === 0) {
-    throw new ServiceError("Something Went wrong", 401);
+    throw new ServiceError("Something Went wrong", 400);
   }
   return deletedCoach;
 }
