@@ -276,6 +276,7 @@ exports.create_course_info = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
+    let existingImages = await courseService.getCourseImages(courseId);
     const validation = new Validator(req.body, {
       name: "string",
       holes: "integer",
@@ -332,6 +333,9 @@ exports.create_course_info = async (req, res) => {
         courseId,
       );
       reqBody.images = images;
+    }
+    if (existingImages && courseImages) {
+      reqBody.images = [...existingImages, ...reqBody.images];
     }
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
