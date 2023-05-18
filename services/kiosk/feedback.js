@@ -22,16 +22,23 @@ async function getAverageRating(courseId) {
   // Fetch the average rating
   const result = await Feedback.findAll({
     where: { gcId: courseId },
-    attributes: [[Sequelize.fn("avg", Sequelize.col("rating")), "avgRating"]],
+    attributes: [
+      [Sequelize.fn("avg", Sequelize.col("rating")), "avgRating"],
+      [Sequelize.fn("count", Sequelize.col("rating")), "totalRating"],
+    ],
   });
 
-  let averageRating = 0;
+  const response = { averageRating: 0, totalRating: 0 };
 
   if (result.length) {
-    averageRating = result[0]?.dataValues?.avgRating || averageRating;
-    averageRating = parseFloat(averageRating).toFixed(2);
+    response.averageRating =
+      result[0]?.dataValues?.avgRating || response.averageRating;
+    response.averageRating = +parseFloat(response.averageRating).toFixed(2);
+    response.totalRating =
+      result[0]?.dataValues?.totalRating || response.totalRating;
   }
-  return averageRating;
+
+  return response;
 }
 
 async function getFeedBackById(feedbackId) {
