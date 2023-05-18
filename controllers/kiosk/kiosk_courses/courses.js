@@ -376,20 +376,20 @@ exports.getCourseInfo = async (req, res) => {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
     const course = await courseService.getCourseById(courseId);
-    const orgId = course.orgId;
+
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
       "super",
       "admin",
     ]).success;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
     const averageRating = await FeedbackService.getAverageRating(courseId);
-    if (averageRating) {
-      course.setDataValue("averageRating", averageRating);
-    }
+
+    course.setDataValue("averageRating", averageRating);
+
     if (course.logo) {
       const logo = upload_file.getFileURL(course.logo);
       course.setDataValue("logo", logo);

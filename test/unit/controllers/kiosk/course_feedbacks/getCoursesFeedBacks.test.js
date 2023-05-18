@@ -4,7 +4,7 @@ const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
 const { async } = require("crypto-random-string");
 
-describe("GET /api/v1/kiosk-content/screens", () => {
+describe("GET /api/v1/course-feedback/courses/${gcId}", () => {
   let adminToken;
   let courseId;
   let deviceId;
@@ -64,7 +64,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
-    const postMultipleFeedbcks = async () => {
+    const postMultipleFeedbacks = async () => {
       for (const feedbackParam of FeedbackParams) {
         await helper.post_request_with_authorization({
           endpoint: `kiosk-content/feedbacks`,
@@ -73,11 +73,11 @@ describe("GET /api/v1/kiosk-content/screens", () => {
         });
       }
     };
-    await postMultipleFeedbcks();
+    await postMultipleFeedbacks();
   });
   const makeApiRequest = async (gcId, token = adminToken) => {
     return await helper.get_request_with_authorization({
-      endpoint: `course-feedback/${gcId}`,
+      endpoint: `course-feedback/courses/${gcId}`,
       token: token,
     });
   };
@@ -94,12 +94,14 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       expect.arrayContaining([expect.objectContaining(expectedObject)]),
     );
   });
+
   it("should return validation error invalid input", async () => {
     const response = await makeApiRequest();
-    console.log("response :", response.body.data);
+
     expect(response.body.data).toEqual("courseId must be a valid number");
   });
-  it("should return error while the api is being accessed by the customer of differnet organization", async () => {
+
+  it("should return error while the api is being accessed by the customer of different organization", async () => {
     const response = await makeApiRequest(
       courseId,
       differentOrganizationCustomerToken,

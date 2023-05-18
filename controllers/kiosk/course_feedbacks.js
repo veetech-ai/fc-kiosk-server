@@ -3,6 +3,7 @@ const apiResponse = require("../../common/api.response");
 const courseService = require("../../services/kiosk/course");
 const helper = require("../../common/helper");
 const FeedbackService = require("../../services/kiosk/feedback");
+const ServiceError = require("../../utils/serviceError");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ exports.getCourseFeedBacks = async (req, res) => {
   /**
    * @swagger
    *
-   * /course-feedback/{courseId}:
+   * /course-feedback/courses/{courseId}:
    *   get:
    *     security:
    *       - auth: []
@@ -39,13 +40,13 @@ exports.getCourseFeedBacks = async (req, res) => {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
     const course = await courseService.getCourseById(courseId);
-    const orgId = course.orgId;
+
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
       "super",
       "admin",
     ]).success;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
@@ -70,7 +71,7 @@ exports.updateFeedBack = async (req, res) => {
    *       - application/x-www-form-urlencoded
    *     parameters:
    *       - name: id
-   *         description: id of coure feedback
+   *         description: id of course feedback
    *         in: path
    *         required: true
    *         type: string
@@ -111,7 +112,15 @@ exports.updateFeedBack = async (req, res) => {
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
-    const isAddressedBoolean = JSON.parse(req.body.isAddressed);
+    let isAddressedBoolean = req.body.isAddressed;
+    const isStringBoolean =
+      isAddressedBoolean === "true" ||
+      isAddressedBoolean === "false" ||
+      typeof isAddressedBoolean === "boolean";
+    if (!isStringBoolean)
+      throw new ServiceError("isAddressed must be a boolean", 400);
+    isAddressedBoolean = JSON.parse(req.body.isAddressed);
+
     const updatedFeedBack = await FeedbackService.updateFeedBackIsAddressable(
       feedbackId,
       isAddressedBoolean,

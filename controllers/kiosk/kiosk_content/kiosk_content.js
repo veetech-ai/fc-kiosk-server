@@ -66,9 +66,8 @@ exports.getCourseInfo = async (req, res) => {
     const courseInfo = await courseService.getCourseById(courseId);
 
     const averageRating = await FeedbackService.getAverageRating(courseId);
-    if (averageRating) {
-      courseInfo.setDataValue("averageRating", averageRating);
-    }
+    courseInfo.setDataValue("averageRating", averageRating);
+
     if (courseInfo.logo) {
       const logo = upload_file.getFileURL(courseInfo.logo);
       courseInfo.setDataValue("logo", logo);

@@ -10,10 +10,11 @@ async function createFeedback(reqBody) {
 }
 
 async function getCourseFeedBacks(courseId) {
-  const feedbacks = await Feedback.findAll({ where: { gcId: courseId } });
-  if (!feedbacks) {
-    throw new ServiceError("Not found", 404);
-  }
+  const feedbacks = await Feedback.findAll({
+    where: { gcId: courseId },
+    attributes: { exclude: ["gc_id", "org_id"] },
+  });
+
   return feedbacks;
 }
 
@@ -24,16 +25,12 @@ async function getAverageRating(courseId) {
     attributes: [[Sequelize.fn("avg", Sequelize.col("rating")), "avgRating"]],
   });
 
-  // If no feedback found, throw an error
-  if (!result) {
-    throw new ServiceError("Not found", 404);
+  let averageRating = 0;
+
+  if (result.length) {
+    averageRating = result[0]?.dataValues?.avgRating || averageRating;
+    averageRating = parseFloat(averageRating).toFixed(2);
   }
-  let averageRating = result[0].dataValues.avgRating;
-
-  // Format averageRating to two decimal places
-  averageRating = parseFloat(averageRating).toFixed(2);
-
-  // Return the average rating
   return averageRating;
 }
 
