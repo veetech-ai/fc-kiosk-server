@@ -73,3 +73,51 @@ exports.update_membership = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.get_membership = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /course-membership/courses/{id}:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: get membership info.
+   *     tags: [Courses-Membership]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     parameters:
+   *       - name: id
+   *         description: id of membership
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const id = Number(req.params.id);
+    if (!id) {
+      return apiResponse.fail(res, "id must be a valid number");
+    }
+    const membership = await membershipService.getMembershipByCourseId(id);
+
+    const isSameOrganizationResource = loggedInUserOrg === membership.orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
+      return apiResponse.fail(res, "", 403);
+    }
+    return apiResponse.success(res, req, membership);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+

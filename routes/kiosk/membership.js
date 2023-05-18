@@ -9,4 +9,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseMembershipController.update_membership,
   ]);
+  router.get(membership + `/courses/:courseId`, [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CourseMembershipController.get_membership,
+  ]);
 };
