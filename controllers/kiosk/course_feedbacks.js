@@ -55,3 +55,70 @@ exports.getCourseFeedBacks = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.updateFeedBack = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /course-feedback/{id}:
+   *   patch:
+   *     security:
+   *       - auth: []
+   *     description: update wether the contact of lesson is addressable.
+   *     tags: [Course-Feedback]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     parameters:
+   *       - name: id
+   *         description: id of coure feedback
+   *         in: path
+   *         required: true
+   *         type: string
+   *       - name: isAddressed
+   *         type: boolean
+   *         description: is the feedback of course addressed or not
+   *         in: formData
+   *         required: false
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const validation = new Validator(req.body, {
+      isAddressed: "boolean",
+    });
+
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
+    const feedbackId = Number(req.params.id);
+    if (!feedbackId) {
+      return apiResponse.fail(res, "feedbackId must be a valid number");
+    }
+
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const feedback = await FeedbackService.getFeedBackById(feedbackId);
+    const orgId = feedback.orgId;
+    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
+      return apiResponse.fail(res, "", 403);
+    }
+
+    const isAddressedBoolean = JSON.parse(req.body.isAddressed);
+    const updatedFeedBack = await FeedbackService.updateFeedBackIsAddressable(
+      feedbackId,
+      isAddressedBoolean,
+    );
+    return apiResponse.success(res, req, updatedFeedBack);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};

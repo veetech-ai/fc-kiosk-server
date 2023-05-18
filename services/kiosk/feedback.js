@@ -8,6 +8,7 @@ async function createFeedback(reqBody) {
   const feedback = await Feedback.create({ ...reqBody });
   return feedback;
 }
+
 async function getCourseFeedBacks(courseId) {
   const feedbacks = await Feedback.findAll({ where: { gcId: courseId } });
   if (!feedbacks) {
@@ -15,6 +16,7 @@ async function getCourseFeedBacks(courseId) {
   }
   return feedbacks;
 }
+
 async function getAverageRating(courseId) {
   // Fetch the average rating
   const result = await Feedback.findAll({
@@ -34,8 +36,32 @@ async function getAverageRating(courseId) {
   // Return the average rating
   return averageRating;
 }
+
+async function getFeedBackById(feedbackId) {
+  const result = await Feedback.findOne({
+    where: { id: feedbackId },
+  });
+
+  if (!result) {
+    throw new ServiceError("Not found", 404);
+  }
+
+  return result;
+}
+
+async function updateFeedBackIsAddressable(feedbackId, isAddressedBoolean) {
+  const [affectedRows] = await Feedback.update(
+    { isAddressed: isAddressedBoolean },
+    { where: { id: feedbackId } },
+  );
+
+  return affectedRows;
+}
+
 module.exports = {
   createFeedback,
   getCourseFeedBacks,
   getAverageRating,
+  getFeedBackById,
+  updateFeedBackIsAddressable,
 };

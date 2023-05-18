@@ -8,9 +8,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseFeedBacksController.getCourseFeedBacks,
   ]);
-  //   router.patch(lesson + "/:lessonId", [
-  //     validation_middleware.validJWTNeeded,
-  //     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
-  //     CourseLessonsController.update_lesson,
-  //   ]);
+  router.patch(feedback + "/:id", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CourseFeedBacksController.updateFeedBack,
+  ]);
 };

@@ -37,6 +37,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      isAddressed: {
+        field: "is_addressed",
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       createdAt: {
         field: "created_at",
         type: DataTypes.DATE,
