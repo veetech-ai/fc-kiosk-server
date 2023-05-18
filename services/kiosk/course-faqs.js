@@ -9,7 +9,7 @@ const Organization = models.Organization;
 
 exports.create = async (body) => {
   return await FAQ.create(body);
-}
+};
 
 exports.getCourseFaqs = async (gcId) => {
   const faqs = await FAQ.findAll({
@@ -23,7 +23,7 @@ exports.getCourseFaqs = async (gcId) => {
 
 exports.getCourseFaq = async (where, loggedInUserOrgId) => {
   if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
-  
+
   const faq = await FAQ.findOne({
     where,
   });
@@ -36,7 +36,6 @@ exports.getCourseFaq = async (where, loggedInUserOrgId) => {
 };
 
 exports.getCourseFaqByCourseId = async (courseId) => {
-  
   const faq = await FAQ.findAll({
     where: { gcId: courseId },
   });

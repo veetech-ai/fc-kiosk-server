@@ -73,7 +73,6 @@ const makeApiRequest = async (faqId, token = adminToken) => {
   return faq;
 };
 
-
 describe("DELETE /api/v1/course-faqs/{faqId}", () => {
   beforeAll(async () => {
     // Create some courses for the test organization

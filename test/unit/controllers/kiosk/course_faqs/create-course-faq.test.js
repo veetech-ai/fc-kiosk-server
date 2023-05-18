@@ -68,7 +68,6 @@ describe("POST /api/v1/course-faqs", () => {
   });
 
   it("should create a new course faq with valid input", async () => {
-
     const response = await makeApiRequest(faqFixtures.valid);
 
     const expectedResponse = {
@@ -84,7 +83,6 @@ describe("POST /api/v1/course-faqs", () => {
   });
 
   it("should create a new course faq for same org golf course", async () => {
-
     const response = await makeApiRequest(faqFixtures.valid, customerToken);
     const expectedResponse = {
       createdAt: expect.any(String),
@@ -99,20 +97,13 @@ describe("POST /api/v1/course-faqs", () => {
   });
 
   it("should not create a new course faq for different org golf course", async () => {
-
-    const response = await makeApiRequest(
-      faqFixtures.valid,
-      zongCustomerToken,
-    );
+    const response = await makeApiRequest(faqFixtures.valid, zongCustomerToken);
     const expectedResponse = "Course not found";
     expect(response.body.data).toEqual(expectedResponse);
   });
 
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
-    const response = await makeApiRequest(
-      faqFixtures.valid,
-      testOperatorToken,
-    );
+    const response = await makeApiRequest(faqFixtures.valid, testOperatorToken);
     expect(response.body.data).toEqual("You are not allowed");
   });
 

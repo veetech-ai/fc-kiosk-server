@@ -64,7 +64,6 @@ async function createGolfCourseFaq(reqBody, token = adminToken) {
   return courseFaq;
 }
 
-
 const makeApiRequest = async (faqId, reqBody, token = adminToken) => {
   const faqs = await helper.patch_request_with_authorization({
     endpoint: `course-faqs/${faqId}`,
@@ -73,7 +72,6 @@ const makeApiRequest = async (faqId, reqBody, token = adminToken) => {
   });
   return faqs;
 };
-
 
 describe("PATCH /api/v1/course-faqs/{faqId}", () => {
   beforeAll(async () => {
@@ -102,7 +100,7 @@ describe("PATCH /api/v1/course-faqs/{faqId}", () => {
       testCourseFaqId,
       faqsFixtures.testUpdated,
     );
-    const expectedResponse = [1]
+    const expectedResponse = [1];
     expect(response.body.data).toEqual(
       expect.objectContaining(expectedResponse),
     );
@@ -114,7 +112,7 @@ describe("PATCH /api/v1/course-faqs/{faqId}", () => {
       faqsFixtures.testUpdated,
       customerToken,
     );
-    const expectedResponse = [0]
+    const expectedResponse = [0];
     expect(response.body.data).toEqual(
       expect.objectContaining(expectedResponse),
     );

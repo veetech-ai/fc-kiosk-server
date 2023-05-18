@@ -59,7 +59,6 @@ async function createGolfCourseFaq(reqBody, token = adminToken) {
   return courseFaq;
 }
 
-
 const makeApiRequest = async (courseId, token = adminToken) => {
   const faqs = await helper.get_request_with_authorization({
     endpoint: `course-faqs/courses/${courseId}`,
@@ -67,8 +66,6 @@ const makeApiRequest = async (courseId, token = adminToken) => {
   });
   return faqs;
 };
-
-
 
 describe("GET /api/v1/course-faqs/courses/{courseId}", () => {
   beforeAll(async () => {
@@ -103,7 +100,7 @@ describe("GET /api/v1/course-faqs/courses/{courseId}", () => {
       id: expect.any(Number),
       orgId: expect.any(Number),
       updatedAt: expect.any(String),
-      question: "Test Question", 
+      question: "Test Question",
       answer: "Test Answer",
     };
     expect(response.body.data).toEqual(
@@ -119,7 +116,7 @@ describe("GET /api/v1/course-faqs/courses/{courseId}", () => {
       id: expect.any(Number),
       orgId: expect.any(Number),
       updatedAt: expect.any(String),
-      question: "Test Question", 
+      question: "Test Question",
       answer: "Test Answer",
     };
 

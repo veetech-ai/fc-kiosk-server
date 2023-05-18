@@ -167,8 +167,7 @@ exports.updateCourseFaq = async (req, res) => {
 
     const faqId = req.params.faqId;
     const loggedInUserOrgId = req.user.orgId;
-    await courseFaqsService.getCourseFaq({id: faqId}, loggedInUserOrgId);
-
+    await courseFaqsService.getCourseFaq({ id: faqId }, loggedInUserOrgId);
 
     const updatedCourseFaq = await courseFaqsService.updateCourseFaq(
       faqId,
@@ -209,9 +208,9 @@ exports.deleteCourseFaq = async (req, res) => {
     if (!faqId) {
       return apiResponse.fail(res, "faqId must be a valid number");
     }
- 
+
     const loggedInUserOrgId = req.user.orgId;
-    await courseFaqsService.getCourseFaq({id: faqId}, loggedInUserOrgId);
+    await courseFaqsService.getCourseFaq({ id: faqId }, loggedInUserOrgId);
 
     await courseFaqsService.deleteCourseFaq({ id: faqId });
     return apiResponse.success(res, req, "Faq Deleted");
