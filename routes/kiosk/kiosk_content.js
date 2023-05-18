@@ -62,7 +62,7 @@ exports.routesConfig = function (app, router) {
     validation_middleware.onlyDeviceAccess,
     ContactCareersController.create,
   ]);
-  
+
   router.get(kioskContentBaseUrl + "/faqs", [
     validation_middleware.onlyDeviceAccess,
     FaqsController.getFaqs,
