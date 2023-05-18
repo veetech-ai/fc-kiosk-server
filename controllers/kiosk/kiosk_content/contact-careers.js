@@ -1,5 +1,7 @@
 const apiResponse = require("../../../common/api.response");
 const ContactCareersServices = require("../../../services/kiosk/contact-careers");
+const CareersServices = require("../../../services/kiosk/career");
+
 const DevicesServices = require("../../../services/device");
 const Validator = require("validatorjs");
 
@@ -66,6 +68,12 @@ exports.create = async (req, res) => {
 
     const deviceId = req.device.id;
     const course = await DevicesServices.getLinkedCourse(deviceId);
+
+    await CareersServices.findOne({
+      id: careerId,
+      gcId: course.id,
+      orgId: course.orgId,
+    });
     const reqBody = {
       careerId,
       phone,
@@ -80,7 +88,9 @@ exports.create = async (req, res) => {
     return apiResponse.fail(
       res,
       error.message,
-      error.statusCode || error.errors[0]?.original?.statusCode || 500,
+      error.statusCode ||
+        (error.errors && error.errors[0]?.original?.statusCode) ||
+        500,
     );
   }
 };
