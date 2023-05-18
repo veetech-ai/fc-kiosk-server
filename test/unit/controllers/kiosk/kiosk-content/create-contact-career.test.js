@@ -204,6 +204,9 @@ describe("POST /kiosk-content/careers/contacts - Create contact request", () => 
     // To make sure that the device is not linked with the course, we would call a service to unlink in case it is already linked
     await DevicesServices.update(testOrganizationDeviceId, { gcId: null });
     const response = await makeApiRequest({ careerId: testCareerId });
+    await DevicesServices.update(testOrganizationDeviceId, {
+      gcId: testGolfCourseId,
+    });
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(404);
   });
