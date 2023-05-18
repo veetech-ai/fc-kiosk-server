@@ -2,6 +2,7 @@ const apiResponse = require("../../common/api.response");
 const Validator = require("validatorjs");
 const CoursesServices = require("../../services/kiosk/course");
 const CareersServices = require("../../services/kiosk/career");
+const ServiceError = require("../../utils/serviceError");
 
 /**
  * @swagger
@@ -92,6 +93,45 @@ exports.create = async (req, res) => {
 
     const career = await CareersServices.create(careerBody);
     return apiResponse.success(res, req, career);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.getCareersByCourseId = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /careers/courses/courseId:
+   *   get:
+   *     security:
+   *      - auth: []
+   *     description: Get all careers
+   *     tags: [Careers]
+   *     parameters:
+   *       - name: courseId
+   *         description: Id of the golf course
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    // Pagination would be added later.
+
+    const loggedInUserOrgId = req.user.orgId;
+
+    const gcId = Number(req.params.courseId);
+    if (!gcId) throw new ServiceError("The courseId must be an integer.", 400);
+
+    const careers = await CareersServices.find({ gcId }, loggedInUserOrgId);
+
+    return apiResponse.success(res, req, careers);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
