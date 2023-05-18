@@ -45,15 +45,12 @@ async function findLessonsByCourseId(courseId) {
     where: { gcId: courseId },
   });
   if (!lessons.length) {
-    throw new ServiceError("Not found", 404);
+    lessons.forEach((lesson) => {
+      if (!lesson?.image) return;
+      const image = upload_file.getFileURL(lesson.image);
+      lesson.image = image;
+    });
   }
-
-  lessons.forEach((lesson) => {
-    if (!lesson?.image) return;
-    const image = upload_file.getFileURL(lesson.image);
-    lesson.image = image;
-  });
-
   return lessons;
 }
 async function deleteLessonById(lessonId) {
