@@ -18,7 +18,7 @@ exports.create_feedback = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-content/feedback:
+   * /kiosk-content/feedbacks:
    *   post:
    *     security:
    *       - auth: []

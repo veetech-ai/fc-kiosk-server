@@ -4,7 +4,7 @@ const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
 const { async } = require("crypto-random-string");
 
-describe("GET /api/v1/kiosk-content/screens", () => {
+describe("PATCH /api/v1/course-feedbacks/{id}", () => {
   let adminToken;
   let courseId;
   let deviceId;
@@ -24,6 +24,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       contact_medium: "call",
     },
   ];
+  let feedBackId
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -66,18 +67,20 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
     const postMultipleFeedbcks = async () => {
       for (const feedbackParam of FeedbackParams) {
-        await helper.post_request_with_authorization({
+         return await helper.post_request_with_authorization({
           endpoint: `kiosk-content/feedbacks`,
           token: deviceToken,
           params: feedbackParam,
         });
       }
+      
     };
-    await postMultipleFeedbcks();
+    const response=await postMultipleFeedbcks();
+    feedBackId=response.body
   });
-  const makeApiRequest = async (gcId, token = adminToken) => {
-    return await helper.get_request_with_authorization({
-      endpoint: `course-feedback/${gcId}`,
+  const makeApiRequest = async (id, token = adminToken) => {
+    return await helper.patch_request_with_authorization({
+      endpoint: `course-feedback/${id}`,
       token: token,
     });
   };
