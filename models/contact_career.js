@@ -1,4 +1,7 @@
 "use strict";
+
+const ServiceError = require("../utils/serviceError");
+
 module.exports = (sequelize, DataTypes) => {
   const Contact_Career = sequelize.define(
     "Contact_Career",
@@ -54,7 +57,24 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {},
+    {
+      validate: {
+        phoneAndEmailBothNotNull() {
+          if (!this.email && !this.phone)
+            throw new ServiceError(
+              "Phone and email can not be empty at the same time",
+              400,
+            );
+        },
+        phoneAndContactMedium() {
+          if (this.phone && !this.contactMedium)
+            throw new ServiceError(
+              "Contact medium (text or call) is required",
+              400,
+            );
+        },
+      },
+    },
   );
   Contact_Career.associate = function (models) {
     // associations can be defined here

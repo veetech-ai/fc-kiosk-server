@@ -114,6 +114,10 @@ async function getCourseImages(courseId) {
   return course.images;
 }
 
+async function deleteWhere(where) {
+  return await Course.destroy({ where });
+}
+
 module.exports = {
   createCourse,
   getCoursesByOrganization,
@@ -123,4 +127,5 @@ module.exports = {
   getCourseById,
   getCourse,
   getCourseImages,
+  deleteWhere,
 };
