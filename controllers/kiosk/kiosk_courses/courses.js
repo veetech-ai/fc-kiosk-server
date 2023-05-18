@@ -388,7 +388,7 @@ exports.getCourseInfo = async (req, res) => {
     }
     const averageRating = await FeedbackService.getAverageRating(courseId);
 
-    course.setDataValue("averageRating", averageRating);
+    course.setDataValue("feedback", averageRating);
 
     if (course.logo) {
       const logo = upload_file.getFileURL(course.logo);

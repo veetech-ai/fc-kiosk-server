@@ -117,6 +117,7 @@ const CourseShops = require("./routes/kiosk/course_shops");
 const CourseFeedBacks = require("./routes/kiosk/course_feedbacks");
 const CourseFaqs = require("./routes/kiosk/course-faqs");
 const CareersRouter = require("./routes/kiosk/careers");
+const CourseMemberships = require("./routes/kiosk/membership");
 
 swaggerDoc(router);
 
@@ -199,6 +200,7 @@ CourseShops.routesConfig(app, router);
 CourseFeedBacks.routesConfig(app, router);
 CourseFaqs.routesConfig(app, router);
 CareersRouter.routesConfig(app, router);
+CourseMemberships.routesConfig(app, router);
 
 if (config.env === "test") {
   // for test case server
