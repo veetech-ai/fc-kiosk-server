@@ -1,11 +1,7 @@
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
-const screenConfigServices = require("../screenConfig/screens");
-const membershipService = require("./membership");
-const upload_file = require("../../common/upload");
 
 const FAQ = models.FAQ;
-const Organization = models.Organization;
 
 exports.create = async (body) => {
   return await FAQ.create(body);

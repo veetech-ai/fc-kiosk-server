@@ -109,7 +109,7 @@ describe("POST /api/v1/course-faqs", () => {
 
   it("should return an error if reqBody is invalid", async () => {
     const response = await makeApiRequest(faqFixtures.inValid, adminToken);
-    console.log(response.body.data);
+
     const expectedResponse = {
       errors: {
         answer: ["The answer field is required."],

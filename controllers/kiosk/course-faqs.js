@@ -156,9 +156,8 @@ exports.updateCourseFaq = async (req, res) => {
 
   try {
     const validation = new Validator(req.body, {
-      name: "string",
-      subheading: "string",
-      description: "string",
+      question: "string",
+      answer: "string",
     });
 
     if (validation.fails()) {
