@@ -113,12 +113,10 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
     expect(response.body.data).toEqual(expect.objectContaining(expectedObject));
   });
   it("should return validation error for lessonId", async () => {
-  
     const response = await makeApiRequest("dasd", customerToken);
     expect(response.body.data).toBe("lessonId must be a valid number");
   });
   it("should return error if api is accessd by customer of different organization", async () => {
-
     const response = await makeApiRequest(
       courseId,
       differentOrganizationCustomerToken,
