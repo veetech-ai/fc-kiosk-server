@@ -8,6 +8,7 @@ const LessonController = require("../../controllers/kiosk/kiosk_content/lesson")
 const ContactLessonController = require("../../controllers/kiosk/kiosk_content/contact_lesson");
 const ShopsController = require("../../controllers/kiosk/kiosk_content/shops");
 const CareersController = require("../../controllers/kiosk/kiosk_content/careers");
+const ContactCareersController = require("../../controllers/kiosk/kiosk_content/contact-careers");
 const FaqsController = require("../../controllers/kiosk/kiosk_content/faqs");
 
 exports.routesConfig = function (app, router) {
@@ -55,6 +56,11 @@ exports.routesConfig = function (app, router) {
   router.get(kioskContentBaseUrl + "/careers", [
     validation_middleware.onlyDeviceAccess,
     CareersController.getAll,
+  ]);
+
+  router.post(kioskContentBaseUrl + "/careers/contacts", [
+    validation_middleware.onlyDeviceAccess,
+    ContactCareersController.create,
   ]);
 
   router.get(kioskContentBaseUrl + "/faqs", [
