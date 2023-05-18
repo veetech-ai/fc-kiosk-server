@@ -51,8 +51,8 @@ exports.update_membership = async (req, res) => {
       return apiResponse.fail(res, "id must be a valid number");
     }
     const membership = await membershipService.getMembershipById(id);
-    const orgId = membership.orgId;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
+
+    const isSameOrganizationResource = loggedInUserOrg === membership.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
@@ -63,15 +63,10 @@ exports.update_membership = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
-    let reqBody = {};
-    if (req.body.link) {
-      const link = req.body.link;
-      reqBody = { link };
-    }
 
     const updatedMembership = await membershipService.updateMembershipLink(
       id,
-      reqBody,
+      req.body,
     );
     return apiResponse.success(res, req, updatedMembership);
   } catch (error) {
