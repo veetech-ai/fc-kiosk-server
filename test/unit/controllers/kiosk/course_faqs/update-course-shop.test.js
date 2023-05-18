@@ -20,33 +20,29 @@ const coursesFixtures = {
   },
 };
 
-const shopFixtures = {
+const faqsFixtures = {
   test: {
-    name: "Assistant",
-    subheading: "Sub Heading",
-    description: "Extensive Description",
+    question: "Test Question",
+    answer: "Test Answer",
   },
   testUpdated: {
-    name: "Assistant Updated",
-    subheading: "Sub Heading Updated",
-    description: "Extensive Description Updated",
+    question: "Test Updated Question",
+    answer: "Test Updated Answer",
   },
   zong: {
-    name: "Assistant",
-    subheading: "Sub Heading",
-    description: "Extensive Description",
+    question: "Zong Question",
+    answer: "Zong Answer",
   },
 };
 
 let testCourseId;
 let zongCourseId;
-let testCourseShopId;
-let zongCourseShopId;
+let testCourseFaqId;
+let zongCourseFaqId;
 let adminToken;
 let customerToken;
 let zongCustomerToken;
 let testOperatorToken;
-let mockedReqBody = shopFixtures.test;
 
 // Helper Functions for this test
 async function createGolfCourse(reqBody, token = adminToken) {
@@ -58,54 +54,28 @@ async function createGolfCourse(reqBody, token = adminToken) {
   return course;
 }
 
-async function createGolfCourseShop(reqBody, token = adminToken) {
-  const courseShop = await helper.post_request_with_authorization({
-    endpoint: "course-shops",
+async function createGolfCourseFaq(reqBody, token = adminToken) {
+  const courseFaq = await helper.post_request_with_authorization({
+    endpoint: "course-faqs",
     token: token,
     params: reqBody,
   });
 
-  return courseShop;
-}
-function changeFormidableMockedValues(reqBody) {
-  mockedReqBody = reqBody;
+  return courseFaq;
 }
 
-const makeApiRequest = async (shopId, reqBody, token = adminToken) => {
-  const shops = await helper.patch_request_with_authorization({
-    endpoint: `course-shops/${shopId}`,
+
+const makeApiRequest = async (faqId, reqBody, token = adminToken) => {
+  const faqs = await helper.patch_request_with_authorization({
+    endpoint: `course-faqs/${faqId}`,
     token: token,
     params: reqBody,
   });
-  return shops;
+  return faqs;
 };
 
-// mocks
-jest.mock("formidable", () => {
-  return {
-    IncomingForm: jest.fn().mockImplementation(() => {
-      return {
-        multiples: true,
-        parse: (req, cb) => {
-          cb(null, mockedReqBody, {
-            image: {
-              name: "mock-logo.png",
-              type: "image/png",
-              size: 5000, // bytes
-              path: "/mock/path/to/logo.png",
-            },
-          });
-        },
-      };
-    }),
-  };
-});
 
-jest
-  .spyOn(upload_file, "uploadImageForCourse")
-  .mockImplementation(() => Promise.resolve("mock-logo-url"));
-
-describe("PATCH /api/v1/course-shops/{shopId}", () => {
+describe("PATCH /api/v1/course-faqs/{faqId}", () => {
   beforeAll(async () => {
     // Create some courses for the test organization
     adminToken = await helper.get_token_for("admin");
@@ -118,66 +88,45 @@ describe("PATCH /api/v1/course-shops/{shopId}", () => {
     testCourseId = course.body.data.id;
     zongCourseId = zongCourse.body.data.id;
 
-    const reqBodyOne = { ...shopFixtures.test, gcId: testCourseId };
-    changeFormidableMockedValues(reqBodyOne);
-    const courseShop = await createGolfCourseShop(reqBodyOne, adminToken);
-    testCourseShopId = courseShop.body.data.id;
+    const reqBodyOne = { ...faqsFixtures.test, gcId: testCourseId };
+    const courseFaq = await createGolfCourseFaq(reqBodyOne, adminToken);
+    testCourseFaqId = courseFaq.body.data.id;
 
-    const reqBodyTwo = { ...shopFixtures.zong, gcId: zongCourseId };
-    changeFormidableMockedValues(reqBodyTwo);
-    const zongCourseShop = await createGolfCourseShop(reqBodyTwo, adminToken);
-    zongCourseShopId = zongCourseShop.body.data.id;
+    const reqBodyTwo = { ...faqsFixtures.zong, gcId: zongCourseId };
+    const zongCourseFaq = await createGolfCourseFaq(reqBodyTwo, adminToken);
+    zongCourseFaqId = zongCourseFaq.body.data.id;
   });
 
-  it("should return a updated shops for the golf course", async () => {
-    changeFormidableMockedValues(shopFixtures.testUpdated);
+  it("should return a updated faqs for the golf course", async () => {
     const response = await makeApiRequest(
-      testCourseShopId,
-      shopFixtures.testUpdated,
+      testCourseFaqId,
+      faqsFixtures.testUpdated,
     );
-    const expectedResponse = {
-      createdAt: expect.any(String),
-      gcId: expect.any(Number),
-      id: expect.any(Number),
-      image: expect.any(String),
-      orgId: expect.any(Number),
-      updatedAt: expect.any(String),
-      ...shopFixtures.testUpdated,
-    };
+    const expectedResponse = [1]
     expect(response.body.data).toEqual(
       expect.objectContaining(expectedResponse),
     );
   });
 
-  it("should update shop for the same org customer", async () => {
-    changeFormidableMockedValues(shopFixtures.test);
+  it("should update faq for the same org customer", async () => {
     const response = await makeApiRequest(
-      testCourseShopId,
-      shopFixtures.testUpdated,
+      testCourseFaqId,
+      faqsFixtures.testUpdated,
       customerToken,
     );
-    const expectedResponse = {
-      createdAt: expect.any(String),
-      gcId: expect.any(Number),
-      id: expect.any(Number),
-      image: expect.any(String),
-      orgId: expect.any(Number),
-      updatedAt: expect.any(String),
-      ...shopFixtures.test,
-    };
+    const expectedResponse = [0]
     expect(response.body.data).toEqual(
       expect.objectContaining(expectedResponse),
     );
   });
 
   it("should return an error if the customer is of different org", async () => {
-    changeFormidableMockedValues(shopFixtures.test);
     const response = await makeApiRequest(
-      testCourseShopId,
-      shopFixtures.testUpdated,
+      testCourseFaqId,
+      faqsFixtures.testUpdated,
       zongCustomerToken,
     );
-    const expectedResponse = "Shop not Found";
+    const expectedResponse = "Faq not found";
 
     expect(response.body.data).toEqual(expectedResponse);
   });
