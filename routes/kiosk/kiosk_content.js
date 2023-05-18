@@ -8,6 +8,8 @@ const LessonController = require("../../controllers/kiosk/kiosk_content/lesson")
 const ContactLessonController = require("../../controllers/kiosk/kiosk_content/contact_lesson");
 const ShopsController = require("../../controllers/kiosk/kiosk_content/shops");
 const ContactMembershipController = require("../../controllers/kiosk/kiosk_content/contact_membership");
+const CareersController = require("../../controllers/kiosk/kiosk_content/careers");
+const FaqsController = require("../../controllers/kiosk/kiosk_content/faqs");
 
 exports.routesConfig = function (app, router) {
   const kioskContentBaseUrl = `${config.app.apiPath}kiosk-content`;
@@ -21,7 +23,7 @@ exports.routesConfig = function (app, router) {
     KioskContentController.getCourseInfo,
   ]);
 
-  router.post(kioskContentBaseUrl + "/feedback", [
+  router.post(kioskContentBaseUrl + "/feedbacks", [
     validation_middleware.onlyDeviceAccess,
     FeedbackController.create_feedback,
   ]);
@@ -54,5 +56,15 @@ exports.routesConfig = function (app, router) {
   router.post(kioskContentBaseUrl + "/memberships/contacts", [
     validation_middleware.onlyDeviceAccess,
     ContactMembershipController.create_contact_membership,
+  ])
+  
+  router.get(kioskContentBaseUrl + "/careers", [
+    validation_middleware.onlyDeviceAccess,
+    CareersController.getAll,
+  ]);
+
+  router.get(kioskContentBaseUrl + "/faqs", [
+    validation_middleware.onlyDeviceAccess,
+    FaqsController.getFaqs,
   ]);
 };
