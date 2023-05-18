@@ -4,51 +4,9 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     return Promise.all([
-      queryInterface
-        .addColumn("Contact_Careers", "gcId", {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          references: {
-            model: "Courses",
-            key: "id",
-          },
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE",
-        })
-        .then(() => {
-          queryInterface.removeColumn("Contact_Careers", "gc_id");
-        }),
-
-      queryInterface
-        .addColumn("Contact_Careers", "orgId", {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          references: {
-            model: "Organizations",
-            key: "id",
-          },
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE",
-        })
-        .then(() => {
-          queryInterface.removeColumn("Contact_Careers", "org_id");
-        }),
-
-      queryInterface
-        .addColumn("Contact_Careers", "careerId", {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          references: {
-            model: "Careers",
-            key: "id",
-          },
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE",
-        })
-        .then(() => {
-          queryInterface.removeColumn("Contact_Careers", "career_id");
-        }),
-
+      queryInterface.renameColumn("Contact_Careers", "gc_id", "gcId"),
+      queryInterface.renameColumn("Contact_Careers", "org_id", "orgId"),
+      queryInterface.renameColumn("Contact_Careers", "career_id", "careerId"),
       queryInterface.renameColumn("Contact_Careers", "user_phone", "phone"),
 
       queryInterface.renameColumn("Contact_Careers", "user_email", "email"),
@@ -63,41 +21,9 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return Promise.all([
-      queryInterface.addColumn("Contact_Careers", "gc_id", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Courses",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
-      queryInterface.removeColumn("Contact_Careers", "gcId"),
-
-      queryInterface.addColumn("Contact_Careers", "org_id", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Organizations",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
-      queryInterface.removeColumn("Contact_Careers", "orgId"),
-
-      queryInterface.addColumn("Contact_Careers", "career_id", {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Careers",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      }),
-      queryInterface.removeColumn("Contact_Careers", "careerId"),
+      queryInterface.renameColumn("Contact_Careers", "gcId", "gc_id"),
+      queryInterface.renameColumn("Contact_Careers", "orgId", "org_id"),
+      queryInterface.renameColumn("Contact_Careers", "careerId", "career_id"),
 
       queryInterface.addColumn("Contact_Careers", "contact_medium", {
         type: Sequelize.ENUM("phone", "email"),
