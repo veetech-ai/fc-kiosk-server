@@ -1813,7 +1813,10 @@ exports.getLinkedCourse = async (id) => {
       },
     ],
   });
-  if (!device || !device.Course)
+
+  if (!device || !device.Course) {
     throw new ServiceError("No Course linked with the device", 404);
+  }
+
   return device.Course;
 };

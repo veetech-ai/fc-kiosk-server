@@ -16,8 +16,14 @@ async function find(where, loggedInUserOrgId) {
   return await Career.findAll({ where });
 }
 
+async function findOne(where) {
+  const career = await Career.findOne({ where });
+  if (!career) throw new ServiceError("Career not found", 404);
+}
+
 module.exports = {
   create,
   deleteWhere,
   find,
+  findOne,
 };

@@ -23,7 +23,7 @@ exports.routesConfig = function (app, router) {
     KioskContentController.getCourseInfo,
   ]);
 
-  router.post(kioskContentBaseUrl + "/feedback", [
+  router.post(kioskContentBaseUrl + "/feedbacks", [
     validation_middleware.onlyDeviceAccess,
     FeedbackController.create_feedback,
   ]);

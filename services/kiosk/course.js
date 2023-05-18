@@ -79,7 +79,7 @@ async function getCourseById(courseId) {
       id: courseId,
     },
     attributes: {
-      exclude: ["org_id"],
+      exclude: ["org_id", "gc_id"],
     },
   });
 

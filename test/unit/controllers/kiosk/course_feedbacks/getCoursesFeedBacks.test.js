@@ -2,15 +2,28 @@ const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
+const { async } = require("crypto-random-string");
 
-describe("GET /api/v1/kiosk-content/screens", () => {
+describe("GET /api/v1/course-feedback/courses/${gcId}", () => {
   let adminToken;
   let courseId;
   let deviceId;
   let deviceToken;
   let testOrganizationId = 1;
+  let differentOrganizationCustomerToken;
   let productId = product.products.kiosk.id;
-
+  const FeedbackParams = [
+    {
+      phone: "12312312",
+      rating: 3,
+      contact_medium: "text",
+    },
+    {
+      phone: "12312312",
+      rating: 4,
+      contact_medium: "call",
+    },
+  ];
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -26,6 +39,9 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     };
 
     adminToken = await helper.get_token_for("admin");
+    differentOrganizationCustomerToken = await helper.get_token_for(
+      "zongCustomer",
+    );
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses",
       token: adminToken,
@@ -48,40 +64,48 @@ describe("GET /api/v1/kiosk-content/screens", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
+    const postMultipleFeedbacks = async () => {
+      for (const feedbackParam of FeedbackParams) {
+        await helper.post_request_with_authorization({
+          endpoint: `kiosk-content/feedbacks`,
+          token: deviceToken,
+          params: feedbackParam,
+        });
+      }
+    };
+    await postMultipleFeedbacks();
   });
-
-  const makeApiRequest = async (params, token = deviceToken) => {
-    return await helper.post_request_with_authorization({
-      endpoint: `kiosk-content/feedback`,
+  const makeApiRequest = async (gcId, token = adminToken) => {
+    return await helper.get_request_with_authorization({
+      endpoint: `course-feedback/courses/${gcId}`,
       token: token,
-      params: params,
     });
   };
 
   it("should successfully return registered feedback with valid input", async () => {
-    const reqBody = {
-      phoneNumber: "",
-      rating: 3,
-      contact_medium: "text",
+    const expectedObject = {
+      phone: FeedbackParams[0].phone,
+      rating: FeedbackParams[0].rating,
+      contact_medium: FeedbackParams[0].contact_medium,
     };
-    const response = await makeApiRequest(reqBody);
-    expect(response.body.data.rating).toEqual(reqBody.rating);
-    expect(response.body.data.contact_medium).toEqual(reqBody.contact_medium);
-    expect(response.body.data.phoneNumber).toEqual(undefined);
+
+    const response = await makeApiRequest(courseId);
+    expect(response.body.data).toEqual(
+      expect.arrayContaining([expect.objectContaining(expectedObject)]),
+    );
   });
+
   it("should return validation error invalid input", async () => {
-    const reqBody = {
-      phoneNumber: "12312312",
-      rating: 3,
-      contact_medium: 12,
-    };
-    const response = await makeApiRequest(reqBody);
-    expect(response.body.data.errors).toEqual({
-      contact_medium: ["The contact medium must be a string."],
-    });
+    const response = await makeApiRequest();
+
+    expect(response.body.data).toEqual("courseId must be a valid number");
   });
-  it("returns 403 status code Request", async () => {
-    const response = await makeApiRequest({}, adminToken);
-    expect(response.body.data).toEqual("Token invalid or expire");
+
+  it("should return error while the api is being accessed by the customer of different organization", async () => {
+    const response = await makeApiRequest(
+      courseId,
+      differentOrganizationCustomerToken,
+    );
+    expect(response.body.data).toEqual("You are not allowed");
   });
 });

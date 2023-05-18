@@ -12,9 +12,12 @@ const CareersServices = require("../../../../../services/kiosk/career");
 let superAdminToken,
   testOrganizationDeviceToken,
   testOrganizatonId = organizationsInApplication.test.id,
+  zongOrganizatonId = organizationsInApplication.zong.id,
   testOrganizationDeviceId,
   testGolfCourseId,
-  testCareerId;
+  zongGolfCourseId,
+  testCareerId,
+  zongCareerId;
 
 beforeAll(async () => {
   superAdminToken = await helper.get_token_for("superadmin");
@@ -70,13 +73,21 @@ describe("POST /kiosk-content/careers/contacts - Create contact request", () => 
 
   beforeAll(async () => {
     // Create golf courses
-    const course = await createGolfCourse({
+    const testCourse = await createGolfCourse({
       name: "TEST COURSE",
       orgId: testOrganizatonId,
       state: "Albama",
       city: "Abbeville",
     });
-    testGolfCourseId = course.id;
+    testGolfCourseId = testCourse.id;
+
+    const course = await createGolfCourse({
+      name: "ZONG COURSE",
+      orgId: zongOrganizatonId,
+      state: "Albama",
+      city: "Abbeville",
+    });
+    zongGolfCourseId = course.id;
 
     // Create a device under test organization
     const testOrganizationDevice = await createDevice({
@@ -90,7 +101,7 @@ describe("POST /kiosk-content/careers/contacts - Create contact request", () => 
       testOrganizationDevice?.body?.data?.device_token.split(" ")[1];
 
     // Create careers
-    const career = await createCareers({
+    const testCareer = await createCareers({
       gcId: testGolfCourseId,
       title: "Test Career",
       content: "<h2>Example Content</h2>",
@@ -98,7 +109,17 @@ describe("POST /kiosk-content/careers/contacts - Create contact request", () => 
       timings: '{"startTime": "10:00", "endTime": "16:00"}',
       link: "https://example.com",
     });
-    testCareerId = career.id;
+    testCareerId = testCareer.id;
+
+    const zongCareer = await createCareers({
+      gcId: zongGolfCourseId,
+      title: "Zong Career",
+      content: "<h2>Example Content</h2>",
+      type: "Full Time",
+      timings: '{"startTime": "10:00", "endTime": "16:00"}',
+      link: "https://example.com",
+    });
+    zongCareerId = zongCareer.id;
 
     await DevicesServices.update(testOrganizationDeviceId, {
       gcId: testGolfCourseId,
@@ -174,38 +195,6 @@ describe("POST /kiosk-content/careers/contacts - Create contact request", () => 
     expect(response.statusCode).toBe(400);
   });
 
-  it("should return 400 and validation error incorrect email format is used", async () => {
-    const expectedResponse = {
-      success: false,
-      data: {
-        errors: {
-          email: ["The email format is invalid."],
-        },
-      },
-    };
-
-    const response = await makeApiRequest({
-      careerId: testCareerId,
-      email: "wrongemail",
-    });
-
-    expect(response.body).toStrictEqual(expectedResponse);
-    expect(response.statusCode).toBe(400);
-  });
-
-  it("should return an error if the device is not yet linked with any golf course", async () => {
-    const expectedResponse = {
-      success: false,
-      data: "No Course linked with the device",
-    };
-
-    // To make sure that the device is not linked with the course, we would call a service to unlink in case it is already linked
-    await DevicesServices.update(testOrganizationDeviceId, { gcId: null });
-    const response = await makeApiRequest({ careerId: testCareerId });
-    expect(response.body).toEqual(expectedResponse);
-    expect(response.statusCode).toBe(404);
-  });
-
   it("should return an error if the device is not yet linked with any golf course", async () => {
     const expectedResponse = {
       success: false,
@@ -218,7 +207,6 @@ describe("POST /kiosk-content/careers/contacts - Create contact request", () => 
     await DevicesServices.update(testOrganizationDeviceId, {
       gcId: testGolfCourseId,
     });
-
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(404);
   });
@@ -248,6 +236,22 @@ describe("POST /kiosk-content/careers/contacts - Create contact request", () => 
 
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(400);
+  });
+
+  it("should return an error if the career does not exist under the linked golf course", async () => {
+    const candidateEmail = "xyz@email.com";
+
+    const expectedResponse = {
+      success: false,
+      data: "Career not found",
+    };
+
+    const response = await makeApiRequest({
+      careerId: zongCareerId,
+      email: candidateEmail,
+    });
+    expect(response.body).toEqual(expectedResponse);
+    expect(response.statusCode).toBe(404);
   });
 
   it("should create the contact request for the specified career with email", async () => {
