@@ -18,7 +18,7 @@ exports.create_feedback = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-content/feedback:
+   * /kiosk-content/feedbacks:
    *   post:
    *     security:
    *       - auth: []
@@ -70,10 +70,9 @@ exports.create_feedback = async (req, res) => {
       phone,
       rating,
       contact_medium,
-      gc_id: courseId,
+      gcId: courseId,
       orgId,
     };
-
     const feedback = await feedbackService.createFeedback(reqBody);
     return apiResponse.success(res, req, feedback);
   } catch (error) {
