@@ -8,6 +8,7 @@ const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
+const FeedbackService = require("../../../services/kiosk/feedback");
 
 /**
  * @swagger
@@ -342,6 +343,62 @@ exports.create_course_info = async (req, res) => {
       courseId,
     );
     return apiResponse.success(res, req, updatedCourse);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+exports.getCourseInfo = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /kiosk-courses/{courseId}/course-info:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get course info for specific course.
+   *     tags: [Kiosk-Courses]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: courseId
+   *         description: Course ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const courseId = Number(req.params.courseId);
+    if (!courseId) {
+      return apiResponse.fail(res, "courseId must be a valid number");
+    }
+    const course = await courseService.getCourseById(courseId);
+
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
+      return apiResponse.fail(res, "", 403);
+    }
+    const averageRating = await FeedbackService.getAverageRating(courseId);
+
+    course.setDataValue("feedback", averageRating);
+
+    if (course.logo) {
+      const logo = upload_file.getFileURL(course.logo);
+      course.setDataValue("logo", logo);
+    }
+    if (course.images) {
+      const images = upload_file.getFileURL(course.images);
+      course.setDataValue("images", images);
+    }
+    return apiResponse.success(res, req, course);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
