@@ -1790,7 +1790,33 @@ exports.getCourse = async (deviceId) => {
 };
 
 exports.findOne = async (where) => {
-  const device = await Device.findOne({ where });
+  const device = await Device.findOne({
+    where,
+    include: [
+      {
+        as: "Course",
+        model: models.Course,
+      },
+    ],
+  });
   if (!device) throw new ServiceError("Device not found", 404);
   return device;
+};
+
+exports.getLinkedCourse = async (id) => {
+  const device = await Device.findOne({
+    where: { id },
+    include: [
+      {
+        as: "Course",
+        model: models.Course,
+      },
+    ],
+  });
+
+  if (!device || !device.Course) {
+    throw new ServiceError("No Course linked with the device", 404);
+  }
+
+  return device.Course;
 };
