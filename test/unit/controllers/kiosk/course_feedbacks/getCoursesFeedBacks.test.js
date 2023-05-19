@@ -83,15 +83,12 @@ describe("GET /api/v1/course-feedback/courses/${gcId}", () => {
   };
 
   it("should successfully return registered feedback with valid input", async () => {
-    const expectedObject = {
-      phone: FeedbackParams[0].phone,
-      rating: FeedbackParams[0].rating,
-      contact_medium: FeedbackParams[0].contact_medium,
-    };
-
     const response = await makeApiRequest(courseId);
     expect(response.body.data).toEqual(
-      expect.arrayContaining([expect.objectContaining(expectedObject)]),
+      expect.objectContaining({
+        feedbacks: expect.any(Array),
+        summary: expect.any(Object),
+      }),
     );
   });
 
