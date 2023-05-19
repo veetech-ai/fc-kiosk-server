@@ -7,6 +7,12 @@ async function createContactMembership(reqBody) {
   return contactMembership;
 }
 
+async function getContactMembership(membershipId) {
+  const contactMembership = await ContactMembership.findAll({where:{mId:membershipId}});
+  return contactMembership;
+}
+
 module.exports = {
   createContactMembership,
+  getContactMembership
 };
