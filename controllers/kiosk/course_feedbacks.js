@@ -51,8 +51,7 @@ exports.getCourseFeedBacks = async (req, res) => {
       return apiResponse.fail(res, "", 403);
     }
     const courseFeedbacks = await FeedbackService.getCourseFeedBacks(courseId);
-    if (!courseFeedbacks.length)
-      return apiResponse.success(res, req, courseFeedbacks);
+
     const courseFeedbacksDistribution =
       await FeedbackService.getFeedBackDetails(courseId);
     const result = {
