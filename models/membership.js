@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Membership.belongsTo(models.Course, { foreignKey: "gc_id" });
     Membership.belongsTo(models.Organization, { foreignKey: "org_id" });
-    Membership.hasMany(models.ContactMembership, {
+    Membership.hasMany(models.Contact_Membership, {
       as: "ContactMemberships",
       foreignKey: "m_id",
     });
