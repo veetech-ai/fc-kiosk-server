@@ -62,10 +62,61 @@ async function updateFeedBackIsAddressable(feedbackId, isAddressedBoolean) {
   return affectedRows;
 }
 
+async function getFeedBackDetails(courseId) {
+  const feedbacksDistribution = await Feedback.findAll({
+    where: { gcId: courseId },
+    attributes: [
+      [
+        Sequelize.fn(
+          "count",
+          Sequelize.literal(`CASE WHEN rating = 1 THEN 1 END`),
+        ),
+        "One",
+      ],
+      [
+        Sequelize.fn(
+          "count",
+          Sequelize.literal(`CASE WHEN rating = 2 THEN 1 END`),
+        ),
+        "two",
+      ],
+      [
+        Sequelize.fn(
+          "count",
+          Sequelize.literal(`CASE WHEN rating = 3 THEN 1 END`),
+        ),
+        "three",
+      ],
+      [
+        Sequelize.fn(
+          "count",
+          Sequelize.literal(`CASE WHEN rating = 4 THEN 1 END`),
+        ),
+        "four",
+      ],
+      [
+        Sequelize.fn(
+          "count",
+          Sequelize.literal(`CASE WHEN rating = 5 THEN 1 END`),
+        ),
+        "five",
+      ],
+    ],
+    group: ["gc_id"],
+  });
+  const averageAndTotalRatings = await getAverageRating(courseId);
+  const result = {
+    ...feedbacksDistribution[0].dataValues,
+    ...averageAndTotalRatings,
+  };
+  return result;
+}
+
 module.exports = {
   createFeedback,
   getCourseFeedBacks,
   getAverageRating,
   getFeedBackById,
   updateFeedBackIsAddressable,
+  getFeedBackDetails,
 };
