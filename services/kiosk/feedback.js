@@ -71,7 +71,7 @@ async function getFeedBackDetails(courseId) {
           "count",
           Sequelize.literal(`CASE WHEN rating = 1 THEN 1 END`),
         ),
-        "One",
+        "one",
       ],
       [
         Sequelize.fn(
