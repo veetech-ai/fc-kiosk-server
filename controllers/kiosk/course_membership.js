@@ -103,13 +103,15 @@ exports.get_membership = async (req, res) => {
       "super",
       "admin",
     ]).success;
-    console.log("id :", req.params.id);
-    const id = Number(req.params.id);
 
-    if (!id) {
-      return apiResponse.fail(res, "id must be a valid number");
+    const courseId = Number(req.params.id);
+
+    if (!courseId) {
+      return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const membership = await membershipService.getMembershipByCourseId(id);
+    const membership = await membershipService.getMembershipByCourseId(
+      courseId,
+    );
 
     const isSameOrganizationResource = loggedInUserOrg === membership.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {

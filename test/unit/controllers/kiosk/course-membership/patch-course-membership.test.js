@@ -59,7 +59,7 @@ describe("PATCH /api/v1/course-membership/{id}", () => {
     expect(response.body.data).toBe(0);
   });
 
-  it("should successfully update with valid input while the api is accessed by customer of same organization", async () => {
+  it("should throw a validation error if reqBody is invalid", async () => {
     const reqBody = {
       link: "google",
     };

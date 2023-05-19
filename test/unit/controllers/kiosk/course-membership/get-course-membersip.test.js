@@ -45,14 +45,13 @@ describe("GET /api/v1/course-membership/courses/{id}", () => {
     });
   };
   const makeApiRequest = async (id, token = adminToken) => {
-    console.log("incoming id :", id);
     return await helper.get_request_with_authorization({
       endpoint: `course-membership/courses/${id}`,
       token: token,
     });
   };
 
-  it("should successfully list the memberships of the coure", async () => {
+  it("should successfully list the memberships of the course", async () => {
     const expected = {
       gcId: courseId,
       link: null,
@@ -60,7 +59,7 @@ describe("GET /api/v1/course-membership/courses/{id}", () => {
     const response = await makeApiRequest(courseId);
     expect(response.body.data).toMatchObject(expected);
   });
-  it("should successfully list the memberships of the coure after updation of link", async () => {
+  it("should successfully list the memberships of the course after updation of link", async () => {
     reqBody = {
       link: "https://github.com",
     };
