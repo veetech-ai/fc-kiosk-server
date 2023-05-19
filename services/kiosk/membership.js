@@ -22,7 +22,9 @@ async function updateMembershipLink(membershipId, reqBody) {
 
 async function getMembershipById(membershipId) {
   const membership = await Membership.findOne({ where: { id: membershipId } });
-
+  if (membership) {
+    throw new ServiceError("Not found", 404);
+  }
   return membership;
 }
 

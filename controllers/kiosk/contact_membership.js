@@ -5,7 +5,9 @@ const upload_file = require("../../common/upload");
 const courseLesson = require("../../services/kiosk/lessons");
 const courseService = require("../../services/kiosk/course");
 const contactMembershipService = require("../../services/kiosk/contact_membership");
+const membershipService = require("../../services/kiosk/membership");
 const helper = require("../../common/helper");
+const ServiceError = require("../../utils/serviceError");
 
 /**
  * @swagger
@@ -46,40 +48,40 @@ exports.getMembershipContacts = async (req, res) => {
       "super",
       "admin",
     ]).success;
-    const lesson = await courseLesson.findLessonById(lessonId);
-    const orgId = lesson.orgId;
+    const membership = await membershipService.getMembershipById(membershipId);
+    const orgId = membership.orgId;
     const isSameOrganizationResource = loggedInUserOrg === orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
-    const contactCoaches =
-      await contactMembershipService.getContactCoachesByLessonId(lessonId);
-    return apiResponse.success(res, req, contactCoaches);
+    const contactMembership =
+      await contactMembershipService.getContactMembership(membershipId);
+    return apiResponse.success(res, req, contactMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-exports.updateContactLesson = async (req, res) => {
+exports.updateContactMembership = async (req, res) => {
   /**
    * @swagger
    *
-   * /course-lesson/contacts/{contactCoachId}:
+   * /course-membership/contacts/{id}:
    *   patch:
    *     security:
    *       - auth: []
    *     description: update wether the contact of lesson is addressable.
-   *     tags: [Courses-Lesson]
+   *     tags: [Courses-Membership]
    *     consumes:
    *       - application/x-www-form-urlencoded
    *     parameters:
-   *       - name: contactCoachId
-   *         description: id of contact coach
+   *       - name: id
+   *         description: id of contact membership
    *         in: path
    *         required: true
    *         type: string
    *       - name: isAddressed
    *         type: boolean
-   *         description: is the contact of coach addressed or not
+   *         description: is the contact of membership addressed or not
    *         in: formData
    *         required: false
    *     produces:
@@ -98,9 +100,12 @@ exports.updateContactLesson = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const contactCoachId = Number(req.params.contactCoachId);
-    if (!contactCoachId) {
-      return apiResponse.fail(res, "contactCoachId must be a valid number");
+    const contactMembershipId = Number(req.params.id);
+    if (!contactMembershipId) {
+      return apiResponse.fail(
+        res,
+        "contactMembershipId must be a valid number",
+      );
     }
 
     const loggedInUserOrg = req.user?.orgId;
@@ -108,22 +113,32 @@ exports.updateContactLesson = async (req, res) => {
       "super",
       "admin",
     ]).success;
-    const contactCoach = await contactCoachService.getContactCoachbyId(
-      contactCoachId,
-    );
-    const orgId = contactCoach.orgId;
+    const contactMembership =
+      await contactMembershipService.getContactMembershipById(
+        contactMembershipId,
+      );
+    const orgId = contactMembership.orgId;
     const isSameOrganizationResource = loggedInUserOrg === orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
 
-    const isAddressedBoolean = JSON.parse(req.body.isAddressed);
-    const updatedCoach =
-      await contactCoachService.updateContactCoachIsAddressable(
-        contactCoachId,
+    let isAddressedBoolean = req.body.isAddressed;
+    const isStringBoolean =
+      isAddressedBoolean === "true" ||
+      isAddressedBoolean === "false" ||
+      typeof isAddressedBoolean === "boolean";
+    if (!isStringBoolean)
+      throw new ServiceError("isAddressed must be a boolean", 400);
+    isAddressedBoolean = JSON.parse(req.body.isAddressed);
+
+    const updatedMemberShipContact =
+      await contactMembershipService.updateContactMemeberShipIsAddressable(
+        contactMembershipId,
         isAddressedBoolean,
       );
-    return apiResponse.success(res, req, updatedCoach);
+
+    return apiResponse.success(res, req, updatedMemberShipContact);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
