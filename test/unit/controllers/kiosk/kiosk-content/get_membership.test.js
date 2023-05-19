@@ -59,7 +59,7 @@ describe("GET /api/v1/kiosk-content/memberships", () => {
 
   it("should successfully return membership if device linked golf course has any", async () => {
     const response = await makeApiRequest();
-    console.log("response :", response.body.data);
+
     expect(response.body.data.gcId).toEqual(courseId);
   });
 

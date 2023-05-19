@@ -64,7 +64,7 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
     });
   };
 
-  it("should successfully return registered feedback with valid input", async () => {
+  it("should throw validation error for invalid reqBody", async () => {
     const reqBody = {
       userPhone: "43423423",
       contact_medium: "text",
@@ -74,7 +74,7 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
       membershipId: ["The membershipId field is required."],
     });
   });
-  it("should successfully return registered feedback with valid input", async () => {
+  it("should successfully create a contact request for membership", async () => {
     const reqBody = {
       membershipId: membershipId,
       userPhone: "43423423",

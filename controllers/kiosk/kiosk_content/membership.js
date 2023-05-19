@@ -3,7 +3,6 @@ const Validator = require("validatorjs");
 // Common Imports
 const apiResponse = require("../../../common/api.response");
 const deviceService = require("../../../services/device");
-const courseLesson = require("../../../services/kiosk/lessons");
 const membershipService = require("../../../services/kiosk/membership");
 
 /**

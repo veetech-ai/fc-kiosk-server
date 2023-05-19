@@ -1803,14 +1803,6 @@ exports.findOne = async (where) => {
   return device;
 };
 
-exports.unlinkDevice = async (deviceId) => {
-  const [affectedRows] = await Device.update(
-    { where: { id: deviceId } },
-    { gcId: null },
-  );
-  return affectedRows;
-};
-
 exports.getLinkedCourse = async (id) => {
   const device = await Device.findOne({
     where: { id },
