@@ -87,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Course.hasMany(models.Career, {
       as: "Careers",
-      foreignKey: "gc_id",
+      foreignKey: "gcId",
     });
     Course.hasMany(models.Ad, {
       as: "Ads",
@@ -95,7 +95,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Course.hasMany(models.Contact_Career, {
       as: "Contact_Careers",
-      foreignKey: "gc_id",
+      foreignKey: "gcId",
     });
     Course.hasMany(models.Contact_Coach, {
       as: "ContactCoaches",
