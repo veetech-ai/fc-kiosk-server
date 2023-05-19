@@ -7,6 +7,8 @@ const apiResponse = require("../../../common/api.response");
 const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
 const contactMembershipService = require("../../../services/kiosk/contact_membership");
+const membershipService = require("../../../services/kiosk/membership");
+const ServiceError = require("../../../utils/serviceError");
 
 /**
  * @swagger
@@ -67,11 +69,16 @@ exports.create_contact_membership = async (req, res) => {
     }
 
     const { membershipId, phone, email, contact_medium } = req.body;
-
+    const membership = await membershipService.getMembershipById(membershipId);
     const deviceId = req.device.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const course = await courseService.getCourseById(courseId);
     const orgId = course.orgId;
+
+    if (membership.gcId !== courseId) {
+      throw new ServiceError("Not found", 404);
+    }
+
     const reqBody = {
       mId: membershipId,
       userPhone: phone,
