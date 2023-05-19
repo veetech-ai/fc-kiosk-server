@@ -83,12 +83,13 @@ describe("GET /api/v1/course-feedback/courses/${gcId}", () => {
   };
 
   it("should successfully return registered feedback with valid input", async () => {
- 
     const response = await makeApiRequest(courseId);
-    expect(response.body.data).toEqual(expect.objectContaining({
-      feedbacks: expect.any(Array),
-      summary: expect.any(Object)
-    }))
+    expect(response.body.data).toEqual(
+      expect.objectContaining({
+        feedbacks: expect.any(Array),
+        summary: expect.any(Object),
+      }),
+    );
   });
 
   it("should return validation error invalid input", async () => {
