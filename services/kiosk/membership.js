@@ -38,7 +38,7 @@ async function updateMembershipLink(membershipId, reqBody) {
 
 module.exports = {
   createMembership,
-  getMembershipByCourseId,
   updateMembershipLink,
+  getMembershipByCourseId,
   getMembershipById,
 };
