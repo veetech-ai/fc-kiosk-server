@@ -102,7 +102,7 @@ exports.getCareersByCourseId = async (req, res) => {
   /**
    * @swagger
    *
-   * /careers/courses/courseId:
+   * /careers/courses/{courseId}:
    *   get:
    *     security:
    *      - auth: []
