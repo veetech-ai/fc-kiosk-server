@@ -36,7 +36,6 @@ async function updateMembershipLink(membershipId, reqBody) {
   return affectedRows;
 }
 
-
 module.exports = {
   createMembership,
   getMembershipByCourseId,

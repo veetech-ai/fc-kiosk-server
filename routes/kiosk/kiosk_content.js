@@ -63,8 +63,8 @@ exports.routesConfig = function (app, router) {
   router.get(kioskContentBaseUrl + "/memberships", [
     validation_middleware.onlyDeviceAccess,
     MembershipController.getCourseMembership,
-  ])
-  
+  ]);
+
   router.get(kioskContentBaseUrl + "/careers", [
     validation_middleware.onlyDeviceAccess,
     CareersController.getAll,

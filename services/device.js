@@ -1809,8 +1809,8 @@ exports.unlinkDevice = async (deviceId) => {
     { gcId: null },
   );
   return affectedRows;
-  }
-  
+};
+
 exports.getLinkedCourse = async (id) => {
   const device = await Device.findOne({
     where: { id },
