@@ -11,7 +11,7 @@ describe("GET /api/v1/course-membership/courses/{id}", () => {
   let testOrganizationId = 1;
   let customerToken;
   let differentOrganizationCustomerToken;
-  let reqBody
+  let reqBody;
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -37,15 +37,15 @@ describe("GET /api/v1/course-membership/courses/{id}", () => {
     );
     membershipId = membership.id;
   });
-  const makePatchApiRequest=async(membershipId,reqBody)=>{
-     await helper.patch_request_with_authorization({
+  const makePatchApiRequest = async (membershipId, reqBody) => {
+    await helper.patch_request_with_authorization({
       endpoint: `course-membership/${membershipId}`,
       token: adminToken,
       params: reqBody,
     });
-  }
-  const makeApiRequest = async (id,token = adminToken) => {
-    console.log("incoming id :",id);
+  };
+  const makeApiRequest = async (id, token = adminToken) => {
+    console.log("incoming id :", id);
     return await helper.get_request_with_authorization({
       endpoint: `course-membership/courses/${id}`,
       token: token,
@@ -53,44 +53,45 @@ describe("GET /api/v1/course-membership/courses/{id}", () => {
   };
 
   it("should successfully list the memberships of the coure", async () => {
-    const expected={
-      gcId:courseId,
-      link:null
-    }
+    const expected = {
+      gcId: courseId,
+      link: null,
+    };
     const response = await makeApiRequest(courseId);
     expect(response.body.data).toMatchObject(expected);
   });
   it("should successfully list the memberships of the coure after updation of link", async () => {
-    reqBody={
-        link: "https://github.com",
-    }
-    await makePatchApiRequest(membershipId,reqBody)
-    const expected={
-      gcId:courseId,
-      link:reqBody.link
-    }
+    reqBody = {
+      link: "https://github.com",
+    };
+    await makePatchApiRequest(membershipId, reqBody);
+    const expected = {
+      gcId: courseId,
+      link: reqBody.link,
+    };
     const response = await makeApiRequest(courseId);
     expect(response.body.data).toMatchObject(expected);
   });
 
   it("should successfully get the membership  if api is accessed by user with same organization", async () => {
-    const expected={
-      gcId:courseId,
-      link:reqBody.link
-    }
-    const response = await makeApiRequest(courseId,customerToken);
+    const expected = {
+      gcId: courseId,
+      link: reqBody.link,
+    };
+    const response = await makeApiRequest(courseId, customerToken);
     expect(response.body.data).toMatchObject(expected);
   });
 
   it("should return error if courseId is invalid", async () => {
-  const invalidId=99
+    const invalidId = 99;
     const response = await makeApiRequest(invalidId);
     expect(response.body.data).toBe("Not found");
   });
 
   it("should return error if api is accessed by user with not same organization", async () => {
     const response = await makeApiRequest(
-      courseId,differentOrganizationCustomerToken
+      courseId,
+      differentOrganizationCustomerToken,
     );
     expect(response.body.data).toBe("You are not allowed");
   });

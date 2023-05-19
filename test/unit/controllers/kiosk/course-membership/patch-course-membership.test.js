@@ -64,7 +64,9 @@ describe("PATCH /api/v1/course-membership/{id}", () => {
       link: "google",
     };
     const response = await makeApiRequest(membershipId, reqBody, customerToken);
-    expect(response.body.data).toBe("Validation error: Validation isUrl on link failed");
+    expect(response.body.data).toBe(
+      "Validation error: Validation isUrl on link failed",
+    );
   });
 
   it("should return error if api is accessed by user with not same organization", async () => {

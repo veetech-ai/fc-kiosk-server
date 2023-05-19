@@ -103,9 +103,9 @@ exports.get_membership = async (req, res) => {
       "super",
       "admin",
     ]).success;
-    console.log("id :",req.params.id);
+    console.log("id :", req.params.id);
     const id = Number(req.params.id);
-   
+
     if (!id) {
       return apiResponse.fail(res, "id must be a valid number");
     }
@@ -120,4 +120,3 @@ exports.get_membership = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-

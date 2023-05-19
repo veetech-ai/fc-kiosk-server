@@ -29,7 +29,7 @@ async function getMembershipById(membershipId) {
 async function getMembershipByCourseId(courseId) {
   const membership = await Membership.findOne({
     where: { gcId: courseId },
-    attributes:{exclude:['org_id','gc_id']}
+    attributes: { exclude: ["org_id", "gc_id"] },
   });
   if (!membership) throw new ServiceError("Not found", 404);
   return membership;
