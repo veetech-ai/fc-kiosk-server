@@ -82,21 +82,19 @@ exports.get_membership = async (req, res) => {
    *   get:
    *     security:
    *       - auth: []
-   *     description: get membership info.
+   *     description: Get membership for Course.
    *     tags: [Courses-Membership]
-   *     consumes:
-   *       - application/x-www-form-urlencoded
-   *     parameters:
-   *       - name: id
-   *         description: id of membership
-   *         in: path
-   *         required: true
-   *         type: integer
    *     produces:
    *       - application/json
+   *     parameters:
+   *       - name: id
+   *         description: id of course
+   *         in: path
+   *         required: true
+   *         type: string
    *     responses:
    *       200:
-   *         description: success
+   *         description: Success
    */
 
   try {
@@ -105,7 +103,9 @@ exports.get_membership = async (req, res) => {
       "super",
       "admin",
     ]).success;
+    console.log("id :",req.params.id);
     const id = Number(req.params.id);
+   
     if (!id) {
       return apiResponse.fail(res, "id must be a valid number");
     }

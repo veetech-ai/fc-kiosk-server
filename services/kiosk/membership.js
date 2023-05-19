@@ -22,13 +22,14 @@ async function updateMembershipLink(membershipId, reqBody) {
 
 async function getMembershipById(membershipId) {
   const membership = await Membership.findOne({ where: { id: membershipId } });
-
+  if (!membership) throw new ServiceError("Not found", 404);
   return membership;
 }
 
 async function getMembershipByCourseId(courseId) {
   const membership = await Membership.findOne({
     where: { gcId: courseId },
+    attributes:{exclude:['org_id','gc_id']}
   });
   if (!membership) throw new ServiceError("Not found", 404);
   return membership;
