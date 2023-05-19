@@ -47,10 +47,10 @@ exports.isValidDeviceCode = async (req, res, next) => {
 
     // refresh the token so it cannot be used again
     await deviceOnboardingCodeServices.refreshDeviceOnboardingCode();
-    
+
     const mqttPayload = {
-      action: "refresh"
-    }
+      action: "refresh",
+    };
 
     helper.mqtt_publish_message(`d/onboarding-code`, mqttPayload, false);
 

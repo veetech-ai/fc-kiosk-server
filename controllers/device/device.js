@@ -3864,4 +3864,3 @@ exports.link_device_to_course = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-
