@@ -1,9 +1,10 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  const ContactMembership = sequelize.define(
-    "ContactMembership",
+  const Contact_Membership = sequelize.define(
+    "Contact_Membership",
     {
       gcId: {
+        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -63,11 +64,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  ContactMembership.associate = function (models) {
+  Contact_Membership.associate = function (models) {
     // associations can be defined here
-    ContactMembership.belongsTo(models.Organization, { foreignKey: "org_id" });
-    ContactMembership.belongsTo(models.Course, { foreignKey: "gc_id" });
-    ContactMembership.belongsTo(models.Membership, { foreignKey: "m_id" });
+    Contact_Membership.belongsTo(models.Organization, { foreignKey: "org_id" });
+    Contact_Membership.belongsTo(models.Course, { foreignKey: "gc_id" });
+    Contact_Membership.belongsTo(models.Membership, { foreignKey: "m_id" });
   };
-  return ContactMembership;
+  return Contact_Membership;
 };
