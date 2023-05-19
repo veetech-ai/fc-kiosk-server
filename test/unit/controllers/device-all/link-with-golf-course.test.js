@@ -10,8 +10,8 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
   let testOrganizationId = 1;
   let courseId;
   let deviceId;
-  let invalidCourseId = 9;
-  let invalidDeviceId = 9;
+  let invalidCourseId = 90000000;
+  let invalidDeviceId = 90000000;
 
   beforeAll(async () => {
     // Create some courses for the test organization
