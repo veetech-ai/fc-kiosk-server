@@ -81,6 +81,7 @@ const options = {
     "./controllers/kiosk/course_feedbacks.js",
     "./controllers/kiosk/career.js",
     "./controllers/kiosk/kiosk_content/careers.js",
+    "./controllers/kiosk/kiosk_content/contact-careers.js",
   ],
 };
 
