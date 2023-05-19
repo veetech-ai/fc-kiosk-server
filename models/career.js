@@ -52,14 +52,7 @@ module.exports = (sequelize, DataTypes) => {
           }
         },
         get() {
-          try {
-            return JSON.parse(this.getDataValue("timings"));
-          } catch (error) {
-            throw new ServiceError(
-              "Get: The timings field format is invalid",
-              400,
-            );
-          }
+          return JSON.parse(this.getDataValue("timings") || '{}');
         },
       },
       link: {

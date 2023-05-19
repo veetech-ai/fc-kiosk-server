@@ -151,7 +151,7 @@ describe("POST /careers", () => {
     const requestBodyClone = { ...requestBody, gcId: testGolfCourseId };
     const response = await makeApiRequest(requestBodyClone, testCustomerToken);
 
-    await CareersServices.deleteWhere({ id: response.body.data.id });
+    await CareersServices.deleteCareersWhere({ id: response.body.data.id });
 
     expect(response.body.data).toEqual(
       expect.objectContaining(expectedResponse),
@@ -184,7 +184,7 @@ describe("POST /careers", () => {
     };
     const requestBodyClone = { ...requestBody, gcId: zongGolfCourseId };
     const response = await makeApiRequest(requestBodyClone, superAdminToken);
-    await CareersServices.deleteWhere({ id: response.body.data.id });
+    await CareersServices.deleteCareersWhere({ id: response.body.data.id });
 
     expect(response.body.data).toEqual(
       expect.objectContaining(expectedResponse),

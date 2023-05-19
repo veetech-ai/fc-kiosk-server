@@ -31,7 +31,7 @@ exports.getAll = async (req, res) => {
 
     const linkedCourse = await DevicesServices.getLinkedCourse(deviceId);
 
-    const careers = await CareersServices.find({ gcId: linkedCourse.id });
+    const careers = await CareersServices.findCareers({ gcId: linkedCourse.id });
 
     return apiResponse.success(res, req, careers);
   } catch (error) {

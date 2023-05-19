@@ -7,7 +7,7 @@ const randtoken = require("rand-token");
 const axios = require("axios");
 const moment = require("moment");
 const Ajv = require("ajv");
-const { cloneDeep, pickBy } = require("lodash");
+const { cloneDeep, pickBy, pick } = require("lodash");
 
 // Logger Imports
 const { logger } = require("../logger");
@@ -536,7 +536,7 @@ exports.set_debugv0 = (payload, source = 1) => {
                         resets: metadata[key].resetC,
                         runt: metadata[key].RunT,
                       })
-                        .then(() => {})
+                        .then(() => { })
                         .catch((err) => {
                           logger.error(err);
                         });
@@ -551,7 +551,7 @@ exports.set_debugv0 = (payload, source = 1) => {
                         fv: metadata.fv,
                         resets: metadata[key],
                       })
-                        .then(() => {})
+                        .then(() => { })
                         .catch((err) => {
                           logger.error(err);
                         });
@@ -582,14 +582,14 @@ exports.set_debugv0 = (payload, source = 1) => {
 
               fv_reports.type = type;
               FvReportsModel.setv0(fv_reports)
-                .then(() => {})
-                .catch(() => {});
+                .then(() => { })
+                .catch(() => { });
               DeviceLogsCountsModel.setv0({
                 device_id: metadata.did,
                 type: type,
               })
-                .then(() => {})
-                .catch(() => {});
+                .then(() => { })
+                .catch(() => { });
               DeviceMetadataModel.bulk_create(params)
                 .then(() => {
                   const device_slack_allow = !(
@@ -600,8 +600,8 @@ exports.set_debugv0 = (payload, source = 1) => {
                   if (source == 1 && type == 1 && device_slack_allow) {
                     self
                       .send_slack(log, config.slack.deviceToChannel)
-                      .then(() => {})
-                      .catch(() => {});
+                      .then(() => { })
+                      .catch(() => { });
                   }
                   resolve(log);
                 })
@@ -651,14 +651,14 @@ exports.set_debugvp = (payload, source = 1) => {
                 .replace("[fv]", metadata.fv);
 
               FvReportsModel.setvp({ fv: metadata.fv, type: priority })
-                .then((result) => {})
-                .catch(() => {});
+                .then((result) => { })
+                .catch(() => { });
               DeviceLogsCountsModel.setvp({
                 device_id: metadata.did,
                 type: priority,
               })
-                .then((result) => {})
-                .catch(() => {});
+                .then((result) => { })
+                .catch(() => { });
               DeviceVPLogsModel.bulk_create([
                 {
                   device_id: metadata.did,
@@ -678,8 +678,8 @@ exports.set_debugvp = (payload, source = 1) => {
                   if (priority == 1 && device_slack_allow) {
                     self
                       .send_slack(log + " (ec)", config.slack.channelPUART)
-                      .then((slack_res) => {})
-                      .catch(() => {});
+                      .then((slack_res) => { })
+                      .catch(() => { });
                   }
                   resolve(log);
                 })
@@ -712,14 +712,14 @@ exports.set_debugvp = (payload, source = 1) => {
                   }
 
                   FvReportsModel.setvp({ fv: metadata.fv, type: priority })
-                    .then((result) => {})
-                    .catch(() => {});
+                    .then((result) => { })
+                    .catch(() => { });
                   DeviceLogsCountsModel.setvp({
                     device_id: metadata.did,
                     type: priority,
                   })
-                    .then((result) => {})
-                    .catch(() => {});
+                    .then((result) => { })
+                    .catch(() => { });
                   params.push({
                     device_id: metadata.did,
                     fv: metadata.fv,
@@ -739,8 +739,8 @@ exports.set_debugvp = (payload, source = 1) => {
                         log + ` (${key_label})`,
                         config.slack.channelPUART,
                       )
-                      .then((slack_res) => {})
-                      .catch(() => {});
+                      .then((slack_res) => { })
+                      .catch(() => { });
                   }
                 }
               }
@@ -818,8 +818,8 @@ exports.set_device_last_seen = (data) => {
       });
 
       DeviceModel.update_where({ fi: fi }, { id: data.device_id })
-        .then((result) => {})
-        .catch(() => {});
+        .then((result) => { })
+        .catch(() => { });
     }
   });
 };
@@ -1502,3 +1502,15 @@ exports.createDeviceJwtToken = (payload) => {
     throw new ServiceError("No Token Created", 500);
   }
 };
+
+exports.validateObject = (objectToBeValidated, allowedFields) => {
+  const fieldsToBeValidated = Object.keys(objectToBeValidated)
+  const inValidFields = fieldsToBeValidated.filter(f => !allowedFields.includes(f))
+  if (inValidFields.length && inValidFields.length == fieldsToBeValidated.length) {
+    // whole object is invalid
+    throw new ServiceError("Can not update the requested item/s", 400)
+  }
+
+  
+  return pick(objectToBeValidated, allowedFields)
+}

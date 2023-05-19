@@ -25,7 +25,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await CoursesServices.deleteWhere({ id: testGolfCourseId });
-  await CareersServices.deleteWhere({ id: testCareerId });
+  await CareersServices.deleteCareersWhere({ id: testCareerId });
 });
 
 describe("POST /kiosk-content/careers/contacts - Create contact request", () => {

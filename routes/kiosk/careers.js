@@ -9,4 +9,10 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CareersController.create,
   ]);
+
+  router.patch(group + "/:careerId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CareersController.patch,
+  ]);
 };
