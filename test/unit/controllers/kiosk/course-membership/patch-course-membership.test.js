@@ -59,12 +59,14 @@ describe("PATCH /api/v1/course-membership/{id}", () => {
     expect(response.body.data).toBe(0);
   });
 
-  it("should successfully update with valid input while the api is accessed by customer of same organization", async () => {
+  it("should throw a validation error if reqBody is invalid", async () => {
     const reqBody = {
-      link: "https://github123.com",
+      link: "google",
     };
     const response = await makeApiRequest(membershipId, reqBody, customerToken);
-    expect(response.body.data).toBe(1);
+    expect(response.body.data).toBe(
+      "Validation error: Validation isUrl on link failed",
+    );
   });
 
   it("should return error if api is accessed by user with not same organization", async () => {
