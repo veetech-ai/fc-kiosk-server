@@ -118,7 +118,7 @@ describe("GET /api/v1/course-lesson/{lessonId}", () => {
   });
   it("should return error if api is accessed by customer of different organization", async () => {
     const response = await makeApiRequest(
-      courseId,
+      lessonId,
       differentOrganizationCustomerToken,
     );
 
