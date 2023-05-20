@@ -117,9 +117,6 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
     );
   });
   it("should return error if api is accessd by customer of different organization", async () => {
-    const expectedObject = {
-      ...fields,
-    };
     const response = await makeApiRequest(
       courseId,
       differentOrganizationCustomerToken,
@@ -128,9 +125,6 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
   });
 
   it("should return validation error for courseId", async () => {
-    const expectedObject = {
-      ...fields,
-    };
     const response = await makeApiRequest("dasd", customerToken);
     expect(response.body.data).toBe("courseId must be a valid number");
   });

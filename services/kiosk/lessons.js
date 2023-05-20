@@ -44,7 +44,7 @@ async function findLessonsByCourseId(courseId) {
   const lessons = await Coach.findAll({
     where: { gcId: courseId },
   });
-  if (!lessons.length) {
+  if (lessons.length) {
     lessons.forEach((lesson) => {
       if (!lesson?.image) return;
       const image = upload_file.getFileURL(lesson.image);

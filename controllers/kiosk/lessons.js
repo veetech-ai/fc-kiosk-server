@@ -329,13 +329,13 @@ exports.getSpecificLesson = async (req, res) => {
       return apiResponse.fail(res, "lessonId must be a valid number");
     }
     const lesson = await courseLesson.findLessonById(lessonId);
-    const orgId = lesson.orgId;
+
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
       "super",
       "admin",
     ]).success;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    const isSameOrganizationResource = loggedInUserOrg === lesson.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
