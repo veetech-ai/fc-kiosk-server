@@ -99,6 +99,7 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
       isAddressed: true,
     };
 
+    await makeApiRequest(feedBackId, reqBody);
     const response = await makeApiRequest(feedBackId, reqBody);
     expect(response.body.data).toBe(0);
   });
