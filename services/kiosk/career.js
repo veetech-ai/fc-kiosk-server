@@ -11,7 +11,8 @@ async function deleteWhere(where) {
   return await Career.destroy({ where });
 }
 
-async function find(where) {
+async function find(where, loggedInUserOrgId) {
+  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
   return await Career.findAll({ where });
 }
 
