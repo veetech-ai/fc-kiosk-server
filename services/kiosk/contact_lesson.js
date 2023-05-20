@@ -12,7 +12,7 @@ async function getContactCoachesByLessonId(lessonId) {
   const contactCoaches = await ContactCoach.findAll({
     where: { coach_id: lessonId },
   });
-  
+
   return contactCoaches;
 }
 

@@ -5,6 +5,7 @@ const upload_file = require("../../common/upload");
 const courseLesson = require("../../services/kiosk/lessons");
 const courseService = require("../../services/kiosk/course");
 const helper = require("../../common/helper");
+
 /**
  * @swagger
  * tags:
@@ -281,13 +282,13 @@ exports.getLessons = async (req, res) => {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
     const course = await courseService.getCourseById(courseId);
-    const orgId = course.orgId;
+
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
       "super",
       "admin",
     ]).success;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
+    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }

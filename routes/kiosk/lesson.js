@@ -20,12 +20,12 @@ exports.routesConfig = function (app, router) {
   ]);
   router.get(lesson + "/courses/:courseId", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     CourseLessonsController.getLessons,
   ]);
   router.get(lesson + "/:lessonId", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     CourseLessonsController.getSpecificLesson,
   ]);
 };

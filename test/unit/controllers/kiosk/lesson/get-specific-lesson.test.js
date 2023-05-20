@@ -24,7 +24,7 @@ const mockFormidable = (fields, files) => {
   mockFiles = files;
 };
 
-describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
+describe("GET /api/v1/course-lesson/{lessonId}", () => {
   let adminToken;
   let courseId;
   let customerToken;
@@ -116,11 +116,12 @@ describe("PATCH /api/v1/course-lesson/{lessonId}", () => {
     const response = await makeApiRequest("dasd", customerToken);
     expect(response.body.data).toBe("lessonId must be a valid number");
   });
-  it("should return error if api is accessd by customer of different organization", async () => {
+  it("should return error if api is accessed by customer of different organization", async () => {
     const response = await makeApiRequest(
       courseId,
       differentOrganizationCustomerToken,
     );
+
     expect(response.body.data).toBe("You are not allowed");
   });
 });
