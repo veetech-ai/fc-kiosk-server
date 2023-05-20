@@ -1776,6 +1776,13 @@ exports.link_to_golf_course = async (deviceId, courseId) => {
   if (!course) {
     throw new ServiceError(`Course not found`, 200);
   }
+
+  if (device.owner_id !== course.orgId) {
+    throw new ServiceError(
+      `Device must belong to the same organization that the course belongs to`,
+      403,
+    );
+  }
   await device.update({ gcId: courseId });
 
   return device;
@@ -1790,7 +1797,33 @@ exports.getCourse = async (deviceId) => {
 };
 
 exports.findOne = async (where) => {
-  const device = await Device.findOne({ where });
+  const device = await Device.findOne({
+    where,
+    include: [
+      {
+        as: "Course",
+        model: models.Course,
+      },
+    ],
+  });
   if (!device) throw new ServiceError("Device not found", 404);
   return device;
+};
+
+exports.getLinkedCourse = async (id) => {
+  const device = await Device.findOne({
+    where: { id },
+    include: [
+      {
+        as: "Course",
+        model: models.Course,
+      },
+    ],
+  });
+
+  if (!device || !device.Course) {
+    throw new ServiceError("No Course linked with the device", 404);
+  }
+
+  return device.Course;
 };

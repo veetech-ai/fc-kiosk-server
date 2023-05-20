@@ -3,14 +3,14 @@ const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
 
-describe("GET /api/v1/kiosk-content/screens", () => {
+describe("GET /api/v1/kiosk-content/memberships", () => {
   let adminToken;
   let courseId;
   let deviceId;
   let deviceToken;
   let testOrganizationId = 1;
   let productId = product.products.kiosk.id;
-
+  let not_linked_device_token;
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -50,38 +50,21 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
   });
 
-  const makeApiRequest = async (params, token = deviceToken) => {
-    return await helper.post_request_with_authorization({
-      endpoint: `kiosk-content/feedback`,
+  const makeApiRequest = async (token = deviceToken) => {
+    return await helper.get_request_with_authorization({
+      endpoint: `kiosk-content/memberships`,
       token: token,
-      params: params,
     });
   };
 
-  it("should successfully return registered feedback with valid input", async () => {
-    const reqBody = {
-      phoneNumber: "",
-      rating: 3,
-      contact_medium: "text",
-    };
-    const response = await makeApiRequest(reqBody);
-    expect(response.body.data.rating).toEqual(reqBody.rating);
-    expect(response.body.data.contact_medium).toEqual(reqBody.contact_medium);
-    expect(response.body.data.phoneNumber).toEqual(undefined);
+  it("should successfully return membership if device linked golf course has any", async () => {
+    const response = await makeApiRequest();
+
+    expect(response.body.data.gcId).toEqual(courseId);
   });
-  it("should return validation error invalid input", async () => {
-    const reqBody = {
-      phoneNumber: "12312312",
-      rating: 3,
-      contact_medium: 12,
-    };
-    const response = await makeApiRequest(reqBody);
-    expect(response.body.data.errors).toEqual({
-      contact_medium: ["The contact medium must be a string."],
-    });
-  });
+
   it("returns 403 status code Request", async () => {
-    const response = await makeApiRequest({}, adminToken);
+    const response = await makeApiRequest(adminToken);
     expect(response.body.data).toEqual("Token invalid or expire");
   });
 });

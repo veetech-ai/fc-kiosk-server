@@ -6,7 +6,9 @@ const apiResponse = require("../../../common/api.response");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
-const feedbackService = require("../../../services/kiosk/feedback");
+const contactMembershipService = require("../../../services/kiosk/contact_membership");
+const membershipService = require("../../../services/kiosk/membership");
+const ServiceError = require("../../../utils/serviceError");
 
 /**
  * @swagger
@@ -14,29 +16,34 @@ const feedbackService = require("../../../services/kiosk/feedback");
  *   name: Kiosk-Courses-Content
  *   description: Courses API's for Device
  */
-exports.create_feedback = async (req, res) => {
+exports.create_contact_membership = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-content/feedbacks:
+   * /kiosk-content/memberships/contacts:
    *   post:
    *     security:
    *       - auth: []
-   *     description: create feedback for golf course.
+   *     description: contact with lesson of golf course.
    *     tags: [Kiosk-Courses-Content]
    *     consumes:
    *       - application/x-www-form-urlencoded
    *     parameters:
-   *       - name: phone
-   *         description: phone of reviewer
-   *         in: formData
-   *         required: false
-   *         type: string
-   *       - name: rating
-   *         description: rating of golf course
+   *       - name: membershipId
+   *         description: id of membership
    *         in: formData
    *         required: true
    *         type: integer
+   *       - name: phone
+   *         description: phone of golfer
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: email
+   *         description: email of golfer
+   *         in: formData
+   *         required: false
+   *         type: string
    *       - name: contact_medium
    *         description: contact_medium
    *         in: formData
@@ -51,8 +58,9 @@ exports.create_feedback = async (req, res) => {
    */
   try {
     const validation = new Validator(req.body, {
+      membershipId: "required|integer",
       phone: "string",
-      rating: "required|integer",
+      email: "string",
       contact_medium: "string",
     });
 
@@ -60,21 +68,28 @@ exports.create_feedback = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const { phone, rating, contact_medium } = req.body;
-
+    const { membershipId, phone, email, contact_medium } = req.body;
+    const membership = await membershipService.getMembershipById(membershipId);
     const deviceId = req.device.id; // device Id
     const courseId = await deviceService.getCourse(deviceId);
     const course = await courseService.getCourseById(courseId);
     const orgId = course.orgId;
+
+    if (membership.gcId !== courseId) {
+      throw new ServiceError("Not found", 404);
+    }
+
     const reqBody = {
-      phone,
-      rating,
-      contact_medium,
+      mId: membershipId,
+      userPhone: phone,
+      userEmail: email,
+      contactMedium: contact_medium,
       gcId: courseId,
       orgId,
     };
-    const feedback = await feedbackService.createFeedback(reqBody);
-    return apiResponse.success(res, req, feedback);
+    const contactMembership =
+      await contactMembershipService.createContactMembership(reqBody);
+    return apiResponse.success(res, req, contactMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

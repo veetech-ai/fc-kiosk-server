@@ -11,7 +11,18 @@ async function deleteWhere(where) {
   return await Career.destroy({ where });
 }
 
+async function find(where) {
+  return await Career.findAll({ where });
+}
+
+async function findOne(where) {
+  const career = await Career.findOne({ where });
+  if (!career) throw new ServiceError("Career not found", 404);
+}
+
 module.exports = {
   create,
   deleteWhere,
+  find,
+  findOne,
 };
