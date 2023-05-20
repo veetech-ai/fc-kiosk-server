@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const Feedback = sequelize.define(
     "Feedback",
     {
-      gc_id: {
+      gcId: {
+        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -35,6 +36,11 @@ module.exports = (sequelize, DataTypes) => {
       contact_medium: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      isAddressed: {
+        field: "is_addressed",
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       createdAt: {
         field: "created_at",
