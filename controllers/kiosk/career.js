@@ -131,7 +131,10 @@ exports.getCareersByCourseId = async (req, res) => {
     const gcId = Number(req.params.courseId);
     if (!gcId) throw new ServiceError("The courseId must be an integer.", 400);
 
-    const careers = await CareersServices.findCareers({ gcId }, loggedInUserOrgId);
+    const careers = await CareersServices.findCareers(
+      { gcId },
+      loggedInUserOrgId,
+    );
 
     return apiResponse.success(res, req, careers);
   } catch (error) {
@@ -205,24 +208,35 @@ exports.patch = async (req, res) => {
     content: "string",
     type: "string",
     timings: "json",
-    link: "string"
+    link: "string",
   });
 
   if (validation.fails()) return apiResponse.fail(res, validation.errors);
 
   try {
     const careerId = Number(req.params.careerId);
-    if (!careerId) throw new ServiceError("The careerId must be an integer.", 400);
+    if (!careerId) {
+      throw new ServiceError("The careerId must be an integer.", 400);
+    }
 
-    const allowedFields = ["title", "content", "type", "timings", "link"]
-    const filteredBody = validateObject({ ...req.body }, allowedFields)
+    const allowedFields = ["title", "content", "type", "timings", "link"];
+    const filteredBody = validateObject({ ...req.body }, allowedFields);
 
     const loggedInUserOrgId = req.user.orgId;
 
     await CareersServices.findOneCareer({ id: careerId }, loggedInUserOrgId);
 
-    const noOfRowsUpdated = await CareersServices.updateCareerById(careerId, filteredBody)
-    return apiResponse.success(res, req, noOfRowsUpdated ? "Career updated successfully" : "Career already up to date");
+    const noOfRowsUpdated = await CareersServices.updateCareerById(
+      careerId,
+      filteredBody,
+    );
+    return apiResponse.success(
+      res,
+      req,
+      noOfRowsUpdated
+        ? "Career updated successfully"
+        : "Career already up to date",
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
