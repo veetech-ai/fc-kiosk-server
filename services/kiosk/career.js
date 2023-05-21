@@ -11,7 +11,8 @@ async function deleteCareersWhere(where) {
   return await Career.destroy({ where });
 }
 
-async function findCareers(where) {
+async function findCareers(where, loggedInUserOrgId) {
+  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
   return await Career.findAll({ where });
 }
 
@@ -20,14 +21,12 @@ async function findOneCareer(where, loggedInUserOrgId) {
   const career = await Career.findOne({ where });
   if (!career) throw new ServiceError("Career not found", 404);
 
-  return career
+  return career;
 }
 
 async function updateCareerById(id, body) {
-
   const career = await Career.update(body, { where: { id } });
   return career[0];
-  
 }
 
 module.exports = {
@@ -35,5 +34,5 @@ module.exports = {
   deleteCareersWhere,
   findCareers,
   findOneCareer,
-  updateCareerById
+  updateCareerById,
 };
