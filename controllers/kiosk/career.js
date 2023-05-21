@@ -131,7 +131,7 @@ exports.getCareersByCourseId = async (req, res) => {
     const gcId = Number(req.params.courseId);
     if (!gcId) throw new ServiceError("The courseId must be an integer.", 400);
 
-    const careers = await CareersServices.find({ gcId }, loggedInUserOrgId);
+    const careers = await CareersServices.findCareers({ gcId }, loggedInUserOrgId);
 
     return apiResponse.success(res, req, careers);
   } catch (error) {
