@@ -4,6 +4,7 @@ const {
 const helper = require("../../../../helper");
 
 const CareersServices = require("../../../../../services/kiosk/career");
+const CoursesServices = require("../../../../../services/kiosk/course");
 
 let testCustomerToken,
   superAdminToken,
@@ -37,6 +38,12 @@ beforeAll(async () => {
   testCustomerToken = await helper.get_token_for("testCustomer");
   superAdminToken = await helper.get_token_for("superadmin");
 });
+
+afterAll(async () => {
+  for await (const course of Object.values(courses)) {
+    await CoursesServices.deleteWhere({id: course.id})
+  }
+}) 
 
 describe("PATCH /careers/:careerId", () => {
   const makePatchApiRequest = async (
@@ -220,7 +227,6 @@ describe("PATCH /careers/:careerId", () => {
       timings: JSON.stringify({ startTime: "9:00", endTime: "5:00" }),
       link: "newLink.com",
     };
-    const abc = await CareersServices.findOneCareer({ id: careers.test.id });
     const response = await makePatchApiRequest(
       newBody,
       careers.test.id,
