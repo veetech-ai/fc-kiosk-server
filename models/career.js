@@ -52,11 +52,7 @@ module.exports = (sequelize, DataTypes) => {
           }
         },
         get() {
-          try {
-            return JSON.parse(this.getDataValue("timings"));
-          } catch (error) {
-            return null;
-          }
+          return JSON.parse(this.getDataValue("timings") || null);
         },
       },
       link: {
