@@ -41,9 +41,9 @@ beforeAll(async () => {
 
 afterAll(async () => {
   for await (const course of Object.values(courses)) {
-    await CoursesServices.deleteWhere({id: course.id})
+    await CoursesServices.deleteWhere({ id: course.id });
   }
-}) 
+});
 
 describe("PATCH /careers/:careerId", () => {
   const makePatchApiRequest = async (
