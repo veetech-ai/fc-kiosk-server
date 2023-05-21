@@ -3,7 +3,6 @@ const {
 } = require("../../../../../common/organizations.data");
 const helper = require("../../../../helper");
 
-const CareersServices = require("../../../../../services/kiosk/career");
 const CoursesServices = require("../../../../../services/kiosk/course");
 
 let testCustomerToken,
@@ -28,11 +27,10 @@ let courses = {
 const commonCareerBody = {
   title: "Career",
   content: "<h2>Example Content</h2>",
+  timings: '{"startTime": "10:00", "endTime": "16:00"}',
   type: "Full Time",
-  timings: JSON.stringify({ startTime: "10:00", endTime: "16:00" }),
   link: "https://example.com",
 };
-let careers = {};
 
 beforeAll(async () => {
   testCustomerToken = await helper.get_token_for("testCustomer");
@@ -45,9 +43,9 @@ afterAll(async () => {
   }
 });
 
-describe("DELETE /careers/:careerId", () => {
-  const deleteCareerById = async (careerId, token = superAdminToken) => {
-    return helper.delete_request_with_authorization({
+describe("GET /careers/:careerId", () => {
+  const getCareerById = async (careerId, token = superAdminToken) => {
+    return helper.get_request_with_authorization({
       endpoint: `careers/${careerId}`,
       token,
     });
@@ -87,11 +85,11 @@ describe("DELETE /careers/:careerId", () => {
       success: false,
       data: "The careerId must be an integer.",
     };
-    const response = await deleteCareerById("abc", testCustomerToken);
+    const response = await getCareerById("abc", testCustomerToken);
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(400);
   });
-  it("should return an error if the test organization's customer tries to delete the career of some different organization", async () => {
+  it("should return an error if the test organization's customer tries to get the career of some different organization", async () => {
     const expectedResponse = {
       success: false,
       data: "Career not found",
@@ -101,52 +99,53 @@ describe("DELETE /careers/:careerId", () => {
       superAdminToken,
     );
     const zongOrganizationCareerId = careerCreationResponse.body.data.id;
-    const response = await deleteCareerById(
+    const response = await getCareerById(
       zongOrganizationCareerId,
       testCustomerToken,
     );
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(404);
   });
-  it("should return an error if the super admin tries to delete a non-existing career", async () => {
+  it("should return an error if the super admin tries to get a non-existing career", async () => {
     const expectedResponse = {
       success: false,
       data: "Career not found",
     };
-    const response = await deleteCareerById(-1, superAdminToken);
+    const response = await getCareerById(-1, superAdminToken);
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(404);
   });
 
-  it("should delete the career if the test organization's customer tries to delete the career of his/her own organization", async () => {
+  it("should return the career if the test organization's customer tries to get the career of his/her own organization", async () => {
     const expectedResponse = {
-      success: true,
-      data: "Career deleted successfully",
+      ...commonCareerBody,
+      gcId: courses.test.id,
+      orgId: testOrganizatonId,
+      timings: JSON.parse(commonCareerBody.timings),
     };
-    // Create a career in test organization
     const careerCreationResponse = await createCareer(
       { gcId: courses.test.id },
       superAdminToken,
     );
     const testOrganizationCareerId = careerCreationResponse.body.data.id;
-    const careerDeletionResponse = await deleteCareerById(
+    const response = await getCareerById(
       testOrganizationCareerId,
       testCustomerToken,
     );
-    expect(careerDeletionResponse.body).toEqual(expectedResponse);
-    expect(careerDeletionResponse.statusCode).toBe(200);
 
-    try {
-      await CareersServices.findOneCareer({ id: testOrganizationCareerId });
-    } catch (error) {
-      expect(error.message).toBe("Career not found");
-    }
+    expect(response.body.data).toEqual(
+      expect.objectContaining(expectedResponse),
+    );
+    expect(response.body.success).toEqual(true);
+    expect(response.statusCode).toBe(200);
   });
 
-  it("should delete the career if the super admin tries to delete any existing career of any organization", async () => {
+  it("should return the career if the super admin tries to get any existing career of any organization", async () => {
     const expectedResponse = {
-      success: true,
-      data: "Career deleted successfully",
+      ...commonCareerBody,
+      gcId: courses.test.id,
+      orgId: testOrganizatonId,
+      timings: JSON.parse(commonCareerBody.timings),
     };
     // Create a career in test organization
     const careerCreationResponse = await createCareer(
@@ -154,17 +153,15 @@ describe("DELETE /careers/:careerId", () => {
       superAdminToken,
     );
     const testOrganizationCareerId = careerCreationResponse.body.data.id;
-    const careerDeletionResponse = await deleteCareerById(
+    const response = await getCareerById(
       testOrganizationCareerId,
       superAdminToken,
     );
-    expect(careerDeletionResponse.body).toEqual(expectedResponse);
-    expect(careerDeletionResponse.statusCode).toBe(200);
 
-    try {
-      await CareersServices.findOneCareer({ id: testOrganizationCareerId });
-    } catch (error) {
-      expect(error.message).toBe("Career not found");
-    }
+    expect(response.body.data).toEqual(
+      expect.objectContaining(expectedResponse),
+    );
+    expect(response.body.success).toEqual(true);
+    expect(response.statusCode).toBe(200);
   });
 });
