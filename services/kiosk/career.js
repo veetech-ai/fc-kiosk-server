@@ -7,8 +7,13 @@ async function createCareer(body) {
   return await Career.create(body);
 }
 
-async function deleteCareersWhere(where) {
-  return await Career.destroy({ where });
+async function deleteCareersWhere(where, loggedInUserOrgId = null) {
+  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
+  const noOfAffectedRows = await Career.destroy({ where });
+  if (!noOfAffectedRows) {
+    throw new ServiceError("Career not found", 404);
+  }
+  return noOfAffectedRows;
 }
 
 async function findCareers(where, loggedInUserOrgId) {

@@ -21,4 +21,14 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     CareersController.getCareersByCourseId,
   ]);
+  router.delete(group + "/:careerId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CareersController.deleteCareerById,
+  ]);
+  router.get(group + "/:careerId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    CareersController.getCareerById,
+  ]);
 };
