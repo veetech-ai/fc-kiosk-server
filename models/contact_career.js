@@ -56,18 +56,24 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
       },
+      isAddressed: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
       validate: {
         phoneAndEmailBothNotNull() {
-          if (!this.email && !this.phone)
+          // This validation will only work in case of contact request creation
+          if (this.createdAt && !this.email && !this.phone)
             throw new ServiceError(
               "Phone and email can not be empty at the same time",
               400,
             );
         },
         phoneAndContactMedium() {
-          if (this.phone && !this.contactMedium)
+          if (this.createdAt && this.phone && !this.contactMedium)
             throw new ServiceError(
               "Contact medium (text or call) is required",
               400,
