@@ -106,7 +106,7 @@ exports.update_screen_for_course = async (req, res) => {
    *         required: false
    *         type: boolean
    *         default: true
-   *       - name: feedbacks
+   *       - name: feedback
    *         description: Golf course feedbacks
    *         in: formData
    *         required: false
@@ -142,7 +142,7 @@ exports.update_screen_for_course = async (req, res) => {
       lessons: "boolean",
       statistics: "boolean",
       memberships: "boolean",
-      feedbacks: "boolean",
+      feedback: "boolean",
       careers: "boolean",
       shop: "boolean",
       faq: "boolean",
@@ -162,7 +162,7 @@ exports.update_screen_for_course = async (req, res) => {
       lessons,
       statistics,
       memberships,
-      feedbacks,
+      feedback,
       careers,
       shop,
       faq,
@@ -173,7 +173,7 @@ exports.update_screen_for_course = async (req, res) => {
       lessons,
       statistics,
       memberships,
-      feedbacks,
+      feedback,
       careers,
       shop,
       faq,
