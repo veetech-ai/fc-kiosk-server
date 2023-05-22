@@ -47,6 +47,13 @@ exports.isValidDeviceCode = async (req, res, next) => {
 
     // refresh the token so it cannot be used again
     await deviceOnboardingCodeServices.refreshDeviceOnboardingCode();
+
+    const mqttPayload = {
+      action: "refresh",
+    };
+
+    helper.mqtt_publish_message(`a/onboarding-code`, mqttPayload, false); // a stands for admin
+
     next();
   } else {
     return apiResponse.fail(res, "Device code not provided", 401);

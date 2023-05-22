@@ -64,7 +64,7 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
     });
   };
 
-  it("should throw validation error if reqBody is not valid", async () => {
+  it("should throw validation error for invalid reqBody", async () => {
     const reqBody = {
       userPhone: "43423423",
       contact_medium: "text",
@@ -74,7 +74,7 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
       membershipId: ["The membershipId field is required."],
     });
   });
-  it("should successfully create contact membership with valid input", async () => {
+  it("should successfully create a contact request for membership", async () => {
     const reqBody = {
       membershipId: membershipId,
       userPhone: "43423423",
@@ -85,7 +85,7 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
     expect(response.body.data.contactMedium).toEqual(reqBody.contact_medium);
     expect(response.body.data.userPhone).toEqual(reqBody.phoneNumber);
   });
-  it("returns 403 status code Request with user token authentication", async () => {
+  it("returns 403 status code Request", async () => {
     const response = await makeApiRequest({}, adminToken);
     expect(response.body.data).toEqual("Token invalid or expire");
   });

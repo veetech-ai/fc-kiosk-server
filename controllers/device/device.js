@@ -3849,8 +3849,16 @@ exports.link_device_to_course = async (req, res) => {
 
     const response = await DeviceModel.link_to_golf_course(deviceId, courseId);
     const isSameOrganizationResource = loggedInUserOrg == response.owner_id;
-    if (!isSuperOrAdmin && !isSameOrganizationResource)
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
+    }
+
+    const mqttPayload = {
+      gcId: courseId,
+    };
+
+    helper.mqtt_publish_message(`d/${deviceId}/gc`, mqttPayload, false);
+
     return apiResponse.success(res, req, response);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

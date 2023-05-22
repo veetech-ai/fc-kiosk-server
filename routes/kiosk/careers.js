@@ -9,4 +9,26 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CareersController.create,
   ]);
+
+  router.patch(group + "/:careerId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CareersController.updateCareerById,
+  ]);
+
+  router.get(group + "/courses/:courseId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    CareersController.getCareersByCourseId,
+  ]);
+  router.delete(group + "/:careerId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CareersController.deleteCareerById,
+  ]);
+  router.get(group + "/:careerId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    CareersController.getCareerById,
+  ]);
 };

@@ -1776,6 +1776,13 @@ exports.link_to_golf_course = async (deviceId, courseId) => {
   if (!course) {
     throw new ServiceError(`Course not found`, 200);
   }
+
+  if (device.owner_id !== course.orgId) {
+    throw new ServiceError(
+      `Device must belong to the same organization that the course belongs to`,
+      403,
+    );
+  }
   await device.update({ gcId: courseId });
 
   return device;

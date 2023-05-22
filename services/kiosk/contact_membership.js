@@ -26,7 +26,7 @@ async function updateContactMemeberShipIsAddressable(
   contactMemebershipId,
   isAddressedBoolean,
 ) {
-  const [affectedRows] = await ContactMembership.findOne();
+  const [affectedRows] = await ContactMembership.findOne({isAddressed:isAddressedBoolean},{where:{id:contactMemebershipId}});
 
   return affectedRows;
 }
@@ -36,4 +36,4 @@ module.exports = {
   getContactMembership,
   getContactMembershipById,
   updateContactMemeberShipIsAddressable,
-};
+}

@@ -2,28 +2,15 @@ const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
-const { async } = require("crypto-random-string");
 
-describe("GET /api/v1/course-feedback/courses/${gcId}", () => {
+describe("GET /api/v1/kiosk-content/memberships", () => {
   let adminToken;
   let courseId;
   let deviceId;
   let deviceToken;
   let testOrganizationId = 1;
-  let differentOrganizationCustomerToken;
   let productId = product.products.kiosk.id;
-  const FeedbackParams = [
-    {
-      phone: "12312312",
-      rating: 3,
-      contact_medium: "text",
-    },
-    {
-      phone: "12312312",
-      rating: 4,
-      contact_medium: "call",
-    },
-  ];
+  let not_linked_device_token;
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -39,9 +26,6 @@ describe("GET /api/v1/course-feedback/courses/${gcId}", () => {
     };
 
     adminToken = await helper.get_token_for("admin");
-    differentOrganizationCustomerToken = await helper.get_token_for(
-      "zongCustomer",
-    );
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses",
       token: adminToken,
@@ -64,45 +48,23 @@ describe("GET /api/v1/course-feedback/courses/${gcId}", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
-    const postMultipleFeedbacks = async () => {
-      for (const feedbackParam of FeedbackParams) {
-        await helper.post_request_with_authorization({
-          endpoint: `kiosk-content/feedbacks`,
-          token: deviceToken,
-          params: feedbackParam,
-        });
-      }
-    };
-    await postMultipleFeedbacks();
   });
-  const makeApiRequest = async (gcId, token = adminToken) => {
+
+  const makeApiRequest = async (token = deviceToken) => {
     return await helper.get_request_with_authorization({
-      endpoint: `course-feedback/courses/${gcId}`,
+      endpoint: `kiosk-content/memberships`,
       token: token,
     });
   };
 
-  it("should successfully return registered feedback with valid input", async () => {
-    const response = await makeApiRequest(courseId);
-    expect(response.body.data).toEqual(
-      expect.objectContaining({
-        feedbacks: expect.any(Array),
-        summary: expect.any(Object),
-      }),
-    );
-  });
-
-  it("should return validation error invalid input", async () => {
+  it("should successfully return membership if device linked golf course has any", async () => {
     const response = await makeApiRequest();
 
-    expect(response.body.data).toEqual("courseId must be a valid number");
+    expect(response.body.data.gcId).toEqual(courseId);
   });
 
-  it("should return error while the api is being accessed by the customer of different organization", async () => {
-    const response = await makeApiRequest(
-      courseId,
-      differentOrganizationCustomerToken,
-    );
-    expect(response.body.data).toEqual("You are not allowed");
+  it("returns 403 status code Request", async () => {
+    const response = await makeApiRequest(adminToken);
+    expect(response.body.data).toEqual("Token invalid or expire");
   });
 });
