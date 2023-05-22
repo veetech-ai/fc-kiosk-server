@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return Promise.all([
+    return await Promise.all([
       queryInterface.changeColumn("Careers", "timings", {
         type: Sequelize.JSON,
         allowNull: true,
@@ -12,7 +12,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return Promise.all([
+    return await Promise.all([
       queryInterface.changeColumn("Careers", "timings", {
         type: Sequelize.JSON,
         allowNull: false,
