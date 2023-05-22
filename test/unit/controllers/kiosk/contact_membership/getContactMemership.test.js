@@ -1,0 +1,126 @@
+const helper = require("../../../../helper");
+const models = require("../../../../../models/index");
+const product = require("../../../../../common/products");
+const { uuid } = require("uuidv4");
+const membershipService = require("../../../../../services/kiosk/membership");
+
+describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
+  let adminToken;
+  let courseId;
+  let deviceId;
+  let deviceToken;
+  let customerToken
+  let testOrganizationId = 1;
+  let differentOrganizationCustomerToken;
+  let productId = product.products.kiosk.id;
+  let membershipId;
+  const reqBody = {
+    phone: "43423423",
+    contact_medium: "text",
+  };
+
+  beforeAll(async () => {
+    // Create some courses for the test organization
+    const courses = {
+      name: "Course 1",
+      city: "Test City 1",
+      state: "Test State 1",
+      orgId: testOrganizationId,
+    };
+    const deviceReqBody = {
+      serial: uuid(),
+      pin_code: 1111,
+      device_type: productId,
+    };
+
+    adminToken = await helper.get_token_for("admin");
+    customerToken=await helper.get_token_for("testCustomer");
+    differentOrganizationCustomerToken = await helper.get_token_for(
+        "zongCustomer",
+      );
+    const course = await helper.post_request_with_authorization({
+      endpoint: "kiosk-courses",
+      token: adminToken,
+      params: courses,
+    });
+    courseId = course.body.data.id;
+    const membership_created = await membershipService.getMembershipByCourseId(
+      courseId,
+    );
+    membershipId = membership_created.id;
+    const device_created = await helper.post_request_with_authorization({
+      endpoint: "device/create",
+      token: adminToken,
+      params: deviceReqBody,
+    });
+    deviceId = device_created.body.data.id;
+    await helper.put_request_with_authorization({
+      endpoint: `device/${deviceId}/courses/${courseId}/link`,
+      params: {},
+      token: adminToken,
+    });
+    const device = await helper.get_request_with_authorization({
+      endpoint: `device/${deviceId}`,
+      token: adminToken,
+    });
+    deviceToken = device.body.data.Device.device_token.split(" ")[1];
+   const resp=await helper.post_request_with_authorization({
+        endpoint: `kiosk-content/memberships/contacts`,
+        token: deviceToken,
+        params: {membershipId,...reqBody},
+      });
+    console.log({membershipId,...reqBody});
+    console.log(resp.body.data);
+  });
+
+ const makeApiRequest = async (id,token = adminToken) => {
+    return await helper.get_request_with_authorization({
+      endpoint: `course-membership/${id}/contacts`,
+      token: token,
+    });
+  };
+  
+
+
+  it("should successfully return contact membership list", async () => {
+    console.log(membershipId);
+    const expectedResponse={
+        id: 1,
+        gcId: 1,
+        orgId: 1,
+        mId: 1,
+        userPhone: reqBody.phone,
+        userEmail: null,
+        contactMedium: 'text',
+        isAddressed: false,
+    }
+    const response = await makeApiRequest(membershipId);
+    expect(response.body.data).toEqual(
+        expect.arrayContaining([expect.objectContaining(expectedResponse)]),
+      );
+  });
+  it("should successfully return contact membership list with user of same orgnaization", async () => {
+    const expectedResponse={
+        id: 1,
+        gcId: 1,
+        orgId: 1,
+        mId: 1,
+        userPhone: reqBody.phone,
+        userEmail: null,
+        contactMedium: 'text',
+        isAddressed: false,
+    }
+    const response = await makeApiRequest(membershipId,customerToken);
+    expect(response.body.data).toEqual(
+        expect.arrayContaining([expect.objectContaining(expectedResponse)]),
+      );
+  });
+  it("should return error while the api is being accessed by the customer of different organization", async () => {
+    const response = await makeApiRequest(
+      membershipId,
+      differentOrganizationCustomerToken,
+    );
+    expect(response.body.data).toEqual("You are not allowed");
+  });
+
+});
