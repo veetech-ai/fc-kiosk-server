@@ -52,7 +52,7 @@ exports.isValidDeviceCode = async (req, res, next) => {
       action: "refresh",
     };
 
-    helper.mqtt_publish_message(`d/onboarding-code`, mqttPayload, false);
+    helper.mqtt_publish_message(`a/onboarding-code`, mqttPayload, false); // a stands for admin
 
     next();
   } else {
