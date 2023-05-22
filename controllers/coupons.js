@@ -1,6 +1,8 @@
 const CouponServices = require("../services/coupons");
 const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
+const ServiceError = require("../utils/serviceError");
+const CoursesServices = require("../services/kiosk/course");
 
 /**
  * @swagger
@@ -47,18 +49,22 @@ exports.get_all_available = async (req, res) => {
   }
 };
 
-exports.get_all = async (req, res) => {
+exports.findCouponsByCourseId = async (req, res) => {
   /**
    * @swagger
    *
-   * /coupon/all:
+   * /coupons/courses/{courseId}:
    *   get:
    *     security:
-   *       - auth: []
-   *     description: Get Coupons
-   *     tags: [Coupons]
-   *     consumes:
-   *       - application/x-www-form-urlencoded
+   *      - auth: []
+   *     description: Get coupons by course id
+   *     tags: [Careers]
+   *     parameters:
+   *       - name: courseId
+   *         description: Id of the golf course
+   *         in: path
+   *         required: true
+   *         type: integer
    *     produces:
    *       - application/json
    *     responses:
@@ -66,22 +72,19 @@ exports.get_all = async (req, res) => {
    *         description: success
    */
   try {
-    const limit =
-      req.query.limit && req.query.limit <= 100
-        ? parseInt(req.query.limit)
-        : 10;
-    let page = 0;
-    if (req.query) {
-      if (req.query.page) {
-        req.query.page = parseInt(req.query.page);
-        page = Number.isInteger(req.query.page) ? req.query.page : 0;
-      }
-    }
+    // Pagination would be added later.
 
-    const result = await CouponServices.list(limit, page);
-    return apiResponse.success(res, req, result);
-  } catch (err) {
-    return apiResponse.fail(res, err.message, 500);
+    const loggedInUserOrgId = req.user.orgId;
+
+    const gcId = Number(req.params.courseId);
+    if (!gcId) throw new ServiceError("The courseId must be an integer.", 400);
+
+    await CoursesServices.getCourse({ id: gcId }, loggedInUserOrgId);
+    const coupons = await CouponServices.findAllCoupons({ gcId });
+
+    return apiResponse.success(res, req, coupons);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
 
