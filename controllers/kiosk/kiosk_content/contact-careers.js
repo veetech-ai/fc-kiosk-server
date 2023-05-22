@@ -69,7 +69,7 @@ exports.create = async (req, res) => {
     const deviceId = req.device.id;
     const course = await DevicesServices.getLinkedCourse(deviceId);
 
-    await CareersServices.findOne({
+    await CareersServices.findOneCareer({
       id: careerId,
       gcId: course.id,
       orgId: course.orgId,

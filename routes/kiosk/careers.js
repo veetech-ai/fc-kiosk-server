@@ -10,6 +10,12 @@ exports.routesConfig = function (app, router) {
     CareersController.create,
   ]);
 
+  router.patch(group + "/:careerId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    CareersController.updateCareerById,
+  ]);
+
   router.get(group + "/courses/:courseId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
