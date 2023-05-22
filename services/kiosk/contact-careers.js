@@ -12,24 +12,24 @@ async function deleteWhere(where) {
 }
 
 async function findContacts(where, loggedInUserOrgId) {
-  const clonedWhere = {...where}
-  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId
+  const clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   return await ContactCareer.findAll({
-    where: clonedWhere
-  })
+    where: clonedWhere,
+  });
 }
 
 async function findOneContact(where, loggedInUserOrgId) {
-  const clonedWhere = {...where}
-  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId
+  const clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const contactRequest = await ContactCareer.findOne({
-    where: clonedWhere
-  })
+    where: clonedWhere,
+  });
 
   if (!contactRequest) {
     throw new ServiceError("Contact request not found", 404);
   }
-  return contactRequest
+  return contactRequest;
 }
 
 async function updateCareerContactById(id, body) {
@@ -41,5 +41,5 @@ module.exports = {
   deleteWhere,
   findContacts,
   findOneContact,
-  updateCareerContactById
+  updateCareerContactById,
 };

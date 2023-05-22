@@ -202,7 +202,7 @@ CourseFeedBacks.routesConfig(app, router);
 CourseFaqs.routesConfig(app, router);
 CareersRouter.routesConfig(app, router);
 CourseMemberships.routesConfig(app, router);
-ContactCareerRouter.routesConfig(app, router)
+ContactCareerRouter.routesConfig(app, router);
 if (config.env === "test") {
   // for test case server
   app.use(router);
