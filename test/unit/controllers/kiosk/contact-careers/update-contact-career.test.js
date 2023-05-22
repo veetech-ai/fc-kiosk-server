@@ -216,9 +216,10 @@ describe("PATCH /careers/contacts/{careerContactId}", () => {
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(200);
 
-    const careerContactRequest = await ContactsCareersServices.findOneCareerContact({
-      id: contactCareers.test.id,
-    });
+    const careerContactRequest =
+      await ContactsCareersServices.findOneCareerContact({
+        id: contactCareers.test.id,
+      });
     expect(careerContactRequest.isAddressed).toBe(true);
 
     await ContactsCareersServices.updateCareerContactById(
@@ -241,9 +242,10 @@ describe("PATCH /careers/contacts/{careerContactId}", () => {
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(200);
 
-    const careerContactRequest = await ContactsCareersServices.findOneCareerContact({
-      id: contactCareers.test.id,
-    });
+    const careerContactRequest =
+      await ContactsCareersServices.findOneCareerContact({
+        id: contactCareers.test.id,
+      });
     expect(careerContactRequest.isAddressed).toBe(true);
 
     await ContactsCareersServices.updateCareerContactById(
@@ -272,9 +274,10 @@ describe("PATCH /careers/contacts/{careerContactId}", () => {
 
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(200);
-    const careerContactRequest = await ContactsCareersServices.findOneCareerContact({
-      id: contactCareers.test.id,
-    });
+    const careerContactRequest =
+      await ContactsCareersServices.findOneCareerContact({
+        id: contactCareers.test.id,
+      });
     expect(careerContactRequest.isAddressed).toBe(false);
 
     await ContactsCareersServices.updateCareerContactById(
@@ -297,9 +300,10 @@ describe("PATCH /careers/contacts/{careerContactId}", () => {
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(200);
 
-    const careerContactRequest = await ContactsCareersServices.findOneCareerContact({
-      id: contactCareers.test.id,
-    });
+    const careerContactRequest =
+      await ContactsCareersServices.findOneCareerContact({
+        id: contactCareers.test.id,
+      });
     expect(careerContactRequest.isAddressed).toBe(true);
 
     await ContactsCareersServices.updateCareerContactById(

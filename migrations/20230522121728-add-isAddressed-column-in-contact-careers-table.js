@@ -10,9 +10,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return await queryInterface.removeColumn(
-      "Contact_Careers",
-      "isAddressed",
-    );
+    return await queryInterface.removeColumn("Contact_Careers", "isAddressed");
   },
 };
