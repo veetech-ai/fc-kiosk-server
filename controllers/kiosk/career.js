@@ -286,7 +286,7 @@ exports.deleteCareerById = async (req, res) => {
    * @swagger
    *
    * /careers/{careerId}:
-   *   get:
+   *   delete:
    *     security:
    *      - auth: []
    *     description: Delete career by id
