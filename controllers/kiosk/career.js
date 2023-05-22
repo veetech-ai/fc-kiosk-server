@@ -4,7 +4,6 @@ const CoursesServices = require("../../services/kiosk/course");
 const CareersServices = require("../../services/kiosk/career");
 const ServiceError = require("../../utils/serviceError");
 
-const lodash = require("lodash");
 const { validateObject } = require("../../common/helper");
 
 /**
@@ -52,7 +51,7 @@ exports.create = async (req, res) => {
    *       - name: timings
    *         description: Career timings - string representation of the object
    *         in: formData
-   *         required: true
+   *         required: false
    *         type: string
    *       - name: link
    *         description: Link to the third party career/job post e.g., indeed.com
@@ -80,7 +79,7 @@ exports.create = async (req, res) => {
     gcId: "required|integer",
     content: "required|string",
     type: "required|string",
-    timings: "required|json",
+    timings: "json",
   });
 
   if (validation.fails()) return apiResponse.fail(res, validation.errors);
@@ -142,7 +141,7 @@ exports.getCareersByCourseId = async (req, res) => {
   }
 };
 
-exports.patch = async (req, res) => {
+exports.updateCareerById = async (req, res) => {
   /**
    * @swagger
    *
@@ -220,7 +219,7 @@ exports.patch = async (req, res) => {
     }
 
     const allowedFields = ["title", "content", "type", "timings", "link"];
-    const filteredBody = validateObject({ ...req.body }, allowedFields);
+    const filteredBody = validateObject(req.body, allowedFields);
 
     const loggedInUserOrgId = req.user.orgId;
 
