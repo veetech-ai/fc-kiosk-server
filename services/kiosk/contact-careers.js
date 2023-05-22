@@ -1,4 +1,5 @@
 const models = require("../../models/index");
+const ServiceError = require("../../utils/serviceError");
 
 const ContactCareer = models.Contact_Career;
 
@@ -13,7 +14,7 @@ async function deleteWhere(where) {
 async function findContacts(where, loggedInUserOrgId) {
   const clonedWhere = {...where}
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId
-  ContactCareer.findAll({
+  return await ContactCareer.findAll({
     where: clonedWhere
   })
 }
@@ -21,9 +22,14 @@ async function findContacts(where, loggedInUserOrgId) {
 async function findOneContact(where, loggedInUserOrgId) {
   const clonedWhere = {...where}
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId
-  ContactCareer.findOne({
+  const contactRequest = await ContactCareer.findOne({
     where: clonedWhere
   })
+
+  if (!contactRequest) {
+    throw new ServiceError("Contact request not found", 404);
+  }
+  return contactRequest
 }
 
 async function updateCareerContactById(id, body) {
