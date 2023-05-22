@@ -7,7 +7,7 @@ const randtoken = require("rand-token");
 const axios = require("axios");
 const moment = require("moment");
 const Ajv = require("ajv");
-const { cloneDeep, pickBy } = require("lodash");
+const { cloneDeep, pickBy, pick } = require("lodash");
 
 // Logger Imports
 const { logger } = require("../logger");
@@ -1501,4 +1501,21 @@ exports.createDeviceJwtToken = (payload) => {
     logger.error(err);
     throw new ServiceError("No Token Created", 500);
   }
+};
+
+exports.validateObject = (objectToBeValidated, allowedFields) => {
+  const cloneObject = { ...objectToBeValidated };
+  const fieldsToBeValidated = Object.keys(cloneObject);
+  const inValidFields = fieldsToBeValidated.filter(
+    (f) => !allowedFields.includes(f),
+  );
+  if (
+    inValidFields.length &&
+    inValidFields.length == fieldsToBeValidated.length
+  ) {
+    // whole object is invalid
+    throw new ServiceError("Can not update the requested item/s", 400);
+  }
+
+  return pick(cloneObject, allowedFields);
 };
