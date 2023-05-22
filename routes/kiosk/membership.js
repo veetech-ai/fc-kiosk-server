@@ -15,12 +15,12 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     CourseMembershipContactController.getMembershipContacts,
   ]);
-  
+
   router.patch(membership + `/contacts/:id`, [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseMembershipContactController.updateContactMembership,
-  ])
+  ]);
 
   router.get(membership + `/courses/:id`, [
     validation_middleware.validJWTNeeded,

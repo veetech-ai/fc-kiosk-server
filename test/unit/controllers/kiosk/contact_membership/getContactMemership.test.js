@@ -9,7 +9,7 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
   let courseId;
   let deviceId;
   let deviceToken;
-  let customerToken
+  let customerToken;
   let testOrganizationId = 1;
   let differentOrganizationCustomerToken;
   let productId = product.products.kiosk.id;
@@ -34,10 +34,10 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
     };
 
     adminToken = await helper.get_token_for("admin");
-    customerToken=await helper.get_token_for("testCustomer");
+    customerToken = await helper.get_token_for("testCustomer");
     differentOrganizationCustomerToken = await helper.get_token_for(
-        "zongCustomer",
-      );
+      "zongCustomer",
+    );
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses",
       token: adminToken,
@@ -64,56 +64,54 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
-   const resp=await helper.post_request_with_authorization({
-        endpoint: `kiosk-content/memberships/contacts`,
-        token: deviceToken,
-        params: {membershipId,...reqBody},
-      });
-    console.log({membershipId,...reqBody});
+    const resp = await helper.post_request_with_authorization({
+      endpoint: `kiosk-content/memberships/contacts`,
+      token: deviceToken,
+      params: { membershipId, ...reqBody },
+    });
+    console.log({ membershipId, ...reqBody });
     console.log(resp.body.data);
   });
 
- const makeApiRequest = async (id,token = adminToken) => {
+  const makeApiRequest = async (id, token = adminToken) => {
     return await helper.get_request_with_authorization({
       endpoint: `course-membership/${id}/contacts`,
       token: token,
     });
   };
-  
-
 
   it("should successfully return contact membership list", async () => {
     console.log(membershipId);
-    const expectedResponse={
-        id: 1,
-        gcId: 1,
-        orgId: 1,
-        mId: 1,
-        userPhone: reqBody.phone,
-        userEmail: null,
-        contactMedium: 'text',
-        isAddressed: false,
-    }
+    const expectedResponse = {
+      id: 1,
+      gcId: 1,
+      orgId: 1,
+      mId: 1,
+      userPhone: reqBody.phone,
+      userEmail: null,
+      contactMedium: "text",
+      isAddressed: false,
+    };
     const response = await makeApiRequest(membershipId);
     expect(response.body.data).toEqual(
-        expect.arrayContaining([expect.objectContaining(expectedResponse)]),
-      );
+      expect.arrayContaining([expect.objectContaining(expectedResponse)]),
+    );
   });
   it("should successfully return contact membership list with user of same orgnaization", async () => {
-    const expectedResponse={
-        id: 1,
-        gcId: 1,
-        orgId: 1,
-        mId: 1,
-        userPhone: reqBody.phone,
-        userEmail: null,
-        contactMedium: 'text',
-        isAddressed: false,
-    }
-    const response = await makeApiRequest(membershipId,customerToken);
+    const expectedResponse = {
+      id: 1,
+      gcId: 1,
+      orgId: 1,
+      mId: 1,
+      userPhone: reqBody.phone,
+      userEmail: null,
+      contactMedium: "text",
+      isAddressed: false,
+    };
+    const response = await makeApiRequest(membershipId, customerToken);
     expect(response.body.data).toEqual(
-        expect.arrayContaining([expect.objectContaining(expectedResponse)]),
-      );
+      expect.arrayContaining([expect.objectContaining(expectedResponse)]),
+    );
   });
   it("should return error while the api is being accessed by the customer of different organization", async () => {
     const response = await makeApiRequest(
@@ -122,5 +120,4 @@ describe("POST /api/v1/kiosk-content/memberships/contacts", () => {
     );
     expect(response.body.data).toEqual("You are not allowed");
   });
-
 });
