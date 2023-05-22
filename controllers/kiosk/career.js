@@ -240,3 +240,82 @@ exports.updateCareerById = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.getCareerById = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /careers/{careerId}:
+   *   get:
+   *     security:
+   *      - auth: []
+   *     description: Get career by id
+   *     tags: [Careers]
+   *     parameters:
+   *       - name: careerId
+   *         description: Id of the career
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const loggedInUserOrgId = req.user.orgId;
+
+    const careerId = Number(req.params.careerId);
+    if (!careerId)
+      throw new ServiceError("The careerId must be an integer.", 400);
+
+    const career = await CareersServices.findOneCareer(
+      { id: careerId },
+      loggedInUserOrgId,
+    );
+
+    return apiResponse.success(res, req, career);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.deleteCareerById = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /careers/{careerId}:
+   *   get:
+   *     security:
+   *      - auth: []
+   *     description: Delete career by id
+   *     tags: [Careers]
+   *     parameters:
+   *       - name: careerId
+   *         description: Id of the career
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const loggedInUserOrgId = req.user.orgId;
+
+    const careerId = Number(req.params.careerId);
+    if (!careerId)
+      throw new ServiceError("The careerId must be an integer.", 400);
+
+    await CareersServices.deleteCareersWhere(
+      { id: careerId },
+      loggedInUserOrgId,
+    );
+    return apiResponse.success(res, req, "Career deleted successfully");
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
