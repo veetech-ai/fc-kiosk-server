@@ -26,12 +26,15 @@ async function updateContactMemeberShipIsAddressable(
   contactMemebershipId,
   isAddressedBoolean,
 ) {
-  const [affectedRows] = await ContactMembership.findOne(
-    { isAddressed: isAddressedBoolean },
-    { where: { id: contactMemebershipId } },
+  const contactMembership = await getContactMembershipById(
+    contactMemebershipId,
   );
-
-  return affectedRows;
+  if (contactMembership) {
+    contactMembership.isAddressed = isAddressedBoolean;
+    await contactMembership.save();
+    return "Updated Successfully";
+  }
+  return "Something went wrong";
 }
 
 module.exports = {

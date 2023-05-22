@@ -1,14 +1,10 @@
 const Validator = require("validatorjs");
 const formidable = require("formidable");
 const apiResponse = require("../../common/api.response");
-const upload_file = require("../../common/upload");
-const courseLesson = require("../../services/kiosk/lessons");
-const courseService = require("../../services/kiosk/course");
 const contactMembershipService = require("../../services/kiosk/contact_membership");
 const membershipService = require("../../services/kiosk/membership");
 const helper = require("../../common/helper");
-const ServiceError = require("../../utils/serviceError");
-
+const {parseBoolean}=require("../../utils/parseBoolean")
 /**
  * @swagger
  * tags:
@@ -124,18 +120,18 @@ exports.updateContactMembership = async (req, res) => {
     }
 
     let isAddressedBoolean = req.body.isAddressed;
-    const isStringBoolean =
-      isAddressedBoolean === "true" ||
-      isAddressedBoolean === "false" ||
-      typeof isAddressedBoolean === "boolean";
-    if (!isStringBoolean)
-      throw new ServiceError("isAddressed must be a boolean", 400);
-    isAddressedBoolean = JSON.parse(req.body.isAddressed);
-
+    const isAddressedParsed=parseBoolean(isAddressedBoolean)
+    // const isStringBoolean =
+    //   isAddressedBoolean === "true" ||
+    //   isAddressedBoolean === "false" ||
+    //   typeof isAddressedBoolean === "boolean";
+    // if (!isStringBoolean)
+    //   throw new ServiceError("isAddressed must be a boolean", 400);
+    // isAddressedBoolean = JSON.parse(req.body.isAddressed);
     const updatedMemberShipContact =
       await contactMembershipService.updateContactMemeberShipIsAddressable(
         contactMembershipId,
-        isAddressedBoolean,
+        isAddressedParsed,
       );
 
     return apiResponse.success(res, req, updatedMemberShipContact);

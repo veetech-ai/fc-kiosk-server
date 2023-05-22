@@ -4,7 +4,7 @@ const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
 const membershipService = require("../../../../../services/kiosk/membership");
 
-describe("GET /api/v1/course-membersip/{id}/contacts", () => {
+describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
   let adminToken;
   let courseId;
   let deviceId;
@@ -64,55 +64,54 @@ describe("GET /api/v1/course-membersip/{id}/contacts", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
-    const resp = await helper.post_request_with_authorization({
+    await helper.post_request_with_authorization({
       endpoint: `kiosk-content/memberships/contacts`,
       token: deviceToken,
       params: { membershipId, ...reqBody },
     });
+
+    //    await helper.get_request_with_authorization({
+    //         endpoint: `course-membership/${id}/contacts`,
+    //         token: deviceToken,
+    //       });
   });
 
-  const makeApiRequest = async (id, token = adminToken) => {
-    return await helper.get_request_with_authorization({
-      endpoint: `course-membership/${id}/contacts`,
+  const makeApiRequest = async (id, body, token = adminToken) => {
+    return await helper.patch_request_with_authorization({
+      endpoint: `course-membership/contacts/${id}`,
       token: token,
+      params: body,
     });
   };
 
-  it("should successfully return contact membership list", async () => {
-    const expectedResponse = {
-      id: 1,
-      gcId: 1,
-      orgId: 1,
-      mId: 1,
-      userPhone: reqBody.phone,
-      userEmail: null,
-      contactMedium: "text",
-      isAddressed: false,
+  it("should successfully update contact membership", async () => {
+    const body = {
+      isAddressed: true,
     };
-    const response = await makeApiRequest(membershipId);
-    expect(response.body.data).toEqual(
-      expect.arrayContaining([expect.objectContaining(expectedResponse)]),
-    );
+    const response = await makeApiRequest(membershipId, body);
+    expect(response.body.data).toBe("Updated Successfully");
   });
-  it("should successfully return contact membership list with user of same orgnaization", async () => {
-    const expectedResponse = {
-      id: 1,
-      gcId: 1,
-      orgId: 1,
-      mId: 1,
-      userPhone: reqBody.phone,
-      userEmail: null,
-      contactMedium: "text",
-      isAddressed: false,
+  it("should successfully update contact membership when api is accessed by customer same orgnaization", async () => {
+    const body = {
+      isAddressed: true,
     };
-    const response = await makeApiRequest(membershipId, customerToken);
-    expect(response.body.data).toEqual(
-      expect.arrayContaining([expect.objectContaining(expectedResponse)]),
-    );
+    const response = await makeApiRequest(membershipId, body, customerToken);
+    expect(response.body.data).toBe("Updated Successfully");
+  });
+  it("should return validation error if non boolean value is passed", async () => {
+    const body = {
+      isAddressed: null,
+    };
+    const response = await makeApiRequest(membershipId, body, customerToken);
+    expect(response.body.data).toBe("isAddressed must be a boolean");
   });
   it("should return error while the api is being accessed by the customer of different organization", async () => {
+    const body = {
+      isAddressed: true,
+    };
     const response = await makeApiRequest(
       membershipId,
+      body,
       differentOrganizationCustomerToken,
     );
     expect(response.body.data).toEqual("You are not allowed");
