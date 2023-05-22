@@ -74,7 +74,6 @@ describe("POST /careers", () => {
           gcId: ["The gcId field is required."],
           content: ["The content field is required."],
           type: ["The type field is required."],
-          timings: ["The timings field is required."],
         },
       },
     };
