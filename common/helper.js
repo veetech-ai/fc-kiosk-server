@@ -1504,7 +1504,8 @@ exports.createDeviceJwtToken = (payload) => {
 };
 
 exports.validateObject = (objectToBeValidated, allowedFields) => {
-  const fieldsToBeValidated = Object.keys(objectToBeValidated);
+  const cloneObject = { ...objectToBeValidated };
+  const fieldsToBeValidated = Object.keys(cloneObject);
   const inValidFields = fieldsToBeValidated.filter(
     (f) => !allowedFields.includes(f),
   );
@@ -1516,5 +1517,5 @@ exports.validateObject = (objectToBeValidated, allowedFields) => {
     throw new ServiceError("Can not update the requested item/s", 400);
   }
 
-  return pick(objectToBeValidated, allowedFields);
+  return pick(cloneObject, allowedFields);
 };

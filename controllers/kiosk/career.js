@@ -4,7 +4,6 @@ const CoursesServices = require("../../services/kiosk/course");
 const CareersServices = require("../../services/kiosk/career");
 const ServiceError = require("../../utils/serviceError");
 
-const lodash = require("lodash");
 const { validateObject } = require("../../common/helper");
 
 /**
@@ -142,7 +141,7 @@ exports.getCareersByCourseId = async (req, res) => {
   }
 };
 
-exports.patch = async (req, res) => {
+exports.updateCareerById = async (req, res) => {
   /**
    * @swagger
    *
@@ -220,7 +219,7 @@ exports.patch = async (req, res) => {
     }
 
     const allowedFields = ["title", "content", "type", "timings", "link"];
-    const filteredBody = validateObject({ ...req.body }, allowedFields);
+    const filteredBody = validateObject(req.body, allowedFields);
 
     const loggedInUserOrgId = req.user.orgId;
 

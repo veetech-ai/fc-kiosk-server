@@ -13,7 +13,7 @@ exports.routesConfig = function (app, router) {
   router.patch(group + "/:careerId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
-    CareersController.patch,
+    CareersController.updateCareerById,
   ]);
 
   router.get(group + "/courses/:courseId", [
