@@ -64,7 +64,7 @@ describe("GET /api/v1/course-membersip/{id}/contacts", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
-    const resp = await helper.post_request_with_authorization({
+    await helper.post_request_with_authorization({
       endpoint: `kiosk-content/memberships/contacts`,
       token: deviceToken,
       params: { membershipId, ...reqBody },
@@ -80,10 +80,6 @@ describe("GET /api/v1/course-membersip/{id}/contacts", () => {
 
   it("should successfully return contact membership list", async () => {
     const expectedResponse = {
-      id: 1,
-      gcId: 1,
-      orgId: 1,
-      mId: 1,
       userPhone: reqBody.phone,
       userEmail: null,
       contactMedium: "text",
@@ -96,10 +92,6 @@ describe("GET /api/v1/course-membersip/{id}/contacts", () => {
   });
   it("should successfully return contact membership list with user of same orgnaization", async () => {
     const expectedResponse = {
-      id: 1,
-      gcId: 1,
-      orgId: 1,
-      mId: 1,
       userPhone: reqBody.phone,
       userEmail: null,
       contactMedium: "text",

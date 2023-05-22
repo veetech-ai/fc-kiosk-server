@@ -18,6 +18,7 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
     phone: "43423423",
     contact_medium: "text",
   };
+  let contactMembershipId
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -64,11 +65,12 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
       token: adminToken,
     });
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
-    await helper.post_request_with_authorization({
+    const response=await helper.post_request_with_authorization({
       endpoint: `kiosk-content/memberships/contacts`,
       token: deviceToken,
       params: { membershipId, ...reqBody },
     });
+    contactMembershipId=response.body.data.id
   });
 
   const makeApiRequest = async (id, body, token = adminToken) => {
@@ -83,21 +85,21 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
     const body = {
       isAddressed: true,
     };
-    const response = await makeApiRequest(membershipId, body);
+    const response = await makeApiRequest(contactMembershipId, body);
     expect(response.body.data).toBe("Updated Successfully");
   });
   it("should successfully update contact membership when api is accessed by customer same orgnaization", async () => {
     const body = {
       isAddressed: true,
     };
-    const response = await makeApiRequest(membershipId, body, customerToken);
+    const response = await makeApiRequest(contactMembershipId, body, customerToken);
     expect(response.body.data).toBe("Updated Successfully");
   });
   it("should return validation error if non boolean value is passed", async () => {
     const body = {
       isAddressed: null,
     };
-    const response = await makeApiRequest(membershipId, body, customerToken);
+    const response = await makeApiRequest(contactMembershipId, body, customerToken);
     expect(response.body.data).toBe("isAddressed must be a boolean");
   });
   it("should return error while the api is being accessed by the customer of different organization", async () => {
@@ -105,7 +107,7 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
       isAddressed: true,
     };
     const response = await makeApiRequest(
-      membershipId,
+      contactMembershipId,
       body,
       differentOrganizationCustomerToken,
     );
