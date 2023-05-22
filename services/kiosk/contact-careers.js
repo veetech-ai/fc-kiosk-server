@@ -11,7 +11,7 @@ async function deleteWhere(where) {
   return await ContactCareer.destroy({ where });
 }
 
-async function findContacts(where, loggedInUserOrgId) {
+async function findCareerContacts(where, loggedInUserOrgId) {
   const clonedWhere = { ...where };
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   return await ContactCareer.findAll({
@@ -19,7 +19,7 @@ async function findContacts(where, loggedInUserOrgId) {
   });
 }
 
-async function findOneContact(where, loggedInUserOrgId) {
+async function findOneCareerContact(where, loggedInUserOrgId) {
   const clonedWhere = { ...where };
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const contactRequest = await ContactCareer.findOne({
@@ -39,7 +39,7 @@ async function updateCareerContactById(id, body) {
 module.exports = {
   create,
   deleteWhere,
-  findContacts,
-  findOneContact,
+  findCareerContacts,
+  findOneCareerContact,
   updateCareerContactById,
 };

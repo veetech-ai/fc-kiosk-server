@@ -39,7 +39,7 @@ exports.getCareerContacts = async (req, res) => {
     }
 
     const loggedInUserOrgId = req.user.orgId;
-    const contactCareers = await ContactsCareersServices.findContacts(
+    const contactCareers = await ContactsCareersServices.findCareerContacts(
       { careerId },
       loggedInUserOrgId,
     );
@@ -102,7 +102,7 @@ exports.updateCareerContact = async (req, res) => {
     }
 
     const loggedInUserOrg = req.user.orgId;
-    await ContactsCareersServices.findOneContact(
+    await ContactsCareersServices.findOneCareerContact(
       { id: careerContactId },
       loggedInUserOrg,
     );

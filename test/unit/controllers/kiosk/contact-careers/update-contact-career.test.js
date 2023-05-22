@@ -216,7 +216,7 @@ describe("PATCH /careers/contacts/{careerContactId}", () => {
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(200);
 
-    const careerContactRequest = await ContactsCareersServices.findOneContact({
+    const careerContactRequest = await ContactsCareersServices.findOneCareerContact({
       id: contactCareers.test.id,
     });
     expect(careerContactRequest.isAddressed).toBe(true);
@@ -241,7 +241,7 @@ describe("PATCH /careers/contacts/{careerContactId}", () => {
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(200);
 
-    const careerContactRequest = await ContactsCareersServices.findOneContact({
+    const careerContactRequest = await ContactsCareersServices.findOneCareerContact({
       id: contactCareers.test.id,
     });
     expect(careerContactRequest.isAddressed).toBe(true);
@@ -272,7 +272,7 @@ describe("PATCH /careers/contacts/{careerContactId}", () => {
 
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(200);
-    const careerContactRequest = await ContactsCareersServices.findOneContact({
+    const careerContactRequest = await ContactsCareersServices.findOneCareerContact({
       id: contactCareers.test.id,
     });
     expect(careerContactRequest.isAddressed).toBe(false);
@@ -297,7 +297,7 @@ describe("PATCH /careers/contacts/{careerContactId}", () => {
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(200);
 
-    const careerContactRequest = await ContactsCareersServices.findOneContact({
+    const careerContactRequest = await ContactsCareersServices.findOneCareerContact({
       id: contactCareers.test.id,
     });
     expect(careerContactRequest.isAddressed).toBe(true);

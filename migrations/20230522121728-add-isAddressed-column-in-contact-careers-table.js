@@ -11,8 +11,8 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     return await queryInterface.removeColumn(
-      "Contact_Careers", // name of Source model
-      "isAddressed", // key we want to remove
+      "Contact_Careers",
+      "isAddressed",
     );
   },
 };

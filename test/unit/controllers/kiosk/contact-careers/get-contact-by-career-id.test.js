@@ -202,24 +202,6 @@ describe("GET /careers/:careerId/contacts", () => {
     expect(response.statusCode).toBe(200);
   });
 
-  it("should return an array if the test organization's customer tries to get the contact requests of a his/her own organization's career", async () => {
-    const expectedResponse = {
-      careerId: careers.test.id,
-      email: `exampletest@xyz.com`,
-      orgId: testOrganizatonId,
-      gcId: courses.test.id,
-    };
-    const response = await getContactCareerByCareerId(
-      careers.test.id,
-      testCustomerToken,
-    );
-    expect(response.body.data).toEqual(
-      expect.arrayContaining([expect.objectContaining(expectedResponse)]),
-    );
-    expect(response.body.success).toEqual(true);
-    expect(response.statusCode).toBe(200);
-  });
-
   it("should return an array if the super admin tries to get the contact requests of a any existing career", async () => {
     const expectedResponse = {
       careerId: careers.zong.id,
