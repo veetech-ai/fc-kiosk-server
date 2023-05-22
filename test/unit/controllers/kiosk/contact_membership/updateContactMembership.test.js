@@ -69,11 +69,6 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
       token: deviceToken,
       params: { membershipId, ...reqBody },
     });
-
-    //    await helper.get_request_with_authorization({
-    //         endpoint: `course-membership/${id}/contacts`,
-    //         token: deviceToken,
-    //       });
   });
 
   const makeApiRequest = async (id, body, token = adminToken) => {

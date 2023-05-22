@@ -4,7 +4,7 @@ const apiResponse = require("../../common/api.response");
 const contactMembershipService = require("../../services/kiosk/contact_membership");
 const membershipService = require("../../services/kiosk/membership");
 const helper = require("../../common/helper");
-const {parseBoolean}=require("../../utils/parseBoolean")
+const { parseBoolean } = require("../../utils/parseBoolean");
 /**
  * @swagger
  * tags:
@@ -120,7 +120,7 @@ exports.updateContactMembership = async (req, res) => {
     }
 
     let isAddressedBoolean = req.body.isAddressed;
-    const isAddressedParsed=parseBoolean(isAddressedBoolean)
+    const isAddressedParsed = parseBoolean(isAddressedBoolean);
     // const isStringBoolean =
     //   isAddressedBoolean === "true" ||
     //   isAddressedBoolean === "false" ||
