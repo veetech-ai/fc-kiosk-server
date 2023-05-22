@@ -58,7 +58,7 @@ exports.findCouponsByCourseId = async (req, res) => {
    *     security:
    *      - auth: []
    *     description: Get coupons by course id
-   *     tags: [Careers]
+   *     tags: [Coupons]
    *     parameters:
    *       - name: courseId
    *         description: Id of the golf course

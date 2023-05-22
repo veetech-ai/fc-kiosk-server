@@ -31,8 +31,9 @@ module.exports.list_available = (perPage, page) => {
 };
 
 exports.findAllCoupons = async (where, loggedInUserOrgId = null) => {
-  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
-  return await Coupon.findAll({ where });
+  const clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
+  return await Coupon.findAll({ clonedWhere });
 };
 
 exports.findByWhere = (where) => {

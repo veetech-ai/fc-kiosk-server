@@ -15,7 +15,6 @@ exports.routesConfig = function (app, router) {
     CouponsController.get_by_id,
   ]);
 
-  // for admin
   router.get(group + "/courses/:courseId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCoupons"]),
