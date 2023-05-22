@@ -52,7 +52,7 @@ exports.create = async (req, res) => {
    *       - name: timings
    *         description: Career timings - string representation of the object
    *         in: formData
-   *         required: true
+   *         required: false
    *         type: string
    *       - name: link
    *         description: Link to the third party career/job post e.g., indeed.com
@@ -80,7 +80,7 @@ exports.create = async (req, res) => {
     gcId: "required|integer",
     content: "required|string",
     type: "required|string",
-    timings: "required|json",
+    timings: "json",
   });
 
   if (validation.fails()) return apiResponse.fail(res, validation.errors);

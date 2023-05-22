@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       timings: {
         type: DataTypes.JSON,
-        allowNull: false,
+        allowNull: true,
         set(value) {
           try {
             JSON.parse(value);
