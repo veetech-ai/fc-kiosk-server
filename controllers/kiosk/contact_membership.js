@@ -1,10 +1,10 @@
 const Validator = require("validatorjs");
-const formidable = require("formidable");
 const apiResponse = require("../../common/api.response");
 const contactMembershipService = require("../../services/kiosk/contact_membership");
 const membershipService = require("../../services/kiosk/membership");
 const helper = require("../../common/helper");
 const { parseBoolean } = require("../../utils/parseBoolean");
+
 /**
  * @swagger
  * tags:
@@ -45,13 +45,13 @@ exports.getMembershipContacts = async (req, res) => {
       "admin",
     ]).success;
     const membership = await membershipService.getMembershipById(membershipId);
-    const orgId = membership.orgId;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
+
+    const isSameOrganizationResource = loggedInUserOrg === membership.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
     const contactMembership =
-      await contactMembershipService.getContactMembership(membershipId);
+      await contactMembershipService.getContactMemberships(membershipId);
     return apiResponse.success(res, req, contactMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -113,16 +113,17 @@ exports.updateContactMembership = async (req, res) => {
       await contactMembershipService.getContactMembershipById(
         contactMembershipId,
       );
-    const orgId = contactMembership.orgId;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
+
+    const isSameOrganizationResource =
+      loggedInUserOrg === contactMembership.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
 
     let isAddressedBoolean = req.body.isAddressed;
-    const isAddressedParsed = parseBoolean(isAddressedBoolean);
+    const isAddressedParsed = parseBoolean(isAddressedBoolean, "isAddressed");
     const updatedMemberShipContact =
-      await contactMembershipService.updateContactMemeberShipIsAddressable(
+      await contactMembershipService.updateContactMemberShipIsAddressable(
         contactMembershipId,
         isAddressedParsed,
       );
