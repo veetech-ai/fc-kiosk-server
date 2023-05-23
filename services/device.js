@@ -20,6 +20,7 @@ const config = require("../config/config");
 const { deviceSettings } = require("../config/config");
 const { logger } = require("../logger");
 const ServiceError = require("../utils/serviceError");
+const CourseService = require("../services/kiosk/course");
 
 function serialExists(serial) {
   return Device.count({
@@ -1770,11 +1771,11 @@ exports.createDeviceToken = async (deviceId, deviceSerial) => {
 exports.link_to_golf_course = async (deviceId, courseId) => {
   const device = await Device.findByPk(deviceId);
   if (!device) {
-    throw new ServiceError(`Device not found`, 200);
+    throw new ServiceError(`Device not found`, 404);
   }
-  const course = await Course.findByPk(courseId);
+  const course = await CourseService.getCourseById(courseId);
   if (!course) {
-    throw new ServiceError(`Course not found`, 200);
+    throw new ServiceError(`Course not found`, 404);
   }
 
   if (device.owner_id !== course.orgId) {
