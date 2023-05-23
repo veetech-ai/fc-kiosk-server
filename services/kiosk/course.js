@@ -2,6 +2,7 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
 const membershipService = require("./membership");
+const upload_file = require("../../common/upload");
 
 const Course = models.Course;
 const Organization = models.Organization;
@@ -39,6 +40,21 @@ async function getCoursesByOrganization(orgId) {
       orgId,
     },
   });
+
+  // Attach Images URLs
+  if (courses.length) {
+    courses.forEach((course) => {
+      if (course.logo) {
+        const logo = upload_file.getFileURL(course.logo);
+        course.setDataValue("logo", logo);
+      }
+
+      if (course.images && course.images.length) {
+        const images = upload_file.getFileURL(course.images);
+        course.setDataValue("images", images);
+      }
+    });
+  }
 
   return courses;
 }
