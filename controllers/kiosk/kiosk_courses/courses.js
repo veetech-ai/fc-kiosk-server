@@ -316,6 +316,14 @@ exports.create_course_info = async (req, res) => {
 
     const logoImage = files?.logo;
     let courseImages = files?.course_images;
+    const parsedOrder=JSON.parse(fields.order)
+    const parseduuidlist=JSON.parse(fields.links)
+    for(let i=0;i<parsedOrder.length;i++){
+      if(parsedOrder[i]=='L'){
+        uploadedImages.push(parsedOrder[i])
+        console.log("uploaded :",uploadedImages);
+      }
+    }
     if (courseImages) {
       const isIterable = Symbol.iterator in Object(courseImages);
       if (!isIterable) {
