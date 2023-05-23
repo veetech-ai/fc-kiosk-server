@@ -186,6 +186,10 @@ exports.redeemCoupon = async (coupon, deviceId) => {
   );
 };
 
+exports.findAllCoupons = async (where) => {
+  return await Coupon.findAll({ where });
+};
+
 exports.deleteCouponsWhere = async (where) => {
   const clonedWhere = { ...where };
   const noOfAffectedRows = await Coupon.destroy({ where: clonedWhere });
