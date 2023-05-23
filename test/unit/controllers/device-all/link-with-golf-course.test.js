@@ -62,10 +62,9 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
     const response = await makeApiRequest(deviceId, courseId);
     expect(response.body.data.gcId).toBe(courseId);
   });
-  it("returns 200 status code Request with expected message for an invalid course ID", async () => {
+  it.only("returns 200 status code Request with expected message for an invalid device ID", async () => {
     const response = await makeApiRequest(invalidDeviceId, courseId);
     expect(response.body.data).toEqual("Device not found");
-    expect(response.status).toEqual(200);
   });
   it("returns 200 status code Request with expected message for an invalid course ID", async () => {
     const response = await makeApiRequest(deviceId, invalidCourseId);

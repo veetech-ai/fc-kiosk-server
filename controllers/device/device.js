@@ -3846,13 +3846,16 @@ exports.link_device_to_course = async (req, res) => {
         "deviceId and courseId must be a valid number",
       );
     }
-
-    const response = await DeviceModel.link_to_golf_course(deviceId, courseId);
-    const isSameOrganizationResource = loggedInUserOrg == response.owner_id;
+    const device=await DeviceModel.findById(deviceId)
+    if(!device){
+      return apiResponse.fail(res, "Device not found", 404);
+    }
+    const ownerId=device.owner_id
+    const isSameOrganizationResource = loggedInUserOrg == ownerId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
     }
-
+    const response = await DeviceModel.link_to_golf_course(deviceId, courseId);
     const mqttPayload = {
       gcId: courseId,
     };
