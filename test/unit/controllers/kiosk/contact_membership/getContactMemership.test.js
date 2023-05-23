@@ -1,5 +1,8 @@
 const helper = require("../../../../helper");
 const product = require("../../../../../common/products");
+const {
+  organizationsInApplication,
+} = require("../../../../../common/organizations.data");
 const { uuid } = require("uuidv4");
 const membershipService = require("../../../../../services/kiosk/membership");
 
@@ -9,7 +12,7 @@ describe("GET /api/v1/course-membersip/{id}/contacts", () => {
   let deviceId;
   let deviceToken;
   let customerToken;
-  let testOrganizationId = 1;
+  let testOrganizationId = organizationsInApplication.test.id;
   let differentOrganizationCustomerToken;
   let productId = product.products.kiosk.id;
   let membershipId;

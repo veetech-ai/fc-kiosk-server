@@ -3,6 +3,9 @@ const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
 const membershipService = require("../../../../../services/kiosk/membership");
+const {
+  organizationsInApplication,
+} = require("../../../../../common/organizations.data");
 
 describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
   let adminToken;
@@ -10,7 +13,7 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
   let deviceId;
   let deviceToken;
   let customerToken;
-  let testOrganizationId = 1;
+  let testOrganizationId = organizationsInApplication.test.id;
   let differentOrganizationCustomerToken;
   let productId = product.products.kiosk.id;
   let membershipId;
