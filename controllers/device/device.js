@@ -3846,11 +3846,11 @@ exports.link_device_to_course = async (req, res) => {
         "deviceId and courseId must be a valid number",
       );
     }
-    const device=await DeviceModel.findById(deviceId)
-    if(!device){
+    const device = await DeviceModel.findById(deviceId);
+    if (!device) {
       return apiResponse.fail(res, "Device not found", 404);
     }
-    const ownerId=device.owner_id
+    const ownerId = device.owner_id;
     const isSameOrganizationResource = loggedInUserOrg == ownerId;
     if (!isSuperOrAdmin && !isSameOrganizationResource) {
       return apiResponse.fail(res, "", 403);
