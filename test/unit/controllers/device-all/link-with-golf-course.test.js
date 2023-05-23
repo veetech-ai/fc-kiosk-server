@@ -1,15 +1,17 @@
 const helper = require("../../../helper");
-const models = require("../../../../models/index");
+const {
+  organizationsInApplication,
+} = require("../../../../common/organizations.data");
 const { uuid } = require("uuidv4");
-const Course = models.Course;
+const product = require("../../../../common/products");
 describe("PUT /api/v1/device/link-golf-course/{id}", () => {
   let adminToken;
   let customerToken;
   let testOperatorToken;
   let differentOrganizationCustomerToken;
-  let testOrganizationId = 1;
+  let testOrganizationId = organizationsInApplication.test.id;
   let courseId;
-  let courseIdWithDiffernetOrganization;
+  let courseIdWithDifferentOrganization;
   let deviceId;
   let invalidCourseId = 90000000;
   let invalidDeviceId = 90000000;
@@ -26,12 +28,12 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
       name: "Course 1",
       city: "Test City 1",
       state: "Test State 1",
-      orgId: 2,
+      orgId: organizationsInApplication.zong.id,
     };
     const bodyData = {
       serial: uuid(),
       pin_code: 1111,
-      device_type: 1,
+      device_type: product.products.kiosk.id,
     };
 
     adminToken = await helper.get_token_for("admin");
@@ -46,14 +48,14 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
       params: courses,
     });
     courseId = course.body.data.id;
-    const courseWithDiffernetOrganization =
+    const courseWithDifferentOrganization =
       await helper.post_request_with_authorization({
         endpoint: "kiosk-courses",
         token: adminToken,
         params: coursesWithDifferentOrganizationParams,
       });
-    courseIdWithDiffernetOrganization =
-      courseWithDiffernetOrganization.body.data.id;
+    courseIdWithDifferentOrganization =
+      courseWithDifferentOrganization.body.data.id;
     const device = await helper.post_request_with_authorization({
       endpoint: "device/create",
       token: adminToken,
@@ -113,10 +115,10 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
     );
     expect(response.body.data).toEqual("Device not found");
   });
-  it("returns error Request with expected message for an invalid device ID", async () => {
+  it("returns error when a device with different orgId is linked to course of different organization", async () => {
     const response = await makeApiRequest(
       deviceId,
-      courseIdWithDiffernetOrganization,
+      courseIdWithDifferentOrganization,
     );
     expect(response.body.data).toEqual("Not linked");
   });

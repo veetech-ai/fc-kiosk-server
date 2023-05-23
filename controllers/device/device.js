@@ -3849,7 +3849,7 @@ exports.link_device_to_course = async (req, res) => {
     if (!device) {
       return apiResponse.fail(res, "Device not found", 404);
     }
-    const ownerId = device.owner_id;
+
     const response = await DeviceModel.link_to_golf_course(
       { id: deviceId },
       courseId,
