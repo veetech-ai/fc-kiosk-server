@@ -4,11 +4,12 @@ const {
 const product = require("../../../../../common/products");
 
 const helper = require("../../../../helper");
+const mainHelper = require("../../../../../common/helper");
+
 const moment = require("moment");
 const { uuid } = require("uuidv4");
 const CouponsServices = require("../../../../../services/coupons");
 const CouponUsedServices = require("../../../../../services/coupon_used");
-
 let superAdminToken,
   testCustomerToken,
   testOrganizationDeviceToken,
@@ -19,7 +20,7 @@ let superAdminToken,
 let couponCreationBody = {
   title: "Example",
   description: "Test Coupon",
-  expiry: moment().format("YYYY-MM-DDTHH:mm:ssZ"),
+  expiry: moment().add(30, "minutes").format("YYYY-MM-DDTHH:mm:ssZ"),
   code: "XYZa123",
   discountType: "fixed",
   discount: 50,
@@ -161,13 +162,16 @@ describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
       success: false,
       data: "Invalid Coupon or coupon may expire",
     };
-    await createCoupons({
+
+    const couponCreationReponse = await createCoupons({
       ...couponCreationBody,
       code: expiredCouponCode,
-      expiry: new Date(Date.now() - 5 * 60 * 1000),
       orgId: testOrganizatonId,
     });
 
+    await CouponsServices.updateCouponById(couponCreationReponse.id, {
+      expiry: moment().subtract(5, "minutes"),
+    });
     const response = await makeApiRequest(reqBody);
 
     await CouponsServices.deleteCouponsWhere({ code: expiredCouponCode });

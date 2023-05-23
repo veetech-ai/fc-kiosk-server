@@ -3,6 +3,7 @@ const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
 const ServiceError = require("../utils/serviceError");
 const CoursesServices = require("../services/kiosk/course");
+const { validateDate } = require("../common/helper");
 
 /**
  * @swagger
@@ -76,7 +77,14 @@ exports.create = async (req, res) => {
    *         required: false
    *         type: string
    *       - name: expiry
-   *         description: expiry of Coupon (Date)
+   *         description: |
+   *           This field supports all ISO or RFC 2822 date formats
+   *           For example:
+   *           - Wed, 22 May 2019 10:30:00 +0300
+   *           - 2019-05-22T10:30:00+03:00 OR 2019-05-22T10:30:00Z
+   *           - 2019-05-22
+   *
+   *           Note: The expiry date-time should be greater than the current date-time
    *         in: formData
    *         required: true
    *         type: string
@@ -134,6 +142,9 @@ exports.create = async (req, res) => {
 
   try {
     const { orgId, gcId } = req.body;
+
+    validateDate("expiry", req.body.expiry);
+
     const loggedInUserOrgId = req.user.orgId;
     const validParent = await CouponsServices.getValidParent({
       orgId,

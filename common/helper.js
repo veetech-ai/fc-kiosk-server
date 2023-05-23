@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const randtoken = require("rand-token");
 const axios = require("axios");
 const moment = require("moment");
+
 const Ajv = require("ajv");
 const { cloneDeep, pickBy, pick } = require("lodash");
 
@@ -1518,4 +1519,21 @@ exports.validateObject = (objectToBeValidated, allowedFields) => {
   }
 
   return pick(cloneObject, allowedFields);
+};
+
+exports.validateDate = (keyName, date) => {
+  const dateToBeValidated = moment(date);
+  if (!dateToBeValidated.isValid()) {
+    throw new ServiceError(`The ${keyName} must be a valid date`, 400);
+  }
+  const dateToBeValidatedInUtc = dateToBeValidated;
+  const currentDateInUtc = moment();
+  if (dateToBeValidatedInUtc.isBefore(currentDateInUtc)) {
+    throw new ServiceError(
+      `The ${keyName} must be greater than the current date`,
+      400,
+    );
+  }
+
+  return true;
 };
