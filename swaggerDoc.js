@@ -83,6 +83,7 @@ const options = {
     "./controllers/kiosk/kiosk_content/membership.js",
     "./controllers/kiosk/kiosk_content/careers.js",
     "./controllers/kiosk/kiosk_content/contact-careers.js",
+    "./controllers/kiosk/contact_membership.js",
     "./controllers/kiosk/contact-careers.js",
   ],
 };

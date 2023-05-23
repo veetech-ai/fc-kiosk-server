@@ -51,6 +51,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("phone", "email"),
         allowNull: true,
       },
+      isAddressed: {
+        field: "is_addressed",
+        type: DataTypes.BOOLEAN,
+      },
       createdAt: {
         field: "created_at",
         type: DataTypes.DATE,
