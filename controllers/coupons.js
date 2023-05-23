@@ -78,7 +78,8 @@ exports.create = async (req, res) => {
    *         type: string
    *       - name: expiry
    *         description: |
-   *           This field supports all ISO or RFC 2822 date formats
+   *           This field represents the expiry date of the coupon
+   *           It supports all ISO or RFC 2822 date formats
    *           For example:
    *           - Wed, 22 May 2019 10:30:00 +0300
    *           - 2019-05-22T10:30:00+03:00 OR 2019-05-22T10:30:00Z
