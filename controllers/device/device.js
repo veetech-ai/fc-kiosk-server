@@ -3837,7 +3837,6 @@ exports.link_device_to_course = async (req, res) => {
 
   try {
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
     const courseId = Number(req.params.courseId);
     const deviceId = Number(req.params.deviceId);
     if (!deviceId || !courseId) {
@@ -3851,11 +3850,11 @@ exports.link_device_to_course = async (req, res) => {
       return apiResponse.fail(res, "Device not found", 404);
     }
     const ownerId = device.owner_id;
-    const isSameOrganizationResource = loggedInUserOrg == ownerId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
-    const response = await DeviceModel.link_to_golf_course(deviceId, courseId);
+    const response = await DeviceModel.link_to_golf_course(
+      { id: deviceId },
+      courseId,
+      loggedInUserOrg,
+    );
     const mqttPayload = {
       gcId: courseId,
     };

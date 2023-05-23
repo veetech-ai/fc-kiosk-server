@@ -9,6 +9,7 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
   let courseId;
+  let courseIdWithDiffernetOrganization;
   let deviceId;
   let invalidCourseId = 90000000;
   let invalidDeviceId = 90000000;
@@ -20,6 +21,12 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
       city: "Test City 1",
       state: "Test State 1",
       orgId: testOrganizationId,
+    };
+    const coursesWithDifferentOrganizationParams = {
+      name: "Course 1",
+      city: "Test City 1",
+      state: "Test State 1",
+      orgId: 2,
     };
     const bodyData = {
       serial: uuid(),
@@ -39,6 +46,14 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
       params: courses,
     });
     courseId = course.body.data.id;
+    const courseWithDiffernetOrganization =
+      await helper.post_request_with_authorization({
+        endpoint: "kiosk-courses",
+        token: adminToken,
+        params: coursesWithDifferentOrganizationParams,
+      });
+    courseIdWithDiffernetOrganization =
+      courseWithDiffernetOrganization.body.data.id;
     const device = await helper.post_request_with_authorization({
       endpoint: "device/create",
       token: adminToken,
@@ -96,6 +111,13 @@ describe("PUT /api/v1/device/link-golf-course/{id}", () => {
       courseId,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.data).toEqual("Device not found");
+  });
+  it("returns error Request with expected message for an invalid device ID", async () => {
+    const response = await makeApiRequest(
+      deviceId,
+      courseIdWithDiffernetOrganization,
+    );
+    expect(response.body.data).toEqual("Not linked");
   });
 });

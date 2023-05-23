@@ -1768,8 +1768,10 @@ exports.createDeviceToken = async (deviceId, deviceSerial) => {
   return deviceToken;
 };
 
-exports.link_to_golf_course = async (deviceId, courseId) => {
-  const device = await Device.findByPk(deviceId);
+exports.link_to_golf_course = async (where, courseId, loggedInUserOrgId) => {
+  const clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.owner_id = loggedInUserOrgId;
+  const device = await Device.findOne({ where: clonedWhere });
   if (!device) {
     throw new ServiceError(`Device not found`, 404);
   }
@@ -1779,10 +1781,7 @@ exports.link_to_golf_course = async (deviceId, courseId) => {
   }
 
   if (device.owner_id !== course.orgId) {
-    throw new ServiceError(
-      `Device must belong to the same organization that the course belongs to`,
-      403,
-    );
+    throw new ServiceError(`Not linked`, 403);
   }
   await device.update({ gcId: courseId });
 
