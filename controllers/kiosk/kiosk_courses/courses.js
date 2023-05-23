@@ -316,6 +316,12 @@ exports.create_course_info = async (req, res) => {
 
     const logoImage = files?.logo;
     let courseImages = files?.course_images;
+    console.log(files, fields)
+    console.log("CourseImages FILES",files.course_images)
+    console.log("ORDER: ",JSON.parse(fields.order) )
+
+    console.log("UUIDs: ",JSON.parse(fields.links) )
+
     if (courseImages) {
       const isIterable = Symbol.iterator in Object(courseImages);
       if (!isIterable) {
