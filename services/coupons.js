@@ -30,28 +30,6 @@ module.exports.list_available = (perPage, page) => {
   });
 };
 
-exports.findAllCoupons = async (where, loggedInUserOrgId = null) => {
-  const clonedWhere = { ...where };
-  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
-  return await Coupon.findAll({ clonedWhere });
-};
-
-exports.findByWhere = (where) => {
-  return new Promise((resolve, reject) => {
-    Coupon.findOne({
-      where: where,
-    })
-      .then((data) => {
-        resolve(data);
-      })
-      .catch((err) => {
-        reject({
-          message: err,
-        });
-      });
-  });
-};
-
 exports.findByID = (id) => {
   return new Promise((resolve, reject) => {
     Coupon.findOne({
@@ -206,4 +184,53 @@ exports.redeemCoupon = async (coupon, deviceId) => {
       },
     },
   );
+};
+
+exports.deleteCouponsWhere = async (where) => {
+  const clonedWhere = { ...where };
+  const noOfAffectedRows = await Coupon.destroy({ where: clonedWhere });
+  if (!noOfAffectedRows) {
+    throw new ServiceError("Coupon not found", 404);
+  }
+  return noOfAffectedRows;
+};
+
+exports.findOneCoupon = async (where, loggedInUserOrgId) => {
+  const clonedWhere = { ...where };
+  const coupon = await Coupon.findOne({
+    where: clonedWhere,
+    include: [
+      {
+        as: "Course",
+        model: models.Course,
+      },
+    ],
+  });
+
+  if (!coupon) throw new ServiceError("Coupon not found", 404);
+  const linkedCourse = coupon.Course;
+  if (linkedCourse) {
+    // Course specific coupon
+    if (loggedInUserOrgId && linkedCourse.orgId !== loggedInUserOrgId) {
+      throw new ServiceError("Coupon not found", 404);
+    }
+  } else {
+    // Organization specific coupon
+    if (loggedInUserOrgId && coupon.orgId !== loggedInUserOrgId) {
+      throw new ServiceError("Coupon not found", 404);
+    }
+  }
+
+  return coupon;
+};
+
+exports.checkCouponType = async (where, loggedInUserOrgId) => {
+  const coupon = await this.findOneCoupon(where, loggedInUserOrgId);
+  let toReturn = {};
+  if (coupon.gcId) {
+    toReturn.gcId = coupon.gcId;
+  } else if (coupon.orgId) {
+    toReturn.orgId = coupon.orgId;
+  }
+  return toReturn;
 };
