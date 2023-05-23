@@ -8,13 +8,13 @@ const CoursesServices = require("../../../../../services/kiosk/course");
 const moment = require("moment");
 let testCustomerToken,
   superAdminToken,
-  testOrganizatonId = organizationsInApplication.test.id,
+  testOrganizationId = organizationsInApplication.test.id,
   zongOrganizationId = organizationsInApplication.zong.id;
 
 let courses = {
   test: {
     name: "TEST COURSE",
-    orgId: testOrganizatonId,
+    orgId: testOrganizationId,
     state: "Albama",
     city: "Abbeville",
   },
@@ -83,7 +83,7 @@ describe("DELETE /coupons/:couponId", () => {
     }
   });
 
-  it.only("should return 400 and validation error for the invalid couponId data type", async () => {
+  it("should return 400 and validation error for the invalid couponId data type", async () => {
     const expectedResponse = {
       success: false,
       data: "The couponId must be an integer.",
@@ -92,7 +92,7 @@ describe("DELETE /coupons/:couponId", () => {
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toBe(400);
   });
-  it.only("should return an error if the test organization's customer tries to delete the coupon of some organization's golf course", async () => {
+  it("should return an error if the test organization's customer tries to delete the coupon of some organization's golf course", async () => {
     const expectedResponse = {
       success: false,
       data: "Coupon not found",
@@ -113,7 +113,7 @@ describe("DELETE /coupons/:couponId", () => {
     await CouponsServices.deleteCouponsWhere({ id: zongGolfCourseCouponId });
   });
 
-  it.only("should return an error if the test organization's customer tries to delete the coupon of some different organization", async () => {
+  it("should return an error if the test organization's customer tries to delete the coupon of some different organization", async () => {
     const expectedResponse = {
       success: false,
       data: "Coupon not found",
@@ -133,7 +133,7 @@ describe("DELETE /coupons/:couponId", () => {
     // Even after the API failure we will still remove the coupon using the service to avoid the tests' dependency.
     await CouponsServices.deleteCouponsWhere({ id: zongOrganizationCouponId });
   });
-  it.only("should return an error if the super admin tries to delete a non-existing coupon", async () => {
+  it("should return an error if the super admin tries to delete a non-existing coupon", async () => {
     const expectedResponse = {
       success: false,
       data: "Coupon not found",
@@ -143,14 +143,14 @@ describe("DELETE /coupons/:couponId", () => {
     expect(response.statusCode).toBe(404);
   });
 
-  it.only("should delete the coupon if the test organization's customer tries to delete the coupon of his/her own organization", async () => {
+  it("should delete the coupon if the test organization's customer tries to delete the coupon of his/her own organization", async () => {
     const expectedResponse = {
       success: true,
       data: "Coupon deleted successfully",
     };
 
     const couponCreationResponse = await createCoupons(
-      { orgId: testOrganizatonId },
+      { orgId: testOrganizationId },
       superAdminToken,
     );
     const testOrganizationCouponId = couponCreationResponse.body.data.id;
@@ -166,7 +166,7 @@ describe("DELETE /coupons/:couponId", () => {
     ).rejects.toThrow("Coupon not found");
   });
 
-  it.only("should delete the coupon if the test organization's customer tries to delete the coupon of his/her own organization's golf course", async () => {
+  it("should delete the coupon if the test organization's customer tries to delete the coupon of his/her own organization's golf course", async () => {
     const expectedResponse = {
       success: true,
       data: "Coupon deleted successfully",
@@ -189,14 +189,14 @@ describe("DELETE /coupons/:couponId", () => {
     ).rejects.toThrow("Coupon not found");
   });
 
-  it.only("should delete the career if the super admin tries to delete any existing organization specific coupon", async () => {
+  it("should delete the career if the super admin tries to delete any existing organization specific coupon", async () => {
     const expectedResponse = {
       success: true,
       data: "Coupon deleted successfully",
     };
 
     const couponCreationResponse = await createCoupons(
-      { orgId: testOrganizatonId },
+      { orgId: testOrganizationId },
       superAdminToken,
     );
     const testOrganizationCouponId = couponCreationResponse.body.data.id;
@@ -211,7 +211,7 @@ describe("DELETE /coupons/:couponId", () => {
       CouponsServices.findOneCoupon({ id: testOrganizationCouponId }),
     ).rejects.toThrow("Coupon not found");
   });
-  it.only("should delete the career if the super admin tries to delete any existing golf course specific coupon", async () => {
+  it("should delete the career if the super admin tries to delete any existing golf course specific coupon", async () => {
     const expectedResponse = {
       success: true,
       data: "Coupon deleted successfully",
