@@ -81,13 +81,10 @@ exports.create = async (params) => {
   return await Coupon.create(params);
 };
 
-exports.update = async (id, params) => {
-  if (params.code) {
-    delete params.code;
-  }
+exports.updateCouponById = async (id, params) => {
   return await Coupon.update(params, {
     where: {
-      id: id,
+      id,
     },
   });
 };
