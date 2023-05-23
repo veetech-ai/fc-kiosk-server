@@ -19,7 +19,7 @@ exports.getMembershipContacts = async (req, res) => {
    *   get:
    *     security:
    *       - auth: []
-   *     description: Get lesson contact for a specific lesson.
+   *     description: Get contacts for a specific membership.
    *     tags: [Courses-Membership]
    *     produces:
    *       - application/json
@@ -65,7 +65,7 @@ exports.updateContactMembership = async (req, res) => {
    *   patch:
    *     security:
    *       - auth: []
-   *     description: update wether the contact of lesson is addressable.
+   *     description: update wether the contact of membership is addressed.
    *     tags: [Courses-Membership]
    *     consumes:
    *       - application/x-www-form-urlencoded
@@ -121,13 +121,6 @@ exports.updateContactMembership = async (req, res) => {
 
     let isAddressedBoolean = req.body.isAddressed;
     const isAddressedParsed = parseBoolean(isAddressedBoolean);
-    // const isStringBoolean =
-    //   isAddressedBoolean === "true" ||
-    //   isAddressedBoolean === "false" ||
-    //   typeof isAddressedBoolean === "boolean";
-    // if (!isStringBoolean)
-    //   throw new ServiceError("isAddressed must be a boolean", 400);
-    // isAddressedBoolean = JSON.parse(req.body.isAddressed);
     const updatedMemberShipContact =
       await contactMembershipService.updateContactMemeberShipIsAddressable(
         contactMembershipId,
