@@ -1,5 +1,4 @@
 const helper = require("../../../../helper");
-const models = require("../../../../../models/index");
 const product = require("../../../../../common/products");
 const { uuid } = require("uuidv4");
 const membershipService = require("../../../../../services/kiosk/membership");

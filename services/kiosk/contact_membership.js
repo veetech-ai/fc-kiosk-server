@@ -7,7 +7,7 @@ async function createContactMembership(reqBody) {
   return contactMembership;
 }
 
-async function getContactMembership(membershipId) {
+async function getContactMemberships(membershipId) {
   const contactMembership = await ContactMembership.findAll({
     where: { mId: membershipId },
   });
@@ -22,13 +22,11 @@ async function getContactMembershipById(contactMembershipId) {
   return contactMembership;
 }
 
-async function updateContactMemeberShipIsAddressable(
-  contactMemebershipId,
+async function updateContactMemberShipIsAddressable(
+  contactMembershipId,
   isAddressedBoolean,
 ) {
-  const contactMembership = await getContactMembershipById(
-    contactMemebershipId,
-  );
+  const contactMembership = await getContactMembershipById(contactMembershipId);
   if (contactMembership) {
     contactMembership.isAddressed = isAddressedBoolean;
     await contactMembership.save();
@@ -39,7 +37,7 @@ async function updateContactMemeberShipIsAddressable(
 
 module.exports = {
   createContactMembership,
-  getContactMembership,
+  getContactMemberships,
   getContactMembershipById,
-  updateContactMemeberShipIsAddressable,
+  updateContactMemberShipIsAddressable,
 };
