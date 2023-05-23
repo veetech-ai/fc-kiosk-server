@@ -6,7 +6,7 @@ const product = require("../../../../../common/products");
 const helper = require("../../../../helper");
 const moment = require("moment");
 const { uuid } = require("uuidv4");
-const CouponServices = require("../../../../../services/coupons");
+const CouponsServices = require("../../../../../services/coupons");
 const CouponUsedServices = require("../../../../../services/coupon_used");
 
 let superAdminToken,
@@ -146,7 +146,7 @@ describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
 
     const response = await makeApiRequest(reqBody);
 
-    await CouponServices.deleteAll({ code: inactiveCouponCode });
+    await CouponsServices.deleteCouponsWhere({ code: inactiveCouponCode });
 
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toEqual(404);
@@ -170,7 +170,7 @@ describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
 
     const response = await makeApiRequest(reqBody);
 
-    await CouponServices.deleteAll({ code: expiredCouponCode });
+    await CouponsServices.deleteCouponsWhere({ code: expiredCouponCode });
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toEqual(404);
   });
@@ -192,7 +192,7 @@ describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
     });
     const response = await makeApiRequest(reqBody);
 
-    await CouponServices.deleteAll({ code: validCouponCode });
+    await CouponsServices.deleteCouponsWhere({ code: validCouponCode });
 
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toEqual(200);
@@ -215,7 +215,7 @@ describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
     });
     const response = await makeApiRequest(reqBody);
 
-    await CouponServices.deleteAll({ code: validCouponCode });
+    await CouponsServices.deleteCouponsWhere({ code: validCouponCode });
 
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toEqual(200);
@@ -240,7 +240,7 @@ describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
     await makeApiRequest(reqBody);
     const response = await makeApiRequest(reqBody);
 
-    await CouponServices.deleteAll({ code: validCouponCode });
+    await CouponsServices.deleteCouponsWhere({ code: validCouponCode });
 
     expect(response.body).toEqual(expectedResponse);
     expect(response.statusCode).toEqual(404);
@@ -274,6 +274,6 @@ describe("PATCH /kiosk-content/coupons - Redeem Coupons", () => {
       expect.objectContaining(expectedResponse.data),
     );
 
-    await CouponServices.deleteAll({ code: validCouponCode });
+    await CouponsServices.deleteCouponsWhere({ code: validCouponCode });
   });
 });
