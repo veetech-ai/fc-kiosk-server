@@ -3,7 +3,7 @@ const {
 } = require("../../../../../common/organizations.data");
 const helper = require("../../../../helper");
 const moment = require("moment");
-const CouponServices = require("../../../../../services/coupons");
+const CouponsServices = require("../../../../../services/coupons");
 
 let testCustomerToken,
   superAdminToken,
@@ -173,7 +173,7 @@ describe("POST /coupons", () => {
   it("should create the coupon under the customer's organization successfully", async () => {
     const requestBodyClone = { ...requestBody };
     const response = await makeApiRequest(requestBodyClone, testCustomerToken);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
     const expectedResponse = {
       title: "Example",
       description: "Test Coupon",
@@ -199,7 +199,7 @@ describe("POST /coupons", () => {
   it("should create the coupon under the customer's organization's golf course successfully", async () => {
     const requestBodyClone = { ...requestBody, gcId: testGolfCourseId };
     const response = await makeApiRequest(requestBodyClone, testCustomerToken);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
     const expectedResponse = {
       title: "Example",
       description: "Test Coupon",
@@ -229,7 +229,7 @@ describe("POST /coupons", () => {
       orgId: testOrganizatonId,
     };
     const response = await makeApiRequest(requestBodyClone, superAdminToken);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
 
     const expectedResponse = {
       title: "Example",
@@ -257,7 +257,7 @@ describe("POST /coupons", () => {
     await makeApiRequest(requestBodyClone, superAdminToken);
 
     const response = await makeApiRequest(requestBodyClone);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
     const expectedResponse = {
       success: false,
       data: "Coupon already exists",
