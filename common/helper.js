@@ -1526,9 +1526,8 @@ exports.validateDate = (keyName, date) => {
   if (!dateToBeValidated.isValid()) {
     throw new ServiceError(`The ${keyName} must be a valid date`, 400);
   }
-  const dateToBeValidatedInUtc = dateToBeValidated;
   const currentDateInUtc = moment();
-  if (dateToBeValidatedInUtc.isBefore(currentDateInUtc)) {
+  if (dateToBeValidated.isBefore(currentDateInUtc)) {
     throw new ServiceError(
       `The ${keyName} must be greater than the current date`,
       400,
