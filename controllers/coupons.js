@@ -3,7 +3,7 @@ const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
 const ServiceError = require("../utils/serviceError");
 const CoursesServices = require("../services/kiosk/course");
-const { validateDate } = require("../common/helper");
+const { validateExpiryDate } = require("../common/helper");
 
 /**
  * @swagger
@@ -144,7 +144,7 @@ exports.create = async (req, res) => {
   try {
     const { orgId, gcId } = req.body;
 
-    validateDate("expiry", req.body.expiry);
+    validateExpiryDate("expiry", req.body.expiry);
 
     const loggedInUserOrgId = req.user.orgId;
     const validParent = await CouponsServices.getValidParent({

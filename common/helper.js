@@ -1521,7 +1521,7 @@ exports.validateObject = (objectToBeValidated, allowedFields) => {
   return pick(cloneObject, allowedFields);
 };
 
-exports.validateDate = (keyName, date) => {
+exports.validateExpiryDate = (keyName, date) => {
   const dateToBeValidated = moment(date);
   if (!dateToBeValidated.isValid()) {
     throw new ServiceError(`The ${keyName} must be a valid date`, 400);
