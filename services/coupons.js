@@ -30,18 +30,10 @@ module.exports.list_available = (perPage, page) => {
   });
 };
 
-module.exports.list = (perPage, page) => {
-  return new Promise((resolve, reject) => {
-    Coupon.findAll({
-      // where: {status:1},
-    })
-      .then((result) => {
-        resolve(result);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+exports.findAllCoupons = async (where, loggedInUserOrgId = null) => {
+  const clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
+  return await Coupon.findAll({ clonedWhere });
 };
 
 exports.findByWhere = (where) => {
