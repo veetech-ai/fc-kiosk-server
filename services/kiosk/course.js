@@ -118,6 +118,21 @@ async function deleteWhere(where) {
   return await Course.destroy({ where });
 }
 
+async function removeImage(courseId, imageId) {
+  const courseImages = await getCourseImages(courseId);
+  if (!courseImages.length) {
+    throw new Error("Course Images not found");
+  }
+
+  if (imageId) {
+    const index = courseImages.indexOf(imageId);
+    courseImages.splice(index, 1);
+    return courseImages;
+  }
+
+  return courseImages;
+}
+
 module.exports = {
   createCourse,
   getCoursesByOrganization,
@@ -128,4 +143,5 @@ module.exports = {
   getCourse,
   getCourseImages,
   deleteWhere,
+  removeImage,
 };

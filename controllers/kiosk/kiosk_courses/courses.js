@@ -403,3 +403,61 @@ exports.getCourseInfo = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.deleteImage = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /kiosk-courses/{courseId}/images/{imageId}:
+   *   delete:
+   *     security:
+   *       - auth: []
+   *     description: Get course info for specific course.
+   *     tags: [Kiosk-Courses]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: courseId
+   *         description: Course ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *       - name: imageId
+   *         description: image ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const courseId = Number(req.params.courseId);
+    const imageId = req.params.imageId;
+    if (!courseId) {
+      return apiResponse.fail(res, "courseId must be a valid number");
+    }
+    const validation = new Validator(req.params, {
+      imageId: "string",
+    });
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+    const course = await courseService.getCourseById(courseId);
+
+    const loggedInUserOrg = req.user?.orgId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
+    if (!isSuperOrAdmin && !isSameOrganizationResource) {
+      return apiResponse.fail(res, "", 403);
+    }
+    const updatedImages = await courseService.removeImage(courseId, imageId);
+    return apiResponse.success(res, req, updatedImages);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
