@@ -318,3 +318,9 @@ exports.uploadImageForCourse = async (
     throw err.status ? err : { message: err.message };
   }
 };
+
+exports.deleteImageForCourse = async (keys) => {
+  for (const key of keys) {
+    await awsS3.deleteObject(key);
+  }
+};

@@ -312,32 +312,49 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
+    let reqBody = {};
     const uploadedImages = [];
-
+    const uploadedImageFiles = [];
     const logoImage = files?.logo;
     let courseImages = files?.course_images;
-    if (courseImages) {
-      const isIterable = Symbol.iterator in Object(courseImages);
-      if (!isIterable) {
-        uploadedImages.push(courseImages);
-        courseImages = [...uploadedImages];
+    if (fields.order) {
+      const parsedOrder = JSON.parse(fields.order);
+      const parsedUuidlist = JSON.parse(fields.links);
+      const parsedRemovedUuidList = JSON.parse(fields.removedUUIDs);
+      if (courseImages) {
+        const isIterable = Symbol.iterator in Object(courseImages);
+        if (!isIterable) {
+          uploadedImageFiles.push(courseImages);
+          courseImages = [...uploadedImageFiles];
+        }
       }
+      let image;
+      let uploadImageCounter = 0;
+      for (let i = 0; i < parsedOrder.length; i++) {
+        if (parsedOrder[i] == "L") {
+          uploadedImages.push(parsedUuidlist[i]);
+        } else {
+          image = await upload_file.uploadCourseImage(
+            courseImages[uploadImageCounter],
+            courseId,
+          );
+          uploadedImages.push(image);
+          uploadImageCounter++;
+        }
+      }
+      fields.images = uploadedImages;
+      if (parsedRemovedUuidList.length) {
+        await upload_file.deleteImageForCourse(parsedRemovedUuidList);
+      }
+      const { order, links, ...restFields } = fields;
+      reqBody = { ...restFields };
     }
-    const reqBody = { ...fields };
+
     if (logoImage) {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
-    if (courseImages) {
-      const images = await upload_file.uploadCourseImages(
-        courseImages,
-        courseId,
-      );
-      reqBody.images = images;
-    }
-    if (existingImages && courseImages) {
-      reqBody.images = [...existingImages, ...reqBody.images];
-    }
+    reqBody = { ...fields };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
