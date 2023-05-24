@@ -359,7 +359,6 @@ exports.create_course_info = async (req, res) => {
       reqBody.logo = logo;
     }
     reqBody = { ...fields };
-    console.log("assa :", reqBody);
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
