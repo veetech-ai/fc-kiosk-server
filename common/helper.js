@@ -326,15 +326,31 @@ exports.mqtt_publish_message = (
 ) => {
   try {
     const msg = stringify ? JSON.stringify(message) : message;
-    globalMQTT.client.publish(channel, msg, {
-      qos,
-      retain: retained,
-    });
+
+    if (mqtt_connection_ok) {
+      globalMQTT.client.publish(channel, msg, {
+        qos,
+        retain: retained,
+      });
+    } else {
+      global.messageQueue.push({ channel, message: msg, qos, retained });
+    }
   } catch (err) {
     logger.error(err);
   }
 };
-
+exports.sendMqttQueuedMessages = () => {
+  while (global.messageQueue?.length > 0) {
+    const queuedMessage = global.messageQueue.shift();
+    this.mqtt_publish_message(
+      queuedMessage.channel,
+      queuedMessage.message,
+      queuedMessage.retained,
+      queuedMessage.qos,
+      false,
+    );
+  }
+};
 exports.mqtt_subscribe_channel = (channel, qos = 1) => {
   if (config.mqtt.mqttEnabled !== "true") {
     return;
@@ -1539,4 +1555,13 @@ exports.validateExpiryDate = (keyName, date) => {
 
 exports.mqttPayloads = {
   updateScreens: ["screen-config"],
+  updateCareerScreen: ["careers"],
+};
+
+exports.isMqttConnectionAlive = (messageIfConnectionNotAlive = "") => {
+  if (!mqtt_connection_ok) {
+    this.set_mqtt_connection_lost_log(messageIfConnectionNotAlive);
+    return false;
+  }
+  return true;
 };

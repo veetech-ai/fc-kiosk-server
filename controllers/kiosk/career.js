@@ -1,4 +1,6 @@
 const apiResponse = require("../../common/api.response");
+const helper = require("../../common/helper");
+
 const Validator = require("validatorjs");
 const CoursesServices = require("../../services/kiosk/course");
 const CareersServices = require("../../services/kiosk/career");
@@ -94,6 +96,12 @@ exports.create = async (req, res) => {
     careerBody.orgId = course.orgId;
 
     const career = await CareersServices.createCareer(careerBody);
+
+    helper.mqtt_publish_message(
+      `gc/${careerBody.gcId}/screens`,
+      helper.mqttPayloads.updateCareerScreen,
+      false,
+    );
     return apiResponse.success(res, req, career);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
