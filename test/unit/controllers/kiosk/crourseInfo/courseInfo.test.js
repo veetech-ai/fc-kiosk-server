@@ -99,7 +99,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     };
 
     const response = await makeApiRequest(courseId, params);
-    expect(response.body.data[0]).toEqual(1);
+    expect(response.body.data).toEqual(1);
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
     const params = {};
