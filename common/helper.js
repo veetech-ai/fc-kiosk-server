@@ -1556,7 +1556,8 @@ exports.validateExpiryDate = (keyName, date) => {
 exports.mqttPayloads = {
   updateScreens: ["screen-config"],
   updateCareerScreen: ["career"],
-  updateMembershipScreen: ["membership"]
+  updateMembershipScreen: ["membership"],
+  updateLessonScreen: ["lesson"],
 };
 
 exports.isMqttConnectionAlive = (messageIfConnectionNotAlive = "") => {
