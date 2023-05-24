@@ -13,16 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      stateId: {
-        field: "state_id",
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      screenId: {
-        field: "screen_id",
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
       smallImage: {
         field: "small_image",
         type: DataTypes.STRING,
@@ -37,6 +27,12 @@ module.exports = (sequelize, DataTypes) => {
         field: "ad_type",
         type: DataTypes.ENUM("kiosk", "mobile"),
         allowNull: true,
+      },
+      screens: {
+        type: DataTypes.JSON,
+      },
+      state: {
+        type: DataTypes.STRING,
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -53,8 +49,8 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Ad.belongsTo(models.Organization, { foreignKey: "org_id" });
     Ad.belongsTo(models.Course, { foreignKey: "gc_id" });
-    Ad.belongsTo(models.CountryState, { foreignKey: "state_id" });
-    Ad.belongsTo(models.AdScreen, { foreignKey: "screen_id" });
+    // Ad.belongsTo(models.CountryState, { foreignKey: "state_id" });
+    // Ad.belongsTo(models.AdScreen, { foreignKey: "screen_id" });
   };
   return Ad;
 };
