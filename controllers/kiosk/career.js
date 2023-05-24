@@ -231,12 +231,23 @@ exports.updateCareerById = async (req, res) => {
 
     const loggedInUserOrgId = req.user.orgId;
 
-    await CareersServices.findOneCareer({ id: careerId }, loggedInUserOrgId);
+    const career = await CareersServices.findOneCareer(
+      { id: careerId },
+      loggedInUserOrgId,
+    );
 
     const noOfRowsUpdated = await CareersServices.updateCareerById(
       careerId,
       filteredBody,
     );
+
+    if (noOfRowsUpdated) {
+      helper.mqtt_publish_message(
+        `gc/${career.gcId}/screens`,
+        helper.mqttPayloads.updateCareerScreen,
+        false,
+      );
+    }
     return apiResponse.success(
       res,
       req,
@@ -317,10 +328,19 @@ exports.deleteCareerById = async (req, res) => {
     const careerId = Number(req.params.careerId);
     if (!careerId)
       throw new ServiceError("The careerId must be an integer.", 400);
-
+    const career = await CareersServices.findOneCareer(
+      { id: careerId },
+      loggedInUserOrgId,
+    );
     await CareersServices.deleteCareersWhere(
       { id: careerId },
       loggedInUserOrgId,
+    );
+
+    helper.mqtt_publish_message(
+      `gc/${career.gcId}/screens`,
+      helper.mqttPayloads.updateCareerScreen,
+      false,
     );
     return apiResponse.success(res, req, "Career deleted successfully");
   } catch (error) {
