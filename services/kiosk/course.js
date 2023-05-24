@@ -134,7 +134,6 @@ async function deleteWhere(where) {
   return await Course.destroy({ where });
 }
 
-
 module.exports = {
   createCourse,
   getCoursesByOrganization,
