@@ -82,11 +82,13 @@ exports.create = async (params) => {
 };
 
 exports.updateCouponById = async (id, params) => {
-  return await Coupon.update(params, {
+  const updateResponseArray = await Coupon.update(params, {
     where: {
       id,
     },
   });
+  const noOfAffectedRows = updateResponseArray[0];
+  return noOfAffectedRows;
 };
 
 exports.use_increment = (id) => {

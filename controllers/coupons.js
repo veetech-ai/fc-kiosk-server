@@ -154,7 +154,6 @@ exports.create = async (req, res) => {
       loggedInUserOrgId,
     });
 
-
     const result = await CouponsServices.create({
       ...req.body,
       ...validParent,
@@ -172,7 +171,7 @@ exports.updateCouponById = async (req, res) => {
    *   put:
    *     security:
    *       - auth: []
-   *     description: Update coupon 
+   *     description: Update coupon
    *     tags: [Coupons]
    *     consumes:
    *       - application/x-www-form-urlencoded
@@ -221,48 +220,55 @@ exports.updateCouponById = async (req, res) => {
    *       200:
    *         description: success
    */
-    const validation = new Validator(req.body, {
-      title: "string",
-      description: "string",
-      discountType: "string",
-      discount: "number",
-      maxUseLimit: "integer",
-    });
+  const validation = new Validator(req.body, {
+    title: "string",
+    description: "string",
+    discountType: "string",
+    discount: "numeric",
+    maxUseLimit: "integer",
+  });
 
-    if (validation.fails()) return apiResponse.fail(res, validation.errors);
-
-    try {
-      const couponId = Number(req.params.couponId);
-      if (!couponId) {
-        throw new ServiceError("The couponId must be an integer.", 400);
-      }
-
-      const allowedFields = ["title", "description", "discount", "discountType", "expiry", "maxUseLimit"];
-      const filteredBody = validateObject(req.body, allowedFields);
-
-      // if (filteredBody.expiry) {
-      //   const date = moment(filteredBody.expiry)
-      //   console.log(date == "Invalid Date")
-      // }
-      const loggedInUserOrgId = req.user.orgId;
-
-      await CouponsServices.findOneCoupon({ id: couponId }, loggedInUserOrgId);
-
-      const noOfRowsUpdated = await CouponsServices.updateCouponById(
-        couponId,
-        filteredBody,
-      );
-      return apiResponse.success(
-        res,
-        req,
-        noOfRowsUpdated
-          ? "Coupon updated successfully"
-          : "Coupon already up to date",
-      );
-    } catch (error) {
-      return apiResponse.fail(res, error.message, error.statusCode || 500);
+  try {
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
     }
 
+    const couponId = Number(req.params.couponId);
+    if (!couponId) {
+      throw new ServiceError("The couponId must be an integer.", 400);
+    }
+
+    const allowedFields = [
+      "title",
+      "description",
+      "discount",
+      "discountType",
+      "expiry",
+      "maxUseLimit",
+    ];
+    const filteredBody = validateObject(req.body, allowedFields);
+
+    if (Object.keys(filteredBody).includes("expiry")) {
+      validateExpiryDate("expiry", filteredBody.expiry);
+    }
+    const loggedInUserOrgId = req.user.orgId;
+
+    await CouponsServices.findOneCoupon({ id: couponId }, loggedInUserOrgId);
+
+    const noOfRowsUpdated = await CouponsServices.updateCouponById(
+      couponId,
+      filteredBody,
+    );
+    return apiResponse.success(
+      res,
+      req,
+      noOfRowsUpdated
+        ? "Coupon updated successfully"
+        : "Coupon already up to date",
+    );
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
 };
 
 exports.deleteCouponById = async (req, res) => {

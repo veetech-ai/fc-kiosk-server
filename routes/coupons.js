@@ -17,7 +17,7 @@ exports.routesConfig = function (app, router) {
     CouponsController.create,
   ]);
 
-  router.put(group + "/:couponId", [
+  router.patch(group + "/:couponId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCoupons"]),
     CouponsController.updateCouponById,
