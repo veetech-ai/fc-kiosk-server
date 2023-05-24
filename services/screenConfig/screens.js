@@ -34,10 +34,7 @@ async function getScreensByCourses(gcId) {
 }
 async function updateScreens(gcId, reqBody) {
   // Check if golf course exist
-  if (!mqtt_connection_ok) {
-    helper.set_mqtt_connection_lost_log("screens.js.updateScreens");
-    throw new ServiceError("Connection with broker is down");
-  }
+
   const course = await Course.findOne({ where: { id: gcId } });
   if (!course) {
     throw new ServiceError(`course not found`, 200);
