@@ -68,6 +68,14 @@ exports.update_membership = async (req, res) => {
       id,
       req.body,
     );
+
+    if (updatedMembership) {
+      helper.mqtt_publish_message(
+        `gc/${membership.gcId}/screens`,
+        helper.mqttPayloads.updateMembershipScreen,
+        false,
+      );
+    }
     return apiResponse.success(res, req, updatedMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

@@ -216,6 +216,7 @@ if (config.env === "test") {
   // global.mqtt_client = new Paho.Client(config.mqtt.host, Number(config.mqtt.port), mqtt_client_id)
 
   global.mqtt_connection_ok = false;
+  global.messageQueue = [];
   global.mqtt_client_id = `mqtt_node_app_${config.mqtt.clientId}_${
     config.mqtt.mqttEnabled === "true" ? "mqtt_only" : "api_only"
   }`;
@@ -253,7 +254,7 @@ if (config.env === "test") {
 
     MQTTController.client();
     logger.info("MQTT started");
-
+    helper.sendMqttQueuedMessages();
     // let's start cron jobs
     if (config.env === "production") {
       const cronjob = require("./controllers/cron");

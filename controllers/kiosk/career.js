@@ -1,4 +1,6 @@
 const apiResponse = require("../../common/api.response");
+const helper = require("../../common/helper");
+
 const Validator = require("validatorjs");
 const CoursesServices = require("../../services/kiosk/course");
 const CareersServices = require("../../services/kiosk/career");
@@ -94,6 +96,12 @@ exports.create = async (req, res) => {
     careerBody.orgId = course.orgId;
 
     const career = await CareersServices.createCareer(careerBody);
+
+    helper.mqtt_publish_message(
+      `gc/${careerBody.gcId}/screens`,
+      helper.mqttPayloads.updateCareerScreen,
+      false,
+    );
     return apiResponse.success(res, req, career);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -223,12 +231,23 @@ exports.updateCareerById = async (req, res) => {
 
     const loggedInUserOrgId = req.user.orgId;
 
-    await CareersServices.findOneCareer({ id: careerId }, loggedInUserOrgId);
+    const career = await CareersServices.findOneCareer(
+      { id: careerId },
+      loggedInUserOrgId,
+    );
 
     const noOfRowsUpdated = await CareersServices.updateCareerById(
       careerId,
       filteredBody,
     );
+
+    if (noOfRowsUpdated) {
+      helper.mqtt_publish_message(
+        `gc/${career.gcId}/screens`,
+        helper.mqttPayloads.updateCareerScreen,
+        false,
+      );
+    }
     return apiResponse.success(
       res,
       req,
@@ -286,7 +305,7 @@ exports.deleteCareerById = async (req, res) => {
    * @swagger
    *
    * /careers/{careerId}:
-   *   get:
+   *   delete:
    *     security:
    *      - auth: []
    *     description: Delete career by id
@@ -309,10 +328,19 @@ exports.deleteCareerById = async (req, res) => {
     const careerId = Number(req.params.careerId);
     if (!careerId)
       throw new ServiceError("The careerId must be an integer.", 400);
-
+    const career = await CareersServices.findOneCareer(
+      { id: careerId },
+      loggedInUserOrgId,
+    );
     await CareersServices.deleteCareersWhere(
       { id: careerId },
       loggedInUserOrgId,
+    );
+
+    helper.mqtt_publish_message(
+      `gc/${career.gcId}/screens`,
+      helper.mqttPayloads.updateCareerScreen,
+      false,
     );
     return apiResponse.success(res, req, "Career deleted successfully");
   } catch (error) {
