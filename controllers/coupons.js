@@ -3,7 +3,8 @@ const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
 const ServiceError = require("../utils/serviceError");
 const CoursesServices = require("../services/kiosk/course");
-const { validateExpiryDate } = require("../common/helper");
+
+const { validateObject, validateExpiryDate } = require("../common/helper");
 
 /**
  * @swagger
@@ -152,6 +153,7 @@ exports.create = async (req, res) => {
       gcId,
       loggedInUserOrgId,
     });
+
     const result = await CouponsServices.create({
       ...req.body,
       ...validParent,
@@ -161,15 +163,15 @@ exports.create = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-exports.update = (req, res) => {
+exports.updateCouponById = async (req, res) => {
   /**
    * @swagger
    *
-   * /coupon/update/{couponId}:
-   *   put:
+   * /coupons/{couponId}:
+   *   patch:
    *     security:
    *       - auth: []
-   *     description: Update coupon (Only Super Admin)
+   *     description: Update coupon
    *     tags: [Coupons]
    *     consumes:
    *       - application/x-www-form-urlencoded
@@ -177,14 +179,14 @@ exports.update = (req, res) => {
    *       - application/json
    *     parameters:
    *       - name: couponId
-   *         description: Coupon ID
+   *         description: id of the coupon
    *         in: path
    *         required: true
-   *         type: string
+   *         type: integer
    *       - name: title
    *         description: Coupon title
    *         in: formData
-   *         required: true
+   *         required: false
    *         type: string
    *       - name: description
    *         description: Coupon description
@@ -194,40 +196,23 @@ exports.update = (req, res) => {
    *       - name: expiry
    *         description: expiry of Coupon (Date)
    *         in: formData
-   *         required: true
+   *         required: false
    *         type: string
-   *       - name: discount_type
-   *         description: Coupon discount type (Fixed or Percentage) 0=fixed, 1=percentage
+   *       - name: discountType
+   *         description: Coupon discount type (fixed or percentage)
    *         in: formData
-   *         required: true
-   *         type: number
+   *         required: false
+   *         type: string
+   *         enum:
+   *           - fixed
+   *           - percentage
    *       - name: discount
    *         description: discount rate
    *         in: formData
-   *         required: true
-   *         type: number
-   *       - name: max_use_limit
-   *         description: Number of max user to use it
-   *         in: formData
    *         required: false
    *         type: number
-   *       - name: coupon_for
-   *         description: Coupon for user or device_type, 0=user, 1=device type
-   *         in: formData
-   *         required: true
-   *         type: number
-   *       - name: users
-   *         description: Comma separated user ids
-   *         in: formData
-   *         required: false
-   *         type: string
-   *       - name: device_types
-   *         description: Comma separated device_type ids
-   *         in: formData
-   *         required: false
-   *         type: string
-   *       - name: status
-   *         description: Coupon status, 0=active, 1=in-active
+   *       - name: maxUseLimit
+   *         description: Number of times a single coupon can be redeem
    *         in: formData
    *         required: false
    *         type: number
@@ -235,40 +220,54 @@ exports.update = (req, res) => {
    *       200:
    *         description: success
    */
+  const validation = new Validator(req.body, {
+    title: "string",
+    description: "string",
+    discountType: "string",
+    discount: "numeric",
+    maxUseLimit: "integer",
+  });
+
   try {
-    const validation = new Validator(req.body, {
-      title: "required",
-      expiry: "required",
-      discount_type: "required",
-      discount: "required",
-      max_use_limit: "required",
-      coupon_for: "required",
-    });
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
 
-    validation.fails(function () {
-      apiResponse.fail(res, validation.errors);
-    });
+    const couponId = Number(req.params.couponId);
+    if (!couponId) {
+      throw new ServiceError("The couponId must be an integer.", 400);
+    }
 
-    validation.passes(async function () {
-      try {
-        const coupon_id = req.params.couponId;
+    const allowedFields = [
+      "title",
+      "description",
+      "discount",
+      "discountType",
+      "expiry",
+      "maxUseLimit",
+    ];
+    const filteredBody = validateObject(req.body, allowedFields);
 
-        if (!coupon_id) {
-          return apiResponse.fail(res, "Coupon not found", 404);
-        }
+    if (Object.keys(filteredBody).includes("expiry")) {
+      validateExpiryDate("expiry", filteredBody.expiry);
+    }
+    const loggedInUserOrgId = req.user.orgId;
 
-        const coupon = await CouponsServices.findByID(coupon_id);
-        if (!coupon) return apiResponse.fail(res, "Coupon not found", 404);
+    await CouponsServices.findOneCoupon({ id: couponId }, loggedInUserOrgId);
 
-        await CouponsServices.update(coupon_id, req.body);
-
-        return apiResponse.success(res, req, "updated");
-      } catch (err) {
-        return apiResponse.fail(res, err.message, 500);
-      }
-    });
-  } catch (err) {
-    return apiResponse.fail(res, err.message, 500);
+    const noOfRowsUpdated = await CouponsServices.updateCouponById(
+      couponId,
+      filteredBody,
+    );
+    return apiResponse.success(
+      res,
+      req,
+      noOfRowsUpdated
+        ? "Coupon updated successfully"
+        : "Coupon already up to date",
+    );
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
 

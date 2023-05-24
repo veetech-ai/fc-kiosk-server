@@ -1536,3 +1536,7 @@ exports.validateExpiryDate = (keyName, date) => {
 
   return true;
 };
+
+exports.mqttPayloads = {
+  updateScreens: ["screen-config"],
+};
