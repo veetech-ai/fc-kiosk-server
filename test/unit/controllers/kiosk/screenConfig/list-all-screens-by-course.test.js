@@ -8,6 +8,7 @@ describe("GET /api/v1/screen-config/courses/{courseId}", () => {
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
   let invalidCourseId = -1;
+
   const expected = {
     courseInfo: true,
     coupons: true,

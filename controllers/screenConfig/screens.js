@@ -45,10 +45,7 @@ exports.get_screens_for_course = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const course = await courseService.getCourse(
-      { id: courseId },
-      loggedInUserOrg,
-    );
+    await courseService.getCourse({ id: courseId }, loggedInUserOrg);
     const courseScreens = await screenService.getScreensByCourses(courseId);
 
     return apiResponse.success(res, req, courseScreens);
@@ -165,13 +162,10 @@ exports.update_screen_for_course = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const course = await courseService.getCourse(
-      { id: courseId },
-      loggedInUserOrg,
-    );
+    await courseService.getCourse({ id: courseId }, loggedInUserOrg);
     const courseWithUpdateScreens = await screenService.updateScreens(
       courseId,
-      req.body,
+      filteredBody,
     );
 
     return apiResponse.success(res, req, courseWithUpdateScreens);
