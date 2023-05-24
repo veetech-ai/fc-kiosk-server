@@ -371,7 +371,13 @@ exports.create_course_info = async (req, res) => {
       reqBody,
       courseId,
     );
-
+    if (updatedCourse) {
+      helper.mqtt_publish_message(
+        `gc/${courseId}/screens`,
+        helper.mqttPayloads.updateCourseInfoScreen,
+        false,
+      );
+    }
     return apiResponse.success(res, req, updatedCourse);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
