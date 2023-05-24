@@ -24,9 +24,4 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     CoursesController.getCourseInfo,
   ]);
-  router.delete(courses + "/:courseId/images/:imageId", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
-    CoursesController.deleteImage,
-  ]);
 };
