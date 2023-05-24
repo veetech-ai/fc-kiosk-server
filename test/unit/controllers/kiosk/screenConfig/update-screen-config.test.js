@@ -10,6 +10,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
   const validbody = { courseInfo: true, lessons: false };
   const invalidBody = { courseInfo: "aa", lessons: false };
   beforeAll(async () => {
+    global.mqtt_connection_ok = true;
     // Create some courses for the test organization
     const courses = {
       name: "Course 1",
@@ -30,6 +31,10 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
       params: courses,
     });
     courseId = course.body.data.id;
+  });
+
+  afterAll(() => {
+    global.mqtt_connection_ok = false;
   });
 
   const makeApiRequest = async (courseId, params, token = adminToken) => {
