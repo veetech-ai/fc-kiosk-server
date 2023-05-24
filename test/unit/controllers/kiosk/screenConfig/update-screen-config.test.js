@@ -88,6 +88,6 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
       validbody,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.data).toEqual("Course not found");
   });
 });

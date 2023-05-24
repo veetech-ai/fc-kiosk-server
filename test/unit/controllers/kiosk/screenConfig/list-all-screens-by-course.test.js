@@ -7,6 +7,7 @@ describe("GET /api/v1/screen-config/courses/{courseId}", () => {
   let testManagerToken;
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
+  let invalidCourseId=-1
   const expected = {
     courseInfo: true,
     coupons: true,
@@ -54,10 +55,10 @@ describe("GET /api/v1/screen-config/courses/{courseId}", () => {
     expect(response.body.data).toMatchObject(expected);
   });
 
-  it("returns 200 status code with expected response Request for an invalid course ID", async () => {
-    const response = await makeApiRequest(999);
-    expect(response.status).toEqual(200);
-    expect(response.body.data).toEqual("course not found");
+  it("returns 404 status code with expected response Request for an invalid course ID", async () => {
+    const response = await makeApiRequest(invalidCourseId);
+    expect(response.status).toEqual(404);
+    expect(response.body.data).toEqual("Course not found");
   });
   it("returns validation error for an invalid course ID", async () => {
     const response = await makeApiRequest("aa");
@@ -76,6 +77,6 @@ describe("GET /api/v1/screen-config/courses/{courseId}", () => {
       courseId,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.data).toEqual("Course not found");
   });
 });
