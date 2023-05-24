@@ -26,8 +26,6 @@ let requestBody = {
   maxUseLimit: 100,
 };
 
-afterAll(() => {});
-
 describe("POST /coupons", () => {
   const makeApiRequest = async (
     params,

@@ -77,6 +77,10 @@ afterAll(async () => {
   for await (const course of Object.values(courses)) {
     await CoursesServices.deleteWhere({ id: course.id });
   }
+
+  for await (const coupon of Object.values(organizationSpecificCoupons)) {
+    await CouponsServices.deleteCouponsWhere({ id: coupon.id });
+  }
 });
 describe("PATCH /coupons/couponId", () => {
   const updateCoupons = async (params, couponId, token = superAdminToken) => {
