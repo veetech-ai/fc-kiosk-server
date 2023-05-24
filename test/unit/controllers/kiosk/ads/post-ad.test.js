@@ -82,7 +82,6 @@ describe("POST /api/v1/ads", () => {
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeAdApiRequest(fields);
-    console.log(response.body);
     expect(response.body.data.gcId).toEqual(fields.gcId);
     expect(response.body.data.state).toEqual(fields.state);
     expect(response.body.data.title).toEqual(fields.title);
