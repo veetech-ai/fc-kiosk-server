@@ -1,7 +1,6 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
 
-
 let mockFields;
 let mockFiles;
 
@@ -26,7 +25,7 @@ const mockFormidable = (fields, files) => {
 describe("POST /api/v1/ads", () => {
   let adminToken;
   let courseId;
-  let invalidCourseId=-1;
+  let invalidCourseId = -1;
   let orgId;
   let customerToken;
   let testOperatorToken;
@@ -65,7 +64,7 @@ describe("POST /api/v1/ads", () => {
     const fields = {
       gcId: courseId,
       state: "Alabama",
-      title: "Main Ad"
+      title: "Main Ad",
     };
 
     const files = {
@@ -87,15 +86,12 @@ describe("POST /api/v1/ads", () => {
     expect(response.body.data.gcId).toEqual(fields.gcId);
     expect(response.body.data.state).toEqual(fields.state);
     expect(response.body.data.title).toEqual(fields.title);
-
-
-
   });
   it("should create a new ad with the customer token who is the part of same organization", async () => {
     const fields = {
       gcId: courseId,
       state: "Alabama",
-      title: "Main Ad"
+      title: "Main Ad",
     };
 
     const files = {
@@ -126,7 +122,7 @@ describe("POST /api/v1/ads", () => {
     const fields = {
       gcId: invalidCourseId,
       state: "Alabama",
-      title: "Main Ad"
+      title: "Main Ad",
     };
 
     const files = {
@@ -150,7 +146,7 @@ describe("POST /api/v1/ads", () => {
     const fields = {
       gcId: undefined,
       state: "Alabama",
-      title: "Main Ad"
+      title: "Main Ad",
     };
 
     const files = {
@@ -168,8 +164,8 @@ describe("POST /api/v1/ads", () => {
       .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeAdApiRequest(fields, customerToken);
-    expect(response.body.data.errors.gcId[0]).toEqual("The gcId field is required.");
+    expect(response.body.data.errors.gcId[0]).toEqual(
+      "The gcId field is required.",
+    );
   });
-
 });
-
