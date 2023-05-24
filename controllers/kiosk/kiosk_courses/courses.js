@@ -358,7 +358,7 @@ exports.create_course_info = async (req, res) => {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
-    reqBody = { ...fields };
+    reqBody = {...reqBody,...fields };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
