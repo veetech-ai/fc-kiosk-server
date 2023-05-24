@@ -7,7 +7,7 @@ const apiResponse = require("../../common/api.response");
 // import service
 const screenService = require("../../services/screenConfig/screens");
 const courseService = require("../../services/kiosk/course");
-const { validateObject} = require("../../common/helper");
+const { validateObject } = require("../../common/helper");
 /**
  * @swagger
  * tags:
@@ -151,8 +151,18 @@ exports.update_screen_for_course = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
-    const allowedFields=["courseInfo","coupons","lessons","statistics","memberships","feedback","careers","shop","faq"]
-    const filteredBody=validateObject(req.body, allowedFields)
+    const allowedFields = [
+      "courseInfo",
+      "coupons",
+      "lessons",
+      "statistics",
+      "memberships",
+      "feedback",
+      "careers",
+      "shop",
+      "faq",
+    ];
+    const filteredBody = validateObject(req.body, allowedFields);
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
     const courseId = Number(req.params.courseId);
