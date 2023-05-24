@@ -6,6 +6,7 @@ const apiResponse = require("../../common/api.response");
 
 // import service
 const screenService = require("../../services/screenConfig/screens");
+const courseService = require("../../services/kiosk/course");
 
 /**
  * @swagger
@@ -153,36 +154,20 @@ exports.update_screen_for_course = async (req, res) => {
     const loggedInUserOrg = req.user?.orgId;
     const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
     const courseId = Number(req.params.courseId);
-    if (isNaN(courseId)) {
+    if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const {
-      courseInfo,
-      coupons,
-      lessons,
-      statistics,
-      memberships,
-      feedback,
-      careers,
-      shop,
-      faq,
-    } = req.body;
-    const reqBody = {
-      courseInfo,
-      coupons,
-      lessons,
-      statistics,
-      memberships,
-      feedback,
-      careers,
-      shop,
-      faq,
-    };
-    const course = await screenService.updateScreens(courseId, reqBody);
+    const course = await courseService.getCourseById(courseId);
     const isSameOrganizationResource = loggedInUserOrg === course.orgId;
     if (!isSuperOrAdmin && !isSameOrganizationResource)
       return apiResponse.fail(res, "", 403);
-    return apiResponse.success(res, req, course);
+    const reqBody = { ...req.body };
+    const courseWithUpdateScreens = await screenService.updateScreens(
+      courseId,
+      reqBody,
+    );
+
+    return apiResponse.success(res, req, courseWithUpdateScreens);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
