@@ -9,6 +9,7 @@ const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
 const FeedbackService = require("../../../services/kiosk/feedback");
+const ServiceError = require("../../../utils/serviceError");
 
 /**
  * @swagger
@@ -317,10 +318,13 @@ exports.create_course_info = async (req, res) => {
     const uploadedImageFiles = [];
     const logoImage = files?.logo;
     let courseImages = files?.course_images;
+    let parsedRemovedUuidList;
     if (fields.order) {
       const parsedOrder = JSON.parse(fields.order);
       const parsedUuidlist = JSON.parse(fields.links);
-      const parsedRemovedUuidList = JSON.parse(fields.removedUUIDs);
+      if (fields.removedUUIDs) {
+        parsedRemovedUuidList = JSON.parse(fields.removedUUIDs);
+      }
       if (courseImages) {
         const isIterable = Symbol.iterator in Object(courseImages);
         if (!isIterable) {
@@ -343,7 +347,7 @@ exports.create_course_info = async (req, res) => {
         }
       }
       fields.images = uploadedImages;
-      if (parsedRemovedUuidList.length) {
+      if (parsedRemovedUuidList && parsedRemovedUuidList.length) {
         await upload_file.deleteImageForCourse(parsedRemovedUuidList);
       }
       const { order, links, ...restFields } = fields;
@@ -355,6 +359,7 @@ exports.create_course_info = async (req, res) => {
       reqBody.logo = logo;
     }
     reqBody = { ...fields };
+    console.log("assa :", reqBody);
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
