@@ -100,10 +100,8 @@ describe("PATCH /api/v1/course-faqs/{faqId}", () => {
       testCourseFaqId,
       faqsFixtures.testUpdated,
     );
-    const expectedResponse = [1];
-    expect(response.body.data).toEqual(
-      expect.objectContaining(expectedResponse),
-    );
+    const expectedResponse = 1;
+    expect(response.body.data).toBe(expectedResponse);
   });
 
   it("should update faq for the same org customer", async () => {
@@ -112,10 +110,8 @@ describe("PATCH /api/v1/course-faqs/{faqId}", () => {
       faqsFixtures.testUpdated,
       customerToken,
     );
-    const expectedResponse = [0];
-    expect(response.body.data).toEqual(
-      expect.objectContaining(expectedResponse),
-    );
+    const expectedResponse = 0;
+    expect(response.body.data).toBe(expectedResponse);
   });
 
   it("should return an error if the customer is of different org", async () => {

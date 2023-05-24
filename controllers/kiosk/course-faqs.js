@@ -70,7 +70,11 @@ exports.createCourseFaq = async (req, res) => {
     faqBody.orgId = course.orgId;
 
     const faq = await courseFaqsService.create(faqBody);
-
+    helper.mqtt_publish_message(
+      `gc/${course.id}/screens`,
+      helper.mqttPayloads.updateFaqScreen,
+      false,
+    );
     return apiResponse.success(res, req, faq);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -166,13 +170,23 @@ exports.updateCourseFaq = async (req, res) => {
 
     const faqId = req.params.faqId;
     const loggedInUserOrgId = req.user.orgId;
-    await courseFaqsService.getCourseFaq({ id: faqId }, loggedInUserOrgId);
+    const faq = await courseFaqsService.getCourseFaq(
+      { id: faqId },
+      loggedInUserOrgId,
+    );
 
     const updatedCourseFaq = await courseFaqsService.updateCourseFaq(
       faqId,
       req.body,
     );
 
+    if (updatedCourseFaq) {
+      helper.mqtt_publish_message(
+        `gc/${faq.gcId}/screens`,
+        helper.mqttPayloads.updateFaqScreen,
+        false,
+      );
+    }
     return apiResponse.success(res, req, updatedCourseFaq);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -209,9 +223,21 @@ exports.deleteCourseFaq = async (req, res) => {
     }
 
     const loggedInUserOrgId = req.user.orgId;
-    await courseFaqsService.getCourseFaq({ id: faqId }, loggedInUserOrgId);
+    const faq = await courseFaqsService.getCourseFaq(
+      { id: faqId },
+      loggedInUserOrgId,
+    );
 
-    await courseFaqsService.deleteCourseFaq({ id: faqId });
+    const noOfAffectedRows = await courseFaqsService.deleteCourseFaq({
+      id: faqId,
+    });
+    if (noOfAffectedRows) {
+      helper.mqtt_publish_message(
+        `gc/${faq.gcId}/screens`,
+        helper.mqttPayloads.updateFaqScreen,
+        false,
+      );
+    }
     return apiResponse.success(res, req, "Faq Deleted");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
