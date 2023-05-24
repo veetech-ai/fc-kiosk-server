@@ -204,7 +204,9 @@ CareersRouter.routesConfig(app, router);
 CourseMemberships.routesConfig(app, router);
 ContactCareerRouter.routesConfig(app, router);
 
+global.mqtt_connection_ok = false;
 global.messageQueue = [];
+
 if (config.env === "test") {
   global.mqtt_connection_ok = true;
   // for test case server
@@ -228,8 +230,6 @@ if (config.env === "test") {
   let mqttTried = 0;
   let connectionClosed = true;
   let mqttTimeoutId = null;
-
-  global.mqtt_connection_ok = false;
 
   // Creating the Client object
   // global.mqtt_client = MQTT.connect(global.mqttUri, {
