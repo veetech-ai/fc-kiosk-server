@@ -5,7 +5,10 @@ module.exports = (sequelize, DataTypes) => {
     {
       title: DataTypes.STRING,
       description: DataTypes.STRING,
-      expiry: DataTypes.DATE,
+      expiry: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
       code: {
         type: DataTypes.STRING,
         allowNull: false,
