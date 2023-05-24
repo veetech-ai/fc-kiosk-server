@@ -273,6 +273,8 @@ if (config.env === "test") {
 
   const onConnectionError = async (error) => {
     logger.error(error);
+    mqtt_connection_ok = false;
+
     if (mqttTried == 0) {
       // only send the logs on first failure
       helper.set_mqtt_connection_failure_log(
@@ -293,6 +295,7 @@ if (config.env === "test") {
   };
 
   const onConnectionClose = async () => {
+    mqtt_connection_ok = false;
     logger.warn("Connection from MQTT Broker Closed!");
     const errorMessage = "Connection from MQTT Closed!";
 
@@ -309,6 +312,7 @@ if (config.env === "test") {
     logger.warn(
       "Connection from MQTT Broker Closed! (Broker sent disconnect packet)",
     );
+    mqtt_connection_ok = false;
   };
 
   const onConnectionReconnect = async () => {
