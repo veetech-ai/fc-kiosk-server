@@ -76,8 +76,7 @@ class S3Service {
     };
     return new Promise((resolve, reject) => {
       this.s3.deleteObject(bucketParams, (err, data) => {
-        if(err)
-        reject(new ServiceError("Something went wrong"))
+        if (err) reject(new ServiceError("Something went wrong"));
         resolve(data);
       });
     });
