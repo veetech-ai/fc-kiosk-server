@@ -28,7 +28,7 @@ let courses = {
 let commonCouponBody = {
   title: "Example",
   description: "Test Coupon",
-  expiry: moment().format("YYYY-MM-DDTHH:mm:ssZ").toString(),
+  expiry: moment().add(30, "minutes").format("YYYY-MM-DDTHH:mm:ssZ").toString(),
   code: "XYZa123",
   discountType: "fixed",
   discount: 50,
