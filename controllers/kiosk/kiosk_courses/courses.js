@@ -320,7 +320,7 @@ exports.create_course_info = async (req, res) => {
     if (fields.order) {
       const parsedOrder = JSON.parse(fields.order);
       const parsedUuidlist = JSON.parse(fields.links);
-      const parsedRemovedUuidList=JSON.parse(fields.removedUUIDs)
+      const parsedRemovedUuidList = JSON.parse(fields.removedUUIDs);
       if (courseImages) {
         const isIterable = Symbol.iterator in Object(courseImages);
         if (!isIterable) {
@@ -343,9 +343,8 @@ exports.create_course_info = async (req, res) => {
         }
       }
       fields.images = uploadedImages;
-      if(parsedRemovedUuidList.length){
-        const response=await upload_file.deleteImageForCourse(parsedRemovedUuidList)
-        console.log("deleted image response :",response);
+      if (parsedRemovedUuidList.length) {
+        await upload_file.deleteImageForCourse(parsedRemovedUuidList);
       }
       const { order, links, ...restFields } = fields;
       reqBody = { ...restFields };
@@ -421,5 +420,3 @@ exports.getCourseInfo = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-
-

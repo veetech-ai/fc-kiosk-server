@@ -5,6 +5,8 @@ const { logger } = require("../../logger");
 
 const { aws } = require("../../config/config");
 
+const ServiceError = require("../../utils/serviceError");
+
 /**
  * Class Represent the service of S3 cloud service
  *
@@ -66,7 +68,7 @@ class S3Service {
    * @param {string} key key of file
    * @return {Promise<DeleteResponse>} A promise with response of delete API call.
    */
-  deleteObject(key, bucketName = this.defaultBucketName) {
+  async deleteObject(key, bucketName = this.defaultBucketName) {
     if (!aws.upload) return null;
     const bucketParams = {
       Bucket: bucketName,
@@ -74,7 +76,8 @@ class S3Service {
     };
     return new Promise((resolve, reject) => {
       this.s3.deleteObject(bucketParams, (err, data) => {
-        if (err) reject(err);
+        if(err)
+        reject(new ServiceError("Something went wrong"))
         resolve(data);
       });
     });
