@@ -304,7 +304,7 @@ exports.deleteCouponById = async (req, res) => {
       { id: couponId },
       loggedInUserOrgId,
     );
-    await CouponsServices.deleteCouponsWhere({ id: couponId, coupon });
+    await CouponsServices.deleteCouponsWhere({ id: couponId, ...coupon });
     return apiResponse.success(res, req, "Coupon deleted successfully");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
