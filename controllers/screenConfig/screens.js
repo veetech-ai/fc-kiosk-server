@@ -6,7 +6,8 @@ const apiResponse = require("../../common/api.response");
 
 // import service
 const screenService = require("../../services/screenConfig/screens");
-
+const courseService = require("../../services/kiosk/course");
+const { validateObject } = require("../../common/helper");
 /**
  * @swagger
  * tags:
@@ -39,21 +40,15 @@ exports.get_screens_for_course = async (req, res) => {
 
   try {
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
 
     const courseId = Number(req.params.courseId);
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const course = await screenService.getScreensByCourses(courseId);
+    await courseService.getCourse({ id: courseId }, loggedInUserOrg);
+    const courseScreens = await screenService.getScreensByCourses(courseId);
 
-    // Admin and Super Admin can access the resource
-    // Only filtered people by middleware from same org can access the resource
-    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource)
-      return apiResponse.fail(res, "", 403);
-
-    return apiResponse.success(res, req, course);
+    return apiResponse.success(res, req, courseScreens);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -150,39 +145,30 @@ exports.update_screen_for_course = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+    const allowedFields = [
+      "courseInfo",
+      "coupons",
+      "lessons",
+      "statistics",
+      "memberships",
+      "feedback",
+      "careers",
+      "shop",
+      "faq",
+    ];
+    const filteredBody = validateObject(req.body, allowedFields);
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = req.user?.role?.super || req.user?.role?.admin;
     const courseId = Number(req.params.courseId);
-    if (isNaN(courseId)) {
+    if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const {
-      courseInfo,
-      coupons,
-      lessons,
-      statistics,
-      memberships,
-      feedback,
-      careers,
-      shop,
-      faq,
-    } = req.body;
-    const reqBody = {
-      courseInfo,
-      coupons,
-      lessons,
-      statistics,
-      memberships,
-      feedback,
-      careers,
-      shop,
-      faq,
-    };
-    const course = await screenService.updateScreens(courseId, reqBody);
-    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource)
-      return apiResponse.fail(res, "", 403);
-    return apiResponse.success(res, req, course);
+    await courseService.getCourse({ id: courseId }, loggedInUserOrg);
+    const courseWithUpdateScreens = await screenService.updateScreens(
+      courseId,
+      filteredBody,
+    );
+
+    return apiResponse.success(res, req, courseWithUpdateScreens);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
