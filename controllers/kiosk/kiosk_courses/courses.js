@@ -325,27 +325,28 @@ exports.create_course_info = async (req, res) => {
         courseImages = [...uploadedImageFiles];
       }
     }
+
+    let image;
+    let uploadImageCounter = 0;
     for (let i = 0; i < parsedOrder.length; i++) {
-      let image;
       if (parsedOrder[i] == "L") {
         uploadedImages.push(parsedUuidlist[i]);
       } else {
-        for (const courseImage of courseImages) {
-          image = await upload_file.uploadCourseImage(
-            courseImage,
-            courseId,
-          );
-          uploadedImages.push(image);
-        }
+        image = await upload_file.uploadCourseImage(
+          courseImages[uploadImageCounter],
+          courseId,
+        );
+        uploadedImages.push(image);
+        uploadImageCounter++;
       }
     }
-    const {order,links,...restFields}=fields
-    const reqBody = { ...restFields};
+    const { order, links, ...restFields } = fields;
+    let reqBody = { ...restFields };
     if (logoImage) {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
-    reqBody.images=uploadedImages
+    reqBody.images = uploadedImages;
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
