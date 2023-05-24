@@ -312,41 +312,45 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
+    let reqBody = {};
     const uploadedImages = [];
     const uploadedImageFiles = [];
     const logoImage = files?.logo;
     let courseImages = files?.course_images;
-    const parsedOrder = JSON.parse(fields.order);
-    const parsedUuidlist = JSON.parse(fields.links);
-    if (courseImages) {
-      const isIterable = Symbol.iterator in Object(courseImages);
-      if (!isIterable) {
-        uploadedImageFiles.push(courseImages);
-        courseImages = [...uploadedImageFiles];
+    if (fields.order) {
+      const parsedOrder = JSON.parse(fields.order);
+      const parsedUuidlist = JSON.parse(fields.links);
+      if (courseImages) {
+        const isIterable = Symbol.iterator in Object(courseImages);
+        if (!isIterable) {
+          uploadedImageFiles.push(courseImages);
+          courseImages = [...uploadedImageFiles];
+        }
       }
+      let image;
+      let uploadImageCounter = 0;
+      for (let i = 0; i < parsedOrder.length; i++) {
+        if (parsedOrder[i] == "L") {
+          uploadedImages.push(parsedUuidlist[i]);
+        } else {
+          image = await upload_file.uploadCourseImage(
+            courseImages[uploadImageCounter],
+            courseId,
+          );
+          uploadedImages.push(image);
+          uploadImageCounter++;
+        }
+      }
+      fields.images = uploadedImages;
+      const { order, links, ...restFields } = fields;
+      reqBody = { ...restFields };
     }
 
-    let image;
-    let uploadImageCounter = 0;
-    for (let i = 0; i < parsedOrder.length; i++) {
-      if (parsedOrder[i] == "L") {
-        uploadedImages.push(parsedUuidlist[i]);
-      } else {
-        image = await upload_file.uploadCourseImage(
-          courseImages[uploadImageCounter],
-          courseId,
-        );
-        uploadedImages.push(image);
-        uploadImageCounter++;
-      }
-    }
-    const { order, links, ...restFields } = fields;
-    let reqBody = { ...restFields };
     if (logoImage) {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
-    reqBody.images = uploadedImages;
+    reqBody = { ...fields };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
