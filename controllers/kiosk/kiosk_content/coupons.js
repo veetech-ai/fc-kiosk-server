@@ -1,4 +1,4 @@
-const CouponServices = require("../../../services/coupons");
+const CouponsServices = require("../../../services/coupons");
 const apiResponse = require("../../../common/api.response");
 const Validator = require("validatorjs");
 
@@ -45,12 +45,12 @@ exports.redeemCoupon = async (req, res) => {
 
     const device = await DeviceServices.findOne({ id: deviceId });
 
-    const validatedCoupon = await CouponServices.validate({
+    const validatedCoupon = await CouponsServices.validate({
       code,
       gcId: device.gcId,
       orgId: device.owner_id,
     });
-    await CouponServices.redeemCoupon(validatedCoupon, device.id);
+    await CouponsServices.redeemCoupon(validatedCoupon, device.id);
 
     apiResponse.success(res, req, "Coupon redeemed successfully");
   } catch (error) {

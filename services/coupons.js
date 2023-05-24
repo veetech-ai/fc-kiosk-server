@@ -30,36 +30,6 @@ module.exports.list_available = (perPage, page) => {
   });
 };
 
-module.exports.list = (perPage, page) => {
-  return new Promise((resolve, reject) => {
-    Coupon.findAll({
-      // where: {status:1},
-    })
-      .then((result) => {
-        resolve(result);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-};
-
-exports.findByWhere = (where) => {
-  return new Promise((resolve, reject) => {
-    Coupon.findOne({
-      where: where,
-    })
-      .then((data) => {
-        resolve(data);
-      })
-      .catch((err) => {
-        reject({
-          message: err,
-        });
-      });
-  });
-};
-
 exports.findByID = (id) => {
   return new Promise((resolve, reject) => {
     Coupon.findOne({
@@ -111,13 +81,10 @@ exports.create = async (params) => {
   return await Coupon.create(params);
 };
 
-exports.update = async (id, params) => {
-  if (params.code) {
-    delete params.code;
-  }
+exports.updateCouponById = async (id, params) => {
   return await Coupon.update(params, {
     where: {
-      id: id,
+      id,
     },
   });
 };
@@ -214,4 +181,57 @@ exports.redeemCoupon = async (coupon, deviceId) => {
       },
     },
   );
+};
+
+exports.findAllCoupons = async (where) => {
+  return await Coupon.findAll({ where });
+};
+
+exports.deleteCouponsWhere = async (where) => {
+  const clonedWhere = { ...where };
+  const noOfAffectedRows = await Coupon.destroy({ where: clonedWhere });
+  if (!noOfAffectedRows) {
+    throw new ServiceError("Coupon not found", 404);
+  }
+  return noOfAffectedRows;
+};
+
+exports.findOneCoupon = async (where, loggedInUserOrgId) => {
+  const clonedWhere = { ...where };
+  const coupon = await Coupon.findOne({
+    where: clonedWhere,
+    include: [
+      {
+        as: "Course",
+        model: models.Course,
+      },
+    ],
+  });
+
+  if (!coupon) throw new ServiceError("Coupon not found", 404);
+  const linkedCourse = coupon.Course;
+  if (linkedCourse) {
+    // Course specific coupon
+    if (loggedInUserOrgId && linkedCourse.orgId !== loggedInUserOrgId) {
+      throw new ServiceError("Coupon not found", 404);
+    }
+  } else {
+    // Organization specific coupon
+    if (loggedInUserOrgId && coupon.orgId !== loggedInUserOrgId) {
+      throw new ServiceError("Coupon not found", 404);
+    }
+  }
+
+  return coupon;
+};
+
+exports.checkCouponType = async (where, loggedInUserOrgId) => {
+  const coupon = await this.findOneCoupon(where, loggedInUserOrgId);
+  let toReturn = {};
+  if (coupon.gcId) {
+    toReturn.gcId = coupon.gcId;
+  } else if (coupon.orgId) {
+    toReturn.orgId = coupon.orgId;
+  }
+  return toReturn;
 };

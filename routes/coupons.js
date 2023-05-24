@@ -5,21 +5,10 @@ const validation_middleware = require("../middlewares/auth.validation");
 exports.routesConfig = function (app, router) {
   const group = `${config.app.apiPath}coupons`;
 
-  router.get(group + "/all/available", [
-    // validation_middleware.validJWTNeeded,
-    CouponsController.get_all_available,
-  ]);
-
-  router.get(group + "/get/:id", [
-    // validation_middleware.validJWTNeeded,
-    CouponsController.get_by_id,
-  ]);
-
-  // for admin
-  router.get(group + "/all", [
+  router.get(group + "/courses/:courseId", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin"]),
-    CouponsController.get_all,
+    validation_middleware.hasAccess(["super", "admin", "getCoupons"]),
+    CouponsController.findCouponsByCourseId,
   ]);
 
   router.post(group + "/", [
@@ -34,19 +23,9 @@ exports.routesConfig = function (app, router) {
     CouponsController.update,
   ]);
 
-  router.put(group + "/status/:couponId", [
+  router.delete(group + "/:couponId", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin"]),
-    CouponsController.update_status,
-  ]);
-
-  router.post(group + "/validate", [
-    validation_middleware.validJWTNeeded,
-    CouponsController.validate,
-  ]);
-
-  router.post(group + "/apply", [
-    validation_middleware.validJWTNeeded,
-    CouponsController.apply,
+    validation_middleware.hasAccess(["super", "admin", "manageCoupons"]),
+    CouponsController.deleteCouponById,
   ]);
 };

@@ -3,7 +3,7 @@ const {
 } = require("../../../../../common/organizations.data");
 const helper = require("../../../../helper");
 const moment = require("moment");
-const CouponServices = require("../../../../../services/coupons");
+const CouponsServices = require("../../../../../services/coupons");
 
 let testCustomerToken,
   superAdminToken,
@@ -19,7 +19,7 @@ beforeAll(async () => {
 let requestBody = {
   title: "Example",
   description: "Test Coupon",
-  expiry: moment().format("YYYY-MM-DDTHH:mm:ssZ").toString(),
+  expiry: moment().add(30, "minutes").format("YYYY-MM-DDTHH:mm:ssZ").toString(),
   code: "XYZa123",
   discountType: "fixed",
   discount: 50,
@@ -35,7 +35,7 @@ describe("POST /coupons", () => {
     return helper.post_request_with_authorization({
       endpoint,
       token,
-      params: params,
+      params: { ...params },
     });
   };
   beforeAll(async () => {
@@ -82,6 +82,36 @@ describe("POST /coupons", () => {
     };
 
     const response = await makeApiRequest({});
+
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("should return 400 and validation error for expiry that is neither ISO or RFC 2822 supported", async () => {
+    const expectedResponse = {
+      success: false,
+      data: "The expiry must be a valid date",
+    };
+
+    const response = await makeApiRequest({
+      ...requestBody,
+      expiry: "23/05/2050",
+    });
+
+    expect(response.body).toStrictEqual(expectedResponse);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("should return 400 and validation error for expiry that is smaller than current date and time", async () => {
+    const expectedResponse = {
+      success: false,
+      data: "The expiry must be greater than the current date",
+    };
+
+    const response = await makeApiRequest({
+      ...requestBody,
+      expiry: moment().subtract(5, "minutes"),
+    });
 
     expect(response.body).toStrictEqual(expectedResponse);
     expect(response.statusCode).toBe(400);
@@ -173,7 +203,7 @@ describe("POST /coupons", () => {
   it("should create the coupon under the customer's organization successfully", async () => {
     const requestBodyClone = { ...requestBody };
     const response = await makeApiRequest(requestBodyClone, testCustomerToken);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
     const expectedResponse = {
       title: "Example",
       description: "Test Coupon",
@@ -199,7 +229,7 @@ describe("POST /coupons", () => {
   it("should create the coupon under the customer's organization's golf course successfully", async () => {
     const requestBodyClone = { ...requestBody, gcId: testGolfCourseId };
     const response = await makeApiRequest(requestBodyClone, testCustomerToken);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
     const expectedResponse = {
       title: "Example",
       description: "Test Coupon",
@@ -229,7 +259,7 @@ describe("POST /coupons", () => {
       orgId: testOrganizatonId,
     };
     const response = await makeApiRequest(requestBodyClone, superAdminToken);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
 
     const expectedResponse = {
       title: "Example",
@@ -257,7 +287,7 @@ describe("POST /coupons", () => {
     await makeApiRequest(requestBodyClone, superAdminToken);
 
     const response = await makeApiRequest(requestBodyClone);
-    await CouponServices.deleteAll({ code: requestBodyClone.code });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
     const expectedResponse = {
       success: false,
       data: "Coupon already exists",
