@@ -313,39 +313,39 @@ exports.create_course_info = async (req, res) => {
       });
     });
     const uploadedImages = [];
-
+    const uploadedImageFiles = [];
     const logoImage = files?.logo;
     let courseImages = files?.course_images;
-    const parsedOrder=JSON.parse(fields.order)
-    const parseduuidlist=JSON.parse(fields.links)
-    for(let i=0;i<parsedOrder.length;i++){
-      if(parsedOrder[i]=='L'){
-        uploadedImages.push(parsedOrder[i])
-        console.log("uploaded :",uploadedImages);
-      }
-    }
+    const parsedOrder = JSON.parse(fields.order);
+    const parsedUuidlist = JSON.parse(fields.links);
     if (courseImages) {
       const isIterable = Symbol.iterator in Object(courseImages);
       if (!isIterable) {
-        uploadedImages.push(courseImages);
-        courseImages = [...uploadedImages];
+        uploadedImageFiles.push(courseImages);
+        courseImages = [...uploadedImageFiles];
       }
     }
-    const reqBody = { ...fields };
+    for (let i = 0; i < parsedOrder.length; i++) {
+      let image;
+      if (parsedOrder[i] == "L") {
+        uploadedImages.push(parsedUuidlist[i]);
+      } else {
+        for (const courseImage of courseImages) {
+          image = await upload_file.uploadCourseImage(
+            courseImage,
+            courseId,
+          );
+          uploadedImages.push(image);
+        }
+      }
+    }
+    const {order,links,...restFields}=fields
+    const reqBody = { ...restFields};
     if (logoImage) {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
-    if (courseImages) {
-      const images = await upload_file.uploadCourseImages(
-        courseImages,
-        courseId,
-      );
-      reqBody.images = images;
-    }
-    if (existingImages && courseImages) {
-      reqBody.images = [...existingImages, ...reqBody.images];
-    }
+    reqBody.images=uploadedImages
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
