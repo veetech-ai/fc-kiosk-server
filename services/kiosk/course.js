@@ -67,7 +67,7 @@ async function createCourseInfo(reqBody, courseId) {
     },
     { where: { id: courseId } },
   );
-  return updatedCourse;
+  return updatedCourse[0];
 }
 async function getLinkedCourse(courseId, orgId) {
   const course = await Course.findOne({

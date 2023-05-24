@@ -1558,4 +1558,5 @@ exports.mqttPayloads = {
   updateCareerScreen: ["career"],
   updateMembershipScreen: ["membership"],
   updateLessonScreen: ["lesson"],
+  updateCourseInfoScreen: ["course-info"],
 };
