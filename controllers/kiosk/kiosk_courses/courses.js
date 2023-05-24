@@ -9,6 +9,7 @@ const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
 const FeedbackService = require("../../../services/kiosk/feedback");
+const ServiceError = require("../../../utils/serviceError");
 
 /**
  * @swagger
@@ -277,8 +278,17 @@ exports.create_course_info = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    let existingImages = await courseService.getCourseImages(courseId);
-    const validation = new Validator(req.body, {
+
+    const form = new formidable.IncomingForm();
+    form.multiples = true;
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        resolve({ fields, files });
+      });
+    });
+
+    const validation = new Validator(fields, {
       name: "string",
       holes: "integer",
       par: "integer",
@@ -304,23 +314,22 @@ exports.create_course_info = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
-    const form = new formidable.IncomingForm();
-    form.multiples = true;
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        resolve({ fields, files });
-      });
-    });
     let reqBody = {};
     const uploadedImages = [];
     const uploadedImageFiles = [];
     const logoImage = files?.logo;
     let courseImages = files?.course_images;
-    if (fields.order) {
+    let parsedRemovedUuidList;
+
+    if (fields.order && fields.links) {
+      // whenever course images are uploaded fields.order will always be there
       const parsedOrder = JSON.parse(fields.order);
-      const parsedUuidlist = JSON.parse(fields.links);
-      const parsedRemovedUuidList = JSON.parse(fields.removedUUIDs);
+      const parsedUuidList = JSON.parse(fields.links);
+
+      if (fields.removedUUIDs) {
+        parsedRemovedUuidList = JSON.parse(fields.removedUUIDs);
+      }
+
       if (courseImages) {
         const isIterable = Symbol.iterator in Object(courseImages);
         if (!isIterable) {
@@ -328,22 +337,25 @@ exports.create_course_info = async (req, res) => {
           courseImages = [...uploadedImageFiles];
         }
       }
-      let image;
-      let uploadImageCounter = 0;
-      for (let i = 0; i < parsedOrder.length; i++) {
-        if (parsedOrder[i] == "L") {
-          uploadedImages.push(parsedUuidlist[i]);
-        } else {
-          image = await upload_file.uploadCourseImage(
-            courseImages[uploadImageCounter],
+
+      for await (const uploadType of parsedOrder) {
+        let fileAccordingToOrder;
+
+        if (uploadType === "L") {
+          fileAccordingToOrder = parsedUuidList.shift();
+        } else if (uploadType === "F") {
+          const fileToBeUploaded = courseImages.shift();
+          fileAccordingToOrder = await upload_file.uploadCourseImage(
+            fileToBeUploaded,
             courseId,
           );
-          uploadedImages.push(image);
-          uploadImageCounter++;
         }
+
+        uploadedImages.push(fileAccordingToOrder);
       }
+
       fields.images = uploadedImages;
-      if (parsedRemovedUuidList.length) {
+      if (parsedRemovedUuidList && parsedRemovedUuidList.length) {
         await upload_file.deleteImageForCourse(parsedRemovedUuidList);
       }
       const { order, links, ...restFields } = fields;
@@ -354,7 +366,8 @@ exports.create_course_info = async (req, res) => {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
-    reqBody = { ...fields };
+
+    reqBody = { ...reqBody, ...fields };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
       courseId,
