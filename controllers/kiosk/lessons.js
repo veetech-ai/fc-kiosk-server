@@ -99,6 +99,11 @@ exports.create_lesson = async (req, res) => {
 
     const reqBody = { ...fields, image };
     const coach = await courseLesson.createLesson(reqBody, orgId);
+    helper.mqtt_publish_message(
+      `gc/${courseId}/screens`,
+      helper.mqttPayloads.updateLessonScreen,
+      false,
+    );
     return apiResponse.success(res, req, coach);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -199,6 +204,13 @@ exports.update_lesson = async (req, res) => {
     }
     const reqBody = { ...fields, image };
     const updatedCoach = await courseLesson.updateLesson(reqBody, lessonId);
+    if (updatedCoach) {
+      helper.mqtt_publish_message(
+        `gc/${lesson.gcId}/screens`,
+        helper.mqttPayloads.updateLessonScreen,
+        false,
+      );
+    }
     return apiResponse.success(res, req, updatedCoach);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -247,6 +259,11 @@ exports.delete_lesson = async (req, res) => {
     }
 
     const deletedLesson = await courseLesson.deleteLessonById(lessonId);
+    helper.mqtt_publish_message(
+      `gc/${lesson.gcId}/screens`,
+      helper.mqttPayloads.updateLessonScreen,
+      false,
+    );
     return apiResponse.success(res, req, deletedLesson);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
