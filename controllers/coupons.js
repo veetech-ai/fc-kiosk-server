@@ -168,7 +168,7 @@ exports.updateCouponById = async (req, res) => {
    * @swagger
    *
    * /coupons/{couponId}:
-   *   put:
+   *   patch:
    *     security:
    *       - auth: []
    *     description: Update coupon
