@@ -1559,11 +1559,3 @@ exports.mqttPayloads = {
   updateMembershipScreen: ["membership"],
   updateLessonScreen: ["lesson"],
 };
-
-exports.isMqttConnectionAlive = (messageIfConnectionNotAlive = "") => {
-  if (!mqtt_connection_ok) {
-    this.set_mqtt_connection_lost_log(messageIfConnectionNotAlive);
-    return false;
-  }
-  return true;
-};
