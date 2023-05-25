@@ -1045,7 +1045,12 @@ exports.verify_transfer_token = async (params, where) => {
   await Device.sequelize.transaction(async (transaction) => {
     // Update device owner in "Device" table
     const deviceUpdatedRecords = await Device.update(
-      { owner_id: new_owner_id, transfer: null, transfer_token: null },
+      {
+        owner_id: new_owner_id,
+        transfer: null,
+        transfer_token: null,
+        gcId: null,
+      },
       { where: { id: device.id }, transaction, individualHooks: true },
     );
 
@@ -1122,177 +1127,9 @@ exports.verify_transfer_token = async (params, where) => {
   helper.mqtt_publish_message(`d/${device.id}/ac/sch`, {
     token: null,
   });
-  // Device.findOne({
-  //   attributes: [
-  //     "id",
-  //     "serial",
-  //     "status",
-  //     "owner_id",
-  //     "live_status",
-  //     "transfer",
-  //   ],
-  //   where: where,
-  //   include: [
-  //     {
-  //       as: "Organization_Devices",
-  //       model: models.Organization_Device,
-  //       attributes: ["device_name"],
-  //       // where: {
-  //       //   orgId: models.sequelize.where(
-  //       //     models.sequelize.col("Organization_Devices.orgId"),
-  //       //     "=",
-  //       //     models.sequelize.col("Device.owner_id"),
-  //       //   ),
-  //       //   device_id: models.sequelize.where(
-  //       //     models.sequelize.col("Organization_Devices.device_id"),
-  //       //     "=",
-  //       //     models.sequelize.col("Device.id"),
-  //       //   ),
-  //       // },
-  //       required: true,
-  //     },
-  //   ],
-  // })
-  //   .then((device) => {
-  //     if (device) {
-  //       const old_owner_id = device.owner_id;
-  //       const new_owner_id =
-  //         invited_user_id || attachToOrganization || device.transfer;
-  //       if (action) {
-  //         Device.update(
-  //           {
-  //             owner_id: new_owner_id,
-  //             transfer: null,
-  //             transfer_token: null,
-  //           },
-  //           {
-  //             where: {
-  //               id: device.id,
-  //             },
-  //           },
-  //         )
-  //           .then((result) => {
-  //             OrganizationDeviceModel.update_where(
-  //               {
-  //                 share_by: new_owner_id,
-  //               },
-  //               {
-  //                 device_id: device.id,
-  //                 orgId: old_owner_id,
-  //               },
-  //             )
-  //               .then((update_device) => {
-  //                 OrganizationDeviceModel.create({
-  //                   orgId: new_owner_id,
-  //                   device_id: device.id,
-  //                   device_name: device.Organization_Devices[0].device_name
-  //                     ? device.Organization_Devices[0].device_name
-  //                     : device.serial,
-  //                 })
-  //                   .then((create_device) => {
-  //                     const deleteWhere = {
-  //                       orgId: {
-  //                         [Op.ne]: new_owner_id,
-  //                       },
-  //                       device_id: device.id,
-  //                     };
-  //                     OrganizationDeviceModel.deleteWhere(deleteWhere)
-  //                       .then((response) => {
-  //                         resolve(response);
-  //                       })
-  //                       .catch((error) => {
-  //                         reject(error);
-  //                       });
-  //                   })
-  //                   .catch(() => {
-  //                     OrganizationDeviceModel.update_where(
-  //                       {
-  //                         share_by: null,
-  //                         can_share: true,
-  //                         can_change_geo_fence: true,
-  //                         can_change_scheduling: true,
-  //                       },
-  //                       {
-  //                         orgId: new_owner_id,
-  //                         device_id: device.id,
-  //                       },
-  //                     )
-  //                       .then((update_device) => {
-  //                         models.Organization_Device_Groups_Items.destroy({
-  //                           where: { device_id: device.id },
-  //                         })
-  //                           .then((group) => { })
-  //                           .then((group) => {
-  //                             if (mqtt_connection_ok) {
-  //                               helper.set_mqtt_connection_lost_log(
-  //                                 "NAPP queries/devices.js.verify_transfer_token:",
-  //                               );
-  //                               helper.mqtt_publish_message(
-  //                                 `d/${device.id}/group`,
-  //                                 {
-  //                                   group: null,
-  //                                 },
-  //                               );
-  //                             }
-  //                             resolve(update_device);
-  //                           })
-  //                           .catch((err) => {
-  //                             reject({
-  //                               message: err,
-  //                             });
-  //                           });
-  //                       })
-  //                       .catch((err) => {
-  //                         reject({
-  //                           message: err,
-  //                         });
-  //                       });
-  //                   });
-  //               })
-  //               .catch((err) => {
-  //                 reject({
-  //                   message: err,
-  //                 });
-  //               });
-  //           })
-  //           .catch((error) => {
-  //             reject({
-  //               message: "Token not exists or may be expire",
-  //             });
-  //           });
-  //       } else {
-  //         // Transfer request rejected
-  //         Device.update(
-  //           {
-  //             transfer: null,
-  //             transfer_token: null,
-  //           },
-  //           {
-  //             where: {
-  //               id: device.id,
-  //             },
-  //           },
-  //         )
-  //           .then((result) => {
-  //             resolve(result);
-  //           })
-  //           .catch((error) => {
-  //             reject({
-  //               message: "Token not exists or may be expire",
-  //             });
-  //           });
-  //       }
-  //     } else {
-  //       reject({
-  //         message: "Token not exists or may be expire",
-  //       });
-  //     }
-  //   })
-  //   .catch(() => {
-  //     reject({
-  //       message: "Token not exists or may be expire",
-  //     });
-  //   });
+  helper.mqtt_publish_message(`d/${device.id}/gc`, {
+    gcId: null,
+  });
 };
 
 exports.get_ownership_requests = (orgId) => {
