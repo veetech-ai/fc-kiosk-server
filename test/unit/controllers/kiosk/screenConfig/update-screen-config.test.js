@@ -77,7 +77,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
         params: fields,
       });
     };
-   await makeAdApi(files, fields);
+    await makeAdApi(files, fields);
   });
 
   const makeApiRequest = async (courseId, params, token = adminToken) => {
