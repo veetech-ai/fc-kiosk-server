@@ -118,7 +118,7 @@ exports.getAds = async (req, res) => {
    */
 
   try {
-    const ads = await adsService.getAds();
+    const ads = await adsService.getAds({});
     return apiResponse.success(res, req, ads);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

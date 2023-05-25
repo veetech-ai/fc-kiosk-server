@@ -1,5 +1,40 @@
 const helper = require("../../../../helper");
+const AdsService = require("../../../../../services/kiosk/ads"); 
+const Commonhelper = require("../../../../../common/helper");
+const upload_file = require("../../../../../common/upload");
 
+jest.mock("formidable", () => {
+  return {
+    IncomingForm: jest.fn().mockImplementation(() => {
+      return {
+        multiples: true,
+        parse: (req, cb) => {
+          cb(null, mockFields, mockFiles);
+        },
+      };
+    }),
+  };
+});
+let fields = {
+  state: "Alabama",
+  title: "Main Ad",
+};
+
+let files = {
+  adImage: {
+    name: "mock-logo.png",
+    type: "image/png",
+    size: 5000, // bytes
+    path: "/mock/path/to/logo.png",
+  },
+};
+jest
+  .spyOn(upload_file, "uploadImageForCourse")
+  .mockImplementation(() => Promise.resolve("mock-logo-url"));
+const mockFormidable = (fields, files) => {
+  mockFields = fields;
+  mockFiles = files;
+};
 describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
   let adminToken;
   let customerToken;
@@ -7,7 +42,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
   let courseId;
-  const validbody = { courseInfo: true, lessons: false };
+  let validbody = { courseInfo: true, lessons: false };
   const invalidBody = { courseInfo: "aa", lessons: false };
   beforeAll(async () => {
     global.mqtt_connection_ok = true;
@@ -31,6 +66,17 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
       params: courses,
     });
     courseId = course.body.data.id;
+    const makeAdApi = async (fields, files) => {
+      fields.gcId = courseId;
+      mockFormidable(fields, files);
+      return await helper.post_request_with_authorization({
+        endpoint: `ads`,
+        token: adminToken,
+        params: fields,
+      });
+    };
+    const ree=await makeAdApi(files,fields)
+    console.log("ree :",ree.body.data);
   });
 
   afterAll(() => {
@@ -89,5 +135,29 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
       differentOrganizationCustomerToken,
     );
     expect(response.body.data).toEqual("Course not found");
+  });
+  it("should successfully update the screens of related golf course ads after screens config has been updated", async () => {
+    const response = await makeApiRequest(courseId, validbody, customerToken);
+    const allowedFields = [
+      "courseInfo",
+      "coupons",
+      "lessons",
+      "statistics",
+      "memberships",
+      "feedback",
+      "careers",
+      "shop",
+      "faq",
+    ];
+  
+    const filterdObject = Commonhelper.validateObject(
+      response.body.data,
+      allowedFields,
+    );
+    const enabledScreens = Object.keys(filterdObject).filter(
+      (key) => filterdObject[key] === true,
+    );
+    const ads=await AdsService.getAds({gcId:courseId})
+    expect(ads[0].dataValues.screens).toEqual(enabledScreens)
   });
 });

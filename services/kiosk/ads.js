@@ -15,8 +15,8 @@ async function createAd(reqBody) {
   return ad;
 }
 
-async function getAds() {
-  const ads = await AdsModel.findAll({ where: {} });
+async function getAds(where) {
+  const ads = await AdsModel.findAll({where});
   if (ads.length) {
     ads.forEach((ad) => {
       ad.smallImage = upload_file.getFileURL(ad.smallImage);
