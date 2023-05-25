@@ -5,12 +5,12 @@ exports.routesConfig = function (app, router) {
   const ads = `${config.app.apiPath}ads`;
   router.post(ads, [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    validation_middleware.hasAccess(["super", "admin"]),
     AdsController.createAd,
   ]);
-  router.get(ads + `/courses/:courseId`, [
+  router.get(ads, [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    validation_middleware.hasAccess(["super", "admin"]),
     AdsController.getAds,
   ]);
 };

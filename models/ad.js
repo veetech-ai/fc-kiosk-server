@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       smallImage: {
         field: "small_image",
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       bigImage: {
         field: "big_image",

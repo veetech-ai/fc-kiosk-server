@@ -45,7 +45,7 @@ exports.createAd = async (req, res) => {
    *       - in: formData
    *         name: adImage
    *         description: Upload image of ads to be displayed
-   *         required: false
+   *         required: true
    *         type: file
    *     produces:
    *       - application/json
@@ -55,8 +55,6 @@ exports.createAd = async (req, res) => {
    */
 
   try {
-    const loggedInUserOrg = req.user?.orgId;
-
     const form = new formidable.IncomingForm();
 
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -74,11 +72,8 @@ exports.createAd = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const courseId = fields.gcId;
-    const course = await courseService.getCourse(
-      { id: courseId },
-      loggedInUserOrg,
-    );
     const adImage = files.adImage;
+
     const screens = await screenConfigService.getScreensByCourses(courseId);
     const { updatedAt, orgId, gcId, id, createdAt, ...restFields } =
       screens.dataValues;
@@ -104,20 +99,12 @@ exports.getAds = async (req, res) => {
   /**
    * @swagger
    *
-   * /ads/courses/{courseId}:
+   * /ads:
    *   get:
    *     security:
    *       - auth: []
    *     description: CREATE ads.
    *     tags: [Ads]
-   *     consumes:
-   *       - multipart/form-data
-   *     parameters:
-   *       - name: courseId
-   *         description: id of golf course
-   *         in: path
-   *         required: true
-   *         type: string
    *     produces:
    *       - application/json
    *     responses:
@@ -126,19 +113,8 @@ exports.getAds = async (req, res) => {
    */
 
   try {
-    const loggedInUserOrg = req.user?.orgId;
-
-    
-    const courseId = Number(req.params.courseId);
-    if (!courseId) {
-      return apiResponse.fail(res, "courseId must be a valid number");
-    }
-    const course = await courseService.getCourse(
-      { id: courseId },
-      loggedInUserOrg,
-    );
-
-    const ads = await adsService.getAds(courseId);
+    console.log("in controler");
+    const ads = await adsService.getAds();
     return apiResponse.success(res, req, ads);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

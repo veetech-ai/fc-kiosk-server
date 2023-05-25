@@ -1,9 +1,10 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
+const ServiceError = require("../../../../../utils/serviceError");
 
 let mockFields;
 let mockFiles;
-
+const errorMessage = "Something went wroong";
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -17,6 +18,9 @@ jest.mock("formidable", () => {
   };
 });
 
+jest
+  .spyOn(upload_file, "uploadImageForCourse")
+  .mockImplementation(() => Promise.resolve("mock-logo-url"));
 const mockFormidable = (fields, files) => {
   mockFields = fields;
   mockFiles = files;
@@ -30,6 +34,7 @@ describe("POST /api/v1/ads", () => {
   let customerToken;
   let testOperatorToken;
   let testOrganizationId = 1;
+  let differentOrganizationCustomerToken;
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -43,6 +48,9 @@ describe("POST /api/v1/ads", () => {
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
     testOperatorToken = await helper.get_token_for("testOperator");
+    differentOrganizationCustomerToken = await helper.get_token_for(
+      "zongCustomer",
+    );
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses",
       token: adminToken,
@@ -53,14 +61,37 @@ describe("POST /api/v1/ads", () => {
   });
 
   const makeAdApiRequest = async (params, token = adminToken) => {
-    return helper.post_request_with_authorization({
+    return await helper.post_request_with_authorization({
       endpoint: `ads`,
       token: token,
       params: params,
     });
   };
 
-  it("should create a new ad info with valid input", async () => {
+  it("should create a new ad info with valid input with admin or super admin token", async () => {
+    const fields = {
+      gcId: courseId,
+      state: "Alabama",
+      title: "Main Ad",
+    };
+
+    const files = {
+      adImage: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
+
+    mockFormidable(fields, files);
+
+    const response = await makeAdApiRequest(fields);
+    expect(response.body.data.gcId).toEqual(fields.gcId);
+    expect(response.body.data.state).toEqual(fields.state);
+    expect(response.body.data.title).toEqual(fields.title);
+  });
+  it("should return something", async () => {
     const fields = {
       gcId: courseId,
       state: "Alabama",
@@ -79,12 +110,12 @@ describe("POST /api/v1/ads", () => {
     mockFormidable(fields, files);
     jest
       .spyOn(upload_file, "uploadImageForCourse")
-      .mockImplementation(() => Promise.resolve("mock-logo-url"));
+      .mockImplementation(() =>
+        Promise.reject(new ServiceError(`${errorMessage}`, 400)),
+      );
 
     const response = await makeAdApiRequest(fields);
-    expect(response.body.data.gcId).toEqual(fields.gcId);
-    expect(response.body.data.state).toEqual(fields.state);
-    expect(response.body.data.title).toEqual(fields.title);
+    expect(response.body.data).toBe(errorMessage);
   });
   it("should create a new ad with the customer token who is the part of same organization", async () => {
     const fields = {
@@ -103,21 +134,24 @@ describe("POST /api/v1/ads", () => {
     };
 
     mockFormidable(fields, files);
-    jest
-      .spyOn(upload_file, "uploadImageForCourse")
-      .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeAdApiRequest(fields, customerToken);
-    expect(response.body.data.gcId).toEqual(fields.gcId);
-    expect(response.body.data.state).toEqual(fields.state);
-    expect(response.body.data.title).toEqual(fields.title);
+    expect(response.body.data).toEqual("You are not allowed");
   });
-  it("should return an error if user belongs to different organization", async () => {
+  it("should return an error if user belongs to same organization but not having sufficient rights", async () => {
     const params = {};
     const response = await makeAdApiRequest(params, testOperatorToken);
     expect(response.body.data).toEqual("You are not allowed");
   });
-  it("should throw error if courseId is not defined", async () => {
+  it("should return an error if user belongs to different organization", async () => {
+    const params = {};
+    const response = await makeAdApiRequest(
+      params,
+      differentOrganizationCustomerToken,
+    );
+    expect(response.body.data).toEqual("You are not allowed");
+  });
+  it("should throw error if courseId is invalid", async () => {
     const fields = {
       gcId: invalidCourseId,
       state: "Alabama",
@@ -134,12 +168,9 @@ describe("POST /api/v1/ads", () => {
     };
 
     mockFormidable(fields, files);
-    jest
-      .spyOn(upload_file, "uploadImageForCourse")
-      .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
     const response = await makeAdApiRequest(fields, customerToken);
-    expect(response.body.data).toEqual("Course not found");
+    expect(response.body.data).toEqual("You are not allowed");
   });
   it("should throw error if courseId is not defined", async () => {
     const fields = {
@@ -158,11 +189,8 @@ describe("POST /api/v1/ads", () => {
     };
 
     mockFormidable(fields, files);
-    jest
-      .spyOn(upload_file, "uploadImageForCourse")
-      .mockImplementation(() => Promise.resolve("mock-logo-url"));
 
-    const response = await makeAdApiRequest(fields, customerToken);
+    const response = await makeAdApiRequest(fields);
     expect(response.body.data.errors.gcId[0]).toEqual(
       "The gcId field is required.",
     );

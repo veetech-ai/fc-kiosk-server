@@ -8,7 +8,6 @@ async function createAd(reqBody, orgId) {
     ...reqBody,
     orgId,
   });
-  console.log("adsss :", ad);
   if (!ad) {
     throw new ServiceError("Something Went wrong", 400);
   }
@@ -19,27 +18,17 @@ async function createAd(reqBody, orgId) {
   return ad;
 }
 
-async function getAds(gcId) {
-  const ads = await AdsModel.findAll({
-   where:{
-    gcId
-   }
-  });
-  console.log("adsss :", ads);
-  if (!ad) {
-    throw new ServiceError("Something Went wrong", 400);
+async function getAds() {
+  const ads = await AdsModel.findAll({ where: {} });
+  if (ads.length) {
+    ads.forEach((ad) => {
+      ad.smallImage = upload_file.getFileURL(ad.smallImage);
+    });
   }
-  // if (ad?.smallImage) {
-  //   const image = upload_file.getFileURL(ad.smallImage);
-  //   ad.smallImage = image;
-  // }
-  ads.forEach(ad => {
-    ad.smallImage=upload_file.getFileURL(ad.smallImage)
-  }); 
   return ads;
 }
 
 module.exports = {
   createAd,
-  getAds
+  getAds,
 };

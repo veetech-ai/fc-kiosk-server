@@ -20,10 +20,10 @@ module.exports = (sequelize, DataTypes) => {
   );
   AdScreen.associate = function (models) {
     // associations can be defined here
-    models.AdScreen.hasMany(models.Ad, {
-      as: "Ads",
-      foreignKey: "screen_id",
-    });
+    // models.AdScreen.hasMany(models.Ad, {
+    //   as: "Ads",
+    //   foreignKey: "screen_id",
+    // });
   };
   return AdScreen;
 };
