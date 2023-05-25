@@ -1,8 +1,10 @@
 const helper = require("../../../../helper");
-const AdsService = require("../../../../../services/kiosk/ads"); 
+const AdsService = require("../../../../../services/kiosk/ads");
 const Commonhelper = require("../../../../../common/helper");
 const upload_file = require("../../../../../common/upload");
 
+let mockFields;
+let mockFiles;
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -75,8 +77,8 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
         params: fields,
       });
     };
-    const ree=await makeAdApi(files,fields)
-    console.log("ree :",ree.body.data);
+    const ree = await makeAdApi(files, fields);
+    console.log("ree :", ree.body.data);
   });
 
   afterAll(() => {
@@ -136,6 +138,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
     );
     expect(response.body.data).toEqual("Course not found");
   });
+
   it("should successfully update the screens of related golf course ads after screens config has been updated", async () => {
     const response = await makeApiRequest(courseId, validbody, customerToken);
     const allowedFields = [
@@ -149,7 +152,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
       "shop",
       "faq",
     ];
-  
+
     const filterdObject = Commonhelper.validateObject(
       response.body.data,
       allowedFields,
@@ -157,7 +160,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
     const enabledScreens = Object.keys(filterdObject).filter(
       (key) => filterdObject[key] === true,
     );
-    const ads=await AdsService.getAds({gcId:courseId})
-    expect(ads[0].dataValues.screens).toEqual(enabledScreens)
+    const ads = await AdsService.getAds({ gcId: courseId });
+    expect(ads[0].dataValues.screens).toEqual(enabledScreens);
   });
 });
