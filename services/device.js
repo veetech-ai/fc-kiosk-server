@@ -957,6 +957,7 @@ exports.reset = (device_id) => {
           Device.update(
             {
               remote_id: null,
+              gcId: null,
               owner_id: organization.id,
             },
             {
@@ -989,6 +990,9 @@ exports.reset = (device_id) => {
               });
               helper.mqtt_publish_message(`d/${device_id}/ac/group`, {
                 group: null,
+              });
+              helper.mqtt_publish_message(`d/${device_id}/gc`, {
+                gcId: null,
               });
               resolve(result);
             })
