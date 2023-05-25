@@ -366,7 +366,6 @@ exports.create_course_info = async (req, res) => {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
-
     reqBody = { ...reqBody, ...fields };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
@@ -436,6 +435,42 @@ exports.getCourseInfo = async (req, res) => {
       course.setDataValue("images", images);
     }
     return apiResponse.success(res, req, course);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.getCourses = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /kiosk-courses:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get course info for specific course.
+   *     tags: [Kiosk-Courses]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: state
+   *         description: state of course
+   *         in: query
+   *         required: false
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const where = {};
+    let courses = [];
+    if (req.query.state) {
+      where.state = req.query.state.toLowerCase();
+    }
+    courses = await courseService.getCourses(where);
+    return apiResponse.success(res, req, courses);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

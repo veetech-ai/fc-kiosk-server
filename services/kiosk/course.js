@@ -7,6 +7,9 @@ const upload_file = require("../../common/upload");
 const Course = models.Course;
 const Organization = models.Organization;
 
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
+
 async function createCourse(reqBody, orgId) {
   // Check if organization exists with the specified org_id
   const organization = await Organization.findOne({ where: { id: orgId } });
@@ -134,6 +137,24 @@ async function deleteWhere(where) {
   return await Course.destroy({ where });
 }
 
+async function getCourses(where) {
+  let clonedWhere = {};
+  if (where.state) {
+    clonedWhere = Sequelize.where(
+      Sequelize.fn("LOWER", Sequelize.col("state")),
+      {
+        [Op.eq]: where.state,
+      },
+    );
+  }
+
+  const courses = await Course.findAll({
+    where: clonedWhere,
+  });
+
+  return courses;
+}
+
 module.exports = {
   createCourse,
   getCoursesByOrganization,
@@ -144,4 +165,5 @@ module.exports = {
   getCourse,
   getCourseImages,
   deleteWhere,
+  getCourses,
 };
