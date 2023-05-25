@@ -99,3 +99,48 @@ exports.createAd = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.getAds = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /ads/courses/{courseId}:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: CREATE ads.
+   *     tags: [Ads]
+   *     consumes:
+   *       - multipart/form-data
+   *     parameters:
+   *       - name: courseId
+   *         description: id of golf course
+   *         in: path
+   *         required: true
+   *         type: string
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const loggedInUserOrg = req.user?.orgId;
+
+    
+    const courseId = Number(req.params.courseId);
+    if (!courseId) {
+      return apiResponse.fail(res, "courseId must be a valid number");
+    }
+    const course = await courseService.getCourse(
+      { id: courseId },
+      loggedInUserOrg,
+    );
+
+    const ads = await adsService.getAds(courseId);
+    return apiResponse.success(res, req, ads);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};

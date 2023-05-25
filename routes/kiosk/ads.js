@@ -8,9 +8,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     AdsController.createAd,
   ]);
-  // router.patch(lesson + `/contacts/:contactCoachId`, [
-  //   validation_middleware.validJWTNeeded,
-  //   validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
-  //   AdsController.updateContactLesson,
-  // ]);
+  router.get(ads + `/courses/:courseId`, [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    AdsController.getAds,
+  ]);
 };
