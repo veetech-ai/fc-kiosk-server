@@ -77,12 +77,7 @@ describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
         params: fields,
       });
     };
-    const ree = await makeAdApi(files, fields);
-    console.log("ree :", ree.body.data);
-  });
-
-  afterAll(() => {
-    global.mqtt_connection_ok = false;
+   await makeAdApi(files, fields);
   });
 
   const makeApiRequest = async (courseId, params, token = adminToken) => {
