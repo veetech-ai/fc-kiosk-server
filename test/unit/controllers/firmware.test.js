@@ -68,7 +68,7 @@ describe("/firmware/create", () => {
       params: {
         name: "test firmware",
         file_key: "file",
-        file_path: "test.bin",
+        file_path: "test.apk",
       },
       fileupload: 1,
       token: tokens.superadmin,
@@ -87,7 +87,7 @@ describe("/firmware/create", () => {
         hw_ver: hw_ver,
 
         file_key: "file",
-        file_path: "test.bin",
+        file_path: "test.apk",
       },
       fileupload: 1,
       token: tokens.superadmin,
@@ -109,7 +109,7 @@ describe("/firmware/create", () => {
         hw_ver: hw_ver,
 
         file_key: "file",
-        file_path: "test.bin",
+        file_path: "test.apk",
       },
       fileupload: 1,
       token: tokens.superadmin,
@@ -309,7 +309,7 @@ describe("/firmware/update/{firmwareId}", () => {
       params: {
         name: "test firmware",
         file_key: "file",
-        file_path: "test.bin",
+        file_path: "test.apk",
       },
       fileupload: 1,
       token: tokens.superadmin,
@@ -328,7 +328,7 @@ describe("/firmware/update/{firmwareId}", () => {
         hw_ver: hw_ver,
 
         file_key: "file",
-        file_path: "test.bin",
+        file_path: "test.apk",
       },
       fileupload: 1,
       token: tokens.superadmin,
