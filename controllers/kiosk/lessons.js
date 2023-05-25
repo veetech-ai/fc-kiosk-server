@@ -101,7 +101,7 @@ exports.create_lesson = async (req, res) => {
     const coach = await courseLesson.createLesson(reqBody, orgId);
     helper.mqtt_publish_message(
       `gc/${courseId}/screens`,
-      helper.mqttPayloads.updateLessonScreen,
+      helper.mqttPayloads.onLessonUpdate,
       false,
     );
     return apiResponse.success(res, req, coach);
@@ -207,7 +207,7 @@ exports.update_lesson = async (req, res) => {
     if (updatedCoach) {
       helper.mqtt_publish_message(
         `gc/${lesson.gcId}/screens`,
-        helper.mqttPayloads.updateLessonScreen,
+        helper.mqttPayloads.onLessonUpdate,
         false,
       );
     }
@@ -261,7 +261,7 @@ exports.delete_lesson = async (req, res) => {
     const deletedLesson = await courseLesson.deleteLessonById(lessonId);
     helper.mqtt_publish_message(
       `gc/${lesson.gcId}/screens`,
-      helper.mqttPayloads.updateLessonScreen,
+      helper.mqttPayloads.onLessonUpdate,
       false,
     );
     return apiResponse.success(res, req, deletedLesson);

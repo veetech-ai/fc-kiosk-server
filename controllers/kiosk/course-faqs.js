@@ -72,7 +72,7 @@ exports.createCourseFaq = async (req, res) => {
     const faq = await courseFaqsService.create(faqBody);
     helper.mqtt_publish_message(
       `gc/${course.id}/screens`,
-      helper.mqttPayloads.updateFaqScreen,
+      helper.mqttPayloads.onFaqUpdate,
       false,
     );
     return apiResponse.success(res, req, faq);
@@ -183,7 +183,7 @@ exports.updateCourseFaq = async (req, res) => {
     if (updatedCourseFaq) {
       helper.mqtt_publish_message(
         `gc/${faq.gcId}/screens`,
-        helper.mqttPayloads.updateFaqScreen,
+        helper.mqttPayloads.onFaqUpdate,
         false,
       );
     }
@@ -234,7 +234,7 @@ exports.deleteCourseFaq = async (req, res) => {
     if (noOfAffectedRows) {
       helper.mqtt_publish_message(
         `gc/${faq.gcId}/screens`,
-        helper.mqttPayloads.updateFaqScreen,
+        helper.mqttPayloads.onFaqUpdate,
         false,
       );
     }
