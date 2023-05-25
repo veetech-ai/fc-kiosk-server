@@ -7,6 +7,7 @@ const apiResponse = require("../../../common/api.response");
 const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
 const feedbackService = require("../../../services/kiosk/feedback");
+const helper = require("../../../common/helper");
 
 /**
  * @swagger
@@ -74,6 +75,11 @@ exports.create_feedback = async (req, res) => {
       orgId,
     };
     const feedback = await feedbackService.createFeedback(reqBody);
+    helper.mqtt_publish_message(
+      `gc/${courseId}/screens`,
+      helper.mqttPayloads.onFeedbackUpdate,
+      false,
+    );
     return apiResponse.success(res, req, feedback);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
