@@ -72,7 +72,7 @@ exports.update_membership = async (req, res) => {
     if (updatedMembership) {
       helper.mqtt_publish_message(
         `gc/${membership.gcId}/screens`,
-        helper.mqttPayloads.updateMembershipScreen,
+        helper.mqttPayloads.onMembershipUpdate,
         false,
       );
     }
