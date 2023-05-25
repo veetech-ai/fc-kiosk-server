@@ -4,7 +4,7 @@ const ServiceError = require("../../../../../utils/serviceError");
 
 let mockFields;
 let mockFiles;
-const errorMessage = "Something went wroong";
+const errorMessage = "Something went wrong";
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -18,7 +18,7 @@ jest.mock("formidable", () => {
   };
 });
 
-jest
+let mockedUploadImageCourse = jest
   .spyOn(upload_file, "uploadImageForCourse")
   .mockImplementation(() => Promise.resolve("mock-logo-url"));
 const mockFormidable = (fields, files) => {
@@ -85,13 +85,13 @@ describe("POST /api/v1/ads", () => {
     };
 
     mockFormidable(fields, files);
-
     const response = await makeAdApiRequest(fields);
+    console.log("ee :", response.body);
     expect(response.body.data.gcId).toEqual(fields.gcId);
     expect(response.body.data.state).toEqual(fields.state);
     expect(response.body.data.title).toEqual(fields.title);
   });
-  it("should return something", async () => {
+  it("should return error if an error occurred while image uploading", async () => {
     const fields = {
       gcId: courseId,
       state: "Alabama",
@@ -108,11 +108,9 @@ describe("POST /api/v1/ads", () => {
     };
 
     mockFormidable(fields, files);
-    jest
-      .spyOn(upload_file, "uploadImageForCourse")
-      .mockImplementation(() =>
-        Promise.reject(new ServiceError(`${errorMessage}`, 400)),
-      );
+    mockedUploadImageCourse.mockImplementation(() =>
+      Promise.reject(new ServiceError("Something went wrong")),
+    );
 
     const response = await makeAdApiRequest(fields);
     expect(response.body.data).toBe(errorMessage);

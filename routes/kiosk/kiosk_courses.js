@@ -26,7 +26,7 @@ exports.routesConfig = function (app, router) {
   ]);
   router.get(courses, [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    validation_middleware.hasAccess(["super", "admin"]),
     CoursesController.getCourses,
   ]);
 };

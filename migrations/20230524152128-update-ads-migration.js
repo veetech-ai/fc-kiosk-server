@@ -12,7 +12,7 @@ module.exports = {
       await queryInterface.removeColumn("Ads", "screen_id"),
       await queryInterface.addColumn("Ads", "state", {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       }),
       await queryInterface.addColumn("Ads", "screens", {
         type: Sequelize.JSON,

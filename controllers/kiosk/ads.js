@@ -78,7 +78,7 @@ exports.createAd = async (req, res) => {
     const { updatedAt, orgId, gcId, id, createdAt, ...restFields } =
       screens.dataValues;
     const screensList = { ...restFields };
-    const trueKeys = Object.keys(screensList).filter(
+    const enabledScreens = Object.keys(screensList).filter(
       (key) => screensList[key] === true,
     );
     const smallImage = await upload_file.uploadImageForCourse(
@@ -87,8 +87,13 @@ exports.createAd = async (req, res) => {
     );
     const allowedFields = ["gcId", "state", "title"];
     const filteredObject = validateObject(fields, allowedFields);
-    const reqBody = { ...filteredObject, smallImage, orgId, screens: trueKeys };
-    const postedAd = await adsService.createAd(reqBody, orgId);
+    const reqBody = {
+      ...filteredObject,
+      smallImage,
+      orgId,
+      screens: enabledScreens,
+    };
+    const postedAd = await adsService.createAd(reqBody);
     return apiResponse.success(res, req, postedAd);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -103,7 +108,7 @@ exports.getAds = async (req, res) => {
    *   get:
    *     security:
    *       - auth: []
-   *     description: CREATE ads.
+   *     description: GET ads.
    *     tags: [Ads]
    *     produces:
    *       - application/json
@@ -113,7 +118,6 @@ exports.getAds = async (req, res) => {
    */
 
   try {
-    console.log("in controler");
     const ads = await adsService.getAds();
     return apiResponse.success(res, req, ads);
   } catch (error) {
