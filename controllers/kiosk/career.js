@@ -99,7 +99,7 @@ exports.create = async (req, res) => {
 
     helper.mqtt_publish_message(
       `gc/${careerBody.gcId}/screens`,
-      helper.mqttPayloads.updateCareerScreen,
+      helper.mqttPayloads.onCareerUpdate,
       false,
     );
     return apiResponse.success(res, req, career);
@@ -244,7 +244,7 @@ exports.updateCareerById = async (req, res) => {
     if (noOfRowsUpdated) {
       helper.mqtt_publish_message(
         `gc/${career.gcId}/screens`,
-        helper.mqttPayloads.updateCareerScreen,
+        helper.mqttPayloads.onCareerUpdate,
         false,
       );
     }
@@ -339,7 +339,7 @@ exports.deleteCareerById = async (req, res) => {
 
     helper.mqtt_publish_message(
       `gc/${career.gcId}/screens`,
-      helper.mqttPayloads.updateCareerScreen,
+      helper.mqttPayloads.onCareerUpdate,
       false,
     );
     return apiResponse.success(res, req, "Career deleted successfully");

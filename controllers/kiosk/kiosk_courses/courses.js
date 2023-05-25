@@ -374,7 +374,7 @@ exports.create_course_info = async (req, res) => {
     if (updatedCourse) {
       helper.mqtt_publish_message(
         `gc/${courseId}/screens`,
-        helper.mqttPayloads.updateCourseInfoScreen,
+        helper.mqttPayloads.onCourseInfoUpdate,
         false,
       );
     }

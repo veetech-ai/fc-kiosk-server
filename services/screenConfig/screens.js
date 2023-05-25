@@ -59,7 +59,7 @@ async function updateScreens(gcId, reqBody) {
 
   helper.mqtt_publish_message(
     `gc/${gcId}/screens`,
-    helper.mqttPayloads.updateScreens,
+    helper.mqttPayloads.onPublishScreen,
     false,
   );
 

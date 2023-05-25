@@ -106,7 +106,11 @@ exports.createCourseShop = async (req, res) => {
 
     const imageUrl = upload_file.getFileURL(courseShop.image);
     courseShop.setDataValue("image", imageUrl);
-
+    helper.mqtt_publish_message(
+      `gc/${courseId}/screens`,
+      helper.mqttPayloads.onShopUpdate,
+      false,
+    );
     return apiResponse.success(res, req, courseShop);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -254,6 +258,12 @@ exports.updateCourseShop = async (req, res) => {
     if (updatedCourseShop) {
       const imageUrl = upload_file.getFileURL(updatedCourseShop.image);
       updatedCourseShop.setDataValue("image", imageUrl);
+
+      helper.mqtt_publish_message(
+        `gc/${updatedCourseShop.gcId}/screens`,
+        helper.mqttPayloads.onShopUpdate,
+        false,
+      );
     }
 
     return apiResponse.success(res, req, updatedCourseShop);
@@ -303,6 +313,11 @@ exports.deleteCourseShop = async (req, res) => {
     }
 
     await courseShopsService.deleteCourseShop(shopId);
+    helper.mqtt_publish_message(
+      `gc/${courseShop.gcId}/screens`,
+      helper.mqttPayloads.onShopUpdate,
+      false,
+    );
     return apiResponse.success(res, req, "Shop Deleted");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

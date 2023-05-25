@@ -205,7 +205,6 @@ CourseMemberships.routesConfig(app, router);
 ContactCareerRouter.routesConfig(app, router);
 AdsRouter.routesConfig(app, router);
 
-global.mqtt_connection_ok = false;
 global.messageQueue = [];
 
 if (config.env === "test") {
@@ -215,6 +214,7 @@ if (config.env === "test") {
   module.exports = app;
 } else {
   app.use("/", router);
+  global.mqtt_connection_ok = false;
 
   // global.mqtt_client_id = 'mqtt_node_app_client_id_ts_' + Date.now()
   // global.mqtt_client = new Paho.Client(config.mqtt.host, Number(config.mqtt.port), mqtt_client_id)

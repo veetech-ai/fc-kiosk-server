@@ -44,7 +44,7 @@ exports.updateCourseFaq = async (faqId, reqBody) => {
     where: { id: faqId },
   });
 
-  return updatedFaq;
+  return updatedFaq[0];
 };
 
 exports.deleteCourseFaq = async (where) => {
