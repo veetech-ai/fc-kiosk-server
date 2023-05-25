@@ -102,6 +102,7 @@ describe("PATCH /api/v1/course-faqs/{faqId}", () => {
     );
     const expectedResponse = 1;
     expect(response.body.data).toBe(expectedResponse);
+    await makeApiRequest(testCourseFaqId, faqsFixtures.test);
   });
 
   it("should update faq for the same org customer", async () => {
@@ -110,7 +111,7 @@ describe("PATCH /api/v1/course-faqs/{faqId}", () => {
       faqsFixtures.testUpdated,
       customerToken,
     );
-    const expectedResponse = 0;
+    const expectedResponse = 1;
     expect(response.body.data).toBe(expectedResponse);
   });
 
