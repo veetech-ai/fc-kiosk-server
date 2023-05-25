@@ -90,6 +90,7 @@ describe("GET /api/v1/ads", () => {
 
   it("should lists ads with admin or super admin token", async () => {
     const response = await makeAdApiRequest();
+    expect(response.body.success).toBe(true);
     expect(response.body.data[0].gcId).toEqual(fields.gcId);
     expect(response.body.data[0].state).toEqual(fields.state);
     expect(response.body.data[0].title).toEqual(fields.title);
@@ -101,14 +102,17 @@ describe("GET /api/v1/ads", () => {
   });
   it("should return error with the customer token who is the part of same organization", async () => {
     const response = await makeAdApiRequest(customerToken);
+    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
   it("should return an error if user belongs to same organization but not having sufficient rights", async () => {
     const response = await makeAdApiRequest(testOperatorToken);
+    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
   it("should return an error if user belongs to different organization", async () => {
     const response = await makeAdApiRequest(differentOrganizationCustomerToken);
+    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
 });

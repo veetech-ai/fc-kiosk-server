@@ -86,7 +86,7 @@ describe("POST /api/v1/ads", () => {
 
     mockFormidable(fields, files);
     const response = await makeAdApiRequest(fields);
-    console.log("ee :", response.body);
+    expect(response.body.success).toBe(true);
     expect(response.body.data.gcId).toEqual(fields.gcId);
     expect(response.body.data.state).toEqual(fields.state);
     expect(response.body.data.title).toEqual(fields.title);
@@ -113,6 +113,7 @@ describe("POST /api/v1/ads", () => {
     );
 
     const response = await makeAdApiRequest(fields);
+    expect(response.body.success).toBe(false);
     expect(response.body.data).toBe(errorMessage);
   });
   it("should create a new ad with the customer token who is the part of same organization", async () => {
@@ -134,11 +135,13 @@ describe("POST /api/v1/ads", () => {
     mockFormidable(fields, files);
 
     const response = await makeAdApiRequest(fields, customerToken);
+    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
   it("should return an error if user belongs to same organization but not having sufficient rights", async () => {
     const params = {};
     const response = await makeAdApiRequest(params, testOperatorToken);
+    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
   it("should return an error if user belongs to different organization", async () => {
@@ -147,6 +150,7 @@ describe("POST /api/v1/ads", () => {
       params,
       differentOrganizationCustomerToken,
     );
+    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
   it("should throw error if courseId is invalid", async () => {
@@ -168,6 +172,7 @@ describe("POST /api/v1/ads", () => {
     mockFormidable(fields, files);
 
     const response = await makeAdApiRequest(fields, customerToken);
+    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
   it("should throw error if courseId is not defined", async () => {
@@ -189,6 +194,7 @@ describe("POST /api/v1/ads", () => {
     mockFormidable(fields, files);
 
     const response = await makeAdApiRequest(fields);
+    expect(response.body.success).toBe(false);
     expect(response.body.data.errors.gcId[0]).toEqual(
       "The gcId field is required.",
     );
