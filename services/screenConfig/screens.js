@@ -5,6 +5,7 @@ const ServiceError = require("../../utils/serviceError");
 const Course = models.Course;
 const ScreenConfig = models.Screen_Config;
 const Organization = models.Organization;
+const AdsService = require("../../services/kiosk/ads");
 
 async function createScreenConfig(gcId, orgId) {
   const screens = await ScreenConfig.create({
@@ -56,6 +57,27 @@ async function updateScreens(gcId, reqBody) {
   // Update the fields with the data provided in the request body
   Object.assign(screens, reqBody);
   await screens.save();
+
+  const allowedFields = [
+    "courseInfo",
+    "coupons",
+    "lessons",
+    "statistics",
+    "memberships",
+    "feedback",
+    "careers",
+    "shop",
+    "faq",
+  ];
+
+  const filterdObject = helper.validateObject(
+    screens.dataValues,
+    allowedFields,
+  );
+  const enabledScreens = Object.keys(filterdObject).filter(
+    (key) => filterdObject[key] === true,
+  );
+  await AdsService.updateAdsByCourseId(gcId, enabledScreens);
 
   helper.mqtt_publish_message(
     `gc/${gcId}/screens`,

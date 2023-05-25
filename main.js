@@ -119,7 +119,7 @@ const CourseFaqs = require("./routes/kiosk/course-faqs");
 const CareersRouter = require("./routes/kiosk/careers");
 const CourseMemberships = require("./routes/kiosk/membership");
 const ContactCareerRouter = require("./routes/kiosk/contact-careers");
-
+const AdsRouter = require("./routes/kiosk/ads");
 swaggerDoc(router);
 
 router.use(function (req, res, next) {
@@ -203,6 +203,7 @@ CourseFaqs.routesConfig(app, router);
 CareersRouter.routesConfig(app, router);
 CourseMemberships.routesConfig(app, router);
 ContactCareerRouter.routesConfig(app, router);
+AdsRouter.routesConfig(app, router);
 
 global.messageQueue = [];
 

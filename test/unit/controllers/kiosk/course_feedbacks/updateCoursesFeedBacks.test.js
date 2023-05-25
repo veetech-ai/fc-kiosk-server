@@ -92,15 +92,19 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
 
     const response = await makeApiRequest(feedBackId, reqBody);
     expect(response.body.data).toBe(1);
+
+    await makeApiRequest(feedBackId, { isAddressed: false });
   });
 
-  it("should return error while the api is being accessed by the customer of differnet organization", async () => {
+  it("should update the record when api is accessed by the customer of same organization", async () => {
     const reqBody = {
       isAddressed: true,
     };
 
     const response = await makeApiRequest(feedBackId, reqBody, customerToken);
-    expect(response.body.data).toBe(0);
+    expect(response.body.data).toBe(1);
+
+    await makeApiRequest(feedBackId, { isAddressed: false }, customerToken);
   });
   it("should return error while the api is being accessed by the customer of differnet organization", async () => {
     const reqBody = {
