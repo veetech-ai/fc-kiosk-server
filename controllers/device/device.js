@@ -3859,7 +3859,7 @@ exports.link_device_to_course = async (req, res) => {
       gcId: courseId,
     };
 
-    helper.mqtt_publish_message(`d/${deviceId}/gc`, mqttPayload, false);
+    helper.mqtt_publish_message(`d/${deviceId}/gc`, mqttPayload);
 
     return apiResponse.success(res, req, response);
   } catch (error) {
