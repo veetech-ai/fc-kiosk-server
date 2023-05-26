@@ -118,6 +118,7 @@ exports.get_all_organization_devices = async (
         ],
       },
     ],
+    order: [["device_id", "DESC"]],
   });
 };
 
