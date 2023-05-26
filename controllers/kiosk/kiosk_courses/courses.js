@@ -476,7 +476,7 @@ exports.getCourses = async (req, res) => {
   }
 };
 
-exports.getNoOfCourses=async()=>{
+exports.getNoOfCourses = async (req, res) => {
   /**
    * @swagger
    *
@@ -494,13 +494,13 @@ exports.getNoOfCourses=async()=>{
    */
 
   try {
-
+    let where = {};
     if (req.query.state) {
       where.state = req.query.state.toLowerCase();
     }
-    courses = await courseService.getCourses(where);
+    const courses = await courseService.getCourses(where);
     return apiResponse.success(res, req, courses);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
-}
+};

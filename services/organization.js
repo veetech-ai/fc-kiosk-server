@@ -1,7 +1,27 @@
 const models = require("../models");
 const Organization = models.Organization;
-const Course=models.Course;
-const Device=models.Device
+const Course = models.Course;
+const Device = models.Device;
+
+const getOrganizationStats = async (organizations) => {
+  const organizationStats = [];
+
+  for (const org of organizations) {
+    const courseIdCount = await Course.count({ where: { orgId: org.id } });
+    const deviceCount = await Device.count({ where: { owner_id: org.id } });
+
+    const stats = {
+      organizationId: org.id,
+      organizationName: org.name,
+      courseCount: courseIdCount,
+      deviceCount: deviceCount,
+    };
+
+    organizationStats.push(stats);
+  }
+
+  return organizationStats;
+};
 
 exports.list = (pp = false) => {
   return new Promise((resolve, reject) => {
@@ -77,24 +97,3 @@ exports.findByName = (organizationName) => {
       });
   });
 };
-
-const getOrganizationStats=async(organizations)=> {
-
-  const organizationStats = [];
-
-  for (const org of organizations) {
-    const courseIdCount = await Course.count({ where: { orgId: org.id } });
-    const deviceCount = await Device.count({ where: { owner_id: org.id } });
-
-    const stats = {
-      organizationId: org.id,
-      organizationName: org.name,
-      courseCount: courseIdCount,
-      deviceCount: deviceCount,
-    };
-
-    organizationStats.push(stats);
-  }
-
-  return organizationStats;
-}
