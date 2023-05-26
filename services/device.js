@@ -991,9 +991,13 @@ exports.reset = (device_id) => {
               helper.mqtt_publish_message(`d/${device_id}/ac/group`, {
                 group: null,
               });
-              helper.mqtt_publish_message(`d/${device_id}/gc`, {
-                gcId: null,
-              });
+              helper.mqtt_publish_message(
+                `d/${device_id}/gc`,
+                {
+                  gcId: null,
+                },
+                false,
+              );
               resolve(result);
             })
             .catch((err) => {
@@ -1131,9 +1135,13 @@ exports.verify_transfer_token = async (params, where) => {
   helper.mqtt_publish_message(`d/${device.id}/ac/sch`, {
     token: null,
   });
-  helper.mqtt_publish_message(`d/${device.id}/gc`, {
-    gcId: null,
-  });
+  helper.mqtt_publish_message(
+    `d/${device.id}/gc`,
+    {
+      gcId: null,
+    },
+    false,
+  );
 };
 
 exports.get_ownership_requests = (orgId) => {
