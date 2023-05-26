@@ -126,16 +126,16 @@ describe("GET /api/v1/kiosk-content/ads", () => {
       screens: createdAd.body.data.screens,
     };
     const response = await makeApiRequest();
-    expect(response.body.success).toEqual(true);
     expect(response.body.data).toEqual(
       expect.arrayContaining([expect.objectContaining(expectedObject)]),
     );
+    expect(response.body.success).toEqual(true);
   });
   it("should return error while the api is being accessed by the unlinked device ", async () => {
     const response = await makeApiRequest(unlinkeddeviceToken);
+    expect(response.body.data).toBe("No Course linked with the device");
     expect(response.body.success).toBe(false);
     expect(response.status).toBe(404);
-    expect(response.body.data).toBe("No Course linked with the device");
   });
   it("returns error if api is accsessed by any other than device token", async () => {
     const response = await makeApiRequest(adminToken);
