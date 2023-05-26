@@ -197,7 +197,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
 
     mockFormidable(fields, files);
 
-    const response = await makeAdApiRequest(adId,fields);
+    const response = await makeApiRequest(adId,fields);
     expect(response.body.success).toBe(false);
     expect(response.body.data.errors.gcId[0]).toEqual(
       "The gcId field is required.",
