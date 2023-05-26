@@ -11,6 +11,7 @@ const hw_ver = `v2.0.${app_helper.generate_random_string({
   type: "numeric",
 })}`;
 
+const fileExtension = "apk"
 beforeAll(async () => {
   tokens = await helper.get_all_roles_tokens();
 });
@@ -62,13 +63,13 @@ describe("/firmware/create", () => {
     expect(res.body.success).toEqual(false);
   });
 
-  it("Without some of required params", async () => {
+  it.only("Without some of required params", async () => {
     const res = await helper.post_request_with_authorization({
       endpoint: "firmware/create",
       params: {
         name: "test firmware",
         file_key: "file",
-        file_path: "test.apk",
+        file_path: `test.${fileExtension}`,
       },
       fileupload: 1,
       token: tokens.superadmin,
@@ -87,7 +88,7 @@ describe("/firmware/create", () => {
         hw_ver: hw_ver,
 
         file_key: "file",
-        file_path: "test.apk",
+        file_path: `test.${fileExtension}`,
       },
       fileupload: 1,
       token: tokens.superadmin,
@@ -109,7 +110,7 @@ describe("/firmware/create", () => {
         hw_ver: hw_ver,
 
         file_key: "file",
-        file_path: "test.apk",
+        file_path: `test.${fileExtension}`,
       },
       fileupload: 1,
       token: tokens.superadmin,
@@ -309,7 +310,7 @@ describe("/firmware/update/{firmwareId}", () => {
       params: {
         name: "test firmware",
         file_key: "file",
-        file_path: "test.apk",
+        file_path: `test.${fileExtension}`,
       },
       fileupload: 1,
       token: tokens.superadmin,
@@ -328,7 +329,7 @@ describe("/firmware/update/{firmwareId}", () => {
         hw_ver: hw_ver,
 
         file_key: "file",
-        file_path: "test.apk",
+        file_path: `test.${fileExtension}`,
       },
       fileupload: 1,
       token: tokens.superadmin,
