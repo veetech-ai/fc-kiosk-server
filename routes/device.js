@@ -142,7 +142,7 @@ exports.routesConfig = function (app, router) {
 
   router.post(group + "/reset", [
     validation_middleware.validJWTNeeded,
-    // validation_middleware.hasAccess([ 'super', 'admin' ]),
+    validation_middleware.hasAccess(["super", "admin"]),
     DeviceController.reset,
   ]);
 
