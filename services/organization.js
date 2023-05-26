@@ -1,5 +1,7 @@
 const models = require("../models");
 const Organization = models.Organization;
+const Course=models.Course;
+const Device=models.Device
 
 exports.list = (pp = false) => {
   return new Promise((resolve, reject) => {
@@ -15,7 +17,15 @@ exports.list = (pp = false) => {
         const count = await self.count();
         resolve({ data: organizations, count: count });
       } else {
-        resolve({ data: organizations, count: null });
+        const organizationStats = await getOrganizationStats(organizations);
+        const responseData = organizations.map((org, index) => {
+          return {
+            ...org.dataValues,
+            courseCount: organizationStats[index].courseCount,
+            deviceCount: organizationStats[index].deviceCount,
+          };
+        });
+        resolve({ data: responseData, count: null });
       }
     });
   });
@@ -67,3 +77,24 @@ exports.findByName = (organizationName) => {
       });
   });
 };
+
+const getOrganizationStats=async(organizations)=> {
+
+  const organizationStats = [];
+
+  for (const org of organizations) {
+    const courseIdCount = await Course.count({ where: { orgId: org.id } });
+    const deviceCount = await Device.count({ where: { owner_id: org.id } });
+
+    const stats = {
+      organizationId: org.id,
+      organizationName: org.name,
+      courseCount: courseIdCount,
+      deviceCount: deviceCount,
+    };
+
+    organizationStats.push(stats);
+  }
+
+  return organizationStats;
+}

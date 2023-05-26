@@ -475,3 +475,32 @@ exports.getCourses = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.getNoOfCourses=async()=>{
+  /**
+   * @swagger
+   *
+   * /kiosk-courses:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get no of courses per organization.
+   *     tags: [Kiosk-Courses]
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+
+    if (req.query.state) {
+      where.state = req.query.state.toLowerCase();
+    }
+    courses = await courseService.getCourses(where);
+    return apiResponse.success(res, req, courses);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+}
