@@ -11,7 +11,7 @@ const hw_ver = `v2.0.${app_helper.generate_random_string({
   type: "numeric",
 })}`;
 
-const fileExtension = "apk"
+const fileExtension = "apk";
 beforeAll(async () => {
   tokens = await helper.get_all_roles_tokens();
 });
