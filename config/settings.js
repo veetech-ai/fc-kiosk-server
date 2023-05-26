@@ -35,6 +35,7 @@ exports.get = (key) => {
     // in MBs
     profile_image_max_size: parseFloat(app_config.profile_image_max_size) || 5,
     binary_file_max_size: parseFloat(app_config.binary_file_max_size) || 1,
+    apk_file_max_size: parseFloat(app_config.apk_file_max_size) || 250,
     upload_file_max_size: parseFloat(app_config.upload_file_max_size) || 50,
 
     // Device forcefully offile interval | Note: IN SECONDS

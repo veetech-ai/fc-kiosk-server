@@ -85,7 +85,7 @@ exports.upload_binary = async (file, uploadOn = defaultUploadOn) => {
     const newPath = `${this.upload_path}fw`;
     const fileName = file.name;
     if (!fs.existsSync(newPath)) fs.mkdirSync(newPath, { recursive: true });
-    validateFile(file, ["bin"], settings.get("binary_file_max_size"));
+    validateFile(file, ["bin"], settings.get("apk_file_max_size"));
 
     switch (uploadOn) {
       case 1:
