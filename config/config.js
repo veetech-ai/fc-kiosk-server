@@ -10,7 +10,7 @@ module.exports = {
   slack_contact_channel:
     process.env.SLACK_CONTACT_URL ||
     "https://hooks.slack.com/services/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",
-  apiLimitDefault: Number(process.env.API_RATE_LIMIT) || 14,
+  apiLimitDefault: Number(process.env.API_RATE_LIMIT) || 500,
   window_tpd: process.env.WINDOW_TPD || 16,
   env: process.env.NODE_ENV || "development",
   testAccountEmail: process.env.TEST_ACCOUNT_EMAIL || "test@df.com",
