@@ -30,8 +30,20 @@ async function updateAdsByCourseId(gcId, screens) {
   return ads;
 }
 
+async function updateAd(adId, reqBody) {
+  const ad = await AdsModel.update(
+    {
+      ...reqBody,
+    },
+    { where: { id: adId } },
+  );
+
+  return ad[0];
+}
+
 module.exports = {
   createAd,
   getAds,
   updateAdsByCourseId,
+  updateAd,
 };
