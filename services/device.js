@@ -996,7 +996,6 @@ exports.reset = (device_id) => {
                 {
                   gcId: null,
                 },
-                false,
               );
               resolve(result);
             })
@@ -1140,7 +1139,6 @@ exports.verify_transfer_token = async (params, where) => {
     {
       gcId: null,
     },
-    false,
   );
 };
 
