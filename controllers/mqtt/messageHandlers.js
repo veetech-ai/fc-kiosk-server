@@ -160,10 +160,10 @@ exports.usersAttachGeyserDevice = async (payload) => {
 
 exports.deviceAllOTA = async (payload) => {
   try {
-    JSON.parse(payload.payloadString);
+    const message = JSON.parse(payload.payloadString);
     const device_id = payload.destinationName.split("/")[1];
 
-    await set_device_firmware(device_id, payload.payloadString);
+    await set_device_firmware(device_id, message);
   } catch (e) {
     logger.error(e);
   }

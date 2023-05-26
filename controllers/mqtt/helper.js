@@ -388,19 +388,19 @@ exports.set_debug = async (payload, type = "v0") => {
   }
 };
 
-exports.set_device_firmware = async (device_id, action) => {
+exports.set_device_firmware = async (id, message) => {
   try {
-    const device = await DeviceModel.findById_with_select(device_id, [
-      "new_fv",
-      "fv",
-    ]);
+    const device = await DeviceModel.findById_with_select(id, ["new_fv", "fv"]);
     if (!device) return;
 
-    const message = JSON.parse(action);
-    const update = { fv: message.version };
+    const update = {
+      fv: message.v || message.version,
+      hw_ver: message.hwv ?? null,
+    };
+
     const old_version = device.fv;
 
-    if (message.version == device.new_fv) {
+    if (update.fv == device.new_fv) {
       update.new_fv = null;
     }
 
@@ -408,38 +408,8 @@ exports.set_device_firmware = async (device_id, action) => {
       update.fv_update_state = parseInt(message.ota);
     }
 
-    const split_version = message.version.split(".");
-    const major = parseInt(split_version[0].substr(1));
-    const minor = parseInt(split_version[1]);
-    const sub = parseInt(split_version[2]);
-
-    let stage = "";
-    if (major > 0 && minor == 0 && sub == 0) {
-      stage = "Production";
-    } else if (major == 0 && minor == 0) {
-      stage = "Init";
-    } else if (minor == 1) {
-      stage = "UART";
-    } else if (minor == 2) {
-      stage = "Checklists";
-    } else if (minor == 3) {
-      stage = "Error Handling";
-    } else if (minor == 4) {
-      stage = "Self Recover";
-    } else if (minor == 5) {
-      stage = "Alpha";
-    } else if (minor == 6) {
-      stage = "Lab";
-    } else if (minor == 7) {
-      stage = "Operations Team";
-    } else {
-      stage = "-";
-    }
-
-    update.stage = stage;
-
-    await DeviceModel.update_where(update, { id: device_id });
-    await DeviceModel.fv_count_update(message.version, old_version);
+    await DeviceModel.update_where(update, { id });
+    await DeviceModel.fv_count_update(update.fv, old_version);
   } catch (error) {
     logger.error(error);
   }
