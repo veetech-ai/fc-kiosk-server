@@ -1,8 +1,7 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
 const ServiceError = require("../../../../../utils/serviceError");
-const adsService=require("../../../../../services/kiosk/ads")
-
+const adsService = require("../../../../../services/kiosk/ads");
 
 let mockFields;
 let mockFiles;
@@ -48,6 +47,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
   let testOperatorToken;
   let testOrganizationId = 1;
   let adId;
+  let invalidateId = "invalidate gcId";
   let differentOrganizationCustomerToken;
 
   beforeAll(async () => {
@@ -73,16 +73,16 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     courseId = course.body.data.id;
     orgId = course.body.data.orgId;
     const makeAdApi = async (fields, files) => {
-        fields.gcId = courseId;
-        mockFormidable(fields, files);
-        return await helper.post_request_with_authorization({
-          endpoint: `ads`,
-          token: adminToken,
-          params: fields,
-        });
-      };
-      const createdAd=await makeAdApi(files, fields);
-      adId=createdAd.body.data.id
+      fields.gcId = courseId;
+      mockFormidable(fields, files);
+      return await helper.post_request_with_authorization({
+        endpoint: `ads`,
+        token: adminToken,
+        params: fields,
+      });
+    };
+    const createdAd = await makeAdApi(files, fields);
+    adId = createdAd.body.data.id;
   });
 
   const makeApiRequest = async (id, params, token = adminToken) => {
@@ -92,9 +92,6 @@ describe("PATCH /api/v1/ads/{adId}", () => {
       token: token,
     });
   };
-
-
-
 
   it("should create a new ad info with valid input with admin or super admin token", async () => {
     const fields = {
@@ -111,47 +108,44 @@ describe("PATCH /api/v1/ads/{adId}", () => {
         path: "/mock/path/to/logo.png",
       },
     };
-    let expectedObject={}
+    let expectedObject = {};
 
     mockFormidable(fields, files);
-    const response = await makeApiRequest(adId,fields);
-    const ad=await adsService.getAds({id:adId})
-    expectedObject={...ad[0].dataValues}
-    fields.smallImage=expectedObject.smallImage
+    const response = await makeApiRequest(adId, fields);
+    const ad = await adsService.getAds({ id: adId });
+    expectedObject = { ...ad[0].dataValues };
+    fields.smallImage = expectedObject.smallImage;
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBe("Ad updated successfully");
-    expect(expectedObject).toMatchObject(fields)
+    expect(expectedObject).toMatchObject(fields);
   });
   it("should not update the api with emtey request body", async () => {
-    const fields = {
-    };
+    const fields = {};
 
-    const files = {
-    };
+    const files = {};
 
     mockFormidable(fields, files);
 
-
-    const response = await makeApiRequest(adId,fields);
+    const response = await makeApiRequest(adId, fields);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBe("Ad already up to date");
   });
   it("should return an error if user other than addmin or super admin access tha api", async () => {
     const fields = {
-        gcId: courseId,
-        state: "Alabama",
-        title: "Main Ad",
-      };
-  
-      const files = {
-        adImage: {
-          name: "mock-logo.png",
-          type: "image/png",
-          size: 5000, // bytes
-          path: "/mock/path/to/logo.png",
-        },
-      };
-    const response = await makeApiRequest(adId,fields,customerToken);
+      gcId: courseId,
+      state: "Alabama",
+      title: "Main Ad",
+    };
+
+    const files = {
+      adImage: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
+    const response = await makeApiRequest(adId, fields, customerToken);
     expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
@@ -174,14 +168,13 @@ describe("PATCH /api/v1/ads/{adId}", () => {
 
     mockFormidable(fields, files);
 
-    const response = await makeApiRequest(adId,fields);
-    console.log("response :",response.body);
+    const response = await makeApiRequest(adId, fields);
     expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("course not found");
   });
-  it("should throw error if courseId is not defined", async () => {
+  it("should throw error if courseId is invalid", async () => {
     const fields = {
-      gcId: undefined,
+      gcId: invalidateId,
       state: "Alabama",
       title: "Main Ad",
     };
@@ -197,10 +190,10 @@ describe("PATCH /api/v1/ads/{adId}", () => {
 
     mockFormidable(fields, files);
 
-    const response = await makeApiRequest(adId,fields);
+    const response = await makeApiRequest(adId, fields);
     expect(response.body.success).toBe(false);
     expect(response.body.data.errors.gcId[0]).toEqual(
-      "The gcId field is required.",
+      "The gcId must be an integer.",
     );
   });
 });
