@@ -2272,7 +2272,10 @@ exports.resendInvitation = (req, res) => {
           email: req.body.email,
         });
 
-        const mail = await email.reSendRegistrationEmail(updatedUser);
+        const mail = await email.reSendRegistrationEmail({
+          ...updatedUser.dataValues,
+          email_token: token,
+        });
         apiResponse.success(res, req, {
           message: "User re-Invited successfully",
           mail,
