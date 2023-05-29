@@ -246,7 +246,6 @@ exports.deleteAd = async (req, res) => {
     if (!adId) {
       return apiResponse.fail(res, "adId must be a valid number");
     }
-    await adsService.getAd({ id: adId }, loggedInUserOrg);
     const response = await adsService.deleteAd({ id: adId }, loggedInUserOrg);
     return apiResponse.success(
       res,
