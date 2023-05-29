@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       code: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
       },
       discountType: DataTypes.ENUM("fixed", "percentage"),
       discount: DataTypes.FLOAT,

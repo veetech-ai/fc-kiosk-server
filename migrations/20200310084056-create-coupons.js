@@ -26,7 +26,6 @@ module.exports = {
       },
       code: {
         type: Sequelize.STRING,
-        unique: true,
         allowNull: false,
         comment: "Coupon code",
       },

@@ -72,10 +72,12 @@ exports.validate = async ({ code, gcId, orgId }) => {
 };
 
 exports.create = async (params) => {
+  const validationParams = { code: params.code };
+  if (params.gcId) validationParams.gcId = params.gcId;
+  else if (params.orgId) validationParams.orgId = params.orgId;
+
   const coupon = await Coupon.findOne({
-    where: {
-      code: params.code,
-    },
+    where: validationParams,
   });
   if (coupon) throw new ServiceError("Coupon already exists", 409);
   return await Coupon.create(params);

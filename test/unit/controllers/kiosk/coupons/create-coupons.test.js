@@ -282,6 +282,69 @@ describe("POST /coupons", () => {
     expect(response.body.success).toBe(true);
     expect(response.statusCode).toBe(200);
   });
+
+  it("should create the coupon in the Zong Org even if the coupon with the same code is already present in the Test Org", async () => {
+    const requestBodyClone = { ...requestBody, orgId: testOrganizatonId };
+    await makeApiRequest(requestBodyClone, superAdminToken);
+
+    const response = await makeApiRequest({
+      ...requestBody,
+      orgId: zongOrganizationId,
+    });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
+    const expectedResponse = {
+      title: "Example",
+      description: "Test Coupon",
+      code: "XYZa123",
+      discountType: "fixed",
+      discount: 50,
+      maxUseLimit: 100,
+      orgId: zongOrganizationId,
+    };
+    expect(response.body.data).toEqual(
+      expect.objectContaining(expectedResponse),
+    );
+
+    // test the expiry date separately
+    const receivedExpiryDate = new Date(response.body.data.expiry);
+    const expectedExpiryDate = new Date(requestBodyClone.expiry);
+    expect(receivedExpiryDate).toEqual(expectedExpiryDate);
+
+    expect(response.body.success).toBe(true);
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("should create the coupon in the zong organization's golf course even if the coupon with the same code is already present in the Test Organization's golf course", async () => {
+    const requestBodyClone = { ...requestBody, gcId: testGolfCourseId };
+    await makeApiRequest(requestBodyClone, superAdminToken);
+
+    const response = await makeApiRequest({
+      ...requestBody,
+      gcId: zongGolfCourseId,
+    });
+    await CouponsServices.deleteCouponsWhere({ code: requestBodyClone.code });
+    const expectedResponse = {
+      title: "Example",
+      description: "Test Coupon",
+      code: "XYZa123",
+      discountType: "fixed",
+      discount: 50,
+      maxUseLimit: 100,
+      gcId: zongGolfCourseId,
+    };
+    expect(response.body.data).toEqual(
+      expect.objectContaining(expectedResponse),
+    );
+
+    // test the expiry date separately
+    const receivedExpiryDate = new Date(response.body.data.expiry);
+    const expectedExpiryDate = new Date(requestBodyClone.expiry);
+    expect(receivedExpiryDate).toEqual(expectedExpiryDate);
+
+    expect(response.body.success).toBe(true);
+    expect(response.statusCode).toBe(200);
+  });
+
   it("should return an error if the coupon with the same coupon code already exists", async () => {
     const requestBodyClone = { ...requestBody, orgId: testOrganizatonId };
     await makeApiRequest(requestBodyClone, superAdminToken);
