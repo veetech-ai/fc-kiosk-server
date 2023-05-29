@@ -6,7 +6,7 @@ const Device = models.Device;
 const getOrganizationStats = async (organizations) => {
   const organizationStats = [];
 
-  for (const org of organizations) {
+  for await (const org of organizations) {
     const courseIdCount = await Course.count({ where: { orgId: org.id } });
     const deviceCount = await Device.count({ where: { owner_id: org.id } });
 
