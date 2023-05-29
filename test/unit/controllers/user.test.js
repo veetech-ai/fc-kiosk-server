@@ -344,7 +344,7 @@ describe("user test cases", () => {
       expect(response.body.data).toBe("Report to user id is incorrect");
     });
 
-    it("Should send 404 if the report to user id is incorrect", async () => {
+    it("Should send 400 if the report to user id is incorrect", async () => {
       const wrongReportToUserId = -1;
       const data = {
         params: {
@@ -359,7 +359,7 @@ describe("user test cases", () => {
 
       const response = await helper.post_request_with_authorization(data);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(400);
       expect(response.body.data).toBe("Report to user id is incorrect");
     });
 
