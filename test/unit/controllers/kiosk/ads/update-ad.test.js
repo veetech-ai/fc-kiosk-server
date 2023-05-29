@@ -48,6 +48,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
   let testOperatorToken;
   let testOrganizationId = 1;
   let adId;
+  let nonExistingAdId = -1;
   let invalidateId = "invalidate gcId";
   let differentOrganizationCustomerToken;
 
@@ -110,7 +111,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     adId = createdAd.body.data.id;
   });
 
-  const makeApiRequest = async (id, params, token = adminToken) => {
+  const updateAdRequest = async (id, params, token = adminToken) => {
     return await helper.patch_request_with_authorization({
       endpoint: `ads/${id}`,
       params,
@@ -122,7 +123,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     let expectedObject = {};
 
     mockFormidable(commonAdsBody.fields, commonAdsBody.files);
-    const response = await makeApiRequest(adId, fields);
+    const response = await updateAdRequest(adId, fields);
     const ad = await adsService.getAds({ id: adId });
     expectedObject = { ...ad[0].dataValues };
     fields.smallImage = expectedObject.smallImage;
@@ -138,12 +139,12 @@ describe("PATCH /api/v1/ads/{adId}", () => {
 
     mockFormidable(fields, files);
 
-    const response = await makeApiRequest(adId, fields);
+    const response = await updateAdRequest(adId, fields);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBe("Ad already up to date");
   });
   it("should return an error if user other than admin or super admin access tha api", async () => {
-    const response = await makeApiRequest(
+    const response = await updateAdRequest(
       adId,
       commonAdsBody.fields,
       customerToken,
@@ -163,8 +164,16 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     };
 
     mockFormidable(invalidAdBody.fields);
-    const response = await makeApiRequest(adId, invalidAdBody);
+    const response = await updateAdRequest(adId, invalidAdBody);
     expect(response.body).toEqual(expectedResponse);
     expect(response.status).toEqual(400);
+  });
+  it("should return  error if adId that is to be updated invalid", async () => {
+    mockFormidable(commonAdsBody.fields, commonAdsBody.files);
+    const response = await updateAdRequest(nonExistingAdId, commonAdsBody);
+
+    expect(response.body.success).toEqual(false);
+    expect(response.body.data).toEqual("Not found");
+    expect(response.status).toEqual(404);
   });
 });
