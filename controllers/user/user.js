@@ -2090,7 +2090,7 @@ exports.getAllUnverifiedUsers = async (req, res) => {
   }
 };
 
-exports.inviteUser = (req, res) => {
+exports.inviteUser = async (req, res) => {
   /**
    * @swagger
    *
@@ -2142,53 +2142,15 @@ exports.inviteUser = (req, res) => {
       role: "required|string",
     });
 
-    validation.fails(function () {
+    if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
-    });
+    }
 
-    validation.passes(async function () {
-      try {
-        const params = req.body;
-        const invitation = await UserModel.createAndInviteUser({ ...params });
+    const invitation = await UserModel.createAndInviteUser({ ...req.body });
 
-        return apiResponse.success(res, req, invitation);
-      } catch (error) {
-        if (error.message === "Organization not found") {
-          return apiResponse.fail(res, error.message);
-        } else if (error.message === "test organization") {
-          return apiResponse.fail(
-            res,
-            "Can not add user to test organization",
-            403,
-          );
-        } else if (error.message === "emailExists") {
-          return apiResponse.fail(res, "Email already exists", 422);
-        } else if (error.message === "Invitation already sent") {
-          return apiResponse.fail(res, "Invitation already sent", 422);
-        } else if (error.message === "Role not found") {
-          return apiResponse.fail(res, "Role not found", 400);
-        } else if (
-          error.message === "Report to user id is incorrect" ||
-          error.message === "User not found"
-        ) {
-          return apiResponse.fail(res, "Report to user id is incorrect", 400);
-        } else if (error.message === "Invalid role of report to user") {
-          return apiResponse.fail(res, "Invalid role of report to user", 403);
-        } else if (
-          error.message === `${req.body.role} can not be in any organization`
-        ) {
-          return apiResponse.fail(
-            res,
-            `${req.body.role} can not be in any organization`,
-            403,
-          );
-        } else {
-          return apiResponse.fail(res, error.message, 500);
-        }
-      }
-    });
+    return apiResponse.success(res, req, invitation);
   } catch (error) {
-    return apiResponse.fail(res, error.message, 500);
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
 

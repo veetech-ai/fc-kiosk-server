@@ -76,7 +76,7 @@ exports.addOrganization = (req, res) => {
 
   const validation = new Validator(req.body, {
     name: "required|string",
-    email: "required|email"
+    email: "required|email",
   });
 
   validation.fails(function () {
@@ -85,28 +85,46 @@ exports.addOrganization = (req, res) => {
 
   validation.passes(async function () {
     try {
-      const organizationCreationBody = helper.validateObject(req.body, ["name", "email", "description"])
-      
-      const userCreationBody = helper.validateObject(organizationCreationBody, ["name", "email"])
-      
-      const isOrganizationExist = await OrganizationsServices.isOrganizationExist({name: req.body.name});
-      if (isOrganizationExist) throw new ServiceError("Organization already exists", 409);
+      const organizationCreationBody = helper.validateObject(req.body, [
+        "name",
+        "email",
+        "description",
+      ]);
 
+      const userCreationBody = helper.validateObject(organizationCreationBody, [
+        "name",
+        "email",
+      ]);
 
-      // Create default customer for the organization 
+      const isOrganizationExist =
+        await OrganizationsServices.isOrganizationExist({
+          name: req.body.name,
+        });
+      if (isOrganizationExist)
+        throw new ServiceError("Organization already exists", 409);
 
-      userCreationBody.role = "customer"
+      // Create default customer for the organization
+
+      userCreationBody.role = "customer";
       const invitation = await UserModel.createAndInviteUser({
         ...userCreationBody,
       });
 
       // Create organization
-      const organization = await OrganizationsServices.createOrganization(organizationCreationBody)
+      const organization = await OrganizationsServices.createOrganization(
+        organizationCreationBody,
+      );
 
       // Set the owner for the respective user
-      await UserModel.update_where({ orgId: organization.id }, { email: userCreationBody.email })
+      await UserModel.update_where(
+        { orgId: organization.id },
+        { email: userCreationBody.email },
+      );
 
-      return apiResponse.success(res, req, {...invitation, orgId: organization.id});
+      return apiResponse.success(res, req, {
+        ...invitation,
+        orgId: organization.id,
+      });
     } catch (error) {
       return apiResponse.fail(res, error.message, error.statusCode || 500);
     }

@@ -500,11 +500,14 @@ exports.createAndInviteUser = async (params) => {
   let orgId = params.orgId;
   const isAdmin = params.role === "admin" || params.role === "super admin";
   if (isAdmin && orgId)
-    throw new ServiceError(`${params.role} can not be in any organization`, 400);
+    throw new ServiceError(
+      `${params.role} can not be in any organization`,
+      400,
+    );
 
   if (!isAdmin && orgId) {
     const org = await OrganizationModel.findById(params.orgId);
-    if (!org) throw new Error("Organization not found");
+    if (!org) throw new ServiceError("Organization not found", 404);
     else if (org.name === config.testOrganization)
       throw new ServiceError("Can not add user to test organization", 400);
   }
@@ -535,7 +538,8 @@ exports.createAndInviteUser = async (params) => {
   const isUserAlreadyInvited = await this.isUserAlreadyInvited({
     email: params.email,
   });
-  if (isUserAlreadyInvited) throw new ServiceError("Invitation already sent", 409);
+  if (isUserAlreadyInvited)
+    throw new ServiceError("Invitation already sent", 409);
 
   const createdUser = await this.create_user(params);
   const e_mail = createdUser.email;

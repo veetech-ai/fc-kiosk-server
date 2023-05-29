@@ -87,13 +87,11 @@ exports.findByName = async (organizationName) => {
 };
 
 exports.isOrganizationExist = async (where) => {
-  const organization = await Organization.findOne({ where })
-  if (organization) return true
-  return false
-}
+  const organization = await Organization.findOne({ where });
+  if (organization) return true;
+  return false;
+};
 
 exports.createOrganization = async (body) => {
-  return await Organization.create(body)
-}
-
-
+  return await Organization.create(body);
+};
