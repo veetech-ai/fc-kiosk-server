@@ -183,7 +183,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     const response = await updateAdRequest(nonExistingAdId, commonAdsBody);
 
     expect(response.body.success).toEqual(false);
-    expect(response.body.data).toEqual("Not found");
+    expect(response.body.data).toEqual("Ad not found");
     expect(response.status).toEqual(404);
   });
 });
