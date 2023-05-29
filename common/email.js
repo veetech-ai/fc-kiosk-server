@@ -552,14 +552,15 @@ exports.send_complete_registration_email = (user, role) => {
       },
     );
 
-    const acctivation_url =
-      config.app.frontendURL +
-      `complete-registration?email=${user.email}&name=${user.name}&token=${user.email_token}`;
+    const acctivation_url = new URL(
+      `complete-registration?email=${user.email}&name=${user.name}&token=${user.email_token}`,
+      config.app.frontendURL,
+    );
     const html = ejs.render(test_template, {
       acctivation_url: acctivation_url,
       email: user.email,
       type: role,
-      icon_url: config.app.frontendURL + "/img/icons/mstile-310x150.png",
+      icon_url: new URL("img/icons/mstile-310x150.png", config.app.frontendURL),
       contact_url: contact_url,
       contact_title: contact_title,
     });
