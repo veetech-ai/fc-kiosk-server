@@ -475,32 +475,3 @@ exports.getCourses = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-
-exports.getNoOfCourses = async (req, res) => {
-  /**
-   * @swagger
-   *
-   * /kiosk-courses:
-   *   get:
-   *     security:
-   *       - auth: []
-   *     description: Get no of courses per organization.
-   *     tags: [Kiosk-Courses]
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       200:
-   *         description: Success
-   */
-
-  try {
-    let where = {};
-    if (req.query.state) {
-      where.state = req.query.state.toLowerCase();
-    }
-    const courses = await courseService.getCourses(where);
-    return apiResponse.success(res, req, courses);
-  } catch (error) {
-    return apiResponse.fail(res, error.message, error.statusCode || 500);
-  }
-};

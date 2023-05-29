@@ -23,32 +23,28 @@ const getOrganizationStats = async (organizations) => {
   return organizationStats;
 };
 
-exports.list = (pp = false) => {
-  return new Promise((resolve, reject) => {
-    const self = this;
-    const query = {};
-    if (pp) {
-      query.limit = pp.limit;
-      query.offset = pp.offset;
-    }
-
-    Organization.findAll(query).then(async (organizations) => {
-      if (pp) {
-        const count = await self.count();
-        resolve({ data: organizations, count: count });
-      } else {
-        const organizationStats = await getOrganizationStats(organizations);
-        const responseData = organizations.map((org, index) => {
-          return {
-            ...org.dataValues,
-            courseCount: organizationStats[index].courseCount,
-            deviceCount: organizationStats[index].deviceCount,
-          };
-        });
-        resolve({ data: responseData, count: null });
-      }
-    });
+exports.list = async (pp = false) => {
+  const self = this;
+  const query = {};
+  if (pp) {
+    query.limit = pp.limit;
+    query.offset = pp.offset;
+  }
+  const organizations = await Organization.findAll(query);
+  const organizationStats = await getOrganizationStats(organizations);
+  const responseData = organizations.map((org, index) => {
+    return {
+      ...org.dataValues,
+      courseCount: organizationStats[index].courseCount,
+      deviceCount: organizationStats[index].deviceCount,
+    };
   });
+
+  if (pp) {
+    const count = await self.count();
+    return { data: responseData, count: count };
+  }
+  return { data: responseData, count: null };
 };
 exports.count = (where = false) => {
   return new Promise((resolve, reject) => {
