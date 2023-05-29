@@ -100,6 +100,13 @@ exports.createAd = async (req, res) => {
       screens: enabledScreens,
     };
     const postedAd = await adsService.createAd(reqBody);
+
+    helper.mqtt_publish_message(
+      `gc/${postedAd.gcId}/screens`,
+      helper.mqttPayloads.onAdUpdate,
+      false,
+    );
+
     return apiResponse.success(res, req, postedAd);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -207,6 +214,13 @@ exports.updateAd = async (req, res) => {
       reqBody,
       loggedInUserOrg,
     );
+
+    helper.mqtt_publish_message(
+      `gc/${ad.gcId}/screens`,
+      helper.mqttPayloads.onAdUpdate,
+      false,
+    );
+
     return apiResponse.success(
       res,
       req,
