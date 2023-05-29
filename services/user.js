@@ -23,7 +23,6 @@ const {
 // Services Imports
 const OrganizationModel = require("./organization");
 const RoleModel = require("./role");
-const organizationServices = require("../services/organization");
 const { organizationsInApplication } = require("../common/organizations.data");
 
 const PNSubscription = models.Push_Notifications_Subscriptions;
@@ -533,8 +532,10 @@ exports.createAndInviteUser = async (params) => {
 
   params.roleId = role.id;
 
-  const user = await this.find_by_where({ email: params.email });
-  if (user && user.email_token) throw new Error("Invitation already sent");
+  const isUserAlreadyInvited = await this.isUserAlreadyInvited({
+    email: params.email,
+  });
+  if (isUserAlreadyInvited) throw new Error("Invitation already sent");
 
   const createdUser = await this.create_user(params);
   const e_mail = createdUser.email;
@@ -595,4 +596,18 @@ exports.delete = async (userId, loggedInUser) => {
   });
 
   return "User deleted successfully";
+};
+
+exports.isUserAlreadyInvited = async (where) => {
+  const clonedWhere = {
+    ...where,
+    email_token: {
+      [Op.not]: null,
+    },
+  };
+
+  const user = await User.findOne({ where: clonedWhere });
+
+  if (user) return true;
+  return false;
 };
