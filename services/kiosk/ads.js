@@ -1,6 +1,7 @@
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const AdsModel = models.Ad;
+const Course=models.Course
 const upload_file = require("../../common/upload");
 
 async function createAd(reqBody) {
@@ -15,8 +16,16 @@ async function createAd(reqBody) {
   return ad;
 }
 
-async function getAds(where) {
-  const ads = await AdsModel.findAll({ where });
+async function getAds(where,loggedInUserOrgId) {
+  if (loggedInUserOrgId) where.orgId=loggedInUserOrgId
+  const ads = await AdsModel.findAll({ 
+    where, 
+    include: [{
+      model: Course,
+      as: 'Course', 
+      attributes: ['name'] 
+    }]
+  });
   if (ads.length) {
     ads.forEach((ad) => {
       ad.smallImage = upload_file.getFileURL(ad.smallImage);
@@ -30,15 +39,29 @@ async function updateAdsByCourseId(gcId, screens) {
   return ads;
 }
 
-async function updateAd(adId, reqBody) {
+async function updateAd(adId, reqBody,loggedInUserOrgId) {
+  if (loggedInUserOrgId) where.orgId=loggedInUserOrgId
   const ad = await AdsModel.update(
     {
       ...reqBody,
     },
     { where: { id: adId } },
   );
-
+  if(!ad) throw new ServiceError("Not found",404)
   return ad[0];
+}
+
+async function getAd(where,loggedInUserOrgId) {
+  if (loggedInUserOrgId) where.orgId=loggedInUserOrgId
+  const ad = await AdsModel.findOne({ where });
+  if (!ad) {
+    throw new ServiceError("Not found",404)
+   
+
+  }
+  ad.smallImage = upload_file.getFileURL(ad.smallImage);
+
+  return ad;
 }
 
 module.exports = {
@@ -46,4 +69,5 @@ module.exports = {
   getAds,
   updateAdsByCourseId,
   updateAd,
+  getAd
 };

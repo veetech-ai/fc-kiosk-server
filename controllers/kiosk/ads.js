@@ -118,7 +118,9 @@ exports.getAds = async (req, res) => {
    */
 
   try {
-    const ads = await adsService.getAds({});
+    const loggedInUserOrg = req.user?.orgId;
+
+    const ads = await adsService.getAds({},loggedInUserOrg);
     return apiResponse.success(res, req, ads);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -143,16 +145,6 @@ exports.updateAd = async (req, res) => {
    *         in: path
    *         required: true
    *         type: integer
-   *       - name: gcId
-   *         description: id golf course course
-   *         in: formData
-   *         required: false
-   *         type: integer
-   *       - name: state
-   *         description: select which state to present the ads in
-   *         in: formData
-   *         required: false
-   *         type: string
    *       - name: title
    *         description: title of the ad
    *         in: formData
@@ -183,28 +175,15 @@ exports.updateAd = async (req, res) => {
         resolve({ fields, files });
       });
     });
-
     const validation = new Validator(fields, {
-      gcId: "integer",
-      state: "string",
       title: "string",
     });
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
-    const courseId = fields.gcId;
     const adImage = files.adImage;
-    if (courseId) {
-      const screens = await screenConfigService.getScreensByCourses(courseId);
-      const { updatedAt, orgId, gcId, id, createdAt, ...restFields } =
-        screens.dataValues;
-      const screensList = { ...restFields };
-      let enabledScreens = Object.keys(screensList).filter(
-        (key) => screensList[key] === true,
-      );
-      fields.screens = enabledScreens;
-      fields.orgId = orgId;
-    }
+    const ad=await adsService.getAd({id:adId})
+    const courseId=ad.dataValues.gcId
     if (adImage) {
       const smallImage = await upload_file.uploadImageForCourse(
         adImage,
