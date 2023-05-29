@@ -66,10 +66,19 @@ async function getAd(where, loggedInUserOrgId) {
   return ad;
 }
 
+async function deleteAd(where, loggedInUserOrgId) {
+  const clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
+  const ad = await AdsModel.destroy({ where: clonedWhere });
+
+  return ad;
+}
+
 module.exports = {
   createAd,
   getAds,
   updateAdsByCourseId,
   updateAd,
   getAd,
+  deleteAd,
 };

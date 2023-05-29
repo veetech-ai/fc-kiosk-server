@@ -216,3 +216,44 @@ exports.updateAd = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.deleteAd = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /ads/{adId}:
+   *   delete:
+   *     security:
+   *       - auth: []
+   *     description: delete ads.
+   *     tags: [Ads]
+   *     parameters:
+   *       - name: adId
+   *         description: Ad id
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const loggedInUserOrg = req.user?.orgId;
+    const adId = Number(req.params.adId);
+    if (!adId) {
+      return apiResponse.fail(res, "adId must be a valid number");
+    }
+    await adsService.getAd({ id: adId }, loggedInUserOrg);
+    const response = await adsService.deleteAd({ id: adId }, loggedInUserOrg);
+    return apiResponse.success(
+      res,
+      req,
+      response ? "Ad deleted successfully" : "Ad not found",
+    );
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
