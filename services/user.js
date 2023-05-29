@@ -24,6 +24,7 @@ const {
 const OrganizationModel = require("./organization");
 const RoleModel = require("./role");
 const { organizationsInApplication } = require("../common/organizations.data");
+const ServiceError = require("../utils/serviceError");
 
 const PNSubscription = models.Push_Notifications_Subscriptions;
 const UserSettings = models.User_Settings;
@@ -147,7 +148,7 @@ exports.create_user = async (params) => {
   } else {
     const isExists = await emailExists(params.email);
     if (isExists) {
-      throw new Error("emailExists");
+      throw new ServiceError("Email already exists", 409);
     }
 
     // Create new user
@@ -169,8 +170,7 @@ exports.update_user = async (id, user) => {
 
 exports.update_where = async (params, where) => {
   const user = await User.update(params, { where: where });
-  if (user) return user[0];
-  else throw new Error("There is a problem. Please try later.");
+  return user[0];
 };
 
 exports.find_by_where = async (where) => {
@@ -500,20 +500,20 @@ exports.createAndInviteUser = async (params) => {
   let orgId = params.orgId;
   const isAdmin = params.role === "admin" || params.role === "super admin";
   if (isAdmin && orgId)
-    throw new Error(`${params.role} can not be in any organization`);
+    throw new ServiceError(`${params.role} can not be in any organization`, 400);
 
-  if (!isAdmin) {
+  if (!isAdmin && orgId) {
     const org = await OrganizationModel.findById(params.orgId);
     if (!org) throw new Error("Organization not found");
     else if (org.name === config.testOrganization)
-      throw new Error("test organization");
+      throw new ServiceError("Can not add user to test organization", 400);
   }
   if (params?.reportTo) {
     const reportToUser = await this.findById(params?.reportTo);
     if (!reportToUser || reportToUser.orgId != orgId)
-      throw new Error("Report to user id is incorrect");
+      throw new ServiceError("Report to user id is incorrect", 400);
     if (!checkIsValidReportToUser(reportToUser?.Role?.title, params.role))
-      throw new Error("Invalid role of report to user");
+      throw new ServiceError("Invalid role of report to user", 400);
   }
 
   const token = helper.generate_verify_token();
@@ -528,14 +528,14 @@ exports.createAndInviteUser = async (params) => {
 
   const roleTitle = params.role;
   const role = await RoleModel.getRoleByTitle(roleTitle);
-  if (!role) throw new Error("Role not found");
+  if (!role) throw new ServiceError("Role not found", 404);
 
   params.roleId = role.id;
 
   const isUserAlreadyInvited = await this.isUserAlreadyInvited({
     email: params.email,
   });
-  if (isUserAlreadyInvited) throw new Error("Invitation already sent");
+  if (isUserAlreadyInvited) throw new ServiceError("Invitation already sent", 409);
 
   const createdUser = await this.create_user(params);
   const e_mail = createdUser.email;

@@ -1,5 +1,7 @@
 const models = require("../models");
+const ServiceError = require("../utils/serviceError");
 const Organization = models.Organization;
+const UsersServices = require("../services/user")
 
 exports.list = (pp = false) => {
   return new Promise((resolve, reject) => {
@@ -51,19 +53,22 @@ exports.findById = (organizationId) => {
       });
   });
 };
-exports.findByName = (organizationName) => {
-  return new Promise((resolve, reject) => {
-    const query = {
-      where: {
-        name: organizationName,
-      },
-    };
-    Organization.findOne(query)
-      .then((organization) => {
-        resolve(organization);
-      })
-      .catch(() => {
-        reject(new Error("organization not found"));
-      });
+exports.findByName = async (organizationName) => {
+  const organization = await Organization.findOne({
+    where: { name: organizationName },
   });
+  if (!organization) throw new ServiceError("Organization not found", 404);
+  return organization;
 };
+
+exports.isOrganizationExist = async (where) => {
+  const organization = await Organization.findOne({ where })
+  if (organization) return true
+  return false
+}
+
+exports.createOrganization = async (body) => {
+  return await Organization.create(body)
+}
+
+
