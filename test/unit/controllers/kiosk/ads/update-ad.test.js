@@ -73,8 +73,17 @@ describe("PATCH /api/v1/ads/{adId}", () => {
   };
 
   const newAdsBody = {
-    title: "Main Ad",
-    smallImage: uuid(),
+    fields: {
+      title: "Georgia",
+    },
+    files: {
+      adImage: {
+        name: "mock-ad2.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    },
   };
 
   beforeAll(async () => {
@@ -130,7 +139,8 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBe("Ad updated successfully");
     expect(expectedObject).toEqual(expect.objectContaining(expectedObject));
-    await adsService.updateAd(adId, newAdsBody);
+    mockFormidable(newAdsBody.fields, newAdsBody.files);
+    await updateAdRequest(adId, newAdsBody.fields);
   });
   it("should not update the api with empty request body", async () => {
     const fields = {};

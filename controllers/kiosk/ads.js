@@ -55,6 +55,8 @@ exports.createAd = async (req, res) => {
    */
 
   try {
+    const loggedInUserOrg = req.user?.orgId;
+
     const form = new formidable.IncomingForm();
 
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -71,6 +73,10 @@ exports.createAd = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+    const linkedCourse = await courseService.getCourse(
+      { id: fields.gcId },
+      loggedInUserOrg,
+    );
     const courseId = fields.gcId;
     const adImage = files.adImage;
 
@@ -163,6 +169,7 @@ exports.updateAd = async (req, res) => {
    */
 
   try {
+    const loggedInUserOrg = req.user?.orgId;
     const adId = Number(req.params.adId);
     if (!adId) {
       return apiResponse.fail(res, "adId must be a valid number");
@@ -182,7 +189,7 @@ exports.updateAd = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const adImage = files.adImage;
-    const ad = await adsService.getAd({ id: adId });
+    const ad = await adsService.getAd({ id: adId }, loggedInUserOrg);
     const courseId = ad.dataValues.gcId;
     if (adImage) {
       const smallImage = await upload_file.uploadImageForCourse(
@@ -193,7 +200,11 @@ exports.updateAd = async (req, res) => {
     }
     const reqBody = fields;
 
-    const noOfRowsUpdated = await adsService.updateAd(adId, reqBody);
+    const noOfRowsUpdated = await adsService.updateAd(
+      { id: adId },
+      reqBody,
+      loggedInUserOrg,
+    );
     return apiResponse.success(
       res,
       req,

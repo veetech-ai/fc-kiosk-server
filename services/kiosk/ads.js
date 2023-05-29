@@ -17,9 +17,10 @@ async function createAd(reqBody) {
 }
 
 async function getAds(where, loggedInUserOrgId) {
-  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
+  const clonedWhere = where;
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const ads = await AdsModel.findAll({
-    where,
+    where: clonedWhere,
     include: [
       {
         model: Course,
@@ -41,21 +42,23 @@ async function updateAdsByCourseId(gcId, screens) {
   return ads;
 }
 
-async function updateAd(adId, reqBody, loggedInUserOrgId) {
-  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
+async function updateAd(where, reqBody, loggedInUserOrgId) {
+  const clonedWhere = where;
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const ad = await AdsModel.update(
     {
       ...reqBody,
     },
-    { where: { id: adId } },
+    { where: clonedWhere },
   );
   if (!ad) throw new ServiceError("Not found", 404);
   return ad[0];
 }
 
 async function getAd(where, loggedInUserOrgId) {
-  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
-  const ad = await AdsModel.findOne({ where });
+  const clonedWhere = where;
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
+  const ad = await AdsModel.findOne({ where: clonedWhere });
   if (!ad) {
     throw new ServiceError("Not found", 404);
   }
