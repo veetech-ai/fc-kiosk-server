@@ -1562,4 +1562,5 @@ exports.mqttPayloads = {
   onFaqUpdate: ["faq"],
   onFeedbackUpdate: ["course-info"], // course info needs to be updated once a feedback is received
   onShopUpdate: ["shop"],
+  onAdUpdate: ["ads"],
 };

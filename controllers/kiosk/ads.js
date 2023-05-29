@@ -246,7 +246,17 @@ exports.deleteAd = async (req, res) => {
     if (!adId) {
       return apiResponse.fail(res, "adId must be a valid number");
     }
-    const response = await adsService.deleteAd({ id: adId }, loggedInUserOrg);
+    const ad = await adsService.getAd({ id: adId }, loggedInUserOrg);
+    const noOfAffectedRows = await adsService.deleteAd(
+      { id: adId },
+      loggedInUserOrg,
+    );
+
+    helper.mqtt_publish_message(
+      `gc/${ad.gcId}/screens`,
+      helper.mqttPayloads.onAdUpdate,
+      false,
+    );
 
     return apiResponse.success(res, req, "Ad deleted successfully");
   } catch (error) {

@@ -39,7 +39,7 @@ const mockFormidable = (fields, files) => {
   mockFiles = files;
 };
 
-describe("PATCH /api/v1/ads/{adId}", () => {
+describe("DELETE /api/v1/ads/{adId}", () => {
   let adminToken;
   let courseId;
   let invalidCourseId = -1;
@@ -51,6 +51,9 @@ describe("PATCH /api/v1/ads/{adId}", () => {
   let nonExistingAdId = -1;
   let invalidAdId = "invalidId";
   let differentOrganizationCustomerToken;
+
+  let firstAdId;
+  let secondAdId;
 
   const commonAdsBody = {
     fields: {
@@ -116,8 +119,10 @@ describe("PATCH /api/v1/ads/{adId}", () => {
         params: fields,
       });
     };
-    const createdAd = await makeAdApi(files, fields);
-    adId = createdAd.body.data.id;
+    const firstAd = await makeAdApi(files, fields);
+    const secondAd = await makeAdApi(files, fields);
+    firstAdId = firstAd.body.data.id;
+    secondAdId = secondAd.body.data.id;
   });
 
   const deleteAdRequest = async (id, token = adminToken) => {
@@ -128,24 +133,24 @@ describe("PATCH /api/v1/ads/{adId}", () => {
   };
 
   it("should delete a new ad info with valid input with admin or super admin token", async () => {
-    const response = await deleteAdRequest(adId);
+    const response = await deleteAdRequest(firstAdId);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBe("Ad deleted successfully");
-    const ad=await adsService.getAds({id:adId})
-    expect(ad.length).toBe(0)
+    expect(adsService.getAd({ id: firstAdId })).rejects.toThrow("Ad not found");
   });
   it("should return error while deleting the already deleted ", async () => {
-    const response = await deleteAdRequest(adId);
+    await deleteAdRequest(secondAdId);
+    const response = await deleteAdRequest(secondAdId);
     expect(response.body.success).toBe(false);
     expect(response.body.data).toBe("Ad not found");
   });
-  it("should return an error if user other than admin or super admin access tha api", async () => {
+  it("should return an error if the non existing ad is to be deleted", async () => {
     const response = await deleteAdRequest(nonExistingAdId);
     expect(response.body.success).toBe(false);
     expect(response.body.data).toBe("Ad not found");
   });
 
-  it("should return an validation error", async () => {
+  it("should return an validation error in case of an invalid adId", async () => {
     const expectedResponse = {
       success: false,
       data: "adId must be a valid number",
@@ -156,7 +161,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     expect(response.body).toEqual(expectedResponse);
   });
   it("should return  error if api is accessed by entity other than super admin", async () => {
-    const response = await deleteAdRequest(adId, customerToken);
+    const response = await deleteAdRequest(firstAdId, customerToken);
 
     expect(response.body.success).toEqual(false);
     expect(response.body.data).toEqual("You are not allowed");
