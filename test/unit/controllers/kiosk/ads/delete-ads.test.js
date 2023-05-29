@@ -131,6 +131,8 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     const response = await deleteAdRequest(adId);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBe("Ad deleted successfully");
+    const ad=await adsService.getAds({id:adId})
+    expect(ad.length).toBe(0)
   });
   it("should return error while deleting the already deleted ", async () => {
     const response = await deleteAdRequest(adId);
