@@ -66,10 +66,21 @@ async function getAd(where, loggedInUserOrgId) {
   return ad;
 }
 
+async function deleteAd(where, loggedInUserOrgId) {
+  const clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
+  const noOfAffectedRows = await AdsModel.destroy({ where: clonedWhere });
+  if (!noOfAffectedRows) {
+    throw new ServiceError("Ad not found", 404);
+  }
+  return noOfAffectedRows;
+}
+
 module.exports = {
   createAd,
   getAds,
   updateAdsByCourseId,
   updateAd,
   getAd,
+  deleteAd,
 };
