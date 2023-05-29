@@ -198,7 +198,9 @@ exports.updateAd = async (req, res) => {
       );
       fields.smallImage = smallImage;
     }
-    const reqBody = fields;
+    const allowedFields = ["title", "smallImage"];
+    const filteredObject = validateObject(fields, allowedFields);
+    const reqBody = filteredObject;
 
     const noOfRowsUpdated = await adsService.updateAd(
       { id: adId },

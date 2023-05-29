@@ -17,7 +17,7 @@ async function createAd(reqBody) {
 }
 
 async function getAds(where, loggedInUserOrgId) {
-  const clonedWhere = where;
+  const clonedWhere = { ...where };
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const ads = await AdsModel.findAll({
     where: clonedWhere,
@@ -43,7 +43,7 @@ async function updateAdsByCourseId(gcId, screens) {
 }
 
 async function updateAd(where, reqBody, loggedInUserOrgId) {
-  const clonedWhere = where;
+  const clonedWhere = { ...where };
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const ad = await AdsModel.update(
     {
@@ -51,16 +51,15 @@ async function updateAd(where, reqBody, loggedInUserOrgId) {
     },
     { where: clonedWhere },
   );
-  if (!ad) throw new ServiceError("Not found", 404);
   return ad[0];
 }
 
 async function getAd(where, loggedInUserOrgId) {
-  const clonedWhere = where;
+  const clonedWhere = { ...where };
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const ad = await AdsModel.findOne({ where: clonedWhere });
   if (!ad) {
-    throw new ServiceError("Not found", 404);
+    throw new ServiceError("Ad not found", 404);
   }
   ad.smallImage = upload_file.getFileURL(ad.smallImage);
 
