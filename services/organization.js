@@ -1,26 +1,51 @@
 const models = require("../models");
 const ServiceError = require("../utils/serviceError");
 const Organization = models.Organization;
-const UsersServices = require("../services/user")
+const Course = models.Course;
+const Device = models.Device;
 
-exports.list = (pp = false) => {
-  return new Promise((resolve, reject) => {
-    const self = this;
-    const query = {};
-    if (pp) {
-      query.limit = pp.limit;
-      query.offset = pp.offset;
-    }
+const getOrganizationStats = async (organizations) => {
+  const organizationStats = [];
 
-    Organization.findAll(query).then(async (organizations) => {
-      if (pp) {
-        const count = await self.count();
-        resolve({ data: organizations, count: count });
-      } else {
-        resolve({ data: organizations, count: null });
-      }
-    });
+  for await (const org of organizations) {
+    const courseIdCount = await Course.count({ where: { orgId: org.id } });
+    const deviceCount = await Device.count({ where: { owner_id: org.id } });
+
+    const stats = {
+      organizationId: org.id,
+      organizationName: org.name,
+      courseCount: courseIdCount,
+      deviceCount: deviceCount,
+    };
+
+    organizationStats.push(stats);
+  }
+
+  return organizationStats;
+};
+
+exports.list = async (pp = false) => {
+  const self = this;
+  const query = {};
+  if (pp) {
+    query.limit = pp.limit;
+    query.offset = pp.offset;
+  }
+  const organizations = await Organization.findAll(query);
+  const organizationStats = await getOrganizationStats(organizations);
+  const responseData = organizations.map((org, index) => {
+    return {
+      ...org.dataValues,
+      courseCount: organizationStats[index].courseCount,
+      deviceCount: organizationStats[index].deviceCount,
+    };
   });
+
+  if (pp) {
+    const count = await self.count();
+    return { data: responseData, count: count };
+  }
+  return { data: responseData, count: null };
 };
 exports.count = (where = false) => {
   return new Promise((resolve, reject) => {

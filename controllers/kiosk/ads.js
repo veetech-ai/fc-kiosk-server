@@ -55,6 +55,8 @@ exports.createAd = async (req, res) => {
    */
 
   try {
+    const loggedInUserOrg = req.user?.orgId;
+
     const form = new formidable.IncomingForm();
 
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -71,6 +73,10 @@ exports.createAd = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+    const linkedCourse = await courseService.getCourse(
+      { id: fields.gcId },
+      loggedInUserOrg,
+    );
     const courseId = fields.gcId;
     const adImage = files.adImage;
 
@@ -94,6 +100,13 @@ exports.createAd = async (req, res) => {
       screens: enabledScreens,
     };
     const postedAd = await adsService.createAd(reqBody);
+
+    helper.mqtt_publish_message(
+      `gc/${postedAd.gcId}/screens`,
+      helper.mqttPayloads.onAdUpdate,
+      false,
+    );
+
     return apiResponse.success(res, req, postedAd);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -118,8 +131,148 @@ exports.getAds = async (req, res) => {
    */
 
   try {
-    const ads = await adsService.getAds({});
+    const loggedInUserOrg = req.user?.orgId;
+
+    const ads = await adsService.getAds({}, loggedInUserOrg);
     return apiResponse.success(res, req, ads);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.updateAd = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /ads/{adId}:
+   *   patch:
+   *     security:
+   *       - auth: []
+   *     description: update ads.
+   *     tags: [Ads]
+   *     consumes:
+   *       - multipart/form-data
+   *     parameters:
+   *       - name: adId
+   *         description: ad id of golf course
+   *         in: path
+   *         required: true
+   *         type: integer
+   *       - name: title
+   *         description: title of the ad
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - in: formData
+   *         name: adImage
+   *         description: Upload image of ads to be displayed
+   *         required: false
+   *         type: file
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const loggedInUserOrg = req.user?.orgId;
+    const adId = Number(req.params.adId);
+    if (!adId) {
+      return apiResponse.fail(res, "adId must be a valid number");
+    }
+    const form = new formidable.IncomingForm();
+
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        resolve({ fields, files });
+      });
+    });
+    const validation = new Validator(fields, {
+      title: "string",
+    });
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+    const adImage = files.adImage;
+    const ad = await adsService.getAd({ id: adId }, loggedInUserOrg);
+    const courseId = ad.dataValues.gcId;
+    if (adImage) {
+      const smallImage = await upload_file.uploadImageForCourse(
+        adImage,
+        courseId,
+      );
+      fields.smallImage = smallImage;
+    }
+    const allowedFields = ["title", "smallImage"];
+    const filteredObject = validateObject(fields, allowedFields);
+    const reqBody = filteredObject;
+
+    const noOfRowsUpdated = await adsService.updateAd(
+      { id: adId },
+      reqBody,
+      loggedInUserOrg,
+    );
+
+    helper.mqtt_publish_message(
+      `gc/${ad.gcId}/screens`,
+      helper.mqttPayloads.onAdUpdate,
+      false,
+    );
+
+    return apiResponse.success(
+      res,
+      req,
+      noOfRowsUpdated ? "Ad updated successfully" : "Ad already up to date",
+    );
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.deleteAd = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /ads/{adId}:
+   *   delete:
+   *     security:
+   *       - auth: []
+   *     description: delete ads.
+   *     tags: [Ads]
+   *     parameters:
+   *       - name: adId
+   *         description: Ad id
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const loggedInUserOrg = req.user?.orgId;
+    const adId = Number(req.params.adId);
+    if (!adId) {
+      return apiResponse.fail(res, "adId must be a valid number");
+    }
+    const ad = await adsService.getAd({ id: adId }, loggedInUserOrg);
+    const noOfAffectedRows = await adsService.deleteAd(
+      { id: adId },
+      loggedInUserOrg,
+    );
+
+    helper.mqtt_publish_message(
+      `gc/${ad.gcId}/screens`,
+      helper.mqttPayloads.onAdUpdate,
+      false,
+    );
+
+    return apiResponse.success(res, req, "Ad deleted successfully");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
