@@ -269,7 +269,7 @@ exports.findById = async (id, organizationId = null) => {
   });
 
   if (user) return user;
-  else throw new Error("User not found");
+  else throw new ServiceError("User not found", 404);
 };
 
 exports.findAllUsersByCardSerial = async (
