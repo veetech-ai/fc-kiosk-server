@@ -4,7 +4,6 @@ const ServiceError = require("../../../../../utils/serviceError");
 const adsService = require("../../../../../services/kiosk/ads");
 const { uuid } = require("uuidv4");
 
-
 let mockFields;
 let mockFiles;
 jest.mock("formidable", () => {
@@ -52,30 +51,30 @@ describe("PATCH /api/v1/ads/{adId}", () => {
   let invalidateId = "invalidate gcId";
   let differentOrganizationCustomerToken;
 
-  const commonAdsBody={
-    fields:{
+  const commonAdsBody = {
+    fields: {
       title: "Main Ad",
     },
-    files:{
+    files: {
       adImage: {
         name: "mock-ad1.png",
         type: "image/png",
         size: 5000, // bytes
         path: "/mock/path/to/logo.png",
-      }
-    }
-  }
+      },
+    },
+  };
 
-  const invalidAdBody={
-    fields:{
-      title:1
-    }
-  }
+  const invalidAdBody = {
+    fields: {
+      title: 1,
+    },
+  };
 
-  const newAdsBody={
-      title: "Main Ad",
-      smallImage:uuid()
-  }
+  const newAdsBody = {
+    title: "Main Ad",
+    smallImage: uuid(),
+  };
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -120,7 +119,6 @@ describe("PATCH /api/v1/ads/{adId}", () => {
   };
 
   it("should create a new ad info with valid input with admin or super admin token", async () => {
-
     let expectedObject = {};
 
     mockFormidable(commonAdsBody.fields, commonAdsBody.files);
@@ -131,7 +129,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBe("Ad updated successfully");
     expect(expectedObject).toEqual(expect.objectContaining(expectedObject));
-    await adsService.updateAd(adId,newAdsBody)
+    await adsService.updateAd(adId, newAdsBody);
   });
   it("should not update the api with empty request body", async () => {
     const fields = {};
@@ -145,8 +143,11 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     expect(response.body.data).toBe("Ad already up to date");
   });
   it("should return an error if user other than admin or super admin access tha api", async () => {
-
-    const response = await makeApiRequest(adId, commonAdsBody.fields, customerToken);
+    const response = await makeApiRequest(
+      adId,
+      commonAdsBody.fields,
+      customerToken,
+    );
     expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
@@ -160,11 +161,10 @@ describe("PATCH /api/v1/ads/{adId}", () => {
         },
       },
     };
-   
-    mockFormidable(invalidAdBody.fields)
-    const response = await makeApiRequest(adId, invalidAdBody);
-    expect(response.body).toEqual(expectedResponse)
-    expect(response.status).toEqual(400)
-  });
 
+    mockFormidable(invalidAdBody.fields);
+    const response = await makeApiRequest(adId, invalidAdBody);
+    expect(response.body).toEqual(expectedResponse);
+    expect(response.status).toEqual(400);
+  });
 });

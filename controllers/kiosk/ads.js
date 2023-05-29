@@ -120,7 +120,7 @@ exports.getAds = async (req, res) => {
   try {
     const loggedInUserOrg = req.user?.orgId;
 
-    const ads = await adsService.getAds({},loggedInUserOrg);
+    const ads = await adsService.getAds({}, loggedInUserOrg);
     return apiResponse.success(res, req, ads);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -141,7 +141,7 @@ exports.updateAd = async (req, res) => {
    *       - multipart/form-data
    *     parameters:
    *       - name: adId
-   *         description: ad id of golf course course
+   *         description: ad id of golf course
    *         in: path
    *         required: true
    *         type: integer
@@ -182,8 +182,8 @@ exports.updateAd = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const adImage = files.adImage;
-    const ad=await adsService.getAd({id:adId})
-    const courseId=ad.dataValues.gcId
+    const ad = await adsService.getAd({ id: adId });
+    const courseId = ad.dataValues.gcId;
     if (adImage) {
       const smallImage = await upload_file.uploadImageForCourse(
         adImage,
