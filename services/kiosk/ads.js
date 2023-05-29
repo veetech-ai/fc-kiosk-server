@@ -70,7 +70,9 @@ async function deleteAd(where, loggedInUserOrgId) {
   const clonedWhere = { ...where };
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const ad = await AdsModel.destroy({ where: clonedWhere });
-
+  if (!ad) {
+    throw new ServiceError("Ad not found", 404);
+  }
   return ad;
 }
 

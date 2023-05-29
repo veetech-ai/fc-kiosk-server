@@ -247,11 +247,8 @@ exports.deleteAd = async (req, res) => {
       return apiResponse.fail(res, "adId must be a valid number");
     }
     const response = await adsService.deleteAd({ id: adId }, loggedInUserOrg);
-    return apiResponse.success(
-      res,
-      req,
-      response ? "Ad deleted successfully" : "Ad not found",
-    );
+
+    return apiResponse.success(res, req, "Ad deleted successfully");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
