@@ -66,10 +66,10 @@ describe("organization creation", () => {
       endpoint: "organization/add-organization",
     };
     const response = await helper.post_request_with_authorization(data);
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(409);
     expect(response.body).toStrictEqual({
       success: false,
-      data: "organizationExists",
+      data: "Organization already exists",
     });
   });
 

@@ -86,14 +86,14 @@ exports.upload_binary = async (file, uploadOn = defaultUploadOn) => {
     const fileName = file.name;
     if (!fs.existsSync(newPath)) fs.mkdirSync(newPath, { recursive: true });
     validateFile(file, ["apk"], settings.get("apk_file_max_size"));
-
+    const fileExt = this.get_file_extension(file.name);
     switch (uploadOn) {
       case 1:
         return await server_upload.upload(file, `${newPath}/${fileName}`);
       // case 2:
       //   return await azureUpload.upload(file, `fw/${fileName}`);
       case 3:
-        return await awsS3.uploadFile(file.path, uuid());
+        return await awsS3.uploadFile(file.path, uuid(), { fileExt });
       default:
         throw {
           message:

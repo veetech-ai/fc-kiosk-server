@@ -1,10 +1,11 @@
 const models = require("../models");
 const helper = require("../common/helper");
-const OrganizationModel = require("../services/organization");
+const OrganizationsServices = require("../services/organization");
 const UserModel = require("../services/user");
 const Organization = models.Organization;
 const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
+const ServiceError = require("../utils/serviceError");
 
 exports.getAllOrganizations = async (req, res) => {
   /**
@@ -30,7 +31,7 @@ exports.getAllOrganizations = async (req, res) => {
       params = helper.get_pagination_params(req.query);
     }
 
-    const result = await OrganizationModel.list(params);
+    const result = await OrganizationsServices.list(params);
 
     return apiResponse.pagination(res, req, result.data, result.count);
   } catch (err) {
@@ -74,7 +75,8 @@ exports.addOrganization = (req, res) => {
    */
 
   const validation = new Validator(req.body, {
-    name: "required",
+    name: "required|string",
+    email: "required|email",
   });
 
   validation.fails(function () {
@@ -83,35 +85,48 @@ exports.addOrganization = (req, res) => {
 
   validation.passes(async function () {
     try {
-      const organization = await Organization.findOne({
-        where: { name: req.body.name },
-      });
+      const organizationCreationBody = helper.validateObject(req.body, [
+        "name",
+        "email",
+        "description",
+      ]);
 
-      if (organization) return apiResponse.fail(res, "organizationExists", 400);
+      const userCreationBody = helper.validateObject(organizationCreationBody, [
+        "name",
+        "email",
+      ]);
 
-      const org = await Organization.create(req.body);
+      const isOrganizationExist =
+        await OrganizationsServices.isOrganizationExist({
+          name: req.body.name,
+        });
+      if (isOrganizationExist)
+        throw new ServiceError("Organization already exists", 409);
 
-      req.body.orgId = org.id;
-      req.body.role = "customer";
+      // Create default customer for the organization
 
-      const params = req.body;
+      userCreationBody.role = "customer";
       const invitation = await UserModel.createAndInviteUser({
-        ...params,
+        ...userCreationBody,
       });
 
-      return apiResponse.success(res, req, invitation);
+      // Create organization
+      const organization = await OrganizationsServices.createOrganization(
+        organizationCreationBody,
+      );
+
+      // Set the owner for the respective user
+      await UserModel.update_where(
+        { orgId: organization.id },
+        { email: userCreationBody.email },
+      );
+
+      return apiResponse.success(res, req, {
+        ...invitation,
+        orgId: organization.id,
+      });
     } catch (error) {
-      if (error.message === "Organization not found") {
-        return apiResponse.fail(res, error.message);
-      } else if (error.message === "test organization") {
-        return apiResponse.fail(
-          res,
-          "Can not add user to test organization",
-          403,
-        );
-      } else {
-        return apiResponse.fail(res, error.message, 500);
-      }
+      return apiResponse.fail(res, error.message, error.statusCode || 500);
     }
   });
 };
@@ -141,7 +156,7 @@ exports.getById = async (req, res) => {
    *         description: success
    */
   try {
-    const organization = await OrganizationModel.findById(
+    const organization = await OrganizationsServices.findById(
       req.params.organizationId,
     );
     if (organization) {

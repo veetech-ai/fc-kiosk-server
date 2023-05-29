@@ -195,7 +195,7 @@ describe("user test cases", () => {
         endpoint: "user/invite-user",
       };
       const response = await helper.post_request_with_authorization(data);
-      expect(response.status).toBe(422);
+      expect(response.status).toBe(409);
       expect(response.body).toStrictEqual({
         success: false,
         data: "Email already exists",
@@ -295,7 +295,7 @@ describe("user test cases", () => {
         endpoint: "user/invite-user",
       };
       const response = await helper.post_request_with_authorization(data);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({
         success: false,
         data: "Role not found",
@@ -359,11 +359,11 @@ describe("user test cases", () => {
 
       const response = await helper.post_request_with_authorization(data);
 
-      expect(response.status).toBe(400);
-      expect(response.body.data).toBe("Report to user id is incorrect");
+      expect(response.body.data).toBe("User not found");
+      expect(response.status).toBe(404);
     });
 
-    it("Should send 403 if assigning customer report to customer", async () => {
+    it("Should send 400 if assigning customer report to customer", async () => {
       const data = {
         params: {
           orgId: Orgs.org1.id,
@@ -377,7 +377,7 @@ describe("user test cases", () => {
 
       const response = await helper.post_request_with_authorization(data);
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
       expect(response.body.data).toBe("Invalid role of report to user");
     });
 
@@ -394,7 +394,7 @@ describe("user test cases", () => {
 
       const response = await helper.post_request_with_authorization(data);
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(400);
       expect(response.body.data).toBe("Invalid role of report to user");
     });
   });

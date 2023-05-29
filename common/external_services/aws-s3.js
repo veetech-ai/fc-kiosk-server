@@ -36,13 +36,21 @@ class S3Service {
    * @param {string} bucketName Name of bucket
    * @return {Promise<string>} A  key uploaded object.
    */
-  async uploadFile(localFilePath, key, bucketName = this.defaultBucketName) {
+  async uploadFile(
+    localFilePath,
+    key,
+    { bucketName = this.defaultBucketName, fileExt = "" } = {},
+  ) {
     const fileStream = fs.createReadStream(localFilePath);
     fileStream.on("error", (err) => {
       logger.error(`File Error ${err}`);
       throw err;
     });
-    const uploadParams = { Bucket: bucketName, Key: key, Body: fileStream }; // ACL: 'public-read',
+    const uploadParams = {
+      Bucket: bucketName,
+      Key: key + fileExt,
+      Body: fileStream,
+    }; // ACL: 'public-read',
     if (!aws.upload) return null;
     const data = await this.s3.upload(uploadParams).promise();
     return data.Key;
