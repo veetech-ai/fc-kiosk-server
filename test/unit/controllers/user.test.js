@@ -344,7 +344,7 @@ describe("user test cases", () => {
       expect(response.body.data).toBe("Report to user id is incorrect");
     });
 
-    it.only("Should send 400 if the report to user id is incorrect", async () => {
+    it("Should send 400 if the report to user id is incorrect", async () => {
       const wrongReportToUserId = -1;
       const data = {
         params: {
