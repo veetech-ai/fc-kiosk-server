@@ -4,6 +4,7 @@ const CareersServices = require("../../../services/kiosk/career");
 
 const DevicesServices = require("../../../services/device");
 const Validator = require("validatorjs");
+const helper = require("../../../common/helper")
 
 /**
  * @swagger
@@ -90,7 +91,7 @@ exports.create = async (req, res) => {
       false,
     );
 
-    return apiResponse.success(res, req, contactCoach);
+    return apiResponse.success(res, req, contactCareer);
   } catch (error) {
     return apiResponse.fail(
       res,
