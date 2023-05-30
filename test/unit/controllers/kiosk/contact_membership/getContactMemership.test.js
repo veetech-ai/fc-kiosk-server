@@ -109,6 +109,6 @@ describe("GET /api/v1/course-membersip/{id}/contacts", () => {
       membershipId,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.data.length).toBe(0);
   });
 });
