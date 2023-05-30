@@ -82,7 +82,14 @@ exports.create = async (req, res) => {
       gcId: course.id,
       orgId: course.orgId,
     };
-    const contactCoach = await ContactCareersServices.create(reqBody);
+    const contactCareer = await ContactCareersServices.create(reqBody);
+
+    helper.mqtt_publish_message(
+      `gc/${contactCareer.gcId}/screens`,
+      helper.mqttPayloads.onCareerContactUpdate,
+      false,
+    );
+
     return apiResponse.success(res, req, contactCoach);
   } catch (error) {
     return apiResponse.fail(

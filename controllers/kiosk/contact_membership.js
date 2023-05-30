@@ -106,7 +106,7 @@ exports.updateContactMembership = async (req, res) => {
 
     const loggedInUserOrg = req.user?.orgId;
 
-    const contactMembership =
+  
       await contactMembershipService.getContactMembershipById(
         {id:contactMembershipId},
         loggedInUserOrg

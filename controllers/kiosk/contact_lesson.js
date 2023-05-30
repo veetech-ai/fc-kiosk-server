@@ -42,16 +42,9 @@ exports.getLessonContacts = async (req, res) => {
       return apiResponse.fail(res, "lessonId must be a valid number");
     }
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    const lesson = await courseLesson.findLessonById(lessonId);
-    const orgId = lesson.orgId;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
+
+    await courseLesson.findLessonById({id:lessonId},loggedInUserOrg);
+
     const contactCoaches =
       await contactCoachService.getContactCoachesByLessonId(lessonId);
     return apiResponse.success(res, req, contactCoaches);
@@ -104,7 +97,7 @@ exports.updateContactLesson = async (req, res) => {
       return apiResponse.fail(res, "contactCoachId must be a valid number");
     }
 
-    const contactCoach = await contactCoachService.getContactCoachbyId(
+    await contactCoachService.getContactCoachbyId(
       { id: contactCoachId },
       loggedInUserOrg,
     );
