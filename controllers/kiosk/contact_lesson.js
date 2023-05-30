@@ -90,6 +90,7 @@ exports.updateContactLesson = async (req, res) => {
    */
 
   try {
+    const loggedInUserOrg = req.user?.orgId;
     const validation = new Validator(req.body, {
       isAddressed: "boolean",
     });
@@ -103,25 +104,20 @@ exports.updateContactLesson = async (req, res) => {
       return apiResponse.fail(res, "contactCoachId must be a valid number");
     }
 
-    const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
     const contactCoach = await contactCoachService.getContactCoachbyId(
-      contactCoachId,
+      { id: contactCoachId },
+      loggedInUserOrg,
     );
-    const orgId = contactCoach.orgId;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
+    const allowedFields = ["isAddressed"];
+    const filteredBody = helper.validateObject(req.body, allowedFields);
 
-    const isAddressedBoolean = JSON.parse(req.body.isAddressed);
+    if (filteredBody.isAddressed) {
+      filteredBody.isAddressed = JSON.parse(filteredBody.isAddressed);
+    }
     const updatedCoach =
       await contactCoachService.updateContactCoachIsAddressable(
         contactCoachId,
-        isAddressedBoolean,
+        filteredBody,
       );
     return apiResponse.success(res, req, updatedCoach);
   } catch (error) {

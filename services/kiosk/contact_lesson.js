@@ -16,21 +16,20 @@ async function getContactCoachesByLessonId(lessonId) {
   return contactCoaches;
 }
 
-async function updateContactCoachIsAddressable(
-  contactCoachId,
-  isAddressedBoolean,
-) {
+async function updateContactCoachIsAddressable(contactCoachId, body) {
   const [affectedRows] = await ContactCoach.update(
-    { isAddressed: isAddressedBoolean },
+    { ...body },
     { where: { id: contactCoachId } },
   );
 
   return affectedRows;
 }
 
-async function getContactCoachbyId(contactCoachId) {
+async function getContactCoachbyId(where, loggedInUserOrgId) {
+  let clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const contactCoach = await ContactCoach.findOne({
-    where: { id: contactCoachId },
+    clonedWhere,
   });
   if (!contactCoach) {
     throw new ServiceError("Not found", 404);
