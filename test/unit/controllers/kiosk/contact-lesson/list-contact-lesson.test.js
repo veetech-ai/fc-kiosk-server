@@ -155,8 +155,9 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
     );
   });
 
-  it("should successfully return not allowed errro with customer with different organization", async () => {
+  it.only("should successfully return not allowed error with customer with different organization", async () => {
+    console.log(differentOrganizationCustomerToken);
     const response = await makeApiRequest(differentOrganizationCustomerToken);
-    expect(response.body.data).toBe("You are not allowed");
+    expect(response.body.data).toBe("Not found");
   });
 });

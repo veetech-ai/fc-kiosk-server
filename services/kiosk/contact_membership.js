@@ -14,21 +14,27 @@ async function getContactMemberships(membershipId) {
   return contactMembership;
 }
 
-async function getContactMembershipById(contactMembershipId) {
+async function getContactMembershipById(where,loggedInUserOrg) {
+  let clonedWhere = {...where}
+  if(loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
   const contactMembership = await ContactMembership.findOne({
-    where: { id: contactMembershipId },
+    where: clonedWhere
   });
   if (!contactMembership) throw new ServiceError("Not found", 404);
   return contactMembership;
 }
 
 async function updateContactMemberShipIsAddressable(
-  contactMembershipId,
-  isAddressedBoolean,
+  where,
+  body,
+  loggedInUserOrg
 ) {
-  const contactMembership = await getContactMembershipById(contactMembershipId);
-  if (contactMembership) {
-    contactMembership.isAddressed = isAddressedBoolean;
+  let clonedWhere = {...where}
+  if(loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
+  const contactMembership = await getContactMembershipById(where,loggedInUserOrg);
+ 
+  if (contactMembership && Object.keys(contactMembership).length) {
+    contactMembership.isAddressed = body.isAddressed;
     await contactMembership.save();
     return "Updated Successfully";
   }

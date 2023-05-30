@@ -158,6 +158,6 @@ describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
       {},
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toBe("You are not allowed");
+    expect(response.body.data).toBe("Not found");
   });
 });

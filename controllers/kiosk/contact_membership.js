@@ -40,18 +40,11 @@ exports.getMembershipContacts = async (req, res) => {
       return apiResponse.fail(res, "membershipId must be a valid number");
     }
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    const membership = await membershipService.getMembershipById(membershipId);
 
-    const isSameOrganizationResource = loggedInUserOrg === membership.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
+
+
     const contactMembership =
-      await contactMembershipService.getContactMemberships(membershipId);
+      await contactMembershipService.getContactMemberships({id:membershipId},loggedInUserOrg);
     return apiResponse.success(res, req, contactMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -106,11 +99,6 @@ exports.updateContactMembership = async (req, res) => {
 
     const loggedInUserOrg = req.user?.orgId;
 
-  
-      await contactMembershipService.getContactMembershipById(
-        {id:contactMembershipId},
-        loggedInUserOrg
-      );
 
       const allowedFields = ["isAddressed"];
       const filteredBody = helper.validateObject(req.body, allowedFields);
@@ -121,8 +109,9 @@ exports.updateContactMembership = async (req, res) => {
 
     const updatedMemberShipContact =
       await contactMembershipService.updateContactMemberShipIsAddressable(
-        contactMembershipId,
+        {id:contactMembershipId},
         filteredBody,
+        loggedInUserOrg
       );
 
     return apiResponse.success(res, req, updatedMemberShipContact);

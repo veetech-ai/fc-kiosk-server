@@ -122,6 +122,6 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
       body,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.data).toEqual("Not found");
   });
 });
