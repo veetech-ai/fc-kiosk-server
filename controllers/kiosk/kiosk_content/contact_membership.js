@@ -57,7 +57,7 @@ exports.create_contact_membership = async (req, res) => {
    *       200:
    *         description: success
    */
-  try { 
+  try {
     const validation = new Validator(req.body, {
       membershipId: "required|integer",
       phone: "string",

@@ -4,7 +4,7 @@ const CareersServices = require("../../../services/kiosk/career");
 
 const DevicesServices = require("../../../services/device");
 const Validator = require("validatorjs");
-const helper = require("../../../common/helper")
+const helper = require("../../../common/helper");
 
 /**
  * @swagger

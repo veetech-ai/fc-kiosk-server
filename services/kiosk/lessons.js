@@ -17,11 +17,11 @@ async function createLesson(reqBody, orgId) {
   }
   return coach;
 }
-async function findLessonById(where,loggedInUserOrg) {
-  let clonedWhere={...where}
-  if(loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg
+async function findLessonById(where, loggedInUserOrg) {
+  let clonedWhere = { ...where };
+  if (loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
   const lesson = await Coach.findOne({
-    where:clonedWhere
+    where: clonedWhere,
   });
   if (!lesson) {
     throw new ServiceError("Not found", 404);

@@ -8,7 +8,7 @@ const deviceService = require("../../../services/device");
 const contactCoachService = require("../../../services/kiosk/contact_lesson");
 const lessonService = require("../../../services/kiosk/lessons");
 const ServiceError = require("../../../utils/serviceError");
-const helper= require("../../../common/helper");
+const helper = require("../../../common/helper");
 
 /**
  * @swagger
@@ -72,10 +72,10 @@ exports.create_contact_lesson = async (req, res) => {
 
     const deviceId = req.device.id; // device Id
     const course = await deviceService.getLinkedCourse(deviceId);
-    const lesson= await lessonService.findLessonById({id:lessonId})
-    if (lesson.gcId!=course.id) {
-          throw new ServiceError("Not found",404)
-        }
+    const lesson = await lessonService.findLessonById({ id: lessonId });
+    if (lesson.gcId != course.id) {
+      throw new ServiceError("Not found", 404);
+    }
 
     const reqBody = {
       coachId: lessonId,
@@ -83,7 +83,7 @@ exports.create_contact_lesson = async (req, res) => {
       userEmail: email,
       contactMedium: contact_medium,
       gcId: course.id,
-      orgId:course.orgId,
+      orgId: course.orgId,
     };
     const contactCoach = await contactCoachService.createContactCoach(reqBody);
 

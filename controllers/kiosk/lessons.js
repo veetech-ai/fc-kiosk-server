@@ -347,10 +347,10 @@ exports.getSpecificLesson = async (req, res) => {
     }
 
     const loggedInUserOrg = req.user?.orgId;
-    const lesson = await courseLesson.findLessonById({id:lessonId},loggedInUserOrg);
-
-  
-
+    const lesson = await courseLesson.findLessonById(
+      { id: lessonId },
+      loggedInUserOrg,
+    );
 
     return apiResponse.success(res, req, lesson);
   } catch (error) {

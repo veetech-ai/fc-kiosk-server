@@ -29,7 +29,7 @@ async function getContactCoachbyId(where, loggedInUserOrgId) {
   let clonedWhere = { ...where };
   if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
   const contactCoach = await ContactCoach.findOne({
-    where:clonedWhere,
+    where: clonedWhere,
   });
   if (!contactCoach) {
     throw new ServiceError("Not found", 404);

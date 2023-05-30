@@ -43,7 +43,7 @@ exports.getLessonContacts = async (req, res) => {
     }
     const loggedInUserOrg = req.user?.orgId;
 
-    await courseLesson.findLessonById({id:lessonId},loggedInUserOrg);
+    await courseLesson.findLessonById({ id: lessonId }, loggedInUserOrg);
 
     const contactCoaches =
       await contactCoachService.getContactCoachesByLessonId(lessonId);

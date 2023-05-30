@@ -41,10 +41,11 @@ exports.getMembershipContacts = async (req, res) => {
     }
     const loggedInUserOrg = req.user?.orgId;
 
-
-
     const contactMembership =
-      await contactMembershipService.getContactMemberships({id:membershipId},loggedInUserOrg);
+      await contactMembershipService.getContactMemberships(
+        { id: membershipId },
+        loggedInUserOrg,
+      );
     return apiResponse.success(res, req, contactMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -99,20 +100,21 @@ exports.updateContactMembership = async (req, res) => {
 
     const loggedInUserOrg = req.user?.orgId;
 
+    const allowedFields = ["isAddressed"];
+    const filteredBody = helper.validateObject(req.body, allowedFields);
 
-      const allowedFields = ["isAddressed"];
-      const filteredBody = helper.validateObject(req.body, allowedFields);
-
-  
-      if (!filteredBody.isAddressed) {
-        filteredBody.isAddressed = parseBoolean(filteredBody.isAddressed, "isAddressed");
-      }
+    if (!filteredBody.isAddressed) {
+      filteredBody.isAddressed = parseBoolean(
+        filteredBody.isAddressed,
+        "isAddressed",
+      );
+    }
 
     const updatedMemberShipContact =
       await contactMembershipService.updateContactMemberShipIsAddressable(
-        {id:contactMembershipId},
+        { id: contactMembershipId },
         filteredBody,
-        loggedInUserOrg
+        loggedInUserOrg,
       );
 
     return apiResponse.success(res, req, updatedMemberShipContact);
