@@ -30,6 +30,7 @@ describe("GET /api/v1/course-lesson/{lessonId}", () => {
   let customerToken;
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
+  let testOperatorToken
   let lessonId;
   let invalidLessonId = -1;
 
