@@ -28,10 +28,10 @@ describe("GET /api/v1/course-lesson/{lessonId}", () => {
   let adminToken;
   let courseId;
   let customerToken;
-  let testOperatorToken;
   let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
   let lessonId;
+  let invalidLessonId = -1;
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -101,7 +101,6 @@ describe("GET /api/v1/course-lesson/{lessonId}", () => {
     expect(response.body.data).toEqual(expect.objectContaining(expectedObject));
   });
   it("should return error if courseId is not valid", async () => {
-    const invalidLessonId = 99;
     const response = await makeApiRequest(invalidLessonId);
     expect(response.body.data).toBe("Not found");
   });
@@ -122,6 +121,6 @@ describe("GET /api/v1/course-lesson/{lessonId}", () => {
       differentOrganizationCustomerToken,
     );
 
-    expect(response.body.data).toBe("You are not allowed");
+    expect(response.body.data).toBe("Not found");
   });
 });

@@ -345,17 +345,12 @@ exports.getSpecificLesson = async (req, res) => {
     if (!lessonId) {
       return apiResponse.fail(res, "lessonId must be a valid number");
     }
-    const lesson = await courseLesson.findLessonById(lessonId);
 
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    const isSameOrganizationResource = loggedInUserOrg === lesson.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
+    const lesson = await courseLesson.findLessonById({id:lessonId},loggedInUserOrg);
+
+  
+
 
     return apiResponse.success(res, req, lesson);
   } catch (error) {
