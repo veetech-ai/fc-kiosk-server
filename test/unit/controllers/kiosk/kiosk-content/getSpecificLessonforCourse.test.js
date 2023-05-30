@@ -117,7 +117,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     expect(response.body.data.content).toEqual(fields.content);
     expect(response.body.data.timings).toEqual(fields.timings);
   });
-  it("returns 403 status code Request", async () => {
+  it("returns forbidden error if the api is accessed by unauthorized client", async () => {
     const response = await makeApiRequest(lessonId, adminToken);
     expect(response.body.data).toEqual("Token invalid or expire");
   });
