@@ -109,7 +109,7 @@ describe("GET /api/v1/kiosk-content/screens", () => {
     });
   };
 
-  it("should successfully return all lessons attached to device's linked course", async () => {
+  it("should successfully return specific lesson attached to device's linked course", async () => {
     const response = await makeApiRequest(lessonId);
     expect(response.body.data.gcId).toEqual(fields.gcId);
     expect(response.body.data.name).toEqual(fields.name);
