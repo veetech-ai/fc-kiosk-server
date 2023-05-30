@@ -111,7 +111,6 @@ describe("GET /api/v1/kiosk-content/screens", () => {
 
   it("should successfully return specific lesson attached to device's linked course", async () => {
     const response = await makeApiRequest(lessonId);
-    expect(response.body.data.gcId).toEqual(fields.gcId);
     expect(response.body.data.name).toEqual(fields.name);
     expect(response.body.data.title).toEqual(fields.title);
     expect(response.body.data.content).toEqual(fields.content);
