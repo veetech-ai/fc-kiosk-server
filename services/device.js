@@ -128,6 +128,11 @@ exports.super_list = (fv = false, resetc = false) => {
       group: ["id"],
       include: [
         {
+          as: "Organization_Devices",
+          model: models.Organization_Device,
+          attributes: ["device_name"],
+        },
+        {
           as: "Device_Type",
           model: models.Product,
           attributes: ["title"],
