@@ -8,6 +8,7 @@ const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
 const contactMembershipService = require("../../../services/kiosk/contact_membership");
 const membershipService = require("../../../services/kiosk/membership");
+const helper = require("../../../common/helper");
 const ServiceError = require("../../../utils/serviceError");
 
 /**
@@ -71,11 +72,9 @@ exports.create_contact_membership = async (req, res) => {
     const { membershipId, phone, email, contact_medium } = req.body;
     const membership = await membershipService.getMembershipById(membershipId);
     const deviceId = req.device.id; // device Id
-    const courseId = await deviceService.getCourse(deviceId);
-    const course = await courseService.getCourseById(courseId);
-    const orgId = course.orgId;
+    const course = await deviceService.getLinkedCourse(deviceId);
 
-    if (membership.gcId !== courseId) {
+    if (membership.gcId !== course.id) {
       throw new ServiceError("Not found", 404);
     }
 
@@ -84,11 +83,18 @@ exports.create_contact_membership = async (req, res) => {
       userPhone: phone,
       userEmail: email,
       contactMedium: contact_medium,
-      gcId: courseId,
-      orgId,
+      gcId: course.id,
+      orgId: course.id,
     };
     const contactMembership =
       await contactMembershipService.createContactMembership(reqBody);
+
+      helper.mqtt_publish_message(
+        `gc/${contactMembership.gcId}/screens`,
+        helper.mqttPayloads.onMembershipContactUpdate,
+        false,
+      );
+
     return apiResponse.success(res, req, contactMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
