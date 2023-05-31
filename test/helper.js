@@ -19,6 +19,9 @@ exports.admin_password = process.env.ADMIN_PASSWORD || "123456";
 exports.admind_email = process.env.ADMIN_D_EMAIL || "admind@df.com";
 exports.admind_password = process.env.ADMIN_D_PASSWORD || "123456";
 
+exports.golfer_email = process.env.GOLFER_EMAIL || "golfer@df.com";
+exports.golfer_password = process.env.GOLFER_PASSWORD || "123456";
+
 exports.incorrect_email = "incorrect.email@cowlar.com";
 exports.incorrect_password = "1234567";
 
@@ -139,7 +142,12 @@ exports.get_token_for = async (role = "superadmin", getNewToken = false) => {
     } else if (role == "testAdminD") {
       params.email = this.admind_email;
       params.password = this.admind_password;
+    } else if (role == "golfer") {
+      params.email = this.golfer_email;
+      params.password = this.golfer_password;
     }
+
+    
 
     try {
       const res = await request.post(`${config.app.apiPath}auth`).send(params);
