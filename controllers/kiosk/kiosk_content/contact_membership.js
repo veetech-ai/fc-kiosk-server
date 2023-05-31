@@ -70,15 +70,9 @@ exports.create_contact_membership = async (req, res) => {
     }
 
     const { membershipId, phone, email, contact_medium } = req.body;
-    const membership = await membershipService.getMembershipById(membershipId);
     const deviceId = req.device.id; // device Id
     const course = await deviceService.getLinkedCourse(deviceId);
-    // const course = await courseService.getCourseById(courseId);
-    const orgId = course.orgId;
-
-    // if (membership.gcId !== course.id) {
-    //   throw new ServiceError("Not found", 404);
-    // }
+    await membershipService.getMembershipById({id:membershipId,gcId:course.id,orgId:course.orgId});
 
     const reqBody = {
       mId: membershipId,
@@ -86,7 +80,7 @@ exports.create_contact_membership = async (req, res) => {
       userEmail: email,
       contactMedium: contact_medium,
       gcId: course.id,
-      orgId,
+      orgId: course.orgId,
     };
     const contactMembership =
       await contactMembershipService.createContactMembership(reqBody);

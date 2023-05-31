@@ -42,20 +42,13 @@ exports.update_membership = async (req, res) => {
 
   try {
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
+  
     const id = Number(req.params.id);
     if (!id) {
       return apiResponse.fail(res, "id must be a valid number");
     }
-    const membership = await membershipService.getMembershipById(id);
+    const membership = await membershipService.getMembershipById({id:id},loggedInUserOrg);
 
-    const isSameOrganizationResource = loggedInUserOrg === membership.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
     const validation = new Validator(req.body, {
       link: "string",
     });

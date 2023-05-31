@@ -40,16 +40,9 @@ exports.getMembershipContacts = async (req, res) => {
       return apiResponse.fail(res, "membershipId must be a valid number");
     }
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    const membership = await membershipService.getMembershipById(membershipId);
 
-    const isSameOrganizationResource = loggedInUserOrg === membership.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
+  await membershipService.getMembershipById({id:membershipId},loggedInUserOrg);
+  
     const contactMembership =
       await contactMembershipService.getContactMemberships(membershipId);
     return apiResponse.success(res, req, contactMembership);
