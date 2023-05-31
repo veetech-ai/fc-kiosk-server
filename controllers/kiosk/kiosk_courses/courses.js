@@ -340,7 +340,6 @@ exports.create_course_info = async (req, res) => {
 
       for await (const uploadType of parsedOrder) {
         let fileAccordingToOrder;
-        console.log("parsed uuid :", parsedUuidList);
         if (uploadType === "L") {
           fileAccordingToOrder = parsedUuidList.shift();
         } else if (uploadType === "F") {
