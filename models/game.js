@@ -48,10 +48,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      inviteId: {
-        field: "invite_id",
+      gameId: {
+        field: "game_id",
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       createdAt: {
         type: DataTypes.DATE,
