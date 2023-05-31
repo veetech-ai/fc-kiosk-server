@@ -340,15 +340,16 @@ exports.create_course_info = async (req, res) => {
 
       for await (const uploadType of parsedOrder) {
         let fileAccordingToOrder;
-
         if (uploadType === "L") {
           fileAccordingToOrder = parsedUuidList.shift();
         } else if (uploadType === "F") {
           const fileToBeUploaded = courseImages.shift();
-          fileAccordingToOrder = await upload_file.uploadCourseImage(
-            fileToBeUploaded,
-            courseId,
-          );
+          if (fileToBeUploaded) {
+            fileAccordingToOrder = await upload_file.uploadCourseImage(
+              fileToBeUploaded,
+              courseId,
+            );
+          }
         }
 
         uploadedImages.push(fileAccordingToOrder);
