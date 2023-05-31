@@ -48,6 +48,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      teeColor: {
+        field: "tee_color",
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       gameId: {
         field: "game_id",
         type: DataTypes.STRING,
