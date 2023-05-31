@@ -4,57 +4,46 @@ module.exports = (sequelize, DataTypes) => {
     "Game",
     {
       mcId: {
-        field: "mc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
       },
       orgId: {
-        field: "org_id",
         type: DataTypes.INTEGER,
         allowNull: false,
       },
       ownerId: {
-        field: "owner_id",
         type: DataTypes.INTEGER,
         allowNull: false,
       },
       participantId: {
-        field: "participant_id",
         type: DataTypes.INTEGER,
         allowNull: true,
       },
       participantName: {
-        field: "participant_name",
         type: DataTypes.STRING,
         allowNull: true,
       },
       startTime: {
-        field: "start_time",
         type: DataTypes.DATE,
         allowNull: true,
       },
       endTime: {
-        field: "end_time",
         type: DataTypes.DATE,
         allowNull: true,
       },
       totalShotsTaken: {
-        field: "total_shots_taken",
         type: DataTypes.INTEGER,
         allowNull: true,
       },
       totalIdealShots: {
-        field: "total_ideal_shots",
         type: DataTypes.INTEGER,
         allowNull: true,
       },
       teeColor: {
-        field: "tee_color",
         type: DataTypes.STRING,
         allowNull: false,
       },
       gameId: {
-        field: "game_id",
         type: DataTypes.STRING,
         allowNull: false,
       },
