@@ -41,7 +41,7 @@ exports.getMembershipContacts = async (req, res) => {
     }
     const loggedInUserOrg = req.user?.orgId;
 
-    await membershipService.getMembershipById(
+    await membershipService.getOneMembership(
       { id: membershipId },
       loggedInUserOrg,
     );

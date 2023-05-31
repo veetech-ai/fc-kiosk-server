@@ -11,7 +11,7 @@ async function createMembership(gcId, orgId) {
   return membership;
 }
 
-async function getMembershipById(where, loggedInUserOrg) {
+async function getOneMembership(where, loggedInUserOrg) {
   let clonedWhere = { ...where };
   if (loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
   const membership = await Membership.findOne({
@@ -43,5 +43,5 @@ module.exports = {
   createMembership,
   updateMembershipLink,
   getMembershipByCourseId,
-  getMembershipById,
+  getOneMembership,
 };

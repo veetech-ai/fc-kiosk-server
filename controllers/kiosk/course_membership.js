@@ -47,7 +47,7 @@ exports.update_membership = async (req, res) => {
     if (!id) {
       return apiResponse.fail(res, "id must be a valid number");
     }
-    const membership = await membershipService.getMembershipById(
+    const membership = await membershipService.getOneMembership(
       { id: id },
       loggedInUserOrg,
     );

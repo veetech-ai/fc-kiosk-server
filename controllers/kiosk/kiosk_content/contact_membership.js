@@ -72,7 +72,7 @@ exports.create_contact_membership = async (req, res) => {
     const { membershipId, phone, email, contact_medium } = req.body;
     const deviceId = req.device.id; // device Id
     const course = await deviceService.getLinkedCourse(deviceId);
-    await membershipService.getMembershipById({
+    await membershipService.getOneMembership({
       id: membershipId,
       gcId: course.id,
       orgId: course.orgId,
