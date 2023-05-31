@@ -80,11 +80,11 @@ exports.create_contact_lesson = async (req, res) => {
     };
     const contactCoach = await contactCoachService.createContactCoach(reqBody);
 
-    helper.mqtt_publish_message(
-      `gc/${contactCoach.gcId}/screens`,
-      helper.mqttPayloads.onLessonContactUpdate,
-      false,
-    );
+    // helper.mqtt_publish_message(
+    //   `gc/${contactCoach.gcId}/screens`,
+    //   helper.mqttPayloads.onLessonContactUpdate,
+    //   false,
+    // );
 
     return apiResponse.success(res, req, contactCoach);
   } catch (error) {

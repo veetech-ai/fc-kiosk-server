@@ -88,11 +88,11 @@ exports.create_contact_membership = async (req, res) => {
     const contactMembership =
       await contactMembershipService.createContactMembership(reqBody);
 
-    helper.mqtt_publish_message(
-      `gc/${contactMembership.gcId}/screens`,
-      helper.mqttPayloads.onMembershipContactUpdate,
-      false,
-    );
+    // helper.mqtt_publish_message(
+    //   `gc/${contactMembership.gcId}/screens`,
+    //   helper.mqttPayloads.onMembershipContactUpdate,
+    //   false,
+    // );
 
     return apiResponse.success(res, req, contactMembership);
   } catch (error) {
