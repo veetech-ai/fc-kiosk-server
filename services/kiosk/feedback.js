@@ -18,10 +18,12 @@ async function getCourseFeedBacks(courseId) {
   return feedbacks;
 }
 
-async function getAverageRating(courseId) {
+async function getAverageRating(where, loggedInUserOrg) {
+  let clonedWhere = { ...where };
+  if (loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
   // Fetch the average rating
   const result = await Feedback.findAll({
-    where: { gcId: courseId },
+    where: clonedWhere,
     attributes: [
       [Sequelize.fn("avg", Sequelize.col("rating")), "avgRating"],
       [Sequelize.fn("count", Sequelize.col("rating")), "totalRating"],
@@ -104,7 +106,7 @@ async function getFeedBackDetails(courseId) {
     ],
     group: ["gc_id"],
   });
-  const averageAndTotalRatings = await getAverageRating(courseId);
+  const averageAndTotalRatings = await getAverageRating({id:courseId});
   const defaultResponse = {
     one: 0,
     two: 0,

@@ -137,3 +137,45 @@ exports.updateFeedBack = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.getAverageRating = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /course-avaerage-feedback/courses/{courseId}:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get All Feedbacks for Course.
+   *     tags: [Course-Feedback]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: courseId
+   *         description: id of course
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const courseId = Number(req.params.courseId);
+    if (!courseId) {
+      return apiResponse.fail(res, "courseId must be a valid number");
+    }
+
+    const loggedInUserOrg = req.device?.orgId;
+
+    const courseAverageFeedback = await FeedbackService.getAverageRating(
+      { gcId: courseId },
+      loggedInUserOrg,
+    );
+
+    return apiResponse.success(res, req, courseAverageFeedback);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
