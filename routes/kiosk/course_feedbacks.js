@@ -14,6 +14,7 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseFeedBacksController.updateFeedBack,
   ]);
+  
   router.get(averageFeedback + "/courses/:courseId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
