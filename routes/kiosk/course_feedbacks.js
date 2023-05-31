@@ -3,7 +3,6 @@ const validation_middleware = require("../../middlewares/auth.validation");
 const config = require("../../config/config");
 exports.routesConfig = function (app, router) {
   const feedback = `${config.app.apiPath}course-feedback`;
-  const averageFeedback = `${config.app.apiPath}course-avaerage-feedback`;
   router.get(feedback + `/courses/:courseId`, [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
@@ -13,11 +12,5 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     CourseFeedBacksController.updateFeedBack,
-  ]);
-  
-  router.get(averageFeedback + "/courses/:courseId", [
-    validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
-    CourseFeedBacksController.getAverageRating,
   ]);
 };
