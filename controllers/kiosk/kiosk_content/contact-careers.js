@@ -3,6 +3,7 @@ const ContactCareersServices = require("../../../services/kiosk/contact-careers"
 const CareersServices = require("../../../services/kiosk/career");
 
 const DevicesServices = require("../../../services/device");
+const helper = require("../../../common/helper");
 const Validator = require("validatorjs");
 
 /**
@@ -82,8 +83,14 @@ exports.create = async (req, res) => {
       gcId: course.id,
       orgId: course.orgId,
     };
-    const contactCoach = await ContactCareersServices.create(reqBody);
-    return apiResponse.success(res, req, contactCoach);
+    const contactCareer = await ContactCareersServices.create(reqBody);
+
+    helper.mqtt_publish_message(
+      `gc/${contactCareer.gcId}/screens`,
+      helper.mqttPayloads.onLessonContactUpdate,
+      false,
+    );
+    return apiResponse.success(res, req, contactCareer);
   } catch (error) {
     return apiResponse.fail(
       res,

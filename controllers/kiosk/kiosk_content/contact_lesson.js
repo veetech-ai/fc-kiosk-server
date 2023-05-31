@@ -4,10 +4,9 @@ const Validator = require("validatorjs");
 const apiResponse = require("../../../common/api.response");
 
 // Logger Imports
-const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
 const contactCoachService = require("../../../services/kiosk/contact_lesson");
-const helper=require("../../../common/helper")
+const helper = require("../../../common/helper");
 
 /**
  * @swagger
@@ -77,7 +76,7 @@ exports.create_contact_lesson = async (req, res) => {
       userEmail: email,
       contactMedium: contact_medium,
       gcId: course.id,
-      orgId:course.orgId,
+      orgId: course.orgId,
     };
     const contactCoach = await contactCoachService.createContactCoach(reqBody);
 
@@ -86,7 +85,6 @@ exports.create_contact_lesson = async (req, res) => {
       helper.mqttPayloads.onLessonContactUpdate,
       false,
     );
-
 
     return apiResponse.success(res, req, contactCoach);
   } catch (error) {

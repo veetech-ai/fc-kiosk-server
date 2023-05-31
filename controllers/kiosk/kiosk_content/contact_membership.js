@@ -4,7 +4,6 @@ const Validator = require("validatorjs");
 const apiResponse = require("../../../common/api.response");
 
 // Logger Imports
-const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
 const contactMembershipService = require("../../../services/kiosk/contact_membership");
 const membershipService = require("../../../services/kiosk/membership");
@@ -89,11 +88,11 @@ exports.create_contact_membership = async (req, res) => {
     const contactMembership =
       await contactMembershipService.createContactMembership(reqBody);
 
-      helper.mqtt_publish_message(
-        `gc/${contactMembership.gcId}/screens`,
-        helper.mqttPayloads.onMembershipContactUpdate,
-        false,
-      );
+    helper.mqtt_publish_message(
+      `gc/${contactMembership.gcId}/screens`,
+      helper.mqttPayloads.onMembershipContactUpdate,
+      false,
+    );
 
     return apiResponse.success(res, req, contactMembership);
   } catch (error) {
