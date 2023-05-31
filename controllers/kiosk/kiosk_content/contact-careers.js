@@ -86,7 +86,7 @@ exports.create = async (req, res) => {
 
     helper.mqtt_publish_message(
       `gc/${contactCareer.gcId}/screens`,
-      helper.mqttPayloads.onLessonContactUpdate,
+      helper.mqttPayloads.onCareerContactUpdate,
       false,
     );
     return apiResponse.success(res, req, contactCareer);
