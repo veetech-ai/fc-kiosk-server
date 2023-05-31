@@ -73,7 +73,7 @@ exports.create_contact_membership = async (req, res) => {
     const deviceId = req.device.id; // device Id
     const course = await deviceService.getLinkedCourse(deviceId);
 
-    if (membership.gcId !== course.id) {
+    if (membership.gcId != course.id) {
       throw new ServiceError("Not found", 404);
     }
 
