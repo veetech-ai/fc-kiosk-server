@@ -11,11 +11,11 @@ async function createMembership(gcId, orgId) {
   return membership;
 }
 
-async function getMembershipById(where,loggedInUserOrg) {
-  let clonedWhere = {...where };
-  if(loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
+async function getMembershipById(where, loggedInUserOrg) {
+  let clonedWhere = { ...where };
+  if (loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
   const membership = await Membership.findOne({
-    where:clonedWhere,
+    where: clonedWhere,
   });
   if (!membership) throw new ServiceError("Not found", 404);
   return membership;

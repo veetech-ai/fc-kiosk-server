@@ -8,7 +8,7 @@ const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
 const contactMembershipService = require("../../../services/kiosk/contact_membership");
 const membershipService = require("../../../services/kiosk/membership");
-const helper=require("../../../common/helper");
+const helper = require("../../../common/helper");
 const ServiceError = require("../../../utils/serviceError");
 
 /**
@@ -72,7 +72,11 @@ exports.create_contact_membership = async (req, res) => {
     const { membershipId, phone, email, contact_medium } = req.body;
     const deviceId = req.device.id; // device Id
     const course = await deviceService.getLinkedCourse(deviceId);
-    await membershipService.getMembershipById({id:membershipId,gcId:course.id,orgId:course.orgId});
+    await membershipService.getMembershipById({
+      id: membershipId,
+      gcId: course.id,
+      orgId: course.orgId,
+    });
 
     const reqBody = {
       mId: membershipId,
@@ -85,7 +89,7 @@ exports.create_contact_membership = async (req, res) => {
     const contactMembership =
       await contactMembershipService.createContactMembership(reqBody);
 
-      helper.mqtt_publish_message(
+    helper.mqtt_publish_message(
       `gc/${contactMembership.gcId}/screens`,
       helper.mqttPayloads.onMembershipContactUpdate,
       false,

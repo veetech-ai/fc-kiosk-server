@@ -1565,5 +1565,5 @@ exports.mqttPayloads = {
   onAdUpdate: ["ads"],
   onCareerContactUpdate: ["career-contact"],
   onMembershipContactUpdate: ["membership-contact"],
-  onLessonContactUpdate: ["lesson-contact"]
+  onLessonContactUpdate: ["lesson-contact"],
 };
