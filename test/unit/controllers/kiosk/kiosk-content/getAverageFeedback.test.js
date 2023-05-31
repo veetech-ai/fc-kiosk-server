@@ -1,20 +1,20 @@
 const helper = require("../../../../helper");
 const product = require("../../../../../common/products");
-const FeedbackService= require("../../../../../services/kiosk/feedback")
+const FeedbackService = require("../../../../../services/kiosk/feedback");
 const { uuid } = require("uuidv4");
 
 describe("PATCH /api/v1/course-feedbacks/{id}", () => {
   let adminToken;
   let courseId;
   let deviceId;
-  let unlinkedDeviceToken
+  let unlinkedDeviceToken;
   let deviceToken;
   let testOrganizationId = 1;
   let differentOrganizationCustomerToken;
   let customerToken;
   let productId = product.products.kiosk.id;
-  let expectedAverageFeedback=0;
-  let feedbackSum = 0; 
+  let expectedAverageFeedback = 0;
+  let feedbackSum = 0;
   const FeedbackParams = [
     {
       phone: "12312312",
@@ -27,12 +27,12 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
       contact_medium: "call",
     },
     {
-        phone: "12312312",
-        rating: 5,
-        contact_medium: "call",
-      }
+      phone: "12312312",
+      rating: 5,
+      contact_medium: "call",
+    },
   ];
-  
+
   FeedbackParams.forEach((feedback) => {
     feedbackSum += feedback.rating;
   });
@@ -74,12 +74,14 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
       params: deviceReqBody,
     });
     deviceId = device_created.body.data.id;
-    const unlinked_device_created = await helper.post_request_with_authorization({
-      endpoint: "device/create",
-      token: adminToken,
-      params: unlinkeddeviceReqBody,
-    });
-    unlinkedDeviceToken = unlinked_device_created.body.data.device_token.split(" ")[1];
+    const unlinked_device_created =
+      await helper.post_request_with_authorization({
+        endpoint: "device/create",
+        token: adminToken,
+        params: unlinkeddeviceReqBody,
+      });
+    unlinkedDeviceToken =
+      unlinked_device_created.body.data.device_token.split(" ")[1];
     await helper.put_request_with_authorization({
       endpoint: `device/${deviceId}/courses/${courseId}/link`,
       params: {},
@@ -92,13 +94,12 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
     deviceToken = device.body.data.Device.device_token.split(" ")[1];
     const postMultipleFeedbcks = async () => {
       for (const feedbackParam of FeedbackParams) {
-        feedbackParam.gcId = course.body.data.id
-        feedbackParam.orgId = course.body.data.orgId
-        await FeedbackService.createFeedback(feedbackParam)
+        feedbackParam.gcId = course.body.data.id;
+        feedbackParam.orgId = course.body.data.orgId;
+        await FeedbackService.createFeedback(feedbackParam);
       }
     };
     await postMultipleFeedbcks();
-    
   });
   const makeApiRequest = async (token = deviceToken) => {
     return await helper.get_request_with_authorization({
@@ -107,36 +108,27 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
     });
   };
 
-
-
   it("should list the average feedback of the golf course", async () => {
-  const expectedObject = {
-    averageRating:expectedAverageFeedback,
-    totalRating:FeedbackParams.length
-    
-  }
+    const expectedObject = {
+      averageRating: expectedAverageFeedback,
+      totalRating: FeedbackParams.length,
+    };
 
     const response = await makeApiRequest();
     expect(response.body.success).toBe(true);
     expect(response.body.data).toEqual(expectedObject);
-
   });
-
 
   it("should return error if device is not linked with any course ", async () => {
     const response = await makeApiRequest(unlinkedDeviceToken);
     expect(response.body.success).toBe(false);
     expect(response.body.data).toBe("No Course linked with the device");
-    expect(response.status).toBe(404)
+    expect(response.status).toBe(404);
   });
-
-
 
   it("should return error if the api is accessed by client other than device ", async () => {
     const response = await makeApiRequest(adminToken);
     expect(response.body.success).toBe(false);
     expect(response.body.data).toBe("Token invalid or expire");
   });
-
-
 });

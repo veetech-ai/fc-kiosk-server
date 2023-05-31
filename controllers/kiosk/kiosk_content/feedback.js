@@ -88,33 +88,32 @@ exports.create_feedback = async (req, res) => {
 
 exports.getAverageRating = async (req, res) => {
   /**
-     * @swagger
-     *
-     * /kiosk-content/averagefeedbacks:
-     *   get:
-     *     security:
-     *       - auth: []
-     *     description: create feedback for golf course.
-     *     tags: [Kiosk-Courses-Content]
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       200:
-     *         description: success
-     */
-  
-    try {
-      const deviceId = req.device.id; 
-      
-      const course = await deviceService.getLinkedCourse(deviceId);
-  
-  
-      const courseAverageFeedback = await feedbackService.getAverageRating(
-        { gcId: course.id },
-      );
-  
-      return apiResponse.success(res, req, courseAverageFeedback);
-    } catch (error) {
-      return apiResponse.fail(res, error.message, error.statusCode || 500);
-    }
-  };
+   * @swagger
+   *
+   * /kiosk-content/averagefeedbacks:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: create feedback for golf course.
+   *     tags: [Kiosk-Courses-Content]
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const deviceId = req.device.id;
+
+    const course = await deviceService.getLinkedCourse(deviceId);
+
+    const courseAverageFeedback = await feedbackService.getAverageRating({
+      gcId: course.id,
+    });
+
+    return apiResponse.success(res, req, courseAverageFeedback);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
