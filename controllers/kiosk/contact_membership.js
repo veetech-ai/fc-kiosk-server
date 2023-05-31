@@ -46,6 +46,7 @@ exports.getMembershipContacts = async (req, res) => {
         { id: membershipId },
         loggedInUserOrg,
       );
+      console.log("contactMembership", contactMembership);
     return apiResponse.success(res, req, contactMembership);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

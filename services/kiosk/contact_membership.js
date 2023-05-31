@@ -10,6 +10,7 @@ async function createContactMembership(reqBody) {
 async function getContactMemberships(where, loggedInUserOrg) {
   let clonedWhere = { ...where };
   if (loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
+  console.log("cloned where clause :",clonedWhere);
   const contactMembership = await ContactMembership.findAll({
     where: clonedWhere,
   });
