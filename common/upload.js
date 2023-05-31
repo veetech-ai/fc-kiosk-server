@@ -175,30 +175,29 @@ exports.getFileURL = (key) => {
 
   if (Array.isArray(key)) {
     for (const data of key) {
-      if(data){
-
+      if (data) {
         switch (defaultUploadOn) {
           case 1:
-          return `${config.app.backendURL}${key}`.replace(
-            "./public/",
-            "files/",
+            return `${config.app.backendURL}${key}`.replace(
+              "./public/",
+              "files/",
             );
-            // case 2:
-            //   return azureUpload.getFileUrl(key);
-            case 3: {
-              const imageWithCompleteUrl = awsS3.getObjectUrl(data);
-              imagesWithCompleteUrl.push(imageWithCompleteUrl);
-              break;
-            }
-            default:
-              throw {
-                message:
-                "The defaultUploadOn parameter is not correct please correct it in env params ",
-              };
-            }
+          // case 2:
+          //   return azureUpload.getFileUrl(key);
+          case 3: {
+            const imageWithCompleteUrl = awsS3.getObjectUrl(data);
+            imagesWithCompleteUrl.push(imageWithCompleteUrl);
+            break;
           }
+          default:
+            throw {
+              message:
+                "The defaultUploadOn parameter is not correct please correct it in env params ",
+            };
         }
-        return imagesWithCompleteUrl;
+      }
+    }
+    return imagesWithCompleteUrl;
   }
 };
 
