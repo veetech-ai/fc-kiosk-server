@@ -81,6 +81,9 @@ exports.create_contact_lesson = async (req, res) => {
       orgId,
     };
     const contactCoach = await contactCoachService.createContactCoach(reqBody);
+    console.log("🚀 ~ file: contact_lesson.js:84 ~ exports.create_contact_lesson= ~ contactCoach:", contactCoach)
+    
+
     return apiResponse.success(res, req, contactCoach);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
