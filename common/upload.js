@@ -196,9 +196,9 @@ exports.getFileURL = (key) => {
                 "The defaultUploadOn parameter is not correct please correct it in env params ",
               };
             }
-            return imagesWithCompleteUrl;
           }
         }
+        return imagesWithCompleteUrl;
   }
 };
 
