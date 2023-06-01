@@ -17,7 +17,7 @@ async function getOneMembership(where, loggedInUserOrg) {
   const membership = await Membership.findOne({
     where: clonedWhere,
   });
-  if (!membership) throw new ServiceError("Not found", 404);
+  if (!membership) throw new ServiceError("Membership not found", 404);
   return membership;
 }
 
