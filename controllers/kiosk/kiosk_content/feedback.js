@@ -94,7 +94,7 @@ exports.getAverageRating = async (req, res) => {
    *   get:
    *     security:
    *       - auth: []
-   *     description: create feedback for golf course.
+   *     description: get avaerage rating of the golf course.
    *     tags: [Kiosk-Courses-Content]
    *     produces:
    *       - application/json
