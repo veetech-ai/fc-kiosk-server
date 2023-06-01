@@ -52,13 +52,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {},
+    {underscored: false},
   );
   Hole.associate = function (models) {
     // associations can be defined here
-    Hole.belongsTo(models.Game, { foreignKey: "g_id" });
-    Hole.belongsTo(models.Mobile_Course, { foreignKey: "mc_id" });
-    Hole.belongsTo(models.User, { foreignKey: "user_id" });
+    Hole.belongsTo(models.Game, { foreignKey: "gId" });
+    Hole.belongsTo(models.Mobile_Course, { foreignKey: "gcId" });
+    Hole.belongsTo(models.User, { foreignKey: "userId" });
   };
   return Hole;
 };
