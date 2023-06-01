@@ -88,17 +88,18 @@ describe("GET /api/v1/ads", () => {
   };
 
   it("should lists ads with admin or super admin token", async () => {
-
     const expectedObject = {
-      gcId:courseId,
-      state:fields.state,
-      title:fields.title,
-      smallImage:expect.any(String),
-      Course:expect.any(Object),
-      screens:expect.any(Array)
-    }
+      gcId: courseId,
+      state: fields.state,
+      title: fields.title,
+      smallImage: expect.any(String),
+      Course: expect.any(Object),
+      screens: expect.any(Array),
+    };
     const response = await makegetApiRequest();
-    expect(response.body.data).toEqual(expect.arrayContaining([expect.objectContaining(expectedObject)]));
+    expect(response.body.data).toEqual(
+      expect.arrayContaining([expect.objectContaining(expectedObject)]),
+    );
   });
   it("should return error with the customer token who is the part of same organization", async () => {
     const response = await makegetApiRequest(customerToken);
@@ -111,7 +112,9 @@ describe("GET /api/v1/ads", () => {
     expect(response.body.data).toEqual("You are not allowed");
   });
   it("should return an error if user belongs to different organization", async () => {
-    const response = await makegetApiRequest(differentOrganizationCustomerToken);
+    const response = await makegetApiRequest(
+      differentOrganizationCustomerToken,
+    );
     expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
   });
