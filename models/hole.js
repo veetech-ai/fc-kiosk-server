@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      mcId: {
+      gcId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },

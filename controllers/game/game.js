@@ -26,7 +26,7 @@ exports.create_game = async (req, res) => {
    *     consumes:
    *       - application/x-www-form-urlencoded
    *     parameters:
-   *       - name: mcId
+   *       - name: gcId
    *         description: Course ID
    *         in: body
    *         required: true
@@ -55,7 +55,7 @@ exports.create_game = async (req, res) => {
    */
   try {
     const validation = new Validator(req.body, {
-      mcId: "required|integer",
+      gcId: "required|integer",
       totalIdealShots: "required|min:1|integer",
       teeColor: "required|string",
       holes: "required|array",
@@ -67,7 +67,7 @@ exports.create_game = async (req, res) => {
 
     // validate course Id is correct
     await courseServices.getCourseFromDb({
-      id: req.body.mcId,
+      id: req.body.gcId,
     });
 
     req.body.ownerId = req.user.id;
@@ -84,7 +84,7 @@ exports.create_game = async (req, res) => {
       holes,
       req.user.id,
       createdGame.id,
-      req.body.mcId,
+      req.body.gcId,
     );
     return apiResponse.success(res, req, createdGame);
   } catch (error) {

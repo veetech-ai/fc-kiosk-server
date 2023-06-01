@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Game = sequelize.define(
     "Game",
     {
-      mcId: {
+      gcId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
