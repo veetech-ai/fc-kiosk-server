@@ -109,6 +109,6 @@ describe("GET /api/v1/course-membersip/{id}/contacts", () => {
       membershipId,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("Not found");
+    expect(response.body.data).toEqual("Membership not found");
   });
 });
