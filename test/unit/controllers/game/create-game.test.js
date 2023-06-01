@@ -45,13 +45,13 @@ describe("Post: /game", () => {
   describe("Success", () => {
     it("should create the game successfully when parameters are valid", async () => {
       const params = {
-        mcId: createdCourses[0].id,
+        gcId: createdCourses[0].id,
         totalIdealShots: 5,
         teeColor: "Red",
         holes,
       };
       const expectedResponse = {
-        mcId: createdCourses[0].id,
+        gcId: createdCourses[0].id,
         totalIdealShots: 5,
         teeColor: "Red",
         ownerId: golferUser.id,
@@ -76,7 +76,7 @@ describe("Post: /game", () => {
     it("should fail if course does not exist", async () => {
       const wrongCourseId = -1;
       const params = {
-        mcId: wrongCourseId,
+        gcId: wrongCourseId,
         totalIdealShots: 5,
         teeColor: "Red",
         holes,
@@ -94,7 +94,7 @@ describe("Post: /game", () => {
     });
     it("should fail if total ideal shots are invalid", async () => {
       const params = {
-        mcId: createdCourses[0].id,
+        gcId: createdCourses[0].id,
         totalIdealShots: -5,
         teeColor: "Red",
         holes,
@@ -119,7 +119,7 @@ describe("Post: /game", () => {
 
     it("should fail if tee color is not string", async () => {
       const params = {
-        mcId: createdCourses[0].id,
+        gcId: createdCourses[0].id,
         totalIdealShots: 5,
         teeColor: 321,
         holes,
@@ -144,7 +144,7 @@ describe("Post: /game", () => {
 
     it("should fail if hole array is empty", async () => {
       const params = {
-        mcId: createdCourses[0].id,
+        gcId: createdCourses[0].id,
         totalIdealShots: 5,
         teeColor: "Red",
         holes: [],
