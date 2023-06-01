@@ -46,6 +46,7 @@ describe("GET /api/v1/ads", () => {
   let testOperatorToken;
   let testOrganizationId = 1;
   let differentOrganizationCustomerToken;
+  let createdAd;
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -78,7 +79,7 @@ describe("GET /api/v1/ads", () => {
         params: fields,
       });
     };
-    await makeAdApi(fields, files);
+    createdAd=await makeAdApi(fields, files);
   });
   const makegetApiRequest = async (token = adminToken) => {
     return await helper.get_request_with_authorization({
@@ -89,14 +90,15 @@ describe("GET /api/v1/ads", () => {
 
   it("should lists ads with admin or super admin token", async () => {
     const expectedObject = {
-      gcId: courseId,
-      state: fields.state,
-      title: fields.title,
+      gcId: createdAd.body.data.gcId,
+      state: createdAd.body.data.state,
+      title: createdAd.body.data.title,
       smallImage: expect.any(String),
       Course: expect.any(Object),
       screens: expect.any(Array),
     };
     const response = await makegetApiRequest();
+    expect(response.body.success).toBe(true);
     expect(response.body.data).toEqual(
       expect.arrayContaining([expect.objectContaining(expectedObject)]),
     );
