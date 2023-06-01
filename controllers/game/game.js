@@ -3,7 +3,7 @@ const Validator = require("validatorjs");
 
 const apiResponse = require("../../common/api.response");
 const gameService = require("../../services/game/game");
-const {organizationsData} = require("../../common/organizations.data")
+const courseServices = require("../../services/mobile/courses");
 const { v4: uuidv4 } = require("uuid");
 
 /**
@@ -49,13 +49,18 @@ exports.create_game = async (req, res) => {
   try {
     const validation = new Validator(req.body, {
       mcId: "required|integer",
-      totalIdealShots: "required|integer",
+      totalIdealShots: "required|min:1|integer",
       teeColor: "required|string",
     });
 
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+
+    // validate course Id is correct
+    await courseServices.getCourseFromDb({
+      id: req.body.mcId,
+    });
 
     req.body.ownerId = req.user.id;
     req.body.participantId = req.user.id;
