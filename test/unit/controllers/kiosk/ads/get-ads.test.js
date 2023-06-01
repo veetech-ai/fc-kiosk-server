@@ -79,7 +79,7 @@ describe("GET /api/v1/ads", () => {
         params: fields,
       });
     };
-    createdAd=await makeAdApi(fields, files);
+    createdAd = await makeAdApi(fields, files);
   });
   const makegetApiRequest = async (token = adminToken) => {
     return await helper.get_request_with_authorization({
