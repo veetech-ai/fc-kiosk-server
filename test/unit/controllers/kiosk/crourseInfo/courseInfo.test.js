@@ -53,7 +53,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
   let courseId;
   let testOperatorToken;
   let testOrganizationId = 1;
-  let nonExistingCourseID=-1
+  let nonExistingCourseID = -1;
 
   beforeAll(async () => {
     // Create some courses for the test organization
@@ -109,7 +109,11 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
   });
   it("should return an error if user belongs to different organization", async () => {
     const params = {};
-    const response = await makeApiRequest(nonExistingCourseID, params, adminToken);
+    const response = await makeApiRequest(
+      nonExistingCourseID,
+      params,
+      adminToken,
+    );
     expect(response.body.data).toBe("Course not found");
   });
 });
