@@ -67,7 +67,7 @@ describe("Post: /game", () => {
           noOfShots: null,
           isGir: false,
           trackedShots: null,
-          User: { id: 12, name: "Golfer" },
+          User: expect.objectContaining({ id: golferUser.id, name: golferUser.name }),
         }),
         expect.objectContaining({
           userId: 12,
@@ -75,7 +75,7 @@ describe("Post: /game", () => {
           noOfShots: null,
           isGir: false,
           trackedShots: null,
-          User: { id: 12, name: "Golfer" },
+          User: expect.objectContaining({ id: golferUser.id, name: golferUser.name }),
         }),
         expect.objectContaining({
           userId: 12,
@@ -83,7 +83,7 @@ describe("Post: /game", () => {
           noOfShots: null,
           isGir: false,
           trackedShots: null,
-          User: { id: 12, name: "Golfer" },
+          User: expect.objectContaining({ id: golferUser.id, name: golferUser.name }),
         }),
       ];
 
@@ -91,7 +91,6 @@ describe("Post: /game", () => {
         endpoint: `holes/${createdGame.id}`,
         token: golferToken,
       });
-      console.log(response.body.data);
       expect(response.body.data).toEqual(
         expect.arrayContaining(expectedResponse),
       );
