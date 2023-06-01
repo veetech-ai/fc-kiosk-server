@@ -14,21 +14,19 @@ async function getContactMemberships(membershipId) {
   return contactMembership;
 }
 
-async function getContactMembershipOne(where,loggedInUserOrg) {
-  let clonedWhere={...where}
-  if(loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg
+async function getContactMembershipOne(where, loggedInUserOrg) {
+  let clonedWhere = { ...where };
+  if (loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
   const contactMembership = await ContactMembership.findOne({
     where: clonedWhere,
   });
-  if (!contactMembership) throw new ServiceError("Contact Membership not found", 404);
+  if (!contactMembership)
+    throw new ServiceError("Contact Membership not found", 404);
   return contactMembership;
 }
 
-async function updateContactMemberShipIsAddressable(
-  where,
-  body,
-) {
-  const contactMembership = await ContactMembership.update({...body},{where});
+async function updateContactMemberShipIsAddressable(where, body) {
+  const contactMembership = await ContactMembership.update({...body}, {where});
   return contactMembership[0];
 }
 

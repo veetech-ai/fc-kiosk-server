@@ -102,25 +102,32 @@ exports.updateContactMembership = async (req, res) => {
 
     const loggedInUserOrg = req.user?.orgId;
 
-      await contactMembershipService.getContactMembershipOne(
-        {id:contactMembershipId},
-        loggedInUserOrg
-      );
+    await contactMembershipService.getContactMembershipOne(
+      { id: contactMembershipId },
+      loggedInUserOrg,
+    );
 
-      const allowedFields = ["isAddressed"];
-      const filteredBody = helper.validateObject(req.body, allowedFields);
-  
-      if (filteredBody.isAddressed) {
-        filteredBody.isAddressed = parseBoolean(filteredBody.isAddressed, "isAddressed");
-      }
+    const allowedFields = ["isAddressed"];
+    const filteredBody = helper.validateObject(req.body, allowedFields);
+
+    if (filteredBody.hasOwnProperty("isAddressed")) {
+      filteredBody.isAddressed = parseBoolean(
+        filteredBody.isAddressed,
+        "isAddressed",
+      );
+    }
 
     const updatedMemberShipContact =
       await contactMembershipService.updateContactMemberShipIsAddressable(
-        {id:contactMembershipId},
+        { id: contactMembershipId },
         filteredBody,
       );
 
-    return apiResponse.success(res, req, updatedMemberShipContact?"Updated Successfully":"Already Updated");
+    return apiResponse.success(
+      res,
+      req,
+      updatedMemberShipContact ? "Updated Successfully" : "Already Updated",
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
