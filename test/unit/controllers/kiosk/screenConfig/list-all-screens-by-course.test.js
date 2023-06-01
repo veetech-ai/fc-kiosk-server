@@ -69,7 +69,7 @@ describe("GET /api/v1/screen-config/courses/{courseId}", () => {
     const response = await makeApiRequest(courseId, customerToken);
     expect(response.body.data).toMatchObject(expected);
   });
-  it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
+  it("should return an error if user belongs to same organization but do not have proper rights", async () => {
     const response = await makeApiRequest(courseId, testManagerToken);
     expect(response.body.data).toEqual("You are not allowed");
   });
