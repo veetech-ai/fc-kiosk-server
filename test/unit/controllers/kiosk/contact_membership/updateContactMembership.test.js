@@ -122,6 +122,17 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
       body,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.data).toEqual("Contact Membership not found");
+  });
+  it("should return already update message if the updation body is empty", async () => {
+    const body = {
+      
+    };
+    const response = await makeApiRequest(
+      contactMembershipId,
+      body,
+      differentOrganizationCustomerToken,
+    );
+    expect(response.body.data).toEqual("Already Updated");
   });
 });

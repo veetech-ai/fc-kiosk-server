@@ -101,30 +101,26 @@ exports.updateContactMembership = async (req, res) => {
     }
 
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    const contactMembership =
-      await contactMembershipService.getContactMembershipById(
-        contactMembershipId,
+
+      await contactMembershipService.getContactMembershipOne(
+        {id:contactMembershipId},
+        loggedInUserOrg
       );
 
-    const isSameOrganizationResource =
-      loggedInUserOrg === contactMembership.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
+      const allowedFields = ["isAddressed"];
+      const filteredBody = helper.validateObject(req.body, allowedFields);
+  
+      if (filteredBody.isAddressed) {
+        filteredBody.isAddressed = parseBoolean(filteredBody.isAddressed, "isAddressed");
+      }
 
-    let isAddressedBoolean = req.body.isAddressed;
-    const isAddressedParsed = parseBoolean(isAddressedBoolean, "isAddressed");
     const updatedMemberShipContact =
       await contactMembershipService.updateContactMemberShipIsAddressable(
-        contactMembershipId,
-        isAddressedParsed,
+        {id:contactMembershipId},
+        filteredBody,
       );
 
-    return apiResponse.success(res, req, updatedMemberShipContact);
+    return apiResponse.success(res, req, updatedMemberShipContact?"Updated Successfully":"Already Updated");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
