@@ -6,9 +6,25 @@ const Course = models.Course;
 
 describe("Post: /game", () => {
     let golferToken;
-    let testOrganizationId = 1;
     let createdCourses;
     let golferUser;
+    const holes = [
+      {
+        holeId: 31931,
+        holeNumber: 1,
+        par: 4,
+      },
+      {
+        holeId: 31931,
+        holeNumber: 1,
+        par: 4,
+      },
+      {
+        holeId: 31931,
+        holeNumber: 1,
+        par: 4,
+      },
+    ]
 
     beforeAll(async () => {
         // Create some courses for the test organization
@@ -36,6 +52,7 @@ describe("Post: /game", () => {
             org_id: golferUser.orgId,
           },
         ];
+
         createdCourses = await Course.bulkCreate(courses);
       });
 
@@ -45,6 +62,7 @@ describe("Post: /game", () => {
           mcId: createdCourses[0].id,
           totalIdealShots: 5,
           teeColor: 'Red',
+          holes
         };
         const expectedResponse = {
           mcId: createdCourses[0].id,
@@ -73,16 +91,8 @@ describe("Post: /game", () => {
           mcId: wrongCourseId,
           totalIdealShots: 5,
           teeColor: 'Red',
+          holes
         };
-        const expectedResponse = {
-          mcId: createdCourses[0].id,
-          totalIdealShots: 5,
-          teeColor: "Red",
-          ownerId: golferUser.id,
-          participantId: golferUser.id,
-          participantName: golferUser.name,
-          orgId: golferUser.orgId,
-        }
   
         const response = await helper.post_request_with_authorization({
           endpoint: "game",
@@ -97,6 +107,7 @@ describe("Post: /game", () => {
           mcId: createdCourses[0].id,
           totalIdealShots: -5,
           teeColor: 'Red',
+          holes
         };
         const expectedResponse = {
           success: false,
@@ -120,6 +131,7 @@ describe("Post: /game", () => {
           mcId: createdCourses[0].id,
           totalIdealShots: 5,
           teeColor: 321,
+          holes
         };
         const expectedResponse = {
           success: false,
