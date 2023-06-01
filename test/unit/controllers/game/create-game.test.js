@@ -150,5 +150,27 @@ describe("Post: /game", () => {
         expect(response.statusCode).toEqual(400);
       })
 
+      it("should fail if hole array is empty", async () => {
+        const params = {
+          mcId: createdCourses[0].id,
+          totalIdealShots: 5,
+          teeColor: "Red",
+          holes: []
+        };
+        const expectedResponse = {
+          success: false,
+          data: expect.any(Object) 
+        }
+  
+        const response = await helper.post_request_with_authorization({
+          endpoint: "game",
+          token: golferToken,
+          params: params,
+        });
+        
+        expect(response.body).toEqual(expect.objectContaining(expectedResponse));
+        expect(response.body.data.errors.holes).toEqual(['The holes field is required.']);
+        expect(response.statusCode).toEqual(400);
+      })
     })
 })
