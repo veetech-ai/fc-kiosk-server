@@ -15,7 +15,7 @@ async function getGameHole(gId) {
     where: {
       gId,
     },
-    attributes: ["userId", "par", "noOfShots", "isGir", "trackedShots"],
+    attributes: ["id", "userId", "par", "noOfShots", "isGir", "trackedShots"],
     include: [
       {
         model: models.User,

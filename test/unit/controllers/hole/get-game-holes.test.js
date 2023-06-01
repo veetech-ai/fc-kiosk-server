@@ -62,6 +62,7 @@ describe("Post: /game", () => {
     it("should get game holes if game Id is correct", async () => {
       const expectedResponse = [
         expect.objectContaining({
+          id: expect.any(Number),
           userId: 12,
           par: 4,
           noOfShots: null,
@@ -70,6 +71,7 @@ describe("Post: /game", () => {
           User: expect.objectContaining({ id: golferUser.id, name: golferUser.name }),
         }),
         expect.objectContaining({
+          id: expect.any(Number),
           userId: 12,
           par: 4,
           noOfShots: null,
@@ -78,6 +80,7 @@ describe("Post: /game", () => {
           User: expect.objectContaining({ id: golferUser.id, name: golferUser.name }),
         }),
         expect.objectContaining({
+          id: expect.any(Number),
           userId: 12,
           par: 4,
           noOfShots: null,
