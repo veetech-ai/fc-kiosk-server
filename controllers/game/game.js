@@ -80,7 +80,12 @@ exports.create_game = async (req, res) => {
     delete req.body.holes;
 
     const createdGame = await gameService.createGame(req?.body);
-    await holeService.createGameHoles(holes, req.user.id, createdGame.id, req.body.mcId);
+    await holeService.createGameHoles(
+      holes,
+      req.user.id,
+      createdGame.id,
+      req.body.mcId,
+    );
     return apiResponse.success(res, req, createdGame);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

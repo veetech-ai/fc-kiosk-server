@@ -8,9 +8,4 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     GameController.create_game,
   ]);
-//   router.get(courses + "/:orgId", [
-//     validation_middleware.validJWTNeeded,
-//     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
-//     CoursesController.get_courses_for_organization,
-//   ]);
 };

@@ -11,8 +11,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return Promise.all([
-      queryInterface.removeColumn("Games", "tee_color"),
-    ]);
+    return Promise.all([queryInterface.removeColumn("Games", "tee_color")]);
   },
 };

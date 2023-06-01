@@ -147,8 +147,6 @@ exports.get_token_for = async (role = "superadmin", getNewToken = false) => {
       params.password = this.golfer_password;
     }
 
-    
-
     try {
       const res = await request.post(`${config.app.apiPath}auth`).send(params);
 
