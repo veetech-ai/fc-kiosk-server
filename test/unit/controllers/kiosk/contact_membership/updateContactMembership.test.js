@@ -93,7 +93,7 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
     expect(response.body.data).toBe("Updated Successfully");
     await contactMembershipService.updateContactMemberShipIsAddressable(
       contactMembershipId,
-      { isAddressed: false },
+      {isAddressed:false},
     );
   });
   it("should successfully update contact membership when api is accessed by customer same orgnaization", async () => {
