@@ -26,7 +26,10 @@ async function getContactMembershipOne(where, loggedInUserOrg) {
 }
 
 async function updateContactMemberShipIsAddressable(id, body) {
-  const contactMembership = await ContactMembership.update({...body}, {where:{id}});
+  const contactMembership = await ContactMembership.update(
+    { ...body },
+    { where: { id } },
+  );
   return contactMembership[0];
 }
 

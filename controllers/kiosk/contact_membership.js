@@ -110,7 +110,7 @@ exports.updateContactMembership = async (req, res) => {
     const allowedFields = ["isAddressed"];
     const filteredBody = helper.validateObject(req.body, allowedFields);
 
-    if (Object.hasOwnProperty.call(filteredBody,"isAddressed")) {
+    if (Object.hasOwnProperty.call(filteredBody, "isAddressed")) {
       filteredBody.isAddressed = parseBoolean(
         filteredBody.isAddressed,
         "isAddressed",
