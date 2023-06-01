@@ -106,6 +106,7 @@ const JazzCashController = require("./routes/jazzcash");
 const GolfBertRouter = require("./routes/golfbert");
 const KioskCoursesRouter = require("./routes/kiosk/kiosk_courses");
 const GameRouter = require("./routes/game");
+const HoleRouter = require("./routes/hole");
 const CoursesRouter = require("./routes//mobile/courses");
 const ScreenConfigRouter = require("./routes//screenConfig/screens");
 const MQTTController = require("./controllers/mqtt/mqtt");
@@ -184,6 +185,7 @@ GolfBertRouter.routesConfig(app, router);
 CoursesRouter.routesConfig(app, router);
 KioskCoursesRouter.routesConfig(app, router);
 GameRouter.routesConfig(app, router);
+HoleRouter.routesConfig(app, router);
 ScreenConfigRouter.routesConfig(app, router);
 if (config.env === "test") {
   // for test case server
