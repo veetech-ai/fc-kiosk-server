@@ -9,7 +9,7 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     return await Promise.all([
-      queryInterface.renameColumn("Holes", "gcId", "mcId")
+      queryInterface.renameColumn("Holes", "gcId", "mcId"),
     ]);
   },
 };
