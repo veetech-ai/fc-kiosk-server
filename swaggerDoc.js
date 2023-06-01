@@ -25,6 +25,7 @@ const options = {
     "./controllers/golfbert/golfbert.js",
     "./controllers/kiosk_courses/courses.js",
     "./controllers/game/game.js",
+    "./controllers/hole/hole.js",
     "./controllers/mobile/courses.js",
     "./controllers/screenConfig/screens.js",
     "./controllers/user/user.js",
