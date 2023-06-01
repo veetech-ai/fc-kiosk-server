@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return Promise.all([
+    return await Promise.all([
       queryInterface.renameColumn("Games","mc_id","mcId"),
       queryInterface.renameColumn("Games","org_id","orgId"),
       queryInterface.renameColumn("Games","owner_id","ownerId"),
@@ -18,7 +18,7 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return Promise.all([
+    return await Promise.all([
       queryInterface.renameColumn("Games","mcId","mc_id"),
       queryInterface.renameColumn("Games","orgId","org_id"),
       queryInterface.renameColumn("Games","ownerId","owner_id"),
