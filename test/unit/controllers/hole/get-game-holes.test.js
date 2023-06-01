@@ -68,7 +68,10 @@ describe("Post: /game", () => {
           noOfShots: null,
           isGir: false,
           trackedShots: null,
-          User: expect.objectContaining({ id: golferUser.id, name: golferUser.name }),
+          User: expect.objectContaining({
+            id: golferUser.id,
+            name: golferUser.name,
+          }),
         }),
         expect.objectContaining({
           id: expect.any(Number),
@@ -77,7 +80,10 @@ describe("Post: /game", () => {
           noOfShots: null,
           isGir: false,
           trackedShots: null,
-          User: expect.objectContaining({ id: golferUser.id, name: golferUser.name }),
+          User: expect.objectContaining({
+            id: golferUser.id,
+            name: golferUser.name,
+          }),
         }),
         expect.objectContaining({
           id: expect.any(Number),
@@ -86,7 +92,10 @@ describe("Post: /game", () => {
           noOfShots: null,
           isGir: false,
           trackedShots: null,
-          User: expect.objectContaining({ id: golferUser.id, name: golferUser.name }),
+          User: expect.objectContaining({
+            id: golferUser.id,
+            name: golferUser.name,
+          }),
         }),
       ];
 
