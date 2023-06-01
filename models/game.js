@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {underscored: false},
+    { underscored: false },
   );
   Game.associate = function (models) {
     // associations can be defined here

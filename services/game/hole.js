@@ -15,17 +15,17 @@ async function getGameHole(gId) {
     where: {
       gId,
     },
-    attributes: [ "userId", "par", "noOfShots", "isGir", "trackedShots" ],
+    attributes: ["userId", "par", "noOfShots", "isGir", "trackedShots"],
     include: [
       {
         model: models.User,
-        attributes: [ "id", "name" ] 
-      }
-    ]
+        attributes: ["id", "name"],
+      },
+    ],
   });
 }
 
 module.exports = {
   createGameHoles,
-  getGameHole
+  getGameHole,
 };

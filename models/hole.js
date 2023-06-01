@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {underscored: false},
+    { underscored: false },
   );
   Hole.associate = function (models) {
     // associations can be defined here
