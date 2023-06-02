@@ -46,18 +46,25 @@ describe("Post: /game", () => {
     it("should create the game successfully when parameters are valid", async () => {
       const params = {
         gcId: createdCourses[0].id,
-        totalIdealShots: 5,
         teeColor: "Red",
         holes,
       };
       const expectedResponse = {
+        id: expect.any(Number),
         gcId: createdCourses[0].id,
-        totalIdealShots: 5,
+        totalIdealShots: holes.reduce(
+          (accumulate, hole) => accumulate + hole.par,
+          0,
+        ),
         teeColor: "Red",
         ownerId: golferUser.id,
         participantId: golferUser.id,
         participantName: golferUser.name,
         orgId: golferUser.orgId,
+        createdAt: expect.any(String),
+        gameId: expect.any(String),
+        startTime: expect.any(String),
+        updatedAt: expect.any(String),
       };
 
       const response = await helper.post_request_with_authorization({
@@ -73,11 +80,27 @@ describe("Post: /game", () => {
     });
   });
   describe("Fail", () => {
+    it("should fail if course is not passed", async () => {
+      const params = {
+        teeColor: "Red",
+        holes,
+      };
+
+      const response = await helper.post_request_with_authorization({
+        endpoint: "game",
+        token: golferToken,
+        params: params,
+      });
+
+      expect(response.body.data.errors.gcId).toEqual(
+        expect.arrayContaining(["The gcId field is required."]),
+      );
+      expect(response.statusCode).toEqual(400);
+    });
     it("should fail if course does not exist", async () => {
       const wrongCourseId = -1;
       const params = {
         gcId: wrongCourseId,
-        totalIdealShots: 5,
         teeColor: "Red",
         holes,
       };
@@ -92,35 +115,10 @@ describe("Post: /game", () => {
         `Course Not Found${config.error_message_separator}404`,
       );
     });
-    it("should fail if total ideal shots are invalid", async () => {
-      const params = {
-        gcId: createdCourses[0].id,
-        totalIdealShots: -5,
-        teeColor: "Red",
-        holes,
-      };
-      const expectedResponse = {
-        success: false,
-        data: expect.any(Object),
-      };
-
-      const response = await helper.post_request_with_authorization({
-        endpoint: "game",
-        token: golferToken,
-        params: params,
-      });
-
-      expect(response.body).toEqual(expect.objectContaining(expectedResponse));
-      expect(response.body.data.errors.totalIdealShots).toEqual([
-        "The totalIdealShots must be at least 1.",
-      ]);
-      expect(response.statusCode).toEqual(400);
-    });
 
     it("should fail if tee color is not string", async () => {
       const params = {
         gcId: createdCourses[0].id,
-        totalIdealShots: 5,
         teeColor: 321,
         holes,
       };
@@ -145,7 +143,6 @@ describe("Post: /game", () => {
     it("should fail if hole array is empty", async () => {
       const params = {
         gcId: createdCourses[0].id,
-        totalIdealShots: 5,
         teeColor: "Red",
         holes: [],
       };
