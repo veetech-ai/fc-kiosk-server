@@ -1,10 +1,11 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
+const courseService = require("../../../../../services/kiosk/course");
+const screensService = require("../../../../../services/screenConfig/screens");
 const ServiceError = require("../../../../../utils/serviceError");
 
 let mockFields;
 let mockFiles;
-const errorMessage = "Something went wroong";
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -41,13 +42,14 @@ const mockFormidable = (fields, files) => {
 describe("GET /api/v1/ads", () => {
   let adminToken;
   let courseId;
-  let orgId;
   let customerToken;
   let testOperatorToken;
   let testOrganizationId = 1;
   let differentOrganizationCustomerToken;
   let createdAd;
-
+  let linkedCourse;
+  let screensData
+  let linkedScreens
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -69,7 +71,6 @@ describe("GET /api/v1/ads", () => {
       params: courses,
     });
     courseId = course.body.data.id;
-    orgId = course.body.data.orgId;
     const makeAdApi = async (fields, files) => {
       fields.gcId = courseId;
       mockFormidable(fields, files);
@@ -80,6 +81,11 @@ describe("GET /api/v1/ads", () => {
       });
     };
     createdAd = await makeAdApi(fields, files);
+    linkedCourse = await courseService.getOne({ id: createdAd.body.data.gcId });
+    screensData=await screensService.getScreensByCourses(createdAd.body.data.gcId)
+    const {id,gcId,orgId,createdAt,updatedAt,...restFields}=screensData.dataValues
+    linkedScreens = Object.keys(restFields).filter(key => restFields[key] === true);
+    
   });
   const makegetApiRequest = async (token = adminToken) => {
     return await helper.get_request_with_authorization({
@@ -94,8 +100,10 @@ describe("GET /api/v1/ads", () => {
       state: createdAd.body.data.state,
       title: createdAd.body.data.title,
       smallImage: expect.any(String),
-      Course: expect.any(Object),
-      screens: expect.any(Array),
+      Course: {
+        name: linkedCourse.name,
+      },
+      screens: linkedScreens,
     };
     const response = await makegetApiRequest();
     expect(response.body.success).toBe(true);
