@@ -11,20 +11,20 @@ const { v4: uuidv4 } = require("uuid");
 /**
  * @swagger
  * tags:
- *   name: Game
- *   description: Courses API's
+ *   name: Games
+ *   description: Games API's
  */
 exports.create_game = async (req, res) => {
   /**
    * @swagger
    *
-   * /game:
+   * /games:
    *   post:
    *     security:
    *       - auth: []
    *     summary: create game
    *     description: logged In user can start/create game.
-   *     tags: [Game]
+   *     tags: [Games]
    *     consumes:
    *       - application/json
    *     parameters:
