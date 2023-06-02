@@ -40,16 +40,12 @@ exports.getMembershipContacts = async (req, res) => {
       return apiResponse.fail(res, "membershipId must be a valid number");
     }
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    const membership = await membershipService.getMembershipById(membershipId);
 
-    const isSameOrganizationResource = loggedInUserOrg === membership.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
+    await membershipService.getOneMembership(
+      { id: membershipId },
+      loggedInUserOrg,
+    );
+
     const contactMembership =
       await contactMembershipService.getContactMemberships(membershipId);
     return apiResponse.success(res, req, contactMembership);
@@ -105,30 +101,33 @@ exports.updateContactMembership = async (req, res) => {
     }
 
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    const contactMembership =
-      await contactMembershipService.getContactMembershipById(
-        contactMembershipId,
-      );
 
-    const isSameOrganizationResource =
-      loggedInUserOrg === contactMembership.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
+    await contactMembershipService.getContactMembershipOne(
+      { id: contactMembershipId },
+      loggedInUserOrg,
+    );
+
+    const allowedFields = ["isAddressed"];
+    const filteredBody = helper.validateObject(req.body, allowedFields);
+
+    if (Object.hasOwnProperty.call(filteredBody, "isAddressed")) {
+      filteredBody.isAddressed = parseBoolean(
+        filteredBody.isAddressed,
+        "isAddressed",
+      );
     }
 
-    let isAddressedBoolean = req.body.isAddressed;
-    const isAddressedParsed = parseBoolean(isAddressedBoolean, "isAddressed");
     const updatedMemberShipContact =
       await contactMembershipService.updateContactMemberShipIsAddressable(
         contactMembershipId,
-        isAddressedParsed,
+        filteredBody,
       );
 
-    return apiResponse.success(res, req, updatedMemberShipContact);
+    return apiResponse.success(
+      res,
+      req,
+      updatedMemberShipContact ? "Updated Successfully" : "Already Updated",
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

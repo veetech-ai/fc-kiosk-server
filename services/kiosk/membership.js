@@ -11,11 +11,13 @@ async function createMembership(gcId, orgId) {
   return membership;
 }
 
-async function getMembershipById(mId) {
+async function getOneMembership(where, loggedInUserOrg) {
+  let clonedWhere = { ...where };
+  if (loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
   const membership = await Membership.findOne({
-    where: { id: mId },
+    where: clonedWhere,
   });
-  if (!membership) throw new ServiceError("Not found", 404);
+  if (!membership) throw new ServiceError("Membership not found", 404);
   return membership;
 }
 
@@ -41,5 +43,5 @@ module.exports = {
   createMembership,
   updateMembershipLink,
   getMembershipByCourseId,
-  getMembershipById,
+  getOneMembership,
 };
