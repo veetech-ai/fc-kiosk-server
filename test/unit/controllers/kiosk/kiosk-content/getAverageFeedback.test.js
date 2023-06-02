@@ -9,8 +9,9 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
   let deviceId;
   let unlinkedDeviceToken;
   let deviceToken;
-  let testOrganizationId = 1;
   let customerToken;
+  let testOrganizationId = 1;
+  let differentOrganizationCustomerToken;
   let productId = product.products.kiosk.id;
   let expectedAverageFeedback = 0;
   let feedbackSum = 0;
@@ -116,7 +117,6 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
     const response = await makeApiRequest();
     expect(response.body.data).toEqual(expectedObject);
     expect(response.body.success).toBe(true);
-
   });
 
   it("should return error if device is not linked with any course ", async () => {
@@ -124,13 +124,11 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
     expect(response.body.data).toBe("No Course linked with the device");
     expect(response.status).toBe(404);
     expect(response.body.success).toBe(false);
-
   });
 
   it("should return error if the api is accessed by client other than device ", async () => {
     const response = await makeApiRequest(adminToken);
     expect(response.body.data).toBe("Token invalid or expire");
     expect(response.body.success).toBe(false);
-
   });
 });
