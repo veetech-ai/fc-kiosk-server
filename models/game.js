@@ -56,7 +56,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {},
+    {
+      indexes: [
+        {
+          fields: ["gameId", "participantId"],
+        },
+      ],
+    },
   );
   Game.associate = function (models) {
     // associations can be defined here
@@ -66,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
     Game.belongsTo(models.User, { foreignKey: "participantId" });
     Game.hasMany(models.Hole, {
       as: "Holes",
-      foreignKey: "g_id",
+      foreignKey: "gId",
     });
   };
   return Game;
