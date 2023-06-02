@@ -90,7 +90,7 @@ exports.getAverageRating = async (req, res) => {
   /**
    * @swagger
    *
-   * /kiosk-content/averagefeedbacks:
+   * /kiosk-content/feedbacks/average:
    *   get:
    *     security:
    *       - auth: []
@@ -108,11 +108,11 @@ exports.getAverageRating = async (req, res) => {
 
     const course = await deviceService.getLinkedCourse(deviceId);
 
-    const courseAverageFeedback = await feedbackService.getAverageRating({
+    const courseFeedBackSummary = await feedbackService.getAverageRating({
       gcId: course.id,
     });
 
-    return apiResponse.success(res, req, courseAverageFeedback);
+    return apiResponse.success(res, req, courseFeedBackSummary);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

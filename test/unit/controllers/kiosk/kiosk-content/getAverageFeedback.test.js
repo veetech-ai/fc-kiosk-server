@@ -10,7 +10,6 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
   let unlinkedDeviceToken;
   let deviceToken;
   let testOrganizationId = 1;
-  let differentOrganizationCustomerToken;
   let customerToken;
   let productId = product.products.kiosk.id;
   let expectedAverageFeedback = 0;
@@ -103,7 +102,7 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
   });
   const makeApiRequest = async (token = deviceToken) => {
     return await helper.get_request_with_authorization({
-      endpoint: `kiosk-content/averagefeedbacks`,
+      endpoint: `kiosk-content/feedbacks/average`,
       token: token,
     });
   };
@@ -115,20 +114,23 @@ describe("PATCH /api/v1/course-feedbacks/{id}", () => {
     };
 
     const response = await makeApiRequest();
-    expect(response.body.success).toBe(true);
     expect(response.body.data).toEqual(expectedObject);
+    expect(response.body.success).toBe(true);
+
   });
 
   it("should return error if device is not linked with any course ", async () => {
     const response = await makeApiRequest(unlinkedDeviceToken);
-    expect(response.body.success).toBe(false);
     expect(response.body.data).toBe("No Course linked with the device");
     expect(response.status).toBe(404);
+    expect(response.body.success).toBe(false);
+
   });
 
   it("should return error if the api is accessed by client other than device ", async () => {
     const response = await makeApiRequest(adminToken);
-    expect(response.body.success).toBe(false);
     expect(response.body.data).toBe("Token invalid or expire");
+    expect(response.body.success).toBe(false);
+
   });
 });
