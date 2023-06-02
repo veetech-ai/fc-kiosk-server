@@ -97,3 +97,35 @@ exports.create_game = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.getHoles = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /game/{gameId}/holes:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: logged In user can fetch holes record by game Id.
+   *     tags: [Game]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     parameters:
+   *       - name: gameId
+   *         description: Id of the game
+   *         in: path
+   *         required: true
+   *         type: integer
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const holes = await holeService.getGameHole(req.params.gameId);
+    return apiResponse.success(res, req, holes);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};

@@ -8,4 +8,8 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     GameController.create_game,
   ]);
+  router.get(game + "/:gameId/holes", [
+    validation_middleware.validJWTNeeded,
+    GameController.getHoles,
+  ]);
 };

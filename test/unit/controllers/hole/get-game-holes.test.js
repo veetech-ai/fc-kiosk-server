@@ -3,7 +3,7 @@ const models = require("../../../../models/index");
 const jwt = require("jsonwebtoken");
 const Course = models.Course;
 
-describe("Post: /game", () => {
+describe("Get: /game/{gameId}/holes", () => {
   let golferToken;
   let createdCourses;
   let createdGame;
@@ -100,7 +100,7 @@ describe("Post: /game", () => {
       ];
 
       const response = await helper.get_request_with_authorization({
-        endpoint: `holes/${createdGame.id}`,
+        endpoint: `game/${createdGame.id}/holes`,
         token: golferToken,
       });
       expect(response.body.data).toEqual(
@@ -111,7 +111,7 @@ describe("Post: /game", () => {
     it("should return empty array if game id is incorrect", async () => {
       const inCorrectGameId = -1;
       const response = await helper.get_request_with_authorization({
-        endpoint: `holes/${inCorrectGameId}`,
+        endpoint: `game/${inCorrectGameId}/holes`,
         token: golferToken,
       });
       expect(response.body.data).toEqual([]);
