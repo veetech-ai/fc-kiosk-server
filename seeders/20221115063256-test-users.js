@@ -6,6 +6,7 @@ const roles =
 const config = require("../config/config");
 const models = require("../models");
 const Organization = models.Organization;
+const { organizationsInApplication } = require("../common/organizations.data");
 
 // ****************** NOTE: **************//
 // ZONG USERS DATA IS FOR TESTING PURPOSES
@@ -131,7 +132,6 @@ module.exports = {
               "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
             mqtt_token: randtoken.generate(10),
             role_id: roles.manager.id,
-            report_to: testCustomer.id,
           },
           {
             name: "Admin D",
