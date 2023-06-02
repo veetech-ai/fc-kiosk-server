@@ -260,6 +260,7 @@ exports.routesConfig = function (app, router) {
   ]);
 
   router.post(group + "/complete-registration", [
+    validation_middleware.validReCaptchaToken,
     validation_middleware.valid_verify_token,
     UsersController.completeRegistration,
   ]);

@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     return await Promise.all([
-      queryInterface.renameColumn("Games", "mc_id", "mcId"),
+      queryInterface.renameColumn("Games", "mc_id", "gcId"),
       queryInterface.renameColumn("Games", "org_id", "orgId"),
       queryInterface.renameColumn("Games", "owner_id", "ownerId"),
       queryInterface.renameColumn("Games", "participant_id", "participantId"),
@@ -24,14 +24,13 @@ module.exports = {
         "total_ideal_shots",
         "totalIdealShots",
       ),
-      queryInterface.renameColumn("Games", "tee_color", "teeColor"),
-      queryInterface.renameColumn("Games", "game_id", "gameId"),
+      queryInterface.renameColumn("Games", "invite_id", "gameId"),
     ]);
   },
 
   down: async (queryInterface, Sequelize) => {
     return await Promise.all([
-      queryInterface.renameColumn("Games", "mcId", "mc_id"),
+      queryInterface.renameColumn("Games", "gcId", "mc_id"),
       queryInterface.renameColumn("Games", "orgId", "org_id"),
       queryInterface.renameColumn("Games", "ownerId", "owner_id"),
       queryInterface.renameColumn("Games", "participantId", "participant_id"),
@@ -52,8 +51,7 @@ module.exports = {
         "totalIdealShots",
         "total_ideal_shots",
       ),
-      queryInterface.renameColumn("Games", "teeColor", "tee_color"),
-      queryInterface.renameColumn("Games", "gameId", "game_id"),
+      queryInterface.renameColumn("Games", "gameId", "invite_id"),
     ]);
   },
 };

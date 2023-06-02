@@ -52,7 +52,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    { underscored: false },
+    {
+      indexes: [
+        {
+          fields: ["gId", "gcId"],
+        },
+      ],
+    },
   );
   Hole.associate = function (models) {
     // associations can be defined here

@@ -2,8 +2,8 @@
 const Validator = require("validatorjs");
 
 const apiResponse = require("../../common/api.response");
-const gameService = require("../../services/game/game");
-const holeService = require("../../services/game/hole");
+const gameService = require("../../services/mobile/game");
+const holeService = require("../../services/mobile/hole");
 const courseServices = require("../../services/mobile/courses");
 const { v4: uuidv4 } = require("uuid");
 

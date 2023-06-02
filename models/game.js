@@ -56,7 +56,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    { underscored: false },
+    {
+      indexes: [
+        {
+          fields: ["gameId", "participantId"],
+        },
+      ],
+    },
   );
   Game.associate = function (models) {
     // associations can be defined here

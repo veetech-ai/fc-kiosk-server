@@ -1,6 +1,6 @@
-const config = require("../config/config");
-const HoleController = require("../controllers/hole/hole");
-const validation_middleware = require("../middlewares/auth.validation");
+const config = require("../../config/config");
+const HoleController = require("../../controllers/mobile/hole");
+const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
   const holes = `${config.app.apiPath}holes`;
