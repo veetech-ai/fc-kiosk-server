@@ -1,6 +1,5 @@
 const { uuid } = require("uuidv4");
 const jwt = require("jsonwebtoken");
-
 const models = require("../../../models");
 const User = models.User;
 
