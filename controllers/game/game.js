@@ -22,32 +22,31 @@ exports.create_game = async (req, res) => {
    *   post:
    *     security:
    *       - auth: []
+   *     summary: create game
    *     description: logged In user can start/create game.
    *     tags: [Game]
    *     consumes:
-   *       - application/x-www-form-urlencoded
+   *       - application/json
    *     parameters:
-   *       - name: gcId
-   *         description: Course ID
-   *         in: body
-   *         required: true
-   *         type: string
-   *       - name: totalIdealShots
-   *         description: Total Ideal Shots
-   *         in: body
-   *         required: true
-   *         type: string
-   *       - name: teeColor
-   *         description: Color of the tee
-   *         in: body
-   *         required: true
-   *         type: string
-   *       - name: holes
-   *         example: [{ holeId: 1, holeNumber: 1, par: 5 }]
-   *         description: array of holes. The hole object properties are should be same as in the example
-   *         in: body
-   *         required: true
-   *         type: array
+   *       - in: body
+   *         name: body
+   *         schema:
+   *          type: object
+   *          required:
+   *           - gcId
+   *           - teeColor
+   *           - holes
+   *          properties:
+   *            gcId:
+   *              type: integer
+   *              example: 1
+   *            teeColor:
+   *              type: string
+   *              example: Red
+   *            holes:
+   *              type: array
+   *              items: object
+   *              example: [{ holeId: 31931, holeNumber: 1, par: 4 }]
    *     produces:
    *       - application/json
    *     responses:
