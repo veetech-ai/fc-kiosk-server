@@ -11,9 +11,7 @@ exports.getCourseFromDb = async (where) => {
 
   const golfBertCourseId = courseFromDB.golfbertId;
   if (!golfBertCourseId) {
-    throw new ServiceError(
-      "Course's Golfbert id not found", 404
-    );
+    throw new ServiceError("Course's Golfbert id not found", 404);
   }
   return courseFromDB;
 };

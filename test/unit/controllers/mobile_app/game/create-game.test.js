@@ -111,9 +111,7 @@ describe("Post: /game", () => {
         params: params,
       });
 
-      expect(response.body.data).toEqual(
-        `Course not found`,
-      );
+      expect(response.body.data).toEqual(`Course not found`);
     });
 
     it("should fail if tee color is not string", async () => {

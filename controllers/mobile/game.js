@@ -58,9 +58,9 @@ exports.create_game = async (req, res) => {
       gcId: "required|integer",
       teeColor: "required|string",
       holes: "required|array",
-      'holes.*.par': 'required|integer',
-      'holes.*.holeId': 'required|integer',
-      'holes.*.holeNumber': 'required|integer',
+      "holes.*.par": "required|integer",
+      "holes.*.holeId": "required|integer",
+      "holes.*.holeNumber": "required|integer",
     });
 
     if (validation.fails()) {
