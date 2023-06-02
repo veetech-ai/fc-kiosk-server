@@ -99,7 +99,7 @@ module.exports = {
           mqtt_token: randtoken.generate(10),
           role_id: roles.manager.id,
           report_to: testCustomer.id,
-        }
+        },
       ],
       { ignoreDuplicates: true, updateOnDuplicate: ["role_id", "email"] },
     );
