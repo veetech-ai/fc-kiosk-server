@@ -6,6 +6,7 @@ const roles =
 const config = require("../config/config");
 const models = require("../models");
 const Organization = models.Organization;
+const { organizationsInApplication } = require("../common/organizations.data");
 
 // ****************** NOTE: **************//
 // ZONG USERS DATA IS FOR TESTING PURPOSES
@@ -81,6 +82,67 @@ module.exports = {
               "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
             mqtt_token: randtoken.generate(10),
             role_id: roles.ceo.id,
+          },
+          {
+            name: "Test Organization Customer account - D",
+            email: config.testDAccountEmail,
+            is_admin: false,
+            super_admin: false,
+            orgId: TestOrg.id,
+            status: 1,
+            password:
+              "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
+            mqtt_token: randtoken.generate(10),
+            role_id: roles.customer.id,
+          },
+          {
+            name: "operator account",
+            email: "testoperator@df.com",
+            is_admin: false,
+            super_admin: false,
+            orgId: TestOrg.id,
+            status: 3,
+            password:
+              "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
+            mqtt_token: randtoken.generate(10),
+            role_id: roles.operator.id,
+            card_serial: 123654,
+          },
+          {
+            name: "Test Organization Device Account",
+            email: "testorgdevice@df.com",
+            is_admin: false,
+            super_admin: false,
+            orgId: TestOrg.id,
+            status: 1,
+            password:
+              "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
+            mqtt_token: randtoken.generate(10),
+            role_id: roles.device.id,
+          },
+          {
+            name: "Golfer",
+            email: "golfer@df.com",
+            orgId: organizationsInApplication.golfers.id,
+            status: 1,
+            date_of_birth: new Date(),
+            gender: "male",
+            handicap_index: 1,
+            password:
+              "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
+            mqtt_token: randtoken.generate(10),
+            role_id: roles.manager.id,
+          },
+          {
+            name: "Admin D",
+            email: "admind@df.com",
+            is_admin: true,
+            super_admin: false,
+            status: 1,
+            password:
+              "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
+            mqtt_token: randtoken.generate(10),
+            role_id: roles.admin.id,
           },
         ],
         { ignoreDuplicates: true },
