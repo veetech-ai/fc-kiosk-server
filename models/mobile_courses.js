@@ -38,11 +38,11 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Mobile_Course.hasMany(models.Game, {
       as: "Games",
-      foreignKey: "mc_id",
+      foreignKey: "gcId",
     });
     Mobile_Course.hasMany(models.Hole, {
       as: "Holes",
-      foreignKey: "mc_id",
+      foreignKey: "gcId",
     });
   };
   return Mobile_Course;
