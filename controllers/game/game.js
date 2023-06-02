@@ -5,6 +5,7 @@ const apiResponse = require("../../common/api.response");
 const gameService = require("../../services/game/game");
 const holeService = require("../../services/game/hole");
 const courseServices = require("../../services/mobile/courses");
+const { validateObject } = require("../../common/helper");
 const { v4: uuidv4 } = require("uuid");
 
 /**
@@ -69,21 +70,23 @@ exports.create_game = async (req, res) => {
       id: req.body.gcId,
     });
 
-    req.body.ownerId = req.user.id;
-    req.body.participantId = req.user.id;
-    req.body.participantName = req.user.name;
-    req.body.startTime = new Date();
-    req.body.gameId = uuidv4();
-    req.body.orgId = req.user.orgId;
-    const holes = req.body.holes;
-    delete req.body.holes;
+    const gameBody = validateObject(req.body, ["gcId", "teeColor"]);
 
-    req.body.totalIdealShots = holes.reduce(
+    gameBody.ownerId = req.user.id;
+    gameBody.participantId = req.user.id;
+    gameBody.participantName = req.user.name;
+    gameBody.startTime = new Date();
+    gameBody.gameId = uuidv4();
+    gameBody.orgId = req.user.orgId;
+
+    const holes = req.body.holes;
+
+    gameBody.totalIdealShots = holes.reduce(
       (accumulate, hole) => accumulate + hole.par,
       0,
     );
 
-    const createdGame = await gameService.createGame(req?.body);
+    const createdGame = await gameService.createGame(gameBody);
     await holeService.createGameHoles(
       holes,
       req.user.id,
