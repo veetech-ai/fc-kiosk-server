@@ -48,8 +48,8 @@ describe("GET /api/v1/ads", () => {
   let differentOrganizationCustomerToken;
   let createdAd;
   let linkedCourse;
-  let screensData
-  let linkedScreens
+  let screensData;
+  let linkedScreens;
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -82,10 +82,14 @@ describe("GET /api/v1/ads", () => {
     };
     createdAd = await makeAdApi(fields, files);
     linkedCourse = await courseService.getOne({ id: createdAd.body.data.gcId });
-    screensData=await screensService.getScreensByCourses(createdAd.body.data.gcId)
-    const {id,gcId,orgId,createdAt,updatedAt,...restFields}=screensData.dataValues
-    linkedScreens = Object.keys(restFields).filter(key => restFields[key] === true);
-    
+    screensData = await screensService.getScreensByCourses(
+      createdAd.body.data.gcId,
+    );
+    const { id, gcId, orgId, createdAt, updatedAt, ...restFields } =
+      screensData.dataValues;
+    linkedScreens = Object.keys(restFields).filter(
+      (key) => restFields[key] === true,
+    );
   });
   const makegetApiRequest = async (token = adminToken) => {
     return await helper.get_request_with_authorization({
@@ -113,19 +117,19 @@ describe("GET /api/v1/ads", () => {
   });
   it("should return error with the customer token who is the part of same organization", async () => {
     const response = await makegetApiRequest(customerToken);
-    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.success).toBe(false);
   });
   it("should return an error if user belongs to same organization but not having sufficient rights", async () => {
     const response = await makegetApiRequest(testOperatorToken);
-    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.success).toBe(false);
   });
   it("should return an error if user belongs to different organization", async () => {
     const response = await makegetApiRequest(
       differentOrganizationCustomerToken,
     );
-    expect(response.body.success).toBe(false);
     expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.success).toBe(false);
   });
 });
