@@ -56,7 +56,6 @@ exports.create_game = async (req, res) => {
   try {
     const validation = new Validator(req.body, {
       gcId: "required|integer",
-      totalIdealShots: "required|min:1|integer",
       teeColor: "required|string",
       holes: "required|array",
     });
@@ -78,6 +77,11 @@ exports.create_game = async (req, res) => {
     req.body.orgId = req.user.orgId;
     const holes = req.body.holes;
     delete req.body.holes;
+
+    req.body.totalIdealShots = holes.reduce(
+      (accumulate, hole) => accumulate + hole.par,
+      0,
+    );
 
     const createdGame = await gameService.createGame(req?.body);
     await holeService.createGameHoles(
