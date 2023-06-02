@@ -100,6 +100,12 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
         field: "manage_courses",
       },
+      manageGames: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        field: "manage_games",
+      },
     },
     {
       defaultScope: {

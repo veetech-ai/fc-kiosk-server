@@ -21,6 +21,7 @@ const defaultAuthorities = {
   get_roles: false,
   get_courses: false,
   manage_courses: false,
+  manage_games: false,
 };
 
 exports.roleWithAuthorities = {
@@ -154,6 +155,7 @@ exports.roleWithAuthorities = {
     get_groups: false,
     manage_groups: false,
     get_roles: false,
+    manage_games: true,
   },
 };
 
