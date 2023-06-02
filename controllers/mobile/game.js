@@ -58,6 +58,9 @@ exports.create_game = async (req, res) => {
       gcId: "required|integer",
       teeColor: "required|string",
       holes: "required|array",
+      'holes.*.par': 'required|integer',
+      'holes.*.holeId': 'required|integer',
+      'holes.*.holeNumber': 'required|integer',
     });
 
     if (validation.fails()) {
@@ -81,7 +84,7 @@ exports.create_game = async (req, res) => {
     const holes = req.body.holes;
 
     gameBody.totalIdealShots = holes.reduce(
-      (accumulate, hole) => accumulate + hole.par,
+      (accumulate, hole) => accumulate + (hole.par || 0),
       0,
     );
 

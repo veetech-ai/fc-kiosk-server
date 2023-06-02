@@ -1,6 +1,6 @@
-const helper = require("../../../helper");
-const models = require("../../../../models/index");
-const config = require("../../../../config/config");
+const helper = require("../../../../helper");
+const models = require("../../../../../models/index");
+const config = require("../../../../../config/config");
 const jwt = require("jsonwebtoken");
 const Course = models.Course;
 
@@ -112,7 +112,7 @@ describe("Post: /game", () => {
       });
 
       expect(response.body.data).toEqual(
-        `Course Not Found${config.error_message_separator}404`,
+        `Course not found`,
       );
     });
 
