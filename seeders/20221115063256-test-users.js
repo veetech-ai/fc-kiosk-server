@@ -20,19 +20,6 @@ module.exports = {
         where: { name: "Test" },
       });
 
-      const testCustomer = {
-        name: "Test Organization Customer account",
-        email: config.testAccountEmail,
-        is_admin: false,
-        super_admin: false,
-        orgId: TestOrg.id,
-        status: 1,
-        password:
-          "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
-        mqtt_token: randtoken.generate(10),
-        role_id: roles.customer.id,
-      };
-
       return queryInterface.bulkInsert(
         "Users",
         [
