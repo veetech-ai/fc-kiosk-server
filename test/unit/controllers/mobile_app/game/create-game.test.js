@@ -8,6 +8,7 @@ describe("Post: /game", () => {
   let golferToken;
   let createdCourses;
   let golferUser;
+  let superAdminToken;
   const holes = [
     {
       holeId: 31931,
@@ -28,6 +29,7 @@ describe("Post: /game", () => {
 
   beforeAll(async () => {
     golferToken = await helper.get_token_for("golfer");
+    superAdminToken = await helper.get_token_for();
     golferUser = jwt.decode(golferToken);
 
     const courses = [
@@ -144,10 +146,6 @@ describe("Post: /game", () => {
         teeColor: "Red",
         holes: [],
       };
-      const expectedResponse = {
-        success: false,
-        data: expect.any(Object),
-      };
 
       const response = await helper.post_request_with_authorization({
         endpoint: "game",
@@ -155,11 +153,34 @@ describe("Post: /game", () => {
         params: params,
       });
 
-      expect(response.body).toEqual(expect.objectContaining(expectedResponse));
+      expect(response.body.success).toEqual(false);
       expect(response.body.data.errors.holes).toEqual([
         "The holes field is required.",
       ]);
       expect(response.statusCode).toEqual(400);
+    });
+
+    it("should fail if super admin tries to create a game", async () => {
+      // The create game API will only be accessible to the Golfer
+      const params = {
+        gcId: createdCourses[0].id,
+        teeColor: "Red",
+        holes,
+      };
+      const expectedResponse = {
+        success: false,
+        data: "You are not allowed",
+      };
+
+      const response = await helper.post_request_with_authorization({
+        endpoint: "game",
+        token: superAdminToken,
+        params: params,
+      });
+
+      expect(response.body).toEqual(expectedResponse);
+
+      expect(response.statusCode).toEqual(403);
     });
   });
 });
