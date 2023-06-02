@@ -4,7 +4,7 @@ const config = require("../../../../../config/config");
 const jwt = require("jsonwebtoken");
 const Course = models.Course;
 
-describe("Post: /game", () => {
+describe("POST: /games", () => {
   let golferToken;
   let createdCourses;
   let golferUser;
@@ -26,7 +26,13 @@ describe("Post: /game", () => {
       par: 4,
     },
   ];
-
+  const makeCreateGameApiRequest = async (params, token = golferToken) => {
+    return await helper.post_request_with_authorization({
+      endpoint: "games",
+      token: token,
+      params: params,
+    });
+  };
   beforeAll(async () => {
     golferToken = await helper.get_token_for("golfer");
     superAdminToken = await helper.get_token_for();
@@ -69,11 +75,7 @@ describe("Post: /game", () => {
         updatedAt: expect.any(String),
       };
 
-      const response = await helper.post_request_with_authorization({
-        endpoint: "game",
-        token: golferToken,
-        params: params,
-      });
+      const response = await makeCreateGameApiRequest(params);
 
       expect(response.body.data).toEqual(
         expect.objectContaining(expectedResponse),
@@ -88,11 +90,7 @@ describe("Post: /game", () => {
         holes,
       };
 
-      const response = await helper.post_request_with_authorization({
-        endpoint: "game",
-        token: golferToken,
-        params: params,
-      });
+      const response = await makeCreateGameApiRequest(params);
 
       expect(response.body.data.errors.gcId).toEqual(
         expect.arrayContaining(["The gcId field is required."]),
@@ -107,11 +105,7 @@ describe("Post: /game", () => {
         holes,
       };
 
-      const response = await helper.post_request_with_authorization({
-        endpoint: "game",
-        token: golferToken,
-        params: params,
-      });
+      const response = await makeCreateGameApiRequest(params);
 
       expect(response.body.data).toEqual(`Course not found`);
     });
@@ -127,11 +121,7 @@ describe("Post: /game", () => {
         data: expect.any(Object),
       };
 
-      const response = await helper.post_request_with_authorization({
-        endpoint: "game",
-        token: golferToken,
-        params: params,
-      });
+      const response = await makeCreateGameApiRequest(params);
 
       expect(response.body).toEqual(expect.objectContaining(expectedResponse));
       expect(response.body.data.errors.teeColor).toEqual([
@@ -147,11 +137,7 @@ describe("Post: /game", () => {
         holes: [],
       };
 
-      const response = await helper.post_request_with_authorization({
-        endpoint: "game",
-        token: golferToken,
-        params: params,
-      });
+      const response = await makeCreateGameApiRequest(params);
 
       expect(response.body.success).toEqual(false);
       expect(response.body.data.errors.holes).toEqual([
@@ -172,11 +158,7 @@ describe("Post: /game", () => {
         data: "You are not allowed",
       };
 
-      const response = await helper.post_request_with_authorization({
-        endpoint: "game",
-        token: superAdminToken,
-        params: params,
-      });
+      const response = await makeCreateGameApiRequest(params, superAdminToken);
 
       expect(response.body).toEqual(expectedResponse);
 
