@@ -6,6 +6,7 @@ const membershipService = require("../../../../../services/kiosk/membership");
 const {
   organizationsInApplication,
 } = require("../../../../../common/organizations.data");
+const contactMembershipService = require("../../../../../services/kiosk/contact_membership");
 
 describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
   let adminToken;
@@ -90,6 +91,10 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
     };
     const response = await makeApiRequest(contactMembershipId, body);
     expect(response.body.data).toBe("Updated Successfully");
+    await contactMembershipService.updateContactMemberShipIsAddressable(
+      contactMembershipId,
+      { isAddressed: false },
+    );
   });
   it("should successfully update contact membership when api is accessed by customer same orgnaization", async () => {
     const body = {
@@ -101,6 +106,10 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
       customerToken,
     );
     expect(response.body.data).toBe("Updated Successfully");
+    await contactMembershipService.updateContactMemberShipIsAddressable(
+      contactMembershipId,
+      { isAddressed: false },
+    );
   });
   it("should return validation error if non boolean value is passed", async () => {
     const body = {
@@ -122,6 +131,15 @@ describe("PATCH /api/v1/course-membership/contacts/{id}", () => {
       body,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.data).toEqual("Contact Membership not found");
+  });
+  it("should return already update message if the updation body is empty", async () => {
+    const body = {};
+    const response = await makeApiRequest(
+      contactMembershipId,
+      body,
+      adminToken,
+    );
+    expect(response.body.data).toEqual("Already Updated");
   });
 });

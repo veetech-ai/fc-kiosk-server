@@ -4,9 +4,9 @@ const Validator = require("validatorjs");
 const apiResponse = require("../../../common/api.response");
 
 // Logger Imports
-const courseService = require("../../../services/kiosk/course");
 const deviceService = require("../../../services/device");
 const contactCoachService = require("../../../services/kiosk/contact_lesson");
+const helper = require("../../../common/helper");
 
 /**
  * @swagger
@@ -69,18 +69,22 @@ exports.create_contact_lesson = async (req, res) => {
     const { lessonId, phone, email, contact_medium } = req.body;
 
     const deviceId = req.device.id; // device Id
-    const courseId = await deviceService.getCourse(deviceId);
-    const course = await courseService.getCourseById(courseId);
-    const orgId = course.orgId;
+    const course = await deviceService.getLinkedCourse(deviceId);
     const reqBody = {
       coachId: lessonId,
       userPhone: phone,
       userEmail: email,
       contactMedium: contact_medium,
-      gcId: courseId,
-      orgId,
+      gcId: course.id,
+      orgId: course.orgId,
     };
     const contactCoach = await contactCoachService.createContactCoach(reqBody);
+
+    helper.mqtt_publish_message(
+      `gc/${contactCoach.gcId}/screens`,
+      helper.mqttPayloads.onLessonContactUpdate,
+      false,
+    );
     return apiResponse.success(res, req, contactCoach);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

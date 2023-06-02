@@ -14,30 +14,28 @@ async function getContactMemberships(membershipId) {
   return contactMembership;
 }
 
-async function getContactMembershipById(contactMembershipId) {
+async function getContactMembershipOne(where, loggedInUserOrg) {
+  let clonedWhere = { ...where };
+  if (loggedInUserOrg) clonedWhere.orgId = loggedInUserOrg;
   const contactMembership = await ContactMembership.findOne({
-    where: { id: contactMembershipId },
+    where: clonedWhere,
   });
-  if (!contactMembership) throw new ServiceError("Not found", 404);
+  if (!contactMembership)
+    throw new ServiceError("Contact Membership not found", 404);
   return contactMembership;
 }
 
-async function updateContactMemberShipIsAddressable(
-  contactMembershipId,
-  isAddressedBoolean,
-) {
-  const contactMembership = await getContactMembershipById(contactMembershipId);
-  if (contactMembership) {
-    contactMembership.isAddressed = isAddressedBoolean;
-    await contactMembership.save();
-    return "Updated Successfully";
-  }
-  return "Something went wrong";
+async function updateContactMemberShipIsAddressable(id, body) {
+  const contactMembership = await ContactMembership.update(
+    { ...body },
+    { where: { id } },
+  );
+  return contactMembership[0];
 }
 
 module.exports = {
   createContactMembership,
   getContactMemberships,
-  getContactMembershipById,
+  getContactMembershipOne,
   updateContactMemberShipIsAddressable,
 };
