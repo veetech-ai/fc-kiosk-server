@@ -278,6 +278,9 @@ exports.create_course_info = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
+    const loggedInUserOrg = req.user?.orgId;
+
+    await courseService.getCourse({ id: courseId }, loggedInUserOrg);
 
     const form = new formidable.IncomingForm();
     form.multiples = true;
@@ -412,20 +415,11 @@ exports.getCourseInfo = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
-    const course = await courseService.getCourseById(courseId);
-
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
-    const isSameOrganizationResource = loggedInUserOrg === course.orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
-    const averageRating = await FeedbackService.getAverageRating(courseId);
-
-    course.setDataValue("feedback", averageRating);
+    const course = await courseService.getCourse(
+      { id: courseId },
+      loggedInUserOrg,
+    );
 
     if (course.logo) {
       const logo = upload_file.getFileURL(course.logo);

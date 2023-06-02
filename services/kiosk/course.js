@@ -109,10 +109,11 @@ async function getCourseById(courseId) {
 }
 
 async function getCourse(where, loggedInUserOrgId) {
-  if (loggedInUserOrgId) where.orgId = loggedInUserOrgId;
+  let clonedWhere = { ...where };
+  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
 
   const course = await Course.findOne({
-    where,
+    where: clonedWhere,
   });
 
   if (!course) {

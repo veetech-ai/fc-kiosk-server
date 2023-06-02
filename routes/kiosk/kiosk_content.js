@@ -85,4 +85,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.onlyDeviceAccess,
     AdsController.getAds,
   ]);
+
+  router.get(kioskContentBaseUrl + "/feedbacks/average", [
+    validation_middleware.onlyDeviceAccess,
+    FeedbackController.getAverageRating,
+  ]);
 };
