@@ -60,10 +60,10 @@ module.exports = (sequelize, DataTypes) => {
   );
   Game.associate = function (models) {
     // associations can be defined here
-    Game.belongsTo(models.Organization, { foreignKey: "org_id" });
-    Game.belongsTo(models.Mobile_Course, { foreignKey: "mc_id" });
-    Game.belongsTo(models.User, { foreignKey: "owner_id" });
-    Game.belongsTo(models.User, { foreignKey: "participant_id" });
+    Game.belongsTo(models.Organization, { foreignKey: "orgId" });
+    Game.belongsTo(models.Mobile_Course, { foreignKey: "gcId" });
+    Game.belongsTo(models.User, { foreignKey: "ownerId" });
+    Game.belongsTo(models.User, { foreignKey: "participantId" });
     Game.hasMany(models.Hole, {
       as: "Holes",
       foreignKey: "g_id",
