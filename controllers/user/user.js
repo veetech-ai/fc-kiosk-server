@@ -16,8 +16,7 @@ const UserLoginInfoModel = require("../../services/user_login_info");
 const PushNotificationsSubscriptionsModel = require("../../services/push_notifications_subscriptions");
 const UserSQAnswerModel = require("../../services/user_sq_answers");
 const OtpModel = require("../../services/otp");
-
-const { calculateTimeBounds } = require("../../services/devices");
+const clubService = require("../../services/mobile/clubs");
 
 // Common Imports
 const apiResponse = require("../../common/api.response");

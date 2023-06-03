@@ -119,6 +119,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "Holes",
       foreignKey: "user_id",
     });
+    User.hasOne(models.Club, {
+      as: "Club",
+      foreignKey: "userId",
+    });
   };
   return User;
 };
