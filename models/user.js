@@ -123,6 +123,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "Club",
       foreignKey: "userId",
     });
+    User.hasMany(models.User_Game_Invitation, {
+      as: "User_Game_Invitations",
+      foreignKey: "userId",
+    });
   };
   return User;
 };
