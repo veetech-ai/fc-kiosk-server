@@ -46,8 +46,17 @@ async function findStatisticsByParticipantId(participantId) {
 async function findBestRoundsByParticipantId(participantId) {
 
   const bestRounds = await Game.findAll({
+    attributes: ['totalShotsTaken', "startTime", "endTime"],
+    include: [
+      {
+        as: "Mobile_Course",
+        model: models.Mobile_Course,
+        attributes: ['name'],
+      }
+    ],
+
     where: { participantId: participantId },
-    order: [['totalIdealShots', 'DESC']],
+    order:  [[Sequelize.literal('totalIdealShots - totalShotsTaken'), 'DESC'],],
     limit: 5
   });
 
