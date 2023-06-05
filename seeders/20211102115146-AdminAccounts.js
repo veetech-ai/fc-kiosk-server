@@ -159,7 +159,7 @@ module.exports = {
           password:
             "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
           mqtt_token: randtoken.generate(10),
-          role_id: roles.manager.id,
+          role_id: roles.golfer.id,
           report_to: testCustomer.id,
         },
       ],

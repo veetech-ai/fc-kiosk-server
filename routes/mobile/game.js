@@ -6,6 +6,7 @@ exports.routesConfig = function (app, router) {
   const game = `${config.app.apiPath}game`;
   router.post(game + "/", [
     validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["manageGames"]),
     GameController.create_game,
   ]);
   router.get(game + "/:gameId/holes", [
