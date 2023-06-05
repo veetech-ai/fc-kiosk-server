@@ -10,8 +10,8 @@ async function createGame(reqBody) {
 }
 
 async function findStatisticsByParticipantId(participantId) {
-
-  const statistics = await Game.sequelize.query(`
+  const statistics = await Game.sequelize.query(
+    `
          SELECT SUM(totalShotsTaken) AS totalShotsTaken,
 
          COUNT(*) AS rounds, 
@@ -36,37 +36,34 @@ async function findStatisticsByParticipantId(participantId) {
 
   FROM Games
   WHERE participantId = ${participantId}
-`, { plain: true });
+`,
+    { plain: true },
+  );
 
-
-  return statistics; 
+  return statistics;
 }
 
-
 async function findBestRoundsByParticipantId(participantId) {
-
   const bestRounds = await Game.findAll({
-    attributes: ['totalShotsTaken', "startTime", "endTime"],
+    attributes: ["totalShotsTaken", "startTime", "endTime"],
     include: [
       {
         as: "Mobile_Course",
         model: models.Mobile_Course,
-        attributes: ['name'],
-      }
+        attributes: ["name"],
+      },
     ],
 
     where: { participantId: participantId },
-    order:  [[Sequelize.literal('totalIdealShots - totalShotsTaken'), 'DESC'],],
-    limit: 5
+    order: [[Sequelize.literal("totalIdealShots - totalShotsTaken"), "DESC"]],
+    limit: 5,
   });
 
-  return bestRounds; 
+  return bestRounds;
 }
-
-
 
 module.exports = {
   createGame,
   findStatisticsByParticipantId,
-  findBestRoundsByParticipantId
+  findBestRoundsByParticipantId,
 };
