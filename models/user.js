@@ -117,7 +117,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     User.hasMany(models.Hole, {
       as: "Holes",
-      foreignKey: "user_id",
+      foreignKey: "userId",
     });
     User.hasOne(models.Club, {
       as: "Club",

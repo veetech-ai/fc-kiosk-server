@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Hole.belongsTo(models.Game, { foreignKey: "gId" });
     Hole.belongsTo(models.Mobile_Course, { foreignKey: "gcId" });
-    Hole.belongsTo(models.User, { foreignKey: "user_id" });
+    Hole.belongsTo(models.User, { foreignKey: "userId" });
   };
   return Hole;
 };
