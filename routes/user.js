@@ -285,5 +285,4 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     UsersController.getStatistics,
   ]);
-
 };

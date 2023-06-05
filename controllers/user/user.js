@@ -17,7 +17,7 @@ const PushNotificationsSubscriptionsModel = require("../../services/push_notific
 const UserSQAnswerModel = require("../../services/user_sq_answers");
 const OtpModel = require("../../services/otp");
 const clubService = require("../../services/mobile/clubs");
-const gameService = require("../../services/mobile/game")
+const gameService = require("../../services/mobile/game");
 
 // Common Imports
 const apiResponse = require("../../common/api.response");
@@ -2512,11 +2512,12 @@ exports.getStatistics = async (req, res) => {
    *         description: success
    */
   try {
-    console.log(helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success , req.params.userId ,req.user.id  )
-
-    if(!helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success && req.user.id != req.params.userId ){
-      return apiResponse.fail(res, "Forbidden", 403 );
-
+    if (
+      !helper.hasProvidedRoleRights(req.user.role, ["super", "admin"])
+        .success &&
+      req.user.id != req.params.userId
+    ) {
+      return apiResponse.fail(res, "Forbidden", 403);
     }
     const loggedInUserId = req.params.userId;
 
@@ -2538,4 +2539,3 @@ exports.getStatistics = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-
