@@ -119,6 +119,14 @@ module.exports = (sequelize, DataTypes) => {
       as: "Holes",
       foreignKey: "userId",
     });
+    User.hasOne(models.Club, {
+      as: "Club",
+      foreignKey: "userId",
+    });
+    User.hasMany(models.User_Game_Invitation, {
+      as: "User_Game_Invitations",
+      foreignKey: "userId",
+    });
   };
   return User;
 };

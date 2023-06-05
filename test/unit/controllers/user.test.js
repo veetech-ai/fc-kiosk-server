@@ -14,20 +14,16 @@ const { getByPhone } = require("../../../services/otp");
 const {
   organizationsInApplication,
 } = require("../../../common/organizations.data.js");
-const validUserId1 = 1;
-const validUserId2 = 2;
-const userIdWithNoFile = 6;
-const inValidUserId = -2;
+const { getClubsByUserId } = require("../../../services/mobile/clubs");
+
 let tokens, testOrganizationUserId, superAdminId;
-let devices = [];
 const userIds = {};
 const nonExistedUserId = -1;
 const invalidRole = "invalid role";
-const zongCustomerEmail = "zong.viaphoton@cowlar.com";
-const testCustomerEmail = config.testAccountEmail;
+
 let zongCustomerId = null;
 let testCustomerId = null;
-
+let devices;
 async function createNewDevices(token) {
   const devicesData = [
     {
@@ -1139,6 +1135,29 @@ describe("user test cases", () => {
       };
 
       expect(body).toEqual(expectedResponse);
+      const createdUserId = jwt.decode(body.data.accessToken).id;
+      // test whether the club record is created after user creation or not
+      const expectedClubResponse = {
+        driver: 0,
+        wood3: 0,
+        wood5: 0,
+        iron4: 0,
+        iron5: 0,
+        iron6: 0,
+        iron7: 0,
+        iron8: 0,
+        iron9: 0,
+        pitchingWedge: 0,
+        wedge52: 0,
+        wedge56: 0,
+        wedge60: 0,
+        putter: 0,
+        gapWedge: 0,
+        sandWedge: 0,
+        lobWedge: 0,
+      };
+      const club = await getClubsByUserId(createdUserId);
+      expect(club.dataValues).toEqual(expectedClubResponse);
     });
 
     it("Should not verify already verified otps", async () => {

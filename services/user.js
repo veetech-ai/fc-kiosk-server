@@ -23,8 +23,8 @@ const {
 // Services Imports
 const OrganizationModel = require("./organization");
 const RoleModel = require("./role");
-const organizationServices = require("../services/organization");
 const { organizationsInApplication } = require("../common/organizations.data");
+const clubServices = require("./mobile/clubs");
 
 const PNSubscription = models.Push_Notifications_Subscriptions;
 const UserSettings = models.User_Settings;
@@ -137,7 +137,8 @@ exports.create_user = async (params) => {
         role_id: params.role_id,
         orgId: organizationsInApplication.golfers.id,
       };
-      await User.create(paramsWithRole);
+      const createdUser = await User.create(paramsWithRole);
+      await clubServices.createClub({ userId: createdUser.id });
     }
 
     let user = await this.getAllDetailByWhere({
