@@ -145,6 +145,9 @@ exports.get_token_for = async (role = "superadmin", getNewToken = false) => {
     } else if (role == "golfer") {
       params.email = this.golfer_email;
       params.password = this.golfer_password;
+    } else if (role == "golfer2") {
+      params.email = this.golfer_email2;
+      params.password = this.golfer_password2;
     }
 
     try {

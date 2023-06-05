@@ -119,6 +119,11 @@ exports.getHoles = async (req, res) => {
    *         in: path
    *         required: true
    *         type: integer
+   *       - name: holeId
+   *         description: Id of the game
+   *         in: query
+   *         required: false
+   *         type: integer
    *     produces:
    *       - application/json
    *     responses:
@@ -126,7 +131,20 @@ exports.getHoles = async (req, res) => {
    *         description: success
    */
   try {
-    const holes = await holeService.getGameHole(req.params.gameId);
+    const validation = new Validator(req.query, {
+      holeId: "integer",
+    });
+
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
+    const holeId = req.query?.holeId;
+
+    const holes = await gameService.getGame(
+      { gameId: req.params.gameId, participantId: req.user.id },
+      holeId,
+    );
     return apiResponse.success(res, req, holes);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

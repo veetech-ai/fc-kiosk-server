@@ -30,6 +30,8 @@ describe("Get: /game/{gameId}/holes", () => {
     golferToken = await helper.get_token_for("golfer");
     golferUser = jwt.decode(golferToken);
 
+    models.Hole.destroy({ truncate: true });
+
     const courses = [
       {
         name: "Course 1",
@@ -51,7 +53,7 @@ describe("Get: /game/{gameId}/holes", () => {
     };
     createdGame = (
       await helper.post_request_with_authorization({
-        endpoint: "game",
+        endpoint: "games",
         token: golferToken,
         params: params,
       })
@@ -61,46 +63,39 @@ describe("Get: /game/{gameId}/holes", () => {
   describe("Success", () => {
     it("should get game holes if game Id is correct", async () => {
       const expectedResponse = [
-        expect.objectContaining({
-          id: expect.any(Number),
-          userId: 12,
-          par: 4,
-          noOfShots: null,
-          isGir: false,
-          trackedShots: null,
-          User: expect.objectContaining({
-            id: golferUser.id,
-            name: golferUser.name,
-          }),
-        }),
-        expect.objectContaining({
-          id: expect.any(Number),
-          userId: 12,
-          par: 4,
-          noOfShots: null,
-          isGir: false,
-          trackedShots: null,
-          User: expect.objectContaining({
-            id: golferUser.id,
-            name: golferUser.name,
-          }),
-        }),
-        expect.objectContaining({
-          id: expect.any(Number),
-          userId: 12,
-          par: 4,
-          noOfShots: null,
-          isGir: false,
-          trackedShots: null,
-          User: expect.objectContaining({
-            id: golferUser.id,
-            name: golferUser.name,
-          }),
-        }),
+        {
+          Holes: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(Number),
+              par: 4,
+              noOfShots: null,
+              isGir: false,
+              trackedShots: null,
+            }),
+            expect.objectContaining({
+              id: expect.any(Number),
+              par: 4,
+              noOfShots: null,
+              isGir: false,
+              trackedShots: null,
+            }),
+            expect.objectContaining({
+              id: expect.any(Number),
+              par: 4,
+              noOfShots: null,
+              isGir: false,
+              trackedShots: null,
+            }),
+          ]),
+          id: createdGame.id,
+          ownerId: golferUser.id,
+          participantId: golferUser.id,
+          participantName: "Golfer",
+        },
       ];
 
       const response = await helper.get_request_with_authorization({
-        endpoint: `game/${createdGame.id}/holes`,
+        endpoint: `games/${createdGame.gameId}/holes`,
         token: golferToken,
       });
       expect(response.body.data).toEqual(
@@ -108,10 +103,52 @@ describe("Get: /game/{gameId}/holes", () => {
       );
       expect(response.status).toBe(200);
     });
+
     it("should return empty array if game id is incorrect", async () => {
       const inCorrectGameId = -1;
       const response = await helper.get_request_with_authorization({
-        endpoint: `game/${inCorrectGameId}/holes`,
+        endpoint: `games/${inCorrectGameId}/holes`,
+        token: golferToken,
+      });
+      expect(response.body.data).toEqual([]);
+      expect(response.status).toBe(200);
+    });
+
+    it("should get game hole if game Id and hole Id is correct", async () => {
+      const hole = await models.Hole.findOne({ ownerId: golferUser.id });
+
+      const expectedResponse = [
+        {
+          Holes: expect.arrayContaining([
+            expect.objectContaining({
+              id: hole.id,
+              par: 4,
+              noOfShots: null,
+              isGir: false,
+              trackedShots: null,
+            }),
+          ]),
+          id: createdGame.id,
+          ownerId: golferUser.id,
+          participantId: golferUser.id,
+          participantName: "Golfer",
+        },
+      ];
+
+      const response = await helper.get_request_with_authorization({
+        endpoint: `games/${createdGame.gameId}/holes?holeId=${hole.id}`,
+        token: golferToken,
+      });
+      expect(response.body.data).toEqual(
+        expect.arrayContaining(expectedResponse),
+      );
+      expect(response.status).toBe(200);
+    });
+
+    it("should return empty array if hole Id is incorrect", async () => {
+      const inCorrectHoleId = -1;
+      const response = await helper.get_request_with_authorization({
+        endpoint: `games/${createdGame.gameId}/holes?holeId=${inCorrectHoleId}`,
         token: golferToken,
       });
       expect(response.body.data).toEqual([]);
