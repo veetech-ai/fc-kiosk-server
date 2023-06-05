@@ -62,8 +62,35 @@ async function findBestRoundsByParticipantId(participantId) {
   return bestRounds;
 }
 
+async function getGame(where, holeId = null) {
+  let holeWhere = {};
+  if (holeId) holeWhere = { id: holeId };
+  return await Game.findAll({
+    where,
+    attributes: [
+      "id",
+      "participantId",
+      "ownerId",
+      "participantName",
+      "score",
+      "teeColor",
+      "startTime",
+      "endTime",
+    ],
+    include: [
+      {
+        as: "Holes",
+        model: models.Hole,
+        attributes: ["id", "par", "noOfShots", "isGir", "trackedShots"],
+        where: holeWhere,
+      },
+    ],
+  });
+}
+
 module.exports = {
   createGame,
   findStatisticsByParticipantId,
   findBestRoundsByParticipantId,
+  getGame,
 };
