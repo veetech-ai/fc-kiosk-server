@@ -95,7 +95,7 @@ describe("Get: /game/{gameId}/holes", () => {
       ];
 
       const response = await helper.get_request_with_authorization({
-        endpoint: `games/${createdGame.gameId}/holes`,
+        endpoint: `games/${createdGame.gameId}`,
         token: golferToken,
       });
       expect(response.body.data).toEqual(
@@ -107,7 +107,7 @@ describe("Get: /game/{gameId}/holes", () => {
     it("should return empty array if game id is incorrect", async () => {
       const inCorrectGameId = -1;
       const response = await helper.get_request_with_authorization({
-        endpoint: `games/${inCorrectGameId}/holes`,
+        endpoint: `games/${inCorrectGameId}`,
         token: golferToken,
       });
       expect(response.body.data).toEqual([]);
@@ -136,7 +136,7 @@ describe("Get: /game/{gameId}/holes", () => {
       ];
 
       const response = await helper.get_request_with_authorization({
-        endpoint: `games/${createdGame.gameId}/holes?holeId=${hole.id}`,
+        endpoint: `games/${createdGame.gameId}?holeId=${hole.id}`,
         token: golferToken,
       });
       expect(response.body.data).toEqual(
@@ -148,7 +148,7 @@ describe("Get: /game/{gameId}/holes", () => {
     it("should return empty array if hole Id is incorrect", async () => {
       const inCorrectHoleId = -1;
       const response = await helper.get_request_with_authorization({
-        endpoint: `games/${createdGame.gameId}/holes?holeId=${inCorrectHoleId}`,
+        endpoint: `games/${createdGame.gameId}?holeId=${inCorrectHoleId}`,
         token: golferToken,
       });
       expect(response.body.data).toEqual([]);

@@ -105,7 +105,7 @@ exports.getHoles = async (req, res) => {
   /**
    * @swagger
    *
-   * /games/{gameId}/holes:
+   * /games/{gameId}:
    *   get:
    *     security:
    *       - auth: []
