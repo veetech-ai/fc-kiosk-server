@@ -14,7 +14,15 @@ async function getGame(where, holeId = null) {
   if (holeId) holeWhere = { id: holeId };
   return await Game.findAll({
     where,
-    attributes: ["id", "participantId", "ownerId", "participantName"],
+    attributes: [
+      "id",
+      "participantId",
+      "ownerId",
+      "participantName",
+      "teeColor",
+      "startTime",
+      "endTime",
+    ],
     include: [
       {
         as: "Holes",
