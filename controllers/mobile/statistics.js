@@ -18,7 +18,7 @@ exports.getStatistics = async (req, res) => {
   /**
    * @swagger
    *
-   * /users/:id:
+   * /statistics:
    *   get:
    *     security:
    *       - auth: []
@@ -27,9 +27,6 @@ exports.getStatistics = async (req, res) => {
    *     tags: [Statistics]
    *     consumes:
    *       - application/json
-   *     parameters:
-   *       - in: params
-   *         name: userId
    *     produces:
    *       - application/json
    *     responses:
@@ -37,6 +34,8 @@ exports.getStatistics = async (req, res) => {
    *         description: success
    */
   try {
+    console.log(req.user.id)
+
     const validation = new Validator(req.body, {
       gcId: "required|integer",
       teeColor: "required|string",

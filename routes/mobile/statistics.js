@@ -4,9 +4,8 @@ const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
   const statistics = `${config.app.apiPath}statistics`;
-  router.get(statistics + "/users/:id", [
+  router.get(`${statistics}`, [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["manageGames"]),
     StatisticsController.getStatistics,
   ]);
 };
