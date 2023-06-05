@@ -38,15 +38,17 @@ exports.getStatistics = async (req, res) => {
     const loggedInUserId = req.user.id
     console.log(loggedInUserId)
 
-    const games = await gameService.findByParticipantId(loggedInUserId)
+    const stats = await gameService.findStatisticsByParticipantId(loggedInUserId)
+
+    const bestRounds = await gameService.findBestRoundsByParticipantId(loggedInUserId)
 
 
 
-    console.log(games)
+    console.log(stats)
 
 
 
-    return apiResponse.success(res, req, games);
+    return apiResponse.success(res, req, bestRounds);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
