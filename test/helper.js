@@ -215,6 +215,13 @@ exports.post_request_with_authorization = async (data) => {
   }
 };
 
+exports.patch_request_with_authorization = async (data) => {
+  return await request
+    .patch(`${config.app.apiPath}${data.endpoint}`)
+    .set("authorization", data.token)
+    .send(data.params);
+};
+
 exports.put_request = async (data) => {
   return await request
     .put(`${config.app.apiPath}${data.endpoint}`)

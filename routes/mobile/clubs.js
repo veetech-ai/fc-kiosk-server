@@ -9,4 +9,8 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     ClubsController.get_clubs,
   ]);
+  router.put(clubs, [
+    validation_middleware.validJWTNeeded,
+    ClubsController.updateClubs,
+  ]);
 };
