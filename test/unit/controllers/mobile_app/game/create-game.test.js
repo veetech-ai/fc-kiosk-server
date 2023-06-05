@@ -1,7 +1,9 @@
+const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
+
 const helper = require("../../../../helper");
 const models = require("../../../../../models/index");
-const config = require("../../../../../config/config");
-const jwt = require("jsonwebtoken");
+
 const Course = models.Course;
 
 describe("POST: /games", () => {
@@ -55,6 +57,7 @@ describe("POST: /games", () => {
       const params = {
         gcId: createdCourses[0].id,
         teeColor: "Red",
+        gameId: uuidv4(),
         holes,
       };
       const expectedResponse = {
@@ -87,6 +90,7 @@ describe("POST: /games", () => {
     it("should fail if course is not passed", async () => {
       const params = {
         teeColor: "Red",
+        gameId: uuidv4(),
         holes,
       };
 
@@ -102,6 +106,7 @@ describe("POST: /games", () => {
       const params = {
         gcId: wrongCourseId,
         teeColor: "Red",
+        gameId: uuidv4(),
         holes,
       };
 
@@ -114,6 +119,7 @@ describe("POST: /games", () => {
       const params = {
         gcId: createdCourses[0].id,
         teeColor: 321,
+        gameId: uuidv4(),
         holes,
       };
       const expectedResponse = {
@@ -134,6 +140,7 @@ describe("POST: /games", () => {
       const params = {
         gcId: createdCourses[0].id,
         teeColor: "Red",
+        gameId: uuidv4(),
         holes: [],
       };
 
@@ -151,6 +158,7 @@ describe("POST: /games", () => {
       const params = {
         gcId: createdCourses[0].id,
         teeColor: "Red",
+        gameId: uuidv4(),
         holes,
       };
       const expectedResponse = {

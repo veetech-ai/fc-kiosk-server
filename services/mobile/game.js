@@ -19,6 +19,7 @@ async function getGame(where, holeId = null) {
       "participantId",
       "ownerId",
       "participantName",
+      "score",
       "teeColor",
       "startTime",
       "endTime",

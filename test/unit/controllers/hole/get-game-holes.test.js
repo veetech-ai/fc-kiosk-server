@@ -1,6 +1,9 @@
+const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
+
 const helper = require("../../../helper");
 const models = require("../../../../models/index");
-const jwt = require("jsonwebtoken");
+
 const Course = models.Course;
 
 describe("Get: /game/{gameId}/holes", () => {
@@ -48,6 +51,7 @@ describe("Get: /game/{gameId}/holes", () => {
     const params = {
       gcId: createdCourses[0].id,
       totalIdealShots: 5,
+      gameId: uuidv4(),
       teeColor: "Red",
       holes,
     };
@@ -91,6 +95,7 @@ describe("Get: /game/{gameId}/holes", () => {
           teeColor: "Red",
           startTime: expect.any(String),
           endTime: null,
+          score: null,
           ownerId: golferUser.id,
           participantId: golferUser.id,
           participantName: "Golfer",
@@ -135,6 +140,7 @@ describe("Get: /game/{gameId}/holes", () => {
           teeColor: "Red",
           startTime: expect.any(String),
           endTime: null,
+          score: null,
           ownerId: golferUser.id,
           participantId: golferUser.id,
           participantName: "Golfer",

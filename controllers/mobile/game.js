@@ -6,7 +6,6 @@ const gameService = require("../../services/mobile/game");
 const holeService = require("../../services/mobile/hole");
 const courseServices = require("../../services/mobile/courses");
 const { validateObject } = require("../../common/helper");
-const { v4: uuidv4 } = require("uuid");
 
 /**
  * @swagger
@@ -36,10 +35,14 @@ exports.create_game = async (req, res) => {
    *           - gcId
    *           - teeColor
    *           - holes
+   *           - gameId
    *          properties:
    *            gcId:
    *              type: integer
    *              example: 1
+   *            gameId:
+   *              type: string
+   *              example: badbea4b-57f8-4402-8c5b-fbfd41d5a40c
    *            teeColor:
    *              type: string
    *              example: Red
@@ -57,6 +60,7 @@ exports.create_game = async (req, res) => {
     const validation = new Validator(req.body, {
       gcId: "required|integer",
       teeColor: "required|string",
+      gameId: "required|string",
       holes: "required|array",
       "holes.*.par": "required|integer",
       "holes.*.holeId": "required|integer",
@@ -72,13 +76,12 @@ exports.create_game = async (req, res) => {
       id: req.body.gcId,
     });
 
-    const gameBody = validateObject(req.body, ["gcId", "teeColor"]);
+    const gameBody = validateObject(req.body, ["gcId", "teeColor", "gameId"]);
 
     gameBody.ownerId = req.user.id;
     gameBody.participantId = req.user.id;
     gameBody.participantName = req.user.name;
     gameBody.startTime = new Date();
-    gameBody.gameId = uuidv4();
     gameBody.orgId = req.user.orgId;
 
     const holes = req.body.holes;
