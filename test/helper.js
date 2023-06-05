@@ -218,11 +218,21 @@ exports.post_request_with_authorization = async (data) => {
   }
 };
 
+/**
+ * Makes a post request against given endpoint and payload
+ * @param {{endpoint: string, token: string, params: object}} data Configuration for the request
+ * @returns Promise <any>
+ */
 exports.patch_request_with_authorization = async (data) => {
-  return await request
-    .patch(`${config.app.apiPath}${data.endpoint}`)
-    .set("authorization", data.token)
-    .send(data.params);
+  try {
+    return await request
+      .patch(`${config.app.apiPath}${data.endpoint}`)
+      .set("authorization", data.token || "")
+      .query(data.queryParams)
+      .send(data.params);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 exports.put_request = async (data) => {

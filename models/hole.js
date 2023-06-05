@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      gameId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       gcId: {
         type: DataTypes.INTEGER,
         allowNull: false,

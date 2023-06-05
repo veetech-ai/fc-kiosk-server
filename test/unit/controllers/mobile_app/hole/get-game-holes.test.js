@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 
-const helper = require("../../../helper");
-const models = require("../../../../models/index");
+const helper = require("../../../../helper");
+const models = require("../../../../../models/index");
 
 const Course = models.Course;
 

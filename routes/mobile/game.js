@@ -13,4 +13,8 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     GameController.getHoles,
   ]);
+  router.patch(game + "/holes", [
+    validation_middleware.validJWTNeeded,
+    GameController.updateHoles,
+  ]);
 };

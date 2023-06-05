@@ -5,14 +5,16 @@ const apiResponse = require("../../common/api.response");
 const gameService = require("../../services/mobile/game");
 const holeService = require("../../services/mobile/hole");
 const courseServices = require("../../services/mobile/courses");
-const { validateObject } = require("../../common/helper");
+const helpers = require("../../common/helper");
 
 /**
  * @swagger
  * tags:
  *   name: Games
  *   description: Games API's
+ *
  */
+
 exports.create_game = async (req, res) => {
   /**
    * @swagger
@@ -76,7 +78,11 @@ exports.create_game = async (req, res) => {
       id: req.body.gcId,
     });
 
-    const gameBody = validateObject(req.body, ["gcId", "teeColor", "gameId"]);
+    const gameBody = helpers.validateObject(req.body, [
+      "gcId",
+      "teeColor",
+      "gameId",
+    ]);
 
     gameBody.ownerId = req.user.id;
     gameBody.participantId = req.user.id;
@@ -96,6 +102,7 @@ exports.create_game = async (req, res) => {
       holes,
       req.user.id,
       createdGame.id,
+      createdGame.gameId,
       req.body.gcId,
     );
     return apiResponse.success(res, req, createdGame);
@@ -149,6 +156,100 @@ exports.getHoles = async (req, res) => {
       holeId,
     );
     return apiResponse.success(res, req, holes);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.updateHoles = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /games/holes:
+   *   patch:
+   *     security:
+   *       - auth: []
+   *     description: logged In user can update holes record by game Id.
+   *     tags: [Games]
+   *     consumes:
+   *       - application/json
+   *     parameters:
+   *       - name: gameId
+   *         description: Id of the game
+   *         in: query
+   *         required: true
+   *         type: string
+   *       - name: userId
+   *         description: Id of the user
+   *         in: query
+   *         required: true
+   *         type: integer
+   *       - name: holeNumber
+   *         description: hole number
+   *         in: query
+   *         required: true
+   *         type: integer
+   *       - in: body
+   *         name: body
+   *         schema:
+   *          type: object
+   *          required:
+   *           - noOfShots
+   *          properties:
+   *            noOfShots:
+   *              type: integer
+   *              example: 1
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const bodyValidation = new Validator(req.body, {
+      noOfShots: "integer",
+    });
+
+    const queryValidation = new Validator(req.query, {
+      userId: "required:integer",
+      holeNumber: "required:integer",
+      gameId: "required:string",
+    });
+
+    if (bodyValidation.fails())
+      return apiResponse.fail(res, bodyValidation.errors);
+    if (queryValidation.fails())
+      return apiResponse.fail(res, queryValidation.errors);
+
+    const filteredBody = helpers.validateObject(req.body, [
+      "noOfShots",
+      "trackedShots",
+    ]);
+
+    const filteredQueryParams = helpers.validateObject(req.query, [
+      "userId",
+      "holeNumber",
+      "gameId",
+    ]);
+
+    const noOfAffectedRows = await holeService.updateHoleByWhere(
+      filteredQueryParams,
+      filteredBody,
+    );
+
+    if (noOfAffectedRows) {
+      helpers.mqtt_publish_message(
+        `game/${filteredQueryParams.gameId}/screens`,
+        { action: "scorecard" },
+      );
+    }
+    return apiResponse.success(
+      res,
+      req,
+      noOfAffectedRows
+        ? "Scorecard updated successfully"
+        : "Scorecard already up to date",
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
