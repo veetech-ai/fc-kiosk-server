@@ -17,6 +17,7 @@ const PushNotificationsSubscriptionsModel = require("../../services/push_notific
 const UserSQAnswerModel = require("../../services/user_sq_answers");
 const OtpModel = require("../../services/otp");
 const clubService = require("../../services/mobile/clubs");
+const gameService = require("../../services/mobile/game")
 
 // Common Imports
 const apiResponse = require("../../common/api.response");
@@ -2484,3 +2485,57 @@ exports.delete = async (req, res) => {
     return apiResponse.fail(res, err.message);
   }
 };
+
+exports.getStatistics = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /user/{userId}/games/statistics:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     summary: Statistics
+   *     description: logged In user can get Statistics
+   *     tags: [User]
+   *     consumes:
+   *       - application/json
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: userId
+   *         description: user ID
+   *         in: path
+   *         required: true
+   *         type: number
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    console.log(helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success , req.params.userId ,req.user.id  )
+
+    if(!helper.hasProvidedRoleRights(req.user.role, ["super", "admin"]).success && req.user.id != req.params.userId ){
+      return apiResponse.fail(res, "Forbidden", 403 );
+
+    }
+    const loggedInUserId = req.params.userId;
+
+    const statistics = await gameService.findStatisticsByParticipantId(
+      loggedInUserId,
+    );
+
+    const bestRounds = await gameService.findBestRoundsByParticipantId(
+      loggedInUserId,
+    );
+
+    const totalStatistics = {
+      statistics: statistics,
+      bestRounds: bestRounds,
+    };
+
+    return apiResponse.success(res, req, totalStatistics);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
