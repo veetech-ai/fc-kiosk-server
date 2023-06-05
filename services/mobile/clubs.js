@@ -1,6 +1,4 @@
-const models = require("../../models/index");
-const Club = models.Club;
-
+const { Club } = require("../../models");
 const ServiceError = require("../../utils/serviceError");
 
 exports.createClub = async function (body) {
@@ -13,7 +11,7 @@ exports.getClubsByUserId = async (userId) => {
       userId,
     },
     attributes: {
-      exclude: ["userId"],
+      exclude: ["userId", "id"],
     },
   });
 
@@ -24,4 +22,33 @@ exports.getClubsByUserId = async (userId) => {
 exports.deleteClubs = async (where) => {
   const noOfAffectedRows = await Club.destroy({ where });
   return noOfAffectedRows;
+};
+
+exports.updateClubs = async function (userId, updates) {
+  let result;
+
+  // Find the user's clubs
+  const existingClubs = await Club.findOne({
+    where: {
+      userId,
+    },
+  });
+
+  if (!existingClubs) {
+    // No clubs found for the user, create the clubs
+    const newUserClubs = {
+      userId,
+      ...updates,
+    };
+
+    result = await Club.create(newUserClubs);
+  } else {
+    // Update the existing clubs
+    result = await Club.update(updates, {
+      where: {
+        userId,
+      },
+    });
+  }
+  return result;
 };
