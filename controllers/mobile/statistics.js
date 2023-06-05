@@ -3,6 +3,7 @@ const Validator = require("validatorjs");
 
 const apiResponse = require("../../common/api.response");
 const gameService = require("../../services/mobile/game");
+const { Op, Sequelize } = require("sequelize");
 const holeService = require("../../services/mobile/hole");
 const courseServices = require("../../services/mobile/courses");
 const { validateObject } = require("../../common/helper");
@@ -34,50 +35,18 @@ exports.getStatistics = async (req, res) => {
    *         description: success
    */
   try {
-    console.log(req.user.id)
+    const loggedInUserId = req.user.id
+    console.log(loggedInUserId)
 
-    const validation = new Validator(req.body, {
-      gcId: "required|integer",
-      teeColor: "required|string",
-      holes: "required|array",
-      "holes.*.par": "required|integer",
-      "holes.*.holeId": "required|integer",
-      "holes.*.holeNumber": "required|integer",
-    });
+    const games = await gameService.findByParticipantId(loggedInUserId)
 
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
 
-    // validate course Id is correct
-    await courseServices.getCourseFromDb({
-      id: req.body.gcId,
-    });
 
-    const gameBody = validateObject(req.body, ["gcId", "teeColor"]);
+    console.log(games)
 
-    gameBody.ownerId = req.user.id;
-    gameBody.participantId = req.user.id;
-    gameBody.participantName = req.user.name;
-    gameBody.startTime = new Date();
-    gameBody.gameId = uuidv4();
-    gameBody.orgId = req.user.orgId;
 
-    const holes = req.body.holes;
 
-    gameBody.totalIdealShots = holes.reduce(
-      (accumulate, hole) => accumulate + (hole.par || 0),
-      0,
-    );
-
-    const createdGame = await gameService.createGame(gameBody);
-    await holeService.createGameHoles(
-      holes,
-      req.user.id,
-      createdGame.id,
-      req.body.gcId,
-    );
-    return apiResponse.success(res, req, createdGame);
+    return apiResponse.success(res, req, games);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
