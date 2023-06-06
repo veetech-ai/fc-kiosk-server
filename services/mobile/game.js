@@ -10,37 +10,45 @@ async function createGame(reqBody) {
 }
 
 async function findStatisticsByParticipantId(participantId) {
-  const statistics = await Game.sequelize.query(
-    `
-         SELECT SUM(totalShotsTaken) AS totalShotsTaken,
+  const rounds = await Game.count({
+    where: {
+      participantId: participantId,
+    },
+  });
 
-         COUNT(*) AS rounds, 
+  const bestScore = await Game.findOne({
+    where: {
+      participantId: participantId,
+    },
+    attributes: [
+      [Sequelize.literal('(totalIdealShots - totalShotsTaken)'), 'difference'],
+      'totalShotsTaken',
+    ],
+    order: [
+      [Sequelize.literal('(totalIdealShots - totalShotsTaken)'), 'DESC'],
+    ],
+    limit: 1,
+  });
 
-         SUM(totalIdealShots) AS totalIdealShots,
+  const worstScore = await Game.findOne({
+    where: {
+      participantId: participantId,
+    },
+    attributes: [
+      [Sequelize.literal('(totalIdealShots - totalShotsTaken)'), 'difference'],
+      'totalShotsTaken',
+    ],
+    order: [
+      [Sequelize.literal('(totalIdealShots - totalShotsTaken)'), 'ASC'],
+    ],
+    limit: 1,
+  });
 
-         (SELECT totalShotsTaken
-          FROM Games
-          WHERE participantId = ${participantId}
-          ORDER BY (totalIdealShots - totalShotsTaken) DESC
-          LIMIT 1) AS bestScore,
-
-         MAX(totalIdealShots - totalShotsTaken) AS maxDifference,
-
-         (SELECT totalShotsTaken
-         FROM Games
-         WHERE participantId = ${participantId}
-         ORDER BY (totalIdealShots - totalShotsTaken) ASC
-         LIMIT 1) AS worstScore,
-
-        MIN(totalIdealShots - totalShotsTaken) AS minDifference
-
-  FROM Games
-  WHERE participantId = ${participantId}
-`,
-    { plain: true },
-  );
-
-  return statistics;
+  return {
+    rounds,
+    bestScore: bestScore ? bestScore.totalShotsTaken : null,
+    worstScore: worstScore ? worstScore.totalShotsTaken : null,
+  };
 }
 
 async function findBestRoundsByParticipantId(participantId) {
