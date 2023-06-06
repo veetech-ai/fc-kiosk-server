@@ -53,10 +53,6 @@ module.exports = (sequelize, DataTypes) => {
       as: "Screen_Configs",
       foreignKey: "org_id",
     });
-    models.Organization.hasMany(models.Ad, {
-      as: "Ads",
-      foreignKey: "org_id",
-    });
     models.Course.hasMany(models.ContactCareer, {
       as: "ContactCareers",
       foreignKey: "org_id",
