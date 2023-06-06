@@ -21,12 +21,10 @@ async function findStatisticsByParticipantId(participantId) {
       participantId: participantId,
     },
     attributes: [
-      [Sequelize.literal('(totalIdealShots - totalShotsTaken)'), 'difference'],
-      'totalShotsTaken',
+      [Sequelize.literal("(totalIdealShots - totalShotsTaken)"), "difference"],
+      "totalShotsTaken",
     ],
-    order: [
-      [Sequelize.literal('(totalIdealShots - totalShotsTaken)'), 'DESC'],
-    ],
+    order: [[Sequelize.literal("(totalIdealShots - totalShotsTaken)"), "DESC"]],
     limit: 1,
   });
 
@@ -35,12 +33,10 @@ async function findStatisticsByParticipantId(participantId) {
       participantId: participantId,
     },
     attributes: [
-      [Sequelize.literal('(totalIdealShots - totalShotsTaken)'), 'difference'],
-      'totalShotsTaken',
+      [Sequelize.literal("(totalIdealShots - totalShotsTaken)"), "difference"],
+      "totalShotsTaken",
     ],
-    order: [
-      [Sequelize.literal('(totalIdealShots - totalShotsTaken)'), 'ASC'],
-    ],
+    order: [[Sequelize.literal("(totalIdealShots - totalShotsTaken)"), "ASC"]],
     limit: 1,
   });
 
