@@ -46,7 +46,7 @@ const emailExists = async (email) => {
   return await User.count({ where: { email: email } });
 };
 
-const PhoneExists = async (phone) => {
+exports.PhoneExists = async (phone) => {
   return await User.count({ where: { phone: phone } });
 };
 
@@ -129,7 +129,7 @@ exports.create_user = async (params) => {
     params?.role_id === roleWithAuthorities.golfer.id;
 
   if (isGolferWithPhoneLogin) {
-    const isPhone = await PhoneExists(params.phone);
+    const isPhone = await this.PhoneExists(params.phone);
 
     if (!isPhone) {
       const paramsWithRole = {

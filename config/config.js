@@ -248,6 +248,7 @@ module.exports = {
       },
     },
   },
+  mobileAppLink: process.env.MOBILE_APP_LINK || "https://google.com",
   /*
    * Date: 4 Jan 2022
    * The Following is required by the sequelize internal working

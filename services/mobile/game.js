@@ -1,9 +1,28 @@
 const models = require("../../models/index");
+const ServiceError = require("../../utils/serviceError");
 const Game = models.Game;
 
 async function createGame(reqBody) {
   const game = await Game.create({
     ...reqBody,
+  });
+
+  return game;
+}
+
+async function isGameOwner(userId, gameId) {
+  const game = await Game.findOne({
+    where: {
+      ownerId: userId,
+      gameId,
+    },
+    include: [
+      {
+        as: "Golf_Course",
+        model: models.Mobile_Course,
+        attributes: ["name"],
+      },
+    ],
   });
 
   return game;
@@ -50,6 +69,7 @@ const updateGame = async (where, data) => {
 };
 
 module.exports = {
+  isGameOwner,
   createGame,
   getGame,
   getOneGame,
