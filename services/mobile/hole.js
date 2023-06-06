@@ -30,7 +30,7 @@ async function getGameHole(gId) {
 
 async function updateHoleByWhere(where, data) {
   const updateResponse = await Hole.update(data, {
-    where: { ...where, updatedAt: { [Op.gte]: data.updatedAt } },
+    where: { ...where, updatedAt: { [Op.lte]: data.updatedAt } },
   });
 
   return updateResponse[0];
