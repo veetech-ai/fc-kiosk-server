@@ -15,3 +15,9 @@ exports.getCourseFromDb = async (where) => {
   }
   return courseFromDB;
 };
+
+exports.getCourses = async (query) => {
+  const courseFromDB = await CourseModel.findAll(query);
+
+  return courseFromDB;
+};

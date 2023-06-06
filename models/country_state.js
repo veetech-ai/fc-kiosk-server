@@ -21,11 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  CountryState.associate = function (models) {
-    models.CountryState.hasMany(models.Ad, {
-      as: "Ads",
-      foreignKey: "state_id",
-    });
-  };
+  // CountryState.associate = function (models) {
+  //   models.CountryState.hasMany(models.Ad, {
+  //     as: "Ads",
+  //     foreignKey: "state_id",
+  //   });
+  // };
   return CountryState;
 };

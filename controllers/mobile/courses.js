@@ -14,6 +14,7 @@ const config = require("../../config/config");
 const { Op, Sequelize } = require("sequelize");
 const golfbertService = require("../../services/golfbert/golfbert");
 const courseServices = require("../../services/mobile/courses");
+const { parseBoolean } = require("../../utils/parseBoolean");
 const CourseModel = models.Mobile_Course;
 
 /**
@@ -39,7 +40,12 @@ exports.get_courses = async (req, res) => {
    *         description: name of the golf course
    *         in: query
    *         required: false
-   *         type: numeric
+   *         type: string
+   *       - name: state
+   *         description: state of the golf course
+   *         in: query
+   *         required: false
+   *         type: string
    *       - name: range
    *         description: distance range to find courses in
    *         in: query
@@ -73,6 +79,12 @@ exports.get_courses = async (req, res) => {
    *         in: query
    *         required: false
    *         type: numeric
+   *       - name: pagination
+   *         description: pagination required or not
+   *         in: query
+   *         required: false
+   *         default: true
+   *         type: boolean
    *     produces:
    *       - application/json
    *     responses:
@@ -80,15 +92,18 @@ exports.get_courses = async (req, res) => {
    *         description: success
    */
   try {
-    const validation = new Validator(req.query, {
+    const validationObject = {
       name: "string",
       range: "integer",
       unit: "string",
       limit: "integer",
       page: "integer",
-      lat: "required|numeric",
-      long: "required|numeric",
-    });
+      state: "string",
+      lat: req.query.state ? "numeric" : "required|numeric",
+      long: req.query.state ? "numeric" : "required|numeric",
+    };
+
+    const validation = new Validator(req.query, validationObject);
 
     validation.fails(function () {
       return apiResponse.fail(res, validation.errors);
@@ -96,15 +111,16 @@ exports.get_courses = async (req, res) => {
 
     validation.passes(async function () {
       try {
-        console.time("TIme");
         const queryParams = {
           name: req.query.name,
+          state: req.query.state,
           unit: req.query.unit || "miles",
           range: parseInt(req.query.range || 50),
           lat: Number(req.query.lat),
           long: Number(req.query.long),
           page: parseInt(req.query.page || 1),
           limit: parseInt(req.query.limit || config.tableRecordsLimit),
+          pagination: req.query.pagination,
         };
 
         const unitAbbreviation = queryParams.unit === "miles" ? "mi" : "km";
@@ -147,9 +163,28 @@ exports.get_courses = async (req, res) => {
           ],
           raw: true,
         };
+        if (queryParams.pagination !== undefined) {
+          const isPaginated = parseBoolean(queryParams.pagination);
+          if (!isPaginated) {
+            delete query.limit;
+            delete query.offset;
+          }
+        }
 
         // if does not have name then regard for the range and unit otherwise find all records
-        if (!queryParams.name) {
+        if (Object.hasOwnProperty.call(queryParams, "state")) {
+          query.where = {
+            [Op.and]: [
+              Sequelize.where(
+                Sequelize.fn("LOWER", Sequelize.col("state")),
+                req.query.state.toLowerCase(),
+              ),
+              Sequelize.where(Sequelize.col("golfbert_id"), {
+                [Op.not]: null,
+              }),
+            ],
+          };
+        } else if (!queryParams.name) {
           query.where = {
             lat: { [Op.between]: [latRange.min, latRange.max] },
             long: { [Op.between]: [longRange.min, longRange.max] },
@@ -161,8 +196,7 @@ exports.get_courses = async (req, res) => {
             `%${queryParams.name.toLowerCase()}%`,
           );
         }
-
-        const golfCourses = await CourseModel.findAll(query);
+        const golfCourses = await courseServices.getCourses(query);
 
         const coursesRoughlyInRange = golfCourses
           .filter((course) => course?.lat && course?.long)

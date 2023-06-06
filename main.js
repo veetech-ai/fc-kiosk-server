@@ -109,6 +109,8 @@ const CoursesRouter = require("./routes/mobile/courses");
 const ClubsRouter = require("./routes/mobile/clubs");
 const ScreenConfigRouter = require("./routes/screenConfig/screens");
 const GameRouter = require("./routes/mobile/game");
+const AdsScreensRouter = require("./routes/mobile/ads-screens");
+const AdsRouter = require("./routes/mobile/ads");
 const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
 
@@ -187,6 +189,8 @@ ClubsRouter.routesConfig(app, router);
 KioskCoursesRouter.routesConfig(app, router);
 GameRouter.routesConfig(app, router);
 ScreenConfigRouter.routesConfig(app, router);
+AdsScreensRouter.routesConfig(app, router);
+AdsRouter.routesConfig(app, router);
 if (config.env === "test") {
   // for test case server
   app.use(router);
