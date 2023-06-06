@@ -69,6 +69,7 @@ const options = {
     "./controllers/mobile/user-game-invitations.js",
     "./controllers/mobile/ads.js",
     "./controllers/mobile/ads-screens.js",
+    "./controllers/mobile/faq.js",
   ],
 };
 
