@@ -47,7 +47,14 @@ async function getGame(where, holeId = null) {
       {
         as: "Holes",
         model: models.Hole,
-        attributes: ["id", "par", "noOfShots", "isGir", "trackedShots"],
+        attributes: [
+          "id",
+          "par",
+          "noOfShots",
+          "isGir",
+          "trackedShots",
+          "holeNumber",
+        ],
         where: holeWhere,
       },
     ],
