@@ -4,39 +4,27 @@ module.exports = (sequelize, DataTypes) => {
     "Ad",
     {
       gcId: {
-        field: "gc_id",
         type: DataTypes.INTEGER,
         allowNull: false,
-      },
-      orgId: {
-        field: "org_id",
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      stateId: {
-        field: "state_id",
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      screenId: {
-        field: "screen_id",
-        type: DataTypes.INTEGER,
-        allowNull: true,
       },
       smallImage: {
-        field: "small_image",
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       bigImage: {
-        field: "big_image",
         type: DataTypes.STRING,
         allowNull: true,
       },
-      adType: {
-        field: "ad_type",
-        type: DataTypes.ENUM("kiosk", "mobile"),
+      tapLink: {
+        type: DataTypes.STRING,
         allowNull: true,
+        validate: {
+          isUrl: true,
+        },
+      },
+      screens: {
+        type: DataTypes.JSON,
+        allowNull: false,
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -47,14 +35,29 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {},
+    {
+      validate: {
+        tapLinkAndBigImageNotNullAndNotAtSameTime() {
+          const hasBigImage = this.bigImage;
+          const hasTapLink = this.tapLink;
+          if (hasBigImage && hasTapLink) {
+            throw new Error(
+              "Both bigImage and tapLink cannot be populated at the same time.",
+            );
+          }
+
+          if (!hasBigImage && !hasTapLink) {
+            throw new Error(
+              "Both bigImage and tapLink cannot be null at the same time. At least one must be populated.",
+            );
+          }
+        },
+      },
+    },
   );
   Ad.associate = function (models) {
     // associations can be defined here
-    Ad.belongsTo(models.Organization, { foreignKey: "org_id" });
-    Ad.belongsTo(models.Course, { foreignKey: "gc_id" });
-    Ad.belongsTo(models.CountryState, { foreignKey: "state_id" });
-    Ad.belongsTo(models.AdScreen, { foreignKey: "screen_id" });
+    Ad.belongsTo(models.Mobile_Course, { foreignKey: "gcId" });
   };
   return Ad;
 };

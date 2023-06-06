@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const AdScreen = sequelize.define(
-    "AdScreen",
+    "Ad_screen",
     {
       name: {
         type: DataTypes.STRING,
@@ -16,14 +16,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {},
+    {
+      defaultScope: {
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      },
+    },
   );
-  AdScreen.associate = function (models) {
-    // associations can be defined here
-    models.AdScreen.hasMany(models.Ad, {
-      as: "Ads",
-      foreignKey: "screen_id",
-    });
-  };
   return AdScreen;
 };
