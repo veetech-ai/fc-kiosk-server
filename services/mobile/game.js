@@ -35,7 +35,23 @@ async function getGame(where, holeId = null) {
   });
 }
 
+async function getOneGame(where) {
+  return await Game.findOne({
+    where,
+  });
+}
+
+const updateGame = async (where, data) => {
+  const updateResponse = await Game.update(data, {
+    where,
+  });
+  const noOfAffectedRows = updateResponse[0];
+  return noOfAffectedRows;
+};
+
 module.exports = {
   createGame,
   getGame,
+  getOneGame,
+  updateGame,
 };

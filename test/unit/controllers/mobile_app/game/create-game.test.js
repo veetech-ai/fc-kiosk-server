@@ -172,5 +172,23 @@ describe("POST: /games", () => {
 
       expect(response.statusCode).toEqual(403);
     });
+
+    it("should throw exception if the game id is already used", async () => {
+      const gameId = uuidv4();
+      const params = {
+        gcId: createdCourses[0].id,
+        teeColor: "Red",
+        gameId,
+        holes,
+      };
+
+      const response = await makeCreateGameApiRequest(params);
+      expect(response.status).toBe(200);
+      const expectedResponse = { success: false, data: "Invalid game id" };
+
+      const secondResponse = await makeCreateGameApiRequest(params);
+      expect(secondResponse.body).toEqual(expectedResponse);
+      expect(secondResponse.status).toBe(400);
+    });
   });
 });

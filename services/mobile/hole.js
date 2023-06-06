@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 const models = require("../../models/index");
 const Hole = models.Hole;
 
@@ -28,7 +30,7 @@ async function getGameHole(gId) {
 
 async function updateHoleByWhere(where, data) {
   const updateResponse = await Hole.update(data, {
-    where,
+    where: { ...where, updatedAt: { [Op.gte]: data.updatedAt } },
   });
 
   return updateResponse[0];

@@ -1,10 +1,12 @@
-const helper = require("../../../../helper");
-const models = require("../../../../../models/index");
 const jwt = require("jsonwebtoken");
-const Course = models.Course;
 const { v4: uuidv4 } = require("uuid");
 
+const helper = require("../../../../helper");
+const models = require("../../../../../models/index");
 const mainHelper = require("../../../../../common/helper");
+
+const Course = models.Course;
+
 describe("Patch: /games/holes", () => {
   let golferToken;
   let createdCourses;
@@ -110,6 +112,8 @@ describe("Patch: /games/holes", () => {
         params: {
           noOfShots: 1,
           trackedShots: '[{"lat":35.5,"long":100.1,"isFromGreen":true}]',
+          updatedAt: new Date(),
+          score: 1,
         },
       });
       const expectedResponse = expect.objectContaining({
@@ -120,17 +124,19 @@ describe("Patch: /games/holes", () => {
       mqttMessageSpy.mockRestore();
     });
 
-    it("should return already up to date if the record with the specified query params not found", async () => {
+    it("should return already up to date if the hole number is incorrect", async () => {
       const response = await helper.patch_request_with_authorization({
         endpoint: `games/holes`,
         token: golferToken,
         params: {
           noOfShots: 1,
+          score: 0,
+          updatedAt: new Date(),
         },
         queryParams: {
-          userId: -1,
+          userId: golferUser.id,
           holeNumber: -1,
-          gameId: "INVALID",
+          gameId: createdGame.gameId,
         },
       });
       const expectedResponse = expect.objectContaining({
@@ -139,15 +145,109 @@ describe("Patch: /games/holes", () => {
       });
       expect(response.body).toEqual(expectedResponse);
     });
+
+    it("should return already up to date if updateAt has old date, time", async () => {
+      const mqttMessageSpy = jest
+        .spyOn(mainHelper, "mqtt_publish_message")
+        .mockImplementation(
+          (channel, message, retained = true, qos = 1, stringify = true) => {
+            const payload = {
+              channel,
+              message,
+              qos,
+              stringify,
+              retained,
+            };
+            expect(payload).toEqual({
+              channel: `game/${createdGame.gameId}/screens`,
+              message: {
+                action: "scorecard",
+              },
+              retained: true,
+              qos: 1,
+              stringify: true,
+            });
+          },
+        );
+      const response = await helper.patch_request_with_authorization({
+        endpoint: `games/holes`,
+        token: golferToken,
+        queryParams: {
+          userId: golferUser.id,
+          holeNumber: holes[0].holeNumber,
+          gameId: createdGame.gameId,
+        },
+        params: {
+          noOfShots: 1,
+          trackedShots: '[{"lat":35.5,"long":100.1,"isFromGreen":true}]',
+          updatedAt: "2019-05-22T10:30:00+03:00",
+          score: 1,
+        },
+      });
+      const expectedResponse = expect.objectContaining({
+        success: true,
+        data: "Scorecard already up to date",
+      });
+      expect(response.body).toEqual(expectedResponse);
+      mqttMessageSpy.mockRestore();
+    });
   });
 
   describe("Fail", () => {
+    it("should throw exception game id is incorrect", async () => {
+      const response = await helper.patch_request_with_authorization({
+        endpoint: `games/holes`,
+        token: golferToken,
+        params: {
+          noOfShots: 1,
+          score: 1,
+          updatedAt: new Date(),
+        },
+        queryParams: {
+          userId: golferUser.id,
+          holeNumber: holes[0].holeNumber,
+          gameId: "INVALID",
+        },
+      });
+      const expectedResponse = expect.objectContaining({
+        success: false,
+        data: "Game not found",
+      });
+      expect(response.body).toEqual(expectedResponse);
+      expect(response.statusCode).toEqual(404);
+    });
+
+    it("should throw exception user id is incorrect", async () => {
+      const response = await helper.patch_request_with_authorization({
+        endpoint: `games/holes`,
+        token: golferToken,
+        params: {
+          noOfShots: 1,
+          score: 1,
+          updatedAt: new Date(),
+        },
+        queryParams: {
+          userId: -1,
+          holeNumber: holes[0].holeNumber,
+          gameId: createdGame.gameId,
+        },
+      });
+      const expectedResponse = expect.objectContaining({
+        success: false,
+        data: "Game not found",
+      });
+      expect(response.body).toEqual(expectedResponse);
+      expect(response.statusCode).toEqual(404);
+    });
+
     it("should throw exception if hole field no of shots have string value", async () => {
       const response = await helper.patch_request_with_authorization({
         endpoint: `games/holes`,
         token: golferToken,
         params: {
           noOfShots: "hello",
+          updatedAt: new Date(),
+          score: 1,
         },
       });
       expect(response.body.data.errors.noOfShots).toEqual(
