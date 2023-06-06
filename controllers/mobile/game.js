@@ -156,6 +156,13 @@ exports.getHoles = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
+    const isGameBelongToUser = await gameService.getGame({
+      gameId: req.params.gameId,
+      participantId: req.user.id,
+    });
+    if (!isGameBelongToUser.length)
+      return apiResponse.fail(res, "Invalid game id", 400);
+
     const holeId = req.query?.holeId;
 
     const holes = await gameService.getGame(
