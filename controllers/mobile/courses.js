@@ -172,7 +172,7 @@ exports.get_courses = async (req, res) => {
         }
 
         // if does not have name then regard for the range and unit otherwise find all records
-        if (Object.hasOwnProperty.call(queryParams, "state")) {
+        if (queryParams.state) {
           query.where = {
             [Op.and]: [
               Sequelize.where(
