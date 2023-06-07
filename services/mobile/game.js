@@ -18,17 +18,7 @@ async function findStatisticsByParticipantId(participantId) {
     },
   });
 
-  if(!rounds) return { rounds: rounds , score: {max: null, min: null} }
-
-  const totalSumOfShotsTaken = await Game.findOne({
-    attributes: [[Sequelize.fn('SUM', Sequelize.col('totalShotsTaken')), 'sum']],
-    where: {
-      participantId,
-      endTime: { [Op.ne]: null },
-    },
-    raw: true,
-  });
-
+  if(!rounds) return { rounds: rounds , bestScore: null, worstScore: null , avg: null }
 
   const scores = await Game.findAll({
     where: {
@@ -38,15 +28,21 @@ async function findStatisticsByParticipantId(participantId) {
     order: [['score', 'ASC']],
   });
 
-  const score = {
-    max: scores[scores.length - 1].totalShotsTaken,
-    min: scores[0].totalShotsTaken,
-    avg: totalSumOfShotsTaken.sum/rounds
-  };
+  const totalShotsTaken = await Game.findOne({
+    attributes: [[Sequelize.fn('SUM', Sequelize.col('totalShotsTaken')), 'sum']],
+    where: {
+      participantId,
+      endTime: { [Op.ne]: null },
+    },
+    raw: true,
+  });
+
 
   return {
     rounds,
-    score
+    worstScore: scores[scores.length - 1].totalShotsTaken,
+    bestScore: scores[0].totalShotsTaken,
+    avg: totalShotsTaken.sum/rounds
   };
 }
 
