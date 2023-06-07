@@ -5,7 +5,7 @@ const testHelpers = require("../../../../helper");
 
 let superAdminToken;
 
-describe("PUT /faq", () => {
+describe("PUT /faqs", () => {
   // A sample FAQ object
   const faq = {
     question: "What is your expected salary?",
@@ -27,7 +27,7 @@ describe("PUT /faq", () => {
   // Helper function to make PUT request to update FAQs
   const makePutFAQsApiRequest = async (id, body, token = superAdminToken) => {
     return await testHelpers.put_request_with_authorization({
-      endpoint: `faq/${id}`,
+      endpoint: `faqs/${id}`,
       token: token,
       params: body,
     });
