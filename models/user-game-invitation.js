@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
           "invalid",
           "seen",
           "pending",
+          "ignored",
         ),
         defaultValue: "pending",
       },

@@ -9,4 +9,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["manageGames"]),
     UserGameInvitationsController.createUserGameInvitations,
   ]);
+  router.get(game + "/", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["manageGames"]),
+    UserGameInvitationsController.getUserGameInvitations,
+  ]);
 };

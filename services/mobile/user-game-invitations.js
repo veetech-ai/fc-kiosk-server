@@ -1,8 +1,10 @@
 const { User_Game_Invitation } = require("../../models");
 const models = require("../../models");
 
+const { Op } = require("sequelize");
+
 exports.createUserGameInvitations = async (body) => {
-  const existingInvitation = await this.getOneInvitation({
+  const existingInvitation = await this.getOneUserGameInvitation({
     userId: body.userId,
     gameId: body.gameId,
   });
@@ -11,10 +13,10 @@ exports.createUserGameInvitations = async (body) => {
   const newCreatedInvitation = await User_Game_Invitation.create(body);
 
   // Calling this service again because the created invite does not have the invited by name
-  return await this.getOneInvitation({ id: newCreatedInvitation.id });
+  return await this.getOneUserGameInvitation({ id: newCreatedInvitation.id });
 };
 
-exports.getOneInvitation = async (where) => {
+exports.getOneUserGameInvitation = async (where) => {
   const invitation = await User_Game_Invitation.findOne({
     where,
     include: [
@@ -27,4 +29,16 @@ exports.getOneInvitation = async (where) => {
   });
 
   return invitation;
+};
+
+exports.getUnAttendedUserGameInvitations = async (userId) => {
+  return await User_Game_Invitation.findAll({
+    where: {
+      userId,
+      status: {
+        [Op.in]: ["seen", "pending", "ignored"],
+      },
+    },
+    order: [["id", "DESC"]],
+  });
 };

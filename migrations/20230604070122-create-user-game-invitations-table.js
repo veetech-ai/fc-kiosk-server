@@ -35,6 +35,7 @@ module.exports = {
           "invalid",
           "seen",
           "pending",
+          "ignored",
         ),
         defaultValue: "pending",
       },
