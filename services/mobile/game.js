@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const Game = models.Game;
-const { Op, Sequelize } = require("sequelize");
+const {Sequelize } = require("sequelize");
 async function createGame(reqBody) {
   const game = await Game.create({
     ...reqBody,
