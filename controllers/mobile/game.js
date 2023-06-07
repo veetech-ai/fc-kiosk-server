@@ -253,7 +253,10 @@ exports.updateHoles = async (req, res) => {
       "updatedAt",
     ]);
 
-    const filteredBodyForGame = helpers.validateObject(req.body, ["score"]);
+    const filteredBodyForGame = helpers.validateObject(req.body, [
+      "score",
+      "updatedAt",
+    ]);
 
     // Filter out the query params
     const filteredQueryParamsForHoles = helpers.validateObject(req.query, [
@@ -267,13 +270,10 @@ exports.updateHoles = async (req, res) => {
       ["userId", "gameId"],
     );
 
-    const gameUpdateResponse = await gameService.updateGame(
+    await gameService.updateGameIfGameIdIsValid(
       { gameId, participantId },
       filteredBodyForGame,
     );
-
-    if (!gameUpdateResponse)
-      return apiResponse.fail(res, "Game not found", 404);
 
     const noOfAffectedRows = await holeService.updateHoleByWhere(
       filteredQueryParamsForHoles,

@@ -13,6 +13,7 @@ describe("Patch: /games/holes", () => {
   let createdGame;
   let getHoles;
   let golferUser;
+  let mqttMessageSpy;
   const holes = [
     {
       holeId: 31931,
@@ -67,6 +68,30 @@ describe("Patch: /games/holes", () => {
         token: golferToken,
       })
     )?.body.data;
+
+    // Mock MQTT
+    mqttMessageSpy = jest
+      .spyOn(mainHelper, "mqtt_publish_message")
+      .mockImplementation(
+        (channel, message, retained = true, qos = 1, stringify = true) => {
+          const payload = {
+            channel,
+            message,
+            qos,
+            stringify,
+            retained,
+          };
+          expect(payload).toEqual({
+            channel: `game/${createdGame.gameId}/screens`,
+            message: {
+              action: "scorecard",
+            },
+            retained: true,
+            qos: 1,
+            stringify: true,
+          });
+        },
+      );
   });
 
   afterAll(async () => {
@@ -75,32 +100,11 @@ describe("Patch: /games/holes", () => {
         gameId: createdGame.gameId,
       },
     });
+    mqttMessageSpy.mockRestore();
   });
 
   describe("Success", () => {
     it("should update game holes if game Id is correct", async () => {
-      const mqttMessageSpy = jest
-        .spyOn(mainHelper, "mqtt_publish_message")
-        .mockImplementation(
-          (channel, message, retained = true, qos = 1, stringify = true) => {
-            const payload = {
-              channel,
-              message,
-              qos,
-              stringify,
-              retained,
-            };
-            expect(payload).toEqual({
-              channel: `game/${createdGame.gameId}/screens`,
-              message: {
-                action: "scorecard",
-              },
-              retained: true,
-              qos: 1,
-              stringify: true,
-            });
-          },
-        );
       const response = await helper.patch_request_with_authorization({
         endpoint: `games/holes`,
         token: golferToken,
@@ -121,7 +125,6 @@ describe("Patch: /games/holes", () => {
         data: "Scorecard updated successfully",
       });
       expect(response.body).toEqual(expectedResponse);
-      mqttMessageSpy.mockRestore();
     });
 
     it("should return already up to date if the hole number is incorrect", async () => {
@@ -147,28 +150,20 @@ describe("Patch: /games/holes", () => {
     });
 
     it("should return already up to date if updateAt has old date, time", async () => {
-      const mqttMessageSpy = jest
-        .spyOn(mainHelper, "mqtt_publish_message")
-        .mockImplementation(
-          (channel, message, retained = true, qos = 1, stringify = true) => {
-            const payload = {
-              channel,
-              message,
-              qos,
-              stringify,
-              retained,
-            };
-            expect(payload).toEqual({
-              channel: `game/${createdGame.gameId}/screens`,
-              message: {
-                action: "scorecard",
-              },
-              retained: true,
-              qos: 1,
-              stringify: true,
-            });
-          },
-        );
+      // create game
+      const params = {
+        gcId: createdCourses[0].id,
+        teeColor: "Red",
+        gameId: uuidv4(),
+        holes,
+      };
+      const createdGame = (
+        await helper.post_request_with_authorization({
+          endpoint: "games",
+          token: golferToken,
+          params: params,
+        })
+      )?.body?.data;
       const response = await helper.patch_request_with_authorization({
         endpoint: `games/holes`,
         token: golferToken,
@@ -189,7 +184,6 @@ describe("Patch: /games/holes", () => {
         data: "Scorecard already up to date",
       });
       expect(response.body).toEqual(expectedResponse);
-      mqttMessageSpy.mockRestore();
     });
   });
 
