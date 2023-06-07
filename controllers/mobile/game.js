@@ -279,6 +279,10 @@ exports.updateHoles = async (req, res) => {
       filteredBodyForGame,
     );
 
+    const hole = await holeService.getHoleByWhere(filteredQueryParamsForHoles);
+    filteredBodyForHoles.isGir =
+      hole?.par - filteredBodyForHoles?.noOfShots >= 2;
+
     const noOfAffectedRows = await holeService.updateHoleByWhere(
       filteredQueryParamsForHoles,
       filteredBodyForHoles,

@@ -36,8 +36,15 @@ async function updateHoleByWhere(where, data) {
   return updateResponse[0];
 }
 
+async function getHoleByWhere(where) {
+  return await Hole.findOne({
+    where,
+  });
+}
+
 module.exports = {
   createGameHoles,
   getGameHole,
   updateHoleByWhere,
+  getHoleByWhere,
 };
