@@ -13,55 +13,55 @@ async function createGame(reqBody) {
 async function findStatisticsByParticipantId(participantId) {
   const rounds = await Game.count({
     where: {
-      participantId: participantId,
+      participantId,
     },
   });
 
-  const bestScore = await Game.findOne({
+  if(!rounds) return { rounds: rounds , score: {max: null, min: null} }
+
+  const totalSumOfShotsTaken = await Game.findOne({
+    attributes: [[Sequelize.fn('SUM', Sequelize.col('totalShotsTaken')), 'sum']],
     where: {
-      participantId: participantId,
+      participantId,
     },
-    attributes: [
-      [Sequelize.literal("(totalIdealShots - totalShotsTaken)"), "difference"],
-      "totalShotsTaken",
-    ],
-    order: [[Sequelize.literal("(totalIdealShots - totalShotsTaken)"), "DESC"]],
-    limit: 1,
+    raw: true,
   });
 
-  const worstScore = await Game.findOne({
+
+  const scores = await Game.findAll({
     where: {
-      participantId: participantId,
+     participantId,
     },
-    attributes: [
-      [Sequelize.literal("(totalIdealShots - totalShotsTaken)"), "difference"],
-      "totalShotsTaken",
-    ],
-    order: [[Sequelize.literal("(totalIdealShots - totalShotsTaken)"), "ASC"]],
-    limit: 1,
+    order: [['score', 'ASC']],
   });
+
+  const score = {
+    max: scores[scores.length - 1].totalShotsTaken,
+    min: scores[0].totalShotsTaken,
+    avg: totalSumOfShotsTaken.sum/rounds
+  };
 
   return {
     rounds,
-    bestScore: bestScore ? bestScore.totalShotsTaken : null,
-    worstScore: worstScore ? worstScore.totalShotsTaken : null,
+    score
   };
 }
 
-async function findBestRoundsByParticipantId(participantId) {
+async function findBestRoundsByParticipantId(participantId , limit) {
+
   const bestRounds = await Game.findAll({
-    attributes: ["totalShotsTaken", "startTime", "endTime"],
+    attributes: ["totalShotsTaken","totalIdealShots", "startTime", "endTime" , "score"],
     include: [
       {
-        as: "Mobile_Course",
+        as: "Golf_Course",
         model: models.Mobile_Course,
         attributes: ["name"],
       },
     ],
 
     where: { participantId: participantId },
-    order: [[Sequelize.literal("totalIdealShots - totalShotsTaken"), "DESC"]],
-    limit: 5,
+    order: [[Sequelize.literal("score"), "DESC"]],
+    limit: limit,
   });
 
   return bestRounds;

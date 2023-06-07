@@ -2526,7 +2526,7 @@ exports.getStatistics = async (req, res) => {
     );
 
     const bestRounds = await gameService.findBestRoundsByParticipantId(
-      loggedInUserId,
+      loggedInUserId, 5
     );
 
     const totalStatistics = {
