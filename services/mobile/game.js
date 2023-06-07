@@ -14,6 +14,7 @@ async function findStatisticsByParticipantId(participantId) {
   const rounds = await Game.count({
     where: {
       participantId,
+      endTime: { [Op.ne]: null },
     },
   });
 
@@ -23,6 +24,7 @@ async function findStatisticsByParticipantId(participantId) {
     attributes: [[Sequelize.fn('SUM', Sequelize.col('totalShotsTaken')), 'sum']],
     where: {
       participantId,
+      endTime: { [Op.ne]: null },
     },
     raw: true,
   });
@@ -31,6 +33,7 @@ async function findStatisticsByParticipantId(participantId) {
   const scores = await Game.findAll({
     where: {
      participantId,
+     endTime: { [Op.ne]: null },
     },
     order: [['score', 'ASC']],
   });
@@ -59,7 +62,10 @@ async function findBestRoundsByParticipantId(participantId , limit) {
       },
     ],
 
-    where: { participantId: participantId },
+    where: { 
+      participantId,
+      endTime: { [Op.ne]: null },
+    },
     order: [[Sequelize.literal("score"), "DESC"]],
     limit: limit,
   });
