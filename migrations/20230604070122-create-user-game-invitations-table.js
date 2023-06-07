@@ -20,12 +20,23 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      invitedBy: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       gameId: {
         type: Sequelize.UUID,
         allowNull: false,
       },
       status: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.ENUM(
+          "accepted",
+          "declined",
+          "invalid",
+          "seen",
+          "pending",
+        ),
+        defaultValue: "pending",
       },
       createdAt: {
         allowNull: false,

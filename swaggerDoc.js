@@ -66,8 +66,10 @@ const options = {
     "./controllers/org_user_rel_fp_user.js",
     "./controllers/roles/index.js",
     "./controllers/mobile/clubs.js",
+    "./controllers/mobile/user-game-invitations.js",
     "./controllers/mobile/ads.js",
     "./controllers/mobile/ads-screens.js",
+    "./controllers/mobile/faq.js",
   ],
 };
 

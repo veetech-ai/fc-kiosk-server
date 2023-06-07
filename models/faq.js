@@ -11,28 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      gcId: {
-        field: "gc_id",
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Course",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      orgId: {
-        field: "org_id",
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Organization",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
+
       createdAt: {
         field: "created_at",
         type: DataTypes.DATE,
@@ -46,10 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  FAQ.associate = function (models) {
-    // associations can be defined here
-    FAQ.belongsTo(models.Organization, { foreignKey: "org_id" });
-    FAQ.belongsTo(models.Course, { foreignKey: "gc_id" });
-  };
+
   return FAQ;
 };

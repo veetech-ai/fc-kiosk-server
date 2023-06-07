@@ -2,11 +2,8 @@ const Validator = require("validatorjs");
 const formidable = require("formidable");
 const apiResponse = require("../../common/api.response");
 const upload_file = require("../../common/upload");
-const courseService = require("../../services/mobile/courses");
 const adsService = require("../../services/mobile/ads");
-// const screenConfigService = require("../../services/screenConfig/screens");
 const helper = require("../../common/helper");
-// const { validateObject } = require("../../common/helper");
 
 /**
  * @swagger
@@ -131,32 +128,38 @@ exports.createAd = async (req, res) => {
   }
 };
 
-// exports.getAds = async (req, res) => {
-//   /**
-//    * @swagger
-//    *
-//    * /ads:
-//    *   get:
-//    *     security:
-//    *       - auth: []
-//    *     description: GET ads.
-//    *     tags: [Ads]
-//    *     produces:
-//    *       - application/json
-//    *     responses:
-//    *       200:
-//    *         description: success
-//    */
+exports.getAds = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /ads:
+   *   get:
+   *     description: GET ads.
+   *     tags: [Ads]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - in: query
+   *         name: gcId
+   *         required: false
+   *         type: integer
+   *         description: The gcId to filter ads.
+   *     responses:
+   *       200:
+   *         description: success
+   */
 
-//   try {
-//     const loggedInUserOrg = req.user?.orgId;
-
-//     const ads = await adsService.getAds({}, loggedInUserOrg);
-//     return apiResponse.success(res, req, ads);
-//   } catch (error) {
-//     return apiResponse.fail(res, error.message, error.statusCode || 500);
-//   }
-// };
+  try {
+    let where = {};
+    if (req.query.gcId) {
+      where.gcId = req.query.gcId;
+    }
+    const ads = await adsService.getAds(where);
+    return apiResponse.success(res, req, ads);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
 
 // exports.updateAd = async (req, res) => {
 //   /**

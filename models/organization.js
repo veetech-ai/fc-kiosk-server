@@ -24,10 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       as: "Courses",
       foreignKey: "org_id",
     });
-    models.Organization.hasMany(models.FAQ, {
-      as: "FAQs",
-      foreignKey: "org_id",
-    });
+
     models.Organization.hasMany(models.Feedback, {
       as: "Feedbacks",
       foreignKey: "org_id",
@@ -54,10 +51,6 @@ module.exports = (sequelize, DataTypes) => {
     });
     models.Organization.hasMany(models.Screen_Config, {
       as: "Screen_Configs",
-      foreignKey: "org_id",
-    });
-    models.Organization.hasMany(models.Ad, {
-      as: "Ads",
       foreignKey: "org_id",
     });
     models.Course.hasMany(models.ContactCareer, {

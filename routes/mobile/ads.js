@@ -10,4 +10,8 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin"]),
     adsController.createAd,
   ]);
+  router.get(ads, [
+    validation_middleware.validJWTOptional,
+    adsController.getAds,
+  ]);
 };

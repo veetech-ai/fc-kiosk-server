@@ -60,10 +60,7 @@ module.exports = (sequelize, DataTypes) => {
   Course.associate = function (models) {
     // associations can be defined here
     Course.belongsTo(models.Organization, { foreignKey: "org_id" });
-    Course.hasMany(models.FAQ, {
-      as: "FAQs",
-      foreignKey: "gc_id",
-    });
+
     Course.hasMany(models.Feedback, {
       as: "Feedbacks",
       foreignKey: "gc_id",
@@ -90,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Course.hasMany(models.Ad, {
       as: "Ads",
-      foreignKey: "gc_id",
+      foreignKey: "gcId",
     });
     Course.hasMany(models.ContactCareer, {
       as: "ContactCareer",

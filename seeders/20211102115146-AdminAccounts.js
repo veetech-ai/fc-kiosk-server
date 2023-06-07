@@ -160,10 +160,13 @@ module.exports = {
             "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
           mqtt_token: randtoken.generate(10),
           role_id: roles.golfer.id,
-          report_to: testCustomer.id,
+          phone: "+12029182132",
         },
       ],
-      { ignoreDuplicates: true, updateOnDuplicate: ["role_id", "email"] },
+      {
+        ignoreDuplicates: true,
+        updateOnDuplicate: ["role_id", "email", "phone"],
+      },
     );
     return result;
   },

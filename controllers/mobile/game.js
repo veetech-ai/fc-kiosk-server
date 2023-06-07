@@ -84,6 +84,13 @@ exports.create_game = async (req, res) => {
       "gameId",
     ]);
 
+    // validate game Id
+    const isGameExistWithGameId = await gameService.getOneGame({
+      gameId: gameBody.gameId,
+    });
+    if (isGameExistWithGameId)
+      return apiResponse.fail(res, "Invalid game id", 400);
+
     gameBody.ownerId = req.user.id;
     gameBody.participantId = req.user.id;
     gameBody.participantName = req.user.name;
@@ -149,6 +156,13 @@ exports.getHoles = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
+    const isGameBelongToUser = await gameService.getGame({
+      gameId: req.params.gameId,
+      participantId: req.user.id,
+    });
+    if (!isGameBelongToUser.length)
+      return apiResponse.fail(res, "Invalid game id", 400);
+
     const holeId = req.query?.holeId;
 
     const holes = await gameService.getGame(
@@ -169,7 +183,7 @@ exports.updateHoles = async (req, res) => {
    *   patch:
    *     security:
    *       - auth: []
-   *     description: logged In user can update holes record by game Id.
+   *     description: logged In user can update holes record by game Id + user Id + hole number .
    *     tags: [Games]
    *     consumes:
    *       - application/json
@@ -195,10 +209,19 @@ exports.updateHoles = async (req, res) => {
    *          type: object
    *          required:
    *           - noOfShots
+   *           - updatedAt
+   *           - score
    *          properties:
    *            noOfShots:
    *              type: integer
    *              example: 1
+   *            updatedAt:
+   *              type: string
+   *              example: 2019-05-22T10:30:00+03:00
+   *            score:
+   *              type: integer
+   *              description: It is the difference of no of shots and par (noOfShots - par).
+   *              example: -3
    *     produces:
    *       - application/json
    *     responses:
@@ -207,7 +230,9 @@ exports.updateHoles = async (req, res) => {
    */
   try {
     const bodyValidation = new Validator(req.body, {
-      noOfShots: "integer",
+      noOfShots: "required|integer",
+      updatedAt: "required|string",
+      score: "required|integer",
     });
 
     const queryValidation = new Validator(req.query, {
@@ -221,25 +246,43 @@ exports.updateHoles = async (req, res) => {
     if (queryValidation.fails())
       return apiResponse.fail(res, queryValidation.errors);
 
-    const filteredBody = helpers.validateObject(req.body, [
+    // Filter out the body
+    const filteredBodyForHoles = helpers.validateObject(req.body, [
       "noOfShots",
       "trackedShots",
+      "updatedAt",
     ]);
 
-    const filteredQueryParams = helpers.validateObject(req.query, [
+    const filteredBodyForGame = helpers.validateObject(req.body, ["score"]);
+
+    // Filter out the query params
+    const filteredQueryParamsForHoles = helpers.validateObject(req.query, [
       "userId",
       "holeNumber",
       "gameId",
     ]);
 
+    const { gameId, userId: participantId } = helpers.validateObject(
+      req.query,
+      ["userId", "gameId"],
+    );
+
+    const gameUpdateResponse = await gameService.updateGame(
+      { gameId, participantId },
+      filteredBodyForGame,
+    );
+
+    if (!gameUpdateResponse)
+      return apiResponse.fail(res, "Game not found", 404);
+
     const noOfAffectedRows = await holeService.updateHoleByWhere(
-      filteredQueryParams,
-      filteredBody,
+      filteredQueryParamsForHoles,
+      filteredBodyForHoles,
     );
 
     if (noOfAffectedRows) {
       helpers.mqtt_publish_message(
-        `game/${filteredQueryParams.gameId}/screens`,
+        `game/${filteredQueryParamsForHoles.gameId}/screens`,
         { action: "scorecard" },
       );
     }

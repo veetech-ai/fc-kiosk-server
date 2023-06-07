@@ -7,6 +7,8 @@ const config = require("../config/config");
 const models = require("../models");
 const Organization = models.Organization;
 
+const { organizationsInApplication } = require("../common/organizations.data");
+
 // ****************** NOTE: **************//
 // ZONG USERS DATA IS FOR TESTING PURPOSES
 module.exports = {
@@ -81,6 +83,20 @@ module.exports = {
               "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
             mqtt_token: randtoken.generate(10),
             role_id: roles.ceo.id,
+          },
+          {
+            name: "Golfer",
+            email: "testgolfer@df.com",
+            orgId: organizationsInApplication.golfers.id,
+            status: 1,
+            date_of_birth: new Date(),
+            gender: "male",
+            handicap_index: 1,
+            password:
+              "$2b$10$IItrD5CBRRjPjOwCA15lCuIa.syxKKEH9KDgYvPFpiN1aDN1ZAPNC", // 123456
+            mqtt_token: randtoken.generate(10),
+            role_id: roles.golfer.id,
+            phone: "+15052521468",
           },
         ],
         { ignoreDuplicates: true },

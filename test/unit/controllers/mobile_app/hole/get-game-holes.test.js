@@ -8,6 +8,7 @@ const Course = models.Course;
 
 describe("Get: /game/{gameId}/holes", () => {
   let golferToken;
+  let secondGolferToken;
   let createdCourses;
   let createdGame;
   let golferUser;
@@ -30,6 +31,7 @@ describe("Get: /game/{gameId}/holes", () => {
   ];
 
   beforeAll(async () => {
+    secondGolferToken = await helper.get_token_for("testGolfer");
     golferToken = await helper.get_token_for("golfer");
     golferUser = jwt.decode(golferToken);
 
@@ -112,16 +114,6 @@ describe("Get: /game/{gameId}/holes", () => {
       expect(response.status).toBe(200);
     });
 
-    it("should return empty array if game id is incorrect", async () => {
-      const inCorrectGameId = -1;
-      const response = await helper.get_request_with_authorization({
-        endpoint: `games/${inCorrectGameId}`,
-        token: golferToken,
-      });
-      expect(response.body.data).toEqual([]);
-      expect(response.status).toBe(200);
-    });
-
     it("should get game hole if game Id and hole Id is correct", async () => {
       const hole = await models.Hole.findOne({ ownerId: golferUser.id });
 
@@ -165,6 +157,25 @@ describe("Get: /game/{gameId}/holes", () => {
       });
       expect(response.body.data).toEqual([]);
       expect(response.status).toBe(200);
+    });
+  });
+  describe("Fail", () => {
+    it("should throw exception if the game id not belong to the user", async () => {
+      const response = await helper.get_request_with_authorization({
+        endpoint: `games/${createdGame.gameId}`,
+        token: secondGolferToken,
+      });
+      expect(response.body.data).toEqual("Invalid game id");
+      expect(response.status).toBe(400);
+    });
+    it("should return empty array if game id is incorrect", async () => {
+      const inCorrectGameId = -1;
+      const response = await helper.get_request_with_authorization({
+        endpoint: `games/${inCorrectGameId}`,
+        token: golferToken,
+      });
+      expect(response.body.data).toEqual("Invalid game id");
+      expect(response.status).toBe(400);
     });
   });
 });

@@ -22,6 +22,10 @@ exports.admind_password = process.env.ADMIN_D_PASSWORD || "123456";
 exports.golfer_email = process.env.GOLFER_EMAIL || "golfer@df.com";
 exports.golfer_password = process.env.GOLFER_PASSWORD || "123456";
 
+exports.test_golfer_email =
+  process.env.TEST_GOLFER_EMAIL || "testgolfer@df.com";
+exports.test_golfer_password = process.env.TEST_GOLFER_PASSWORD || "123456";
+
 exports.incorrect_email = "incorrect.email@cowlar.com";
 exports.incorrect_password = "1234567";
 
@@ -145,9 +149,9 @@ exports.get_token_for = async (role = "superadmin", getNewToken = false) => {
     } else if (role == "golfer") {
       params.email = this.golfer_email;
       params.password = this.golfer_password;
-    } else if (role == "golfer2") {
-      params.email = this.golfer_email2;
-      params.password = this.golfer_password2;
+    } else if (role == "testGolfer") {
+      params.email = this.test_golfer_email;
+      params.password = this.test_golfer_password;
     }
 
     try {

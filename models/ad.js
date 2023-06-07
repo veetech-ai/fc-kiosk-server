@@ -57,7 +57,10 @@ module.exports = (sequelize, DataTypes) => {
   );
   Ad.associate = function (models) {
     // associations can be defined here
-    Ad.belongsTo(models.Mobile_Course, { foreignKey: "gcId" });
+    Ad.belongsTo(models.Mobile_Course, {
+      as: "Golf_Course",
+      foreignKey: "gcId",
+    });
   };
   return Ad;
 };
