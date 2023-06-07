@@ -17,3 +17,16 @@ exports.deleteFAQs = async () => {
   });
   return noOfAffectedRows;
 };
+
+exports.getFAQById = async (id) => {
+  const faq = await FAQ.findByPk(id);
+  return faq;
+};
+
+exports.updateFAQ = async (id, data) => {
+  const [affectedRows] = await FAQ.update(data, {
+    where: { id },
+  });
+
+  return affectedRows;
+};

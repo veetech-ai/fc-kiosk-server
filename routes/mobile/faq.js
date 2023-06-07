@@ -9,8 +9,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     faqController.getFaqs,
   ]);
-  // router.put(faq, [
-  //   validation_middleware.validJWTNeeded,
-  //   faqController.updateFaq,
-  // ]);
+  router.put(`${faq}/:id`, [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin"]),
+    faqController.updateFAQ,
+  ]);
 };
