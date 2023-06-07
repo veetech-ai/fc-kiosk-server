@@ -54,6 +54,7 @@ describe("Get: /game/{gameId}/holes", () => {
       gcId: createdCourses[0].id,
       totalIdealShots: 5,
       gameId: uuidv4(),
+      startTime: new Date(),
       teeColor: "Red",
       holes,
     };

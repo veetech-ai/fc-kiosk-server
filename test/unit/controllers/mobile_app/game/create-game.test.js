@@ -56,6 +56,7 @@ describe("POST: /games", () => {
     it("should create the game successfully when parameters are valid", async () => {
       const params = {
         gcId: createdCourses[0].id,
+        startTime: new Date(),
         teeColor: "Red",
         gameId: uuidv4(),
         holes,
@@ -91,6 +92,7 @@ describe("POST: /games", () => {
       const params = {
         teeColor: "Red",
         gameId: uuidv4(),
+        startTime: new Date(),
         holes,
       };
 
@@ -107,6 +109,7 @@ describe("POST: /games", () => {
         gcId: wrongCourseId,
         teeColor: "Red",
         gameId: uuidv4(),
+        startTime: new Date(),
         holes,
       };
 
@@ -120,6 +123,7 @@ describe("POST: /games", () => {
         gcId: createdCourses[0].id,
         teeColor: 321,
         gameId: uuidv4(),
+        startTime: new Date(),
         holes,
       };
       const expectedResponse = {
@@ -140,6 +144,7 @@ describe("POST: /games", () => {
       const params = {
         gcId: createdCourses[0].id,
         teeColor: "Red",
+        startTime: new Date(),
         gameId: uuidv4(),
         holes: [],
       };
@@ -153,11 +158,29 @@ describe("POST: /games", () => {
       expect(response.statusCode).toEqual(400);
     });
 
+    it("should fail if start time is not passed", async () => {
+      const params = {
+        gcId: createdCourses[0].id,
+        teeColor: "Red",
+        gameId: uuidv4(),
+        holes: [],
+      };
+
+      const response = await makeCreateGameApiRequest(params);
+
+      expect(response.body.success).toEqual(false);
+      expect(response.body.data.errors.startTime).toEqual([
+        "The startTime field is required.",
+      ]);
+      expect(response.statusCode).toEqual(400);
+    });
+
     it("should fail if super admin tries to create a game", async () => {
       // The create game API will only be accessible to the Golfer
       const params = {
         gcId: createdCourses[0].id,
         teeColor: "Red",
+        startTime: new Date(),
         gameId: uuidv4(),
         holes,
       };
@@ -178,6 +201,7 @@ describe("POST: /games", () => {
       const params = {
         gcId: createdCourses[0].id,
         teeColor: "Red",
+        startTime: new Date(),
         gameId,
         holes,
       };

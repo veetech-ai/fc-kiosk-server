@@ -77,7 +77,7 @@ describe("POST: /games", () => {
 
     for await (const status of statuses) {
       const gameCreationResponse = await makeCreateGameApiRequest(
-        { ...gameCreationBody, gameId: uuidv4() },
+        { ...gameCreationBody, gameId: uuidv4(), startTime: new Date() },
         firstGolferToken,
       );
       // gameIds.push(gameCreationResponse.body.data.gameId)

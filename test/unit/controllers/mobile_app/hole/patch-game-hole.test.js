@@ -53,6 +53,7 @@ describe("Patch: /games/holes", () => {
       gcId: createdCourses[0].id,
       teeColor: "Red",
       gameId: uuidv4(),
+      startTime: new Date(),
       holes,
     };
     createdGame = (
@@ -155,6 +156,7 @@ describe("Patch: /games/holes", () => {
         gcId: createdCourses[0].id,
         teeColor: "Red",
         gameId: uuidv4(),
+        startTime: new Date(),
         holes,
       };
       const createdGame = (
