@@ -45,6 +45,9 @@ exports.create_game = async (req, res) => {
    *            gameId:
    *              type: string
    *              example: badbea4b-57f8-4402-8c5b-fbfd41d5a40c
+   *            startTime:
+   *              type: string
+   *              example: 2019-05-22T10:30:00+03:00
    *            teeColor:
    *              type: string
    *              example: Red
@@ -62,6 +65,7 @@ exports.create_game = async (req, res) => {
     const validation = new Validator(req.body, {
       gcId: "required|integer",
       teeColor: "required|string",
+      startTime: "required|string",
       gameId: "required|string",
       holes: "required|array",
       "holes.*.par": "required|integer",
@@ -82,6 +86,7 @@ exports.create_game = async (req, res) => {
       "gcId",
       "teeColor",
       "gameId",
+      "startTime",
     ]);
 
     // validate game Id
@@ -94,7 +99,6 @@ exports.create_game = async (req, res) => {
     gameBody.ownerId = req.user.id;
     gameBody.participantId = req.user.id;
     gameBody.participantName = req.user.name;
-    gameBody.startTime = new Date();
     gameBody.orgId = req.user.orgId;
 
     const holes = req.body.holes;
@@ -253,7 +257,10 @@ exports.updateHoles = async (req, res) => {
       "updatedAt",
     ]);
 
-    const filteredBodyForGame = helpers.validateObject(req.body, ["score"]);
+    const filteredBodyForGame = helpers.validateObject(req.body, [
+      "score",
+      "updatedAt",
+    ]);
 
     // Filter out the query params
     const filteredQueryParamsForHoles = helpers.validateObject(req.query, [
@@ -267,13 +274,10 @@ exports.updateHoles = async (req, res) => {
       ["userId", "gameId"],
     );
 
-    const gameUpdateResponse = await gameService.updateGame(
+    await gameService.updateGameIfGameIdIsValid(
       { gameId, participantId },
       filteredBodyForGame,
     );
-
-    if (!gameUpdateResponse)
-      return apiResponse.fail(res, "Game not found", 404);
 
     const noOfAffectedRows = await holeService.updateHoleByWhere(
       filteredQueryParamsForHoles,

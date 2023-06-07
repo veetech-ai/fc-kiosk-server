@@ -13,7 +13,29 @@ exports.getFAQs = async () => {
 
 exports.deleteFAQs = async () => {
   const noOfAffectedRows = await FAQ.destroy({
-    where: {}, // Add the where parameter here
+    where: {},
   });
   return noOfAffectedRows;
+};
+
+exports.deleteOneFAQ = async (id) => {
+  const noOfAffectedRows = await FAQ.destroy({
+    where: { id },
+  });
+
+  if (!noOfAffectedRows) throw new ServiceError("FAQ not found", 404);
+  return noOfAffectedRows;
+};
+
+exports.getFAQById = async (id) => {
+  const faq = await FAQ.findByPk(id);
+  return faq;
+};
+
+exports.updateFAQ = async (id, data) => {
+  const [affectedRows] = await FAQ.update(data, {
+    where: { id },
+  });
+
+  return affectedRows;
 };

@@ -4,17 +4,10 @@ const { createFAQ, deleteFAQs } = require("../../../../../services/mobile/faq");
 const testHelpers = require("../../../../helper");
 
 let golferToken;
-let golferId;
 
-describe("GET /faq", () => {
-  const faq = {
-    question: "What is your expected salary?",
-    answer: "130k",
-  };
-
+describe("GET /faqs", () => {
   beforeAll(async () => {
     golferToken = await testHelpers.get_token_for("golfer");
-    golferId = jwt.decode(golferToken).id;
   });
 
   beforeAll(async () => {
@@ -23,7 +16,7 @@ describe("GET /faq", () => {
 
   const makeGetFAQsApiRequest = async () => {
     return await testHelpers.get_request_with_authorization({
-      endpoint: "faq",
+      endpoint: "faqs",
       token: golferToken,
     });
   };

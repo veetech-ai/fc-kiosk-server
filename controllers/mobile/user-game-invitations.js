@@ -112,3 +112,32 @@ exports.createUserGameInvitations = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.getUserGameInvitations = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /user-game-invitations:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     summary: get game invitations of a logged in user
+   *     description: This API will retrieve the game invitations of the logged in user
+   *     tags: [User Game Invitations]
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const loggedInUserId = req.user.id;
+    const invitations =
+      await userGameInvitationServices.getUnAttendedUserGameInvitations(
+        loggedInUserId,
+      );
+    return apiResponse.success(res, req, invitations);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};

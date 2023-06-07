@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const Game = models.Game;
@@ -133,7 +135,16 @@ async function getOneGame(where) {
   });
 }
 
-const updateGame = async (where, data) => {
+const updateGameIfGameIdIsValid = async (where, data) => {
+  const gameExist = await Game.findOne({
+    where,
+    attributes: ["id"],
+  });
+
+  if (!gameExist) throw new ServiceError("Game not found", 404);
+
+  if (data?.updatedAt) where.updatedAt = { [Op.lte]: data.updatedAt };
+
   const updateResponse = await Game.update(data, {
     where,
   });
@@ -148,5 +159,5 @@ module.exports = {
   findBestRoundsByParticipantId,
   getGame,
   getOneGame,
-  updateGame,
+  updateGameIfGameIdIsValid,
 };

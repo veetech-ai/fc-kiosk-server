@@ -28,6 +28,7 @@ describe("POST: /games", () => {
     return await helper.post_request_with_authorization({
       endpoint: "games",
       token: token,
+      startTime: new Date(),
       params: params,
     });
   };
@@ -60,11 +61,12 @@ describe("POST: /games", () => {
     };
 
     const firstGameResponse = await makeCreateGameApiRequest(
-      { ...gameCreationBody, gameId: uuidv4() },
+      { ...gameCreationBody, gameId: uuidv4(), startTime: new Date() },
       firstGolferToken,
     );
+    console.log(firstGameResponse.body);
     const secondGameResponse = await makeCreateGameApiRequest(
-      { ...gameCreationBody, gameId: uuidv4() },
+      { ...gameCreationBody, gameId: uuidv4(), startTime: new Date() },
       secondGolferToken,
     );
 
