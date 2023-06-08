@@ -1,8 +1,17 @@
 const { FAQ } = require("../../models");
 const ServiceError = require("../../utils/serviceError");
+const helpers = require("../../common/helper");
 
 exports.createFAQ = async function (body) {
-  return await FAQ.create(body);
+  const newFAQ = await FAQ.create(body);
+
+  if (newFAQ) {
+    helpers.mqtt_publish_message(`faq`, {
+      action: "faq",
+    });
+  }
+
+  return newFAQ;
 };
 
 exports.getFAQs = async () => {
@@ -23,6 +32,12 @@ exports.deleteOneFAQ = async (id) => {
     where: { id },
   });
 
+  if (noOfAffectedRows) {
+    helpers.mqtt_publish_message(`faq`, {
+      action: "faq",
+    });
+  }
+
   if (!noOfAffectedRows) throw new ServiceError("FAQ not found", 404);
   return noOfAffectedRows;
 };
@@ -36,6 +51,12 @@ exports.updateFAQ = async (id, data) => {
   const [affectedRows] = await FAQ.update(data, {
     where: { id },
   });
+
+  if (affectedRows) {
+    helpers.mqtt_publish_message(`faq`, {
+      action: "faq",
+    });
+  }
 
   return affectedRows;
 };
