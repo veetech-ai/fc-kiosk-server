@@ -112,6 +112,7 @@ const FAQsRouter = require("./routes/mobile/faq");
 const ScreenConfigRouter = require("./routes/screenConfig/screens");
 const GameRouter = require("./routes/mobile/game");
 const UserGameInvitationsRouter = require("./routes/mobile/user-game-invitations");
+const AppLinkRouter = require("./routes/mobile/app-link");
 
 const AdsScreensRouter = require("./routes/mobile/ads-screens");
 const AdsRouter = require("./routes/mobile/ads");
@@ -195,6 +196,7 @@ FAQsRouter.routesConfig(app, router);
 KioskCoursesRouter.routesConfig(app, router);
 GameRouter.routesConfig(app, router);
 UserGameInvitationsRouter.routesConfig(app, router);
+AppLinkRouter.routesConfig(app, router);
 
 ScreenConfigRouter.routesConfig(app, router);
 AdsScreensRouter.routesConfig(app, router);

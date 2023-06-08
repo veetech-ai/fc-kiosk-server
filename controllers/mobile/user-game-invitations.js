@@ -1,5 +1,6 @@
 // External Module Imports
 const Validator = require("validatorjs");
+const path = require("node:path");
 
 const apiResponse = require("../../common/api.response");
 
@@ -12,7 +13,7 @@ const helper = require("../../common/helper");
 
 const ServiceError = require("../../utils/serviceError");
 const { roleWithAuthorities } = require("../../common/roles_with_authorities");
-const { mobileAppLink } = require("../../config/config");
+const config = require("../../config/config");
 const { uuid } = require("uuidv4");
 const holeServices = require("../../services/mobile/hole");
 
@@ -154,11 +155,17 @@ exports.createUserGameInvitations = async (req, res) => {
           userGameInvitationBody,
         );
 
+      const appStoreLink = new URL(
+        path.normalize(
+          config.app.backendURL + config.app.apiPath + config.mobileApp.link,
+        ),
+      ).toString();
       const golfCourse = game.Golf_Course.name;
       const invitedByName = userGameInvitation.Invited_By.name;
-      const message = `You friend${
-        invitedByName ? " " + invitedByName.toUpperCase() + " " : " "
-      }has invited you to play in ${golfCourse}. Please click on the link below:\n${mobileAppLink}`;
+
+      const message = `Your friend ${
+        invitedByName ? invitedByName.toUpperCase() : ""
+      } has invited you to play in ${golfCourse}. Please click on the link below:\n${appStoreLink}`;
 
       await helper.send_sms(filteredBody.phone, message);
       mqtt.channel = `u/${userGameInvitation.userId}/data`;

@@ -70,6 +70,7 @@ const options = {
     "./controllers/mobile/ads.js",
     "./controllers/mobile/ads-screens.js",
     "./controllers/mobile/faq.js",
+    "./controllers/mobile/app-link.js",
     "./controllers/mobile/aboutus.js",
   ],
 };
