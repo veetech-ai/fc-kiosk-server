@@ -61,7 +61,6 @@ describe("POST: /games", () => {
       { ...gameCreationBody, gameId: uuidv4(), startTime: new Date() },
       firstGolferToken,
     );
-    console.log(firstGameResponse.body);
     const secondGameResponse = await makeCreateGameApiRequest(
       { ...gameCreationBody, gameId: uuidv4(), startTime: new Date() },
       secondGolferToken,
@@ -76,7 +75,6 @@ describe("POST: /games", () => {
       success: false,
       data: {
         errors: {
-          phoneNo: ["The phoneNo field is required."],
           gameId: ["The gameId field is required."],
         },
       },
@@ -94,18 +92,32 @@ describe("POST: /games", () => {
       success: false,
       data: {
         errors: {
-          phoneNo: ["The phoneNo format is invalid."],
+          phone: ["The phone format is invalid."],
           gameId: ["The gameId must be a string."],
         },
       },
     };
 
     const params = {
-      phoneNo: "+123",
+      phone: "+123",
       gameId: 123,
     };
     const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
       params,
+      firstGolferToken,
+    );
+
+    expect(gameInvitationResponse.body).toEqual(expectedResponse);
+    expect(gameInvitationResponse.statusCode).toEqual(400);
+  });
+
+  it("Should return 400 and validation error because of invalid phoneNo and gameId", async () => {
+    const expectedResponse = {
+      success: false,
+      data: "The phone number and name can not be undefined at the same time",
+    };
+    const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
+      { gameId: firstGolferGameId },
       firstGolferToken,
     );
 
@@ -120,7 +132,7 @@ describe("POST: /games", () => {
     };
 
     const params = {
-      phoneNo: secondGolferData.phone,
+      phone: secondGolferData.phone,
       gameId: secondGolferGameId,
     };
     const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
@@ -139,7 +151,7 @@ describe("POST: /games", () => {
     };
 
     const params = {
-      phoneNo: firstGolferData.phone,
+      phone: firstGolferData.phone,
       gameId: firstGolferGameId,
     };
     const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
@@ -177,7 +189,7 @@ describe("POST: /games", () => {
       gcId: golfCourseId,
     };
     const params = {
-      phoneNo: nonExistingPhoneNo,
+      phone: nonExistingPhoneNo,
       gameId: firstGolferGameId,
     };
 

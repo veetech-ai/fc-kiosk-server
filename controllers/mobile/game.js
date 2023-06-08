@@ -160,7 +160,7 @@ exports.getHoles = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const isGameBelongToUser = await gameService.getGame({
+    const isGameBelongToUser = await gameService.getGames({
       gameId: req.params.gameId,
       participantId: req.user.id,
     });
@@ -169,7 +169,7 @@ exports.getHoles = async (req, res) => {
 
     const holeId = req.query?.holeId;
 
-    const holes = await gameService.getGame(
+    const holes = await gameService.getGames(
       { gameId: req.params.gameId },
       holeId,
     );

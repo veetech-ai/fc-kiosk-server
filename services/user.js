@@ -25,6 +25,7 @@ const OrganizationModel = require("./organization");
 const RoleModel = require("./role");
 const { organizationsInApplication } = require("../common/organizations.data");
 const clubServices = require("./mobile/clubs");
+const ServiceError = require("../utils/serviceError");
 
 const PNSubscription = models.Push_Notifications_Subscriptions;
 const UserSettings = models.User_Settings;
@@ -129,21 +130,35 @@ exports.create_user = async (params) => {
     params?.role_id === roleWithAuthorities.golfer.id;
 
   if (isGolferWithPhoneLogin) {
-    const isPhone = await this.PhoneExists(params.phone);
-
-    if (!isPhone) {
-      const paramsWithRole = {
-        ...params,
-        role_id: params.role_id,
-        orgId: organizationsInApplication.golfers.id,
-      };
-      const createdUser = await User.create(paramsWithRole);
-      await clubServices.createClub({ userId: createdUser.id });
+    if (!params.name && !params.phone) {
+      throw new ServiceError(
+        "The phone number and name can not be undefined at the same time",
+        400,
+      );
     }
 
-    let user = await this.getAllDetailByWhere({
-      phone: params.phone,
-    });
+    const isAnonymousPlayer = !params.phone && params.name;
+    let newCreatedUser = null,
+      isPhone;
+    const paramsWithRole = {
+      ...params,
+      role_id: params.role_id,
+      orgId: organizationsInApplication.golfers.id,
+    };
+
+    if (!isAnonymousPlayer) {
+      isPhone = await this.PhoneExists(params.phone);
+    }
+
+    if (!isPhone || isAnonymousPlayer) {
+      newCreatedUser = await User.create(paramsWithRole);
+      await clubServices.createClub({ userId: newCreatedUser.id });
+    }
+
+    const where = {};
+    if (newCreatedUser) where.id = newCreatedUser.id;
+    else where.phone = params.phone;
+    let user = await this.getAllDetailByWhere(where);
 
     return user;
   } else {

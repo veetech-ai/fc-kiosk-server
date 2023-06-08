@@ -208,6 +208,9 @@ module.exports = {
   stripe: {
     secret: process.env.STRIPE_SECRET_KEY,
   },
+  mobileGame: {
+    maxNoOfPlayers: process.env.MAX_NO_OF_GAME_PLAYERS || 5,
+  },
   jazzCash: {
     merchantId: process.env.JAZZCASH_MERCHANT_ID || "MC11328",
     password: process.env.JAZZCASH_PASSWORD,
