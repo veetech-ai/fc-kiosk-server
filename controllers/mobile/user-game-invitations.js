@@ -89,6 +89,8 @@ exports.createUserGameInvitations = async (req, res) => {
       ...filteredBody,
       userId: user.id,
       invitedBy: req.user.id,
+      gcId: game.gcId,
+      gameStartTime: game.startTime,
     };
     const userGameInvitation =
       await userGameInvitationServices.createUserGameInvitations(

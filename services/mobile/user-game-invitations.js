@@ -1,3 +1,4 @@
+const { getFileURL } = require("../../common/upload");
 const { User_Game_Invitation } = require("../../models");
 const models = require("../../models");
 
@@ -32,7 +33,7 @@ exports.getOneUserGameInvitation = async (where) => {
 };
 
 exports.getUnAttendedUserGameInvitations = async (userId) => {
-  return await User_Game_Invitation.findAll({
+  const userGameInvitations = await User_Game_Invitation.findAll({
     where: {
       userId,
       status: {
@@ -40,5 +41,24 @@ exports.getUnAttendedUserGameInvitations = async (userId) => {
       },
     },
     order: [["id", "DESC"]],
+    include: [
+      {
+        model: models.Mobile_Course,
+        as: "Golf_Course",
+        attributes: ["name"],
+      },
+      {
+        model: models.User,
+        as: "Invited_By",
+        attributes: ["name", "profile_image"],
+      },
+    ],
   });
+  for (const invitation of userGameInvitations) {
+    invitation.Invited_By.profile_image = getFileURL(
+      invitation.dataValues.Invited_By.profile_image,
+    );
+  }
+
+  return userGameInvitations;
 };

@@ -2,10 +2,7 @@ const helper = require("../../../../helper");
 const userServices = require("../../../../../services/user");
 const mainHelper = require("../../../../../common/helper");
 
-const models = require("../../../../../models/index");
-const config = require("../../../../../config/config");
 const jwt = require("jsonwebtoken");
-const Course = require("../../../../../services/mobile/courses");
 const nonExistingPhoneNo = "+12021262192";
 const { v4: uuidv4 } = require("uuid");
 describe("POST: /games", () => {
@@ -16,7 +13,7 @@ describe("POST: /games", () => {
   let secondGolferToken;
   let firstGolferData;
   let secondGolferData;
-
+  const golfCourseId = 1;
   const holes = [
     {
       holeId: 31931,
@@ -57,7 +54,7 @@ describe("POST: /games", () => {
     const gameCreationBody = {
       teeColor: "Red",
       holes,
-      gcId: 1,
+      gcId: golfCourseId,
     };
 
     const firstGameResponse = await makeCreateGameApiRequest(
@@ -176,6 +173,8 @@ describe("POST: /games", () => {
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       id: expect.any(Number),
+      gameStartTime: expect.any(String),
+      gcId: golfCourseId,
     };
     const params = {
       phoneNo: nonExistingPhoneNo,
