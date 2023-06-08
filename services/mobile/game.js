@@ -44,6 +44,7 @@ async function getGames(where, holeId = null) {
       "teeColor",
       "startTime",
       "endTime",
+      "updatedAt",
     ],
     include: [
       {
@@ -56,6 +57,7 @@ async function getGames(where, holeId = null) {
           "isGir",
           "trackedShots",
           "holeNumber",
+          "updatedAt",
         ],
         where: holeWhere,
       },

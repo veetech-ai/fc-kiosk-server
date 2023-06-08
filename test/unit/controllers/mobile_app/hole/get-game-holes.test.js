@@ -78,6 +78,7 @@ describe("Get: /game/{gameId}/holes", () => {
               noOfShots: null,
               isGir: false,
               trackedShots: null,
+              updatedAt: expect.any(String),
             }),
             expect.objectContaining({
               id: expect.any(Number),
@@ -85,6 +86,7 @@ describe("Get: /game/{gameId}/holes", () => {
               noOfShots: null,
               isGir: false,
               trackedShots: null,
+              updatedAt: expect.any(String),
             }),
             expect.objectContaining({
               id: expect.any(Number),
@@ -92,6 +94,7 @@ describe("Get: /game/{gameId}/holes", () => {
               noOfShots: null,
               isGir: false,
               trackedShots: null,
+              updatedAt: expect.any(String),
             }),
           ]),
           id: createdGame.id,
@@ -102,6 +105,7 @@ describe("Get: /game/{gameId}/holes", () => {
           ownerId: golferUser.id,
           participantId: golferUser.id,
           participantName: "Golfer",
+          updatedAt: expect.any(String),
         },
       ];
 
@@ -127,6 +131,7 @@ describe("Get: /game/{gameId}/holes", () => {
               noOfShots: null,
               isGir: false,
               trackedShots: null,
+              updatedAt: expect.any(String),
             }),
           ]),
           id: createdGame.id,
@@ -137,6 +142,7 @@ describe("Get: /game/{gameId}/holes", () => {
           ownerId: golferUser.id,
           participantId: golferUser.id,
           participantName: "Golfer",
+          updatedAt: expect.any(String),
         },
       ];
 
