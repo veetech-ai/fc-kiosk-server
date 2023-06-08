@@ -11,7 +11,7 @@ let course;
 let fields = {
   state: "Alabama",
   title: "Main Ad",
-  screens: '["Hole 1","Hole 2", "Hole 3","Hole 4"]',
+  screens: ["Hole 1", "Hole 2", "Hole 3", "Hole 4"],
   tapLink: "google.com",
 };
 
@@ -90,6 +90,7 @@ describe("GET /api/v1/ads", () => {
           id: expect.any(Number),
           smallImage: expect.any(String),
           gcId: fields.gcId,
+          title: fields.title,
           screens: fields.screens,
           tapLink: fields.tapLink,
           bigImage: null,
@@ -113,6 +114,7 @@ describe("GET /api/v1/ads", () => {
           id: expect.any(Number),
           smallImage: expect.any(String),
           gcId: fields.gcId,
+          title: fields.title,
           screens: fields.screens,
           tapLink: fields.tapLink,
           bigImage: null,
