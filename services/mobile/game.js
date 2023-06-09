@@ -22,7 +22,7 @@ async function findStatisticsByParticipantId(participantId) {
   });
 
   if (!rounds)
-    return { rounds: rounds, bestScore: null, worstScore: null, avg: null };
+    return { rounds: rounds, bestScore: null, worstScore: null, avg: null, girPercentage: null};
 
   const scores = await Game.findAll({
     where: {
