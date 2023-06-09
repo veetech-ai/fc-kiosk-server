@@ -85,7 +85,7 @@ async function findBestRoundsByParticipantId(participantId, limit) {
       participantId,
       endTime: { [Op.ne]: null },
     },
-    order: [[Sequelize.literal("score"), "DESC"]],
+    order: [[Sequelize.literal("score"), "ASC"]],
     limit: limit,
   });
 
