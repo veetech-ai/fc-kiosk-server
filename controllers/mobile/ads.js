@@ -136,7 +136,11 @@ exports.createAd = async (req, res) => {
 
     const postedAd = await adsService.createAd(reqBody);
 
-    helper.mqtt_publish_message(`gc/${courseId}/screens`, { action: "ad" });
+    helper.mqtt_publish_message(
+      `gc/${courseId}/screens`,
+      { action: "ad" },
+      false,
+    );
 
     return apiResponse.success(res, req, postedAd);
   } catch (error) {
@@ -172,6 +176,41 @@ exports.getAds = async (req, res) => {
     }
     const ads = await adsService.getAds(where);
     return apiResponse.success(res, req, ads);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.deleteAd = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /ads/{adId}:
+   *   delete:
+   *     security:
+   *       - auth: []
+   *     description: admin can delete ads by ad id.
+   *     tags: [Ads]
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const adId = Number(req.params.adId);
+    if (!adId) return apiResponse.fail(res, "adId must be a valid number", 400);
+
+    const ad = await adsService.getAd({ id: adId });
+    await adsService.deleteAd({ id: adId });
+    helper.mqtt_publish_message(
+      `gc/${ad.gcId}/screens`,
+      { action: "ad" },
+      false,
+    );
+
+    return apiResponse.success(res, req, "Deleted Successfully");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -301,7 +340,11 @@ exports.updateAd = async (req, res) => {
     const updatedAd = await adsService.updateAd({ id: adId }, reqBody);
 
     if (updatedAd) {
-      helper.mqtt_publish_message(`gc/${courseId}/screens`, { action: "ad" });
+      helper.mqtt_publish_message(
+        `gc/${courseId}/screens`,
+        { action: "ad" },
+        false,
+      );
     }
 
     return apiResponse.success(
@@ -313,50 +356,3 @@ exports.updateAd = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
-
-// exports.deleteAd = async (req, res) => {
-//   /**
-//    * @swagger
-//    *
-//    * /ads/{adId}:
-//    *   delete:
-//    *     security:
-//    *       - auth: []
-//    *     description: delete ads.
-//    *     tags: [Ads]
-//    *     parameters:
-//    *       - name: adId
-//    *         description: Ad id
-//    *         in: path
-//    *         required: true
-//    *         type: integer
-//    *     produces:
-//    *       - application/json
-//    *     responses:
-//    *       200:
-//    *         description: success
-//    */
-
-//   try {
-//     const loggedInUserOrg = req.user?.orgId;
-//     const adId = Number(req.params.adId);
-//     if (!adId) {
-//       return apiResponse.fail(res, "adId must be a valid number");
-//     }
-//     const ad = await adsService.getAd({ id: adId }, loggedInUserOrg);
-//     const noOfAffectedRows = await adsService.deleteAd(
-//       { id: adId },
-//       loggedInUserOrg,
-//     );
-
-//     helper.mqtt_publish_message(
-//       `gc/${ad.gcId}/screens`,
-//       helper.mqttPayloads.onAdUpdate,
-//       false,
-//     );
-
-//     return apiResponse.success(res, req, "Ad deleted successfully");
-//   } catch (error) {
-//     return apiResponse.fail(res, error.message, error.statusCode || 500);
-//   }
-// };

@@ -36,8 +36,7 @@ async function getAds(where) {
 }
 
 async function deleteAd(where) {
-  const ads = await AdsModel.destroy({ where });
-  return ads;
+  return await AdsModel.destroy({ where });
 }
 
 async function getAd(where) {

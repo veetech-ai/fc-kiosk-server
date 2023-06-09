@@ -6,17 +6,19 @@ exports.routesConfig = function (app, router) {
   const ads = `${config.app.apiPath}ads`;
 
   router.post(ads, [
-    validation_middleware.validJWTOptional,
+    validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin"]),
     adsController.createAd,
   ]);
-  router.get(ads, [
-    validation_middleware.validJWTOptional,
-    adsController.getAds,
-  ]);
+  router.get(ads, [validation_middleware.validJWTNeeded, adsController.getAds]);
   router.patch(ads + "/:adId", [
-    validation_middleware.validJWTOptional,
+    validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin"]),
     adsController.updateAd,
+  ]);
+  router.delete(ads + "/:adId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin"]),
+    adsController.deleteAd,
   ]);
 };
