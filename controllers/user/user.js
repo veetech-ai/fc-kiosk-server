@@ -16,7 +16,6 @@ const UserLoginInfoModel = require("../../services/user_login_info");
 const PushNotificationsSubscriptionsModel = require("../../services/push_notifications_subscriptions");
 const UserSQAnswerModel = require("../../services/user_sq_answers");
 const OtpModel = require("../../services/otp");
-const clubService = require("../../services/mobile/clubs");
 const gameService = require("../../services/mobile/game");
 
 // Common Imports
@@ -2512,14 +2511,16 @@ exports.getStatistics = async (req, res) => {
    *         description: success
    */
   try {
-    if (
-      !helper.hasProvidedRoleRights(req.user.role, ["super", "admin"])
-        .success &&
-      req.user.id != req.params.userId
-    ) {
+    const loggedInUserId = req.params.userId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const isLoggedInUser = req.user.id == loggedInUserId;
+
+    if (!isSuperOrAdmin && !isLoggedInUser) {
       return apiResponse.fail(res, "Forbidden", 403);
     }
-    const loggedInUserId = req.params.userId;
 
     const statistics = await gameService.findStatisticsByParticipantId(
       loggedInUserId,
@@ -2527,12 +2528,11 @@ exports.getStatistics = async (req, res) => {
 
     const bestRounds = await gameService.findBestRoundsByParticipantId(
       loggedInUserId,
-      5,
     );
 
     const totalStatistics = {
-      statistics: statistics,
-      bestRounds: bestRounds,
+      statistics,
+      bestRounds,
     };
 
     return apiResponse.success(res, req, totalStatistics);
