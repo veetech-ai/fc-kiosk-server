@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
+const { mobileGame } = require("../../config/config");
 const Game = models.Game;
 const {Sequelize } = require("sequelize");
 async function createGame(reqBody) {
@@ -96,7 +97,7 @@ async function isGameOwner(userId, gameId) {
   return game;
 }
 
-async function getGame(where, holeId = null) {
+async function getGames(where, holeId = null) {
   let holeWhere = {};
   if (holeId) holeWhere = { id: holeId };
   return await Game.findAll({
@@ -110,6 +111,7 @@ async function getGame(where, holeId = null) {
       "teeColor",
       "startTime",
       "endTime",
+      "updatedAt",
     ],
     include: [
       {
@@ -122,6 +124,7 @@ async function getGame(where, holeId = null) {
           "isGir",
           "trackedShots",
           "holeNumber",
+          "updatedAt",
         ],
         where: holeWhere,
       },
@@ -134,6 +137,14 @@ async function getOneGame(where) {
     where,
   });
 }
+
+const updateGame = async (where, data) => {
+  const updateResponse = await Game.update(data, {
+    where,
+  });
+  const noOfAffectedRows = updateResponse[0];
+  return noOfAffectedRows;
+};
 
 const updateGameIfGameIdIsValid = async (where, data) => {
   const gameExist = await Game.findOne({
@@ -152,12 +163,25 @@ const updateGameIfGameIdIsValid = async (where, data) => {
   return noOfAffectedRows;
 };
 
+const validateMaxLimitOfPlayersPerGame = async (gameId) => {
+  const noOfExistingPlayers = await Game.count({ where: { gameId } });
+
+  if (noOfExistingPlayers == mobileGame.maxNoOfPlayers)
+    throw new ServiceError(
+      "Limit reached: Max 5 players are allowed in a single game",
+      400,
+    );
+  return true;
+};
+
 module.exports = {
   isGameOwner,
   createGame,
   findStatisticsByParticipantId,
   findBestRoundsByParticipantId,
-  getGame,
+  getGames,
   getOneGame,
+  updateGame,
   updateGameIfGameIdIsValid,
+  validateMaxLimitOfPlayersPerGame,
 };

@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const {
   createUserGameInvitations,
 } = require("../../../../../services/mobile/user-game-invitations");
-
+const { getCourseFromDb } = require("../../../../../services/mobile/courses");
 const statuses = [
   "pending",
   "ignored",
@@ -48,19 +48,6 @@ describe("POST: /games", () => {
     });
   };
 
-  //   const makeCreateUserGameInvitationApiRequest = async (params, token) => {
-  //     return await helper.post_request_with_authorization({
-  //       endpoint: "user-game-invitations",
-  //       token: token,
-  //       params: params,
-  //     });
-  //   };
-
-  //   jest.spyOn(mainHelper, "send_sms").mockImplementation(
-  //     jest.fn((otpCode) => {
-  //       return Promise.resolve(otpCode);
-  //     }),
-  //   );
   beforeAll(async () => {
     superAdminToken = await helper.get_token_for();
 
@@ -75,6 +62,7 @@ describe("POST: /games", () => {
       holes,
     };
 
+    const golfCourse = await getCourseFromDb({ id: gameCreationBody.gcId });
     for await (const status of statuses) {
       const gameCreationResponse = await makeCreateGameApiRequest(
         { ...gameCreationBody, gameId: uuidv4(), startTime: new Date() },
@@ -87,6 +75,8 @@ describe("POST: /games", () => {
         userId: secondGolferData.id,
         status,
         invitedBy: firstGolferData.id,
+        gcId: golfCourse.id,
+        gameStartTime: gameCreationResponse.body.data.startTime,
       });
       if (!createdInvitationsBasedOnStatusInDescOrder[status]) continue;
       createdInvitationsBasedOnStatusInDescOrder[status] = {
@@ -97,6 +87,15 @@ describe("POST: /games", () => {
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         id: expect.any(Number),
+        gcId: golfCourse.id,
+        Invited_By: {
+          name: "Golfer",
+          profile_image: null,
+        },
+        Golf_Course: {
+          name: golfCourse.name,
+        },
+        gameStartTime: expect.any(String),
       };
     }
   });
@@ -111,6 +110,7 @@ describe("POST: /games", () => {
       superAdminToken,
     );
     expect(response.body).toEqual(expectedResponse);
+    expect(response.statusCode).toEqual(403);
   });
 
   it("should only return the pending, seen and ignored invitations of the logged in user", async () => {

@@ -3,6 +3,7 @@ const Validator = require("validatorjs");
 const apiResponse = require("../../common/api.response");
 const { validateObject } = require("../../common/helper");
 const faqServices = require("../../services/mobile/faq");
+const helpers = require("../../common/helper");
 
 /**
  * @swagger

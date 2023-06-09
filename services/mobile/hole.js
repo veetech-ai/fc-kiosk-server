@@ -42,9 +42,22 @@ async function getHoleByWhere(where) {
   });
 }
 
+async function getHolesByWhere(
+  where,
+  { attributes = null, isRaw = true } = {},
+) {
+  const findAllParams = {
+    where,
+    raw: isRaw,
+  };
+  if (attributes) findAllParams.attributes = attributes;
+  return await Hole.findAll({ ...findAllParams });
+}
+
 module.exports = {
   createGameHoles,
   getGameHole,
   updateHoleByWhere,
   getHoleByWhere,
+  getHolesByWhere,
 };

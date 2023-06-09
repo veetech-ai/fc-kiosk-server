@@ -14,4 +14,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTOptional,
     adsController.getAds,
   ]);
+  router.patch(ads + "/:adId", [
+    validation_middleware.validJWTOptional,
+    validation_middleware.hasAccess(["super", "admin"]),
+    adsController.updateAd,
+  ]);
 };

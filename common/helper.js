@@ -1519,3 +1519,28 @@ exports.validateObject = (objectToBeValidated, allowedFields) => {
 
   return pick(cloneObject, allowedFields);
 };
+
+exports.getRequestOriginOperatingSystem = (req) => {
+  let os;
+  const userAgent = req.headers["user-agent"] || "";
+
+  switch (true) {
+    case userAgent.includes("Android"):
+      os = "android";
+      break;
+    case userAgent.includes("iPhone"):
+      os = "iPhone";
+      break;
+    case userAgent.includes("Win64"):
+      os = "windows";
+      break;
+    case userAgent.includes("Linux"):
+      os = "linux";
+      break;
+    default:
+      os = null;
+      break;
+  }
+
+  return os;
+};

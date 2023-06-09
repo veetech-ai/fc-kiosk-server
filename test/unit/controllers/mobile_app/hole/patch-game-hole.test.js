@@ -87,7 +87,7 @@ describe("Patch: /games/holes", () => {
             message: {
               action: "scorecard",
             },
-            retained: true,
+            retained: false,
             qos: 1,
             stringify: true,
           });

@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
+      girPercentage: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+      },
       totalShotsTaken: {
         type: DataTypes.INTEGER,
         allowNull: true,

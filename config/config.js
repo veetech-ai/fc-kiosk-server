@@ -208,6 +208,9 @@ module.exports = {
   stripe: {
     secret: process.env.STRIPE_SECRET_KEY,
   },
+  mobileGame: {
+    maxNoOfPlayers: process.env.MAX_NO_OF_GAME_PLAYERS || 5,
+  },
   jazzCash: {
     merchantId: process.env.JAZZCASH_MERCHANT_ID || "MC11328",
     password: process.env.JAZZCASH_PASSWORD,
@@ -248,7 +251,15 @@ module.exports = {
       },
     },
   },
-  mobileAppLink: process.env.MOBILE_APP_LINK || "https://google.com",
+  mobileApp: {
+    link: process.env.MOBILE_APP_LINK || "/app-link",
+    iOS:
+      process.env.MOBILE_APP_IOS_LINK ||
+      "https://apps.apple.com/us/app/facebook/id284882215",
+    android:
+      process.env.MOBILE_APP_ANDROID_LINK ||
+      "https://play.google.com/store/apps/details?id=com.facebook.katana&hl=en&gl=US",
+  },
   /*
    * Date: 4 Jan 2022
    * The Following is required by the sequelize internal working

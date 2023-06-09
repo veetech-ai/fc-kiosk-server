@@ -36,6 +36,14 @@ module.exports = (sequelize, DataTypes) => {
         ),
         defaultValue: "pending",
       },
+      gcId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      gameStartTime: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -57,6 +65,11 @@ module.exports = (sequelize, DataTypes) => {
     User_Game_Invitation.belongsTo(models.User, {
       as: "Invited_By",
       foreignKey: "invitedBy",
+    });
+
+    User_Game_Invitation.belongsTo(models.Mobile_Course, {
+      as: "Golf_Course",
+      foreignKey: "gcId",
     });
   };
   return User_Game_Invitation;

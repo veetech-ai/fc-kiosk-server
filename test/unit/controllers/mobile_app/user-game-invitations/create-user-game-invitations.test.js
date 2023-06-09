@@ -2,10 +2,7 @@ const helper = require("../../../../helper");
 const userServices = require("../../../../../services/user");
 const mainHelper = require("../../../../../common/helper");
 
-const models = require("../../../../../models/index");
-const config = require("../../../../../config/config");
 const jwt = require("jsonwebtoken");
-const Course = require("../../../../../services/mobile/courses");
 const nonExistingPhoneNo = "+12021262192";
 const { v4: uuidv4 } = require("uuid");
 describe("POST: /games", () => {
@@ -16,7 +13,7 @@ describe("POST: /games", () => {
   let secondGolferToken;
   let firstGolferData;
   let secondGolferData;
-
+  const golfCourseId = 1;
   const holes = [
     {
       holeId: 31931,
@@ -57,14 +54,13 @@ describe("POST: /games", () => {
     const gameCreationBody = {
       teeColor: "Red",
       holes,
-      gcId: 1,
+      gcId: golfCourseId,
     };
 
     const firstGameResponse = await makeCreateGameApiRequest(
       { ...gameCreationBody, gameId: uuidv4(), startTime: new Date() },
       firstGolferToken,
     );
-    console.log(firstGameResponse.body);
     const secondGameResponse = await makeCreateGameApiRequest(
       { ...gameCreationBody, gameId: uuidv4(), startTime: new Date() },
       secondGolferToken,
@@ -79,7 +75,6 @@ describe("POST: /games", () => {
       success: false,
       data: {
         errors: {
-          phoneNo: ["The phoneNo field is required."],
           gameId: ["The gameId field is required."],
         },
       },
@@ -97,18 +92,32 @@ describe("POST: /games", () => {
       success: false,
       data: {
         errors: {
-          phoneNo: ["The phoneNo format is invalid."],
+          phone: ["The phone format is invalid."],
           gameId: ["The gameId must be a string."],
         },
       },
     };
 
     const params = {
-      phoneNo: "+123",
+      phone: "+123",
       gameId: 123,
     };
     const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
       params,
+      firstGolferToken,
+    );
+
+    expect(gameInvitationResponse.body).toEqual(expectedResponse);
+    expect(gameInvitationResponse.statusCode).toEqual(400);
+  });
+
+  it("Should return 400 and validation error because of invalid phoneNo and gameId", async () => {
+    const expectedResponse = {
+      success: false,
+      data: "The phone number and name can not be undefined at the same time",
+    };
+    const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
+      { gameId: firstGolferGameId },
       firstGolferToken,
     );
 
@@ -123,7 +132,7 @@ describe("POST: /games", () => {
     };
 
     const params = {
-      phoneNo: secondGolferData.phone,
+      phone: secondGolferData.phone,
       gameId: secondGolferGameId,
     };
     const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
@@ -142,7 +151,7 @@ describe("POST: /games", () => {
     };
 
     const params = {
-      phoneNo: firstGolferData.phone,
+      phone: firstGolferData.phone,
       gameId: firstGolferGameId,
     };
     const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
@@ -176,9 +185,11 @@ describe("POST: /games", () => {
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       id: expect.any(Number),
+      gameStartTime: expect.any(String),
+      gcId: golfCourseId,
     };
     const params = {
-      phoneNo: nonExistingPhoneNo,
+      phone: nonExistingPhoneNo,
       gameId: firstGolferGameId,
     };
 

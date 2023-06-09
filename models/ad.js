@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSON,
         allowNull: false,
       },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -38,8 +42,14 @@ module.exports = (sequelize, DataTypes) => {
     {
       validate: {
         tapLinkAndBigImageNotNullAndNotAtSameTime() {
-          const hasBigImage = this.bigImage;
-          const hasTapLink = this.tapLink;
+          let hasBigImage = this.bigImage;
+          let hasTapLink = this.tapLink;
+          if (hasBigImage === "null") {
+            hasBigImage = JSON.parse(hasBigImage);
+          }
+          if (hasTapLink === "null") {
+            hasTapLink = JSON.parse(hasTapLink);
+          }
           if (hasBigImage && hasTapLink) {
             throw new Error(
               "Both bigImage and tapLink cannot be populated at the same time.",
