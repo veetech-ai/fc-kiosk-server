@@ -393,3 +393,33 @@ exports.updateHoles = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.getHistory = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /games:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get games history of login user.
+   *     tags: [Games]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    let userId = req.user.id;
+    const gamesHistory = await gameService.getGamesHistoryByParticipantId(
+      userId,
+    );
+
+    return apiResponse.success(res, req, gamesHistory);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};

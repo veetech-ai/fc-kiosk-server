@@ -9,6 +9,11 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["manageGames"]),
     GameController.create_game,
   ]);
+  router.get(game + "/", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["manageGames"]),
+    GameController.getHistory,
+  ]);
   router.get(game + "/:gameId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["manageGames"]),

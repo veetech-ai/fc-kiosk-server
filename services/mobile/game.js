@@ -142,6 +142,23 @@ async function getGames(where, holeId = null) {
   });
 }
 
+async function getGamesHistoryByParticipantId(participantId) {
+  const games = await Game.findAll({
+    where: {
+      participantId,
+    },
+    include: [
+      {
+        as: "Golf_Course",
+        model: models.Mobile_Course,
+        attributes: ["name"],
+      },
+    ],
+  });
+
+  return games;
+}
+
 async function getOneGame(where) {
   return await Game.findOne({
     where,
@@ -194,4 +211,5 @@ module.exports = {
   updateGame,
   updateGameIfGameIdIsValid,
   validateMaxLimitOfPlayersPerGame,
+  getGamesHistoryByParticipantId,
 };
