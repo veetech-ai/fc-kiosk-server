@@ -4,12 +4,89 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const { mobileGame } = require("../../config/config");
 const Game = models.Game;
+const { Sequelize } = require("sequelize");
 async function createGame(reqBody) {
   const game = await Game.create({
     ...reqBody,
   });
 
   return game;
+}
+
+async function findStatisticsByParticipantId(participantId) {
+  const where = {
+    participantId,
+    endTime: { [Op.ne]: null },
+  };
+
+  const rounds = await Game.count({
+    where,
+  });
+
+  if (!rounds) {
+    return {
+      rounds: rounds,
+      bestScore: null,
+      worstScore: null,
+      avg: null,
+      girPercentage: null,
+    };
+  }
+
+  const scores = await Game.findAll({
+    where,
+    order: [["score", "ASC"]],
+  });
+
+  const totalShotsTaken = await Game.findOne({
+    attributes: [
+      [Sequelize.fn("SUM", Sequelize.col("totalShotsTaken")), "sum"],
+    ],
+    where,
+    raw: true,
+  });
+
+  const girPercentage = await Game.findOne({
+    attributes: [[Sequelize.fn("SUM", Sequelize.col("girPercentage")), "sum"]],
+    where,
+    raw: true,
+  });
+
+  return {
+    rounds,
+    worstScore: scores[scores.length - 1].totalShotsTaken,
+    bestScore: scores[0].totalShotsTaken,
+    avg: totalShotsTaken.sum / rounds,
+    avgGirPercentage: girPercentage.sum / rounds,
+  };
+}
+
+async function findBestRoundsByParticipantId(participantId, limit = 5) {
+  const bestRounds = await Game.findAll({
+    attributes: [
+      "totalShotsTaken",
+      "totalIdealShots",
+      "startTime",
+      "endTime",
+      "score",
+      "girPercentage",
+    ],
+    include: [
+      {
+        as: "Golf_Course",
+        model: models.Mobile_Course,
+        attributes: ["name"],
+      },
+    ],
+    where: {
+      participantId,
+      endTime: { [Op.ne]: null },
+    },
+    order: [[Sequelize.literal("score"), "ASC"]],
+    limit,
+  });
+
+  return bestRounds;
 }
 
 async function isGameOwner(userId, gameId) {
@@ -110,6 +187,8 @@ const validateMaxLimitOfPlayersPerGame = async (gameId) => {
 module.exports = {
   isGameOwner,
   createGame,
+  findStatisticsByParticipantId,
+  findBestRoundsByParticipantId,
   getGames,
   getOneGame,
   updateGame,

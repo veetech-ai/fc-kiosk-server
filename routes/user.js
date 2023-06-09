@@ -280,4 +280,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super"]),
     UsersController.delete,
   ]);
+
+  router.get(group + "/:userId/games/statistics", [
+    validation_middleware.validJWTNeeded,
+    UsersController.getStatistics,
+  ]);
 };

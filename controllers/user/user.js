@@ -16,7 +16,7 @@ const UserLoginInfoModel = require("../../services/user_login_info");
 const PushNotificationsSubscriptionsModel = require("../../services/push_notifications_subscriptions");
 const UserSQAnswerModel = require("../../services/user_sq_answers");
 const OtpModel = require("../../services/otp");
-const clubService = require("../../services/mobile/clubs");
+const gameService = require("../../services/mobile/game");
 
 // Common Imports
 const apiResponse = require("../../common/api.response");
@@ -2482,5 +2482,61 @@ exports.delete = async (req, res) => {
     } else return apiResponse.fail(res, "missing/invalid 'userId'", 403);
   } catch (err) {
     return apiResponse.fail(res, err.message);
+  }
+};
+
+exports.getStatistics = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /user/{userId}/games/statistics:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     summary: Statistics
+   *     description: logged In user can get Statistics
+   *     tags: [User]
+   *     consumes:
+   *       - application/json
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: userId
+   *         description: user ID
+   *         in: path
+   *         required: true
+   *         type: number
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const loggedInUserId = req.params.userId;
+    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
+      "super",
+      "admin",
+    ]).success;
+    const isLoggedInUser = req.user.id == loggedInUserId;
+
+    if (!isSuperOrAdmin && !isLoggedInUser) {
+      return apiResponse.fail(res, "Forbidden", 403);
+    }
+
+    const statistics = await gameService.findStatisticsByParticipantId(
+      loggedInUserId,
+    );
+
+    const bestRounds = await gameService.findBestRoundsByParticipantId(
+      loggedInUserId,
+    );
+
+    const totalStatistics = {
+      statistics,
+      bestRounds,
+    };
+
+    return apiResponse.success(res, req, totalStatistics);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
