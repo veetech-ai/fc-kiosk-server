@@ -62,3 +62,19 @@ exports.getUnAttendedUserGameInvitations = async (userId) => {
 
   return userGameInvitations;
 };
+
+exports.invalidAllUnAcceptedInvitation = async (gameId) => {
+  return await User_Game_Invitation.update(
+    {
+      status: "invalid",
+    },
+    {
+      where: {
+        gameId,
+        status: {
+          [Op.in]: ["seen", "pending", "ignored"],
+        },
+      },
+    },
+  );
+};

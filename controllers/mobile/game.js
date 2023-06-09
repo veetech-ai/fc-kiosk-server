@@ -1,11 +1,15 @@
 // External Module Imports
 const Validator = require("validatorjs");
+const moment = require("moment");
 
 const apiResponse = require("../../common/api.response");
 const gameService = require("../../services/mobile/game");
 const holeService = require("../../services/mobile/hole");
 const courseServices = require("../../services/mobile/courses");
 const helpers = require("../../common/helper");
+const {
+  invalidAllUnAcceptedInvitation,
+} = require("../../services/mobile/user-game-invitations");
 
 /**
  * @swagger
@@ -117,6 +121,88 @@ exports.create_game = async (req, res) => {
       req.body.gcId,
     );
     return apiResponse.success(res, req, createdGame);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.endGame = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /games/{gameId}/end-game:
+   *   patch:
+   *     security:
+   *       - auth: []
+   *     summary: end game
+   *     description: Owner of the game can end the game.
+   *     tags: [Games]
+   *     consumes:
+   *       - application/json
+   *     parameters:
+   *       - in: body
+   *         name: body
+   *         schema:
+   *          type: object
+   *          required:
+   *           - endTime
+   *          properties:
+   *            endTime:
+   *              type: string
+   *              example: 2019-05-22T10:30:00+03:00
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const validation = new Validator(req.body, {
+      endTime: "required|string",
+    });
+
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
+    const gameId = req.params.gameId;
+    const endTime = req.body.endTime;
+
+    if (!moment(endTime).isValid())
+      return apiResponse.fail(res, "End time is invalid.", 400);
+
+    const games = await gameService.getGames({
+      gameId,
+    });
+
+    if (!games.length || games[0].ownerId !== req.user.id)
+      return apiResponse.fail(res, "Game not found", 400);
+
+    for await (const game of games) {
+      const totalGir = game.Holes.filter((hole) => hole.isGir).length;
+      const girPercentage = ((totalGir / game.Holes.length) * 100).toFixed(2);
+      await gameService.updateGame(
+        { gameId: gameId, participantId: game.participantId },
+        {
+          girPercentage,
+          endTime: endTime,
+          updatedAt: endTime,
+        },
+      );
+    }
+
+    await invalidAllUnAcceptedInvitation(gameId);
+
+    const retain = false;
+    helpers.mqtt_publish_message(
+      `game/${gameId}/screens`,
+      {
+        action: "end-game",
+      },
+      retain,
+    );
+
+    return apiResponse.success(res, req, "Game ended successfully");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -289,9 +375,11 @@ exports.updateHoles = async (req, res) => {
     );
 
     if (noOfAffectedRows) {
+      const retain = false;
       helpers.mqtt_publish_message(
         `game/${filteredQueryParamsForHoles.gameId}/screens`,
         { action: "scorecard" },
+        retain,
       );
     }
     return apiResponse.success(

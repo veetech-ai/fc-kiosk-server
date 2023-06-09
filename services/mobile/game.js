@@ -71,6 +71,14 @@ async function getOneGame(where) {
   });
 }
 
+const updateGame = async (where, data) => {
+  const updateResponse = await Game.update(data, {
+    where,
+  });
+  const noOfAffectedRows = updateResponse[0];
+  return noOfAffectedRows;
+};
+
 const updateGameIfGameIdIsValid = async (where, data) => {
   const gameExist = await Game.findOne({
     where,
@@ -104,6 +112,7 @@ module.exports = {
   createGame,
   getGames,
   getOneGame,
+  updateGame,
   updateGameIfGameIdIsValid,
   validateMaxLimitOfPlayersPerGame,
 };

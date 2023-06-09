@@ -246,7 +246,6 @@ exports.hasAccess =
       if (!req.user.role) throw new Error();
       const roleInfo = await getRoleByTitle(req.user.role.title);
       if (!roleInfo) throw new Error();
-
       if (!requiredRoleRights && roleInfo.super) return next();
 
       if (!roleInfo.super && !roleInfo.admin) {
@@ -260,6 +259,7 @@ exports.hasAccess =
         requiredRoleRights,
       );
       if (!hasProvidedRoleRights.success) throw new Error();
+
       next();
     } catch (error) {
       return apiResponse.fail(res, "You are not allowed", 403);
