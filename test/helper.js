@@ -279,5 +279,6 @@ exports.delete_request_with_authorization = async (data) => {
   return await request
     .delete(`${config.app.apiPath}${data.endpoint}`)
     .set("authorization", data.token)
+    .query(data.queryParams)
     .send(data.params);
 };

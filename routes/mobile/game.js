@@ -29,4 +29,10 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["manageGames"]),
     GameController.endGame,
   ]);
+
+  router.delete(game + "/users", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["manageGames"]),
+    GameController.removePlayerFromAGame,
+  ]);
 };

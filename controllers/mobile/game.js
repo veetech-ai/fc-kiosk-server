@@ -8,8 +8,10 @@ const holeService = require("../../services/mobile/hole");
 const courseServices = require("../../services/mobile/courses");
 const helpers = require("../../common/helper");
 const {
-  invalidAllUnAcceptedInvitation,
+  invalidAllUnAcceptedInvitations,
+  deletePlayerInvitationsForAParticularGame,
 } = require("../../services/mobile/user-game-invitations");
+const ServiceError = require("../../utils/serviceError");
 
 /**
  * @swagger
@@ -191,7 +193,7 @@ exports.endGame = async (req, res) => {
       );
     }
 
-    await invalidAllUnAcceptedInvitation(gameId);
+    await invalidAllUnAcceptedInvitations(gameId);
 
     const retain = false;
     helpers.mqtt_publish_message(
@@ -419,6 +421,72 @@ exports.getHistory = async (req, res) => {
     );
 
     return apiResponse.success(res, req, gamesHistory);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.removePlayerFromAGame = async (req, res) => {
+  /**
+   * @swagger
+   *
+   *   /games/users:
+   *     delete:
+   *       security:
+   *         - auth: []
+   *       summary: Remove user from game and its respective holes
+   *       description: Removes a participant from a game
+   *       tags: [Games]
+   *       produces:
+   *         - application/json
+   *       parameters:
+   *         - name: participantId
+   *           in: query
+   *           description: ID of the user to remove from the game
+   *           required: true
+   *           type: integer
+   *         - name: gameId
+   *           in: query
+   *           description: ID of the game from which to remove the user
+   *           required: true
+   *           type: string
+   *       responses:
+   *         200:
+   *           description: Success
+   */
+
+  try {
+    const validation = new Validator(req.query, {
+      participantId: "required",
+      gameId: "required",
+    });
+
+    if (validation.fails()) return apiResponse.fail(res, validation.errors);
+
+    const participantId = req.query.participantId;
+    const gameId = req.query.gameId;
+    const loggedInUserId = req.user.id;
+    const game = await gameService.isGameOwner(loggedInUserId, gameId);
+    if (!game) {
+      throw new ServiceError("Only game owner can remove the player", 403);
+    }
+
+    if (game.ownerId == participantId) {
+      throw new ServiceError(
+        "Game owner can not be removed from the game",
+        403,
+      );
+    }
+
+    await gameService.removeUserFromAGame(participantId, gameId);
+
+    await deletePlayerInvitationsForAParticularGame(participantId, gameId);
+
+    return apiResponse.success(
+      res,
+      req,
+      "Player removed from the game successfully",
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

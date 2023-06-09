@@ -5,6 +5,8 @@ const mainHelper = require("../../../../../common/helper");
 const jwt = require("jsonwebtoken");
 const nonExistingPhoneNo = "+12021262192";
 const { v4: uuidv4 } = require("uuid");
+const models = require("../../../../../models/index");
+
 describe("POST: /games", () => {
   let firstGolferGameId;
   let secondGolferGameId;
@@ -68,6 +70,19 @@ describe("POST: /games", () => {
 
     firstGolferGameId = firstGameResponse.body.data.gameId; // firstGolfer is the owner of the game
     secondGolferGameId = secondGameResponse.body.data.gameId; // secondGolfer is the owner of the game
+  });
+
+  afterAll(async () => {
+    await models.Game.destroy({
+      where: {
+        gameId: firstGolferGameId,
+      },
+    });
+    await models.Game.destroy({
+      where: {
+        gameId: secondGolferGameId,
+      },
+    });
   });
 
   it("Should return 400 and validation error because of invalid phoneNo and gameId", async () => {

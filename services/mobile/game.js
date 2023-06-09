@@ -201,6 +201,15 @@ const validateMaxLimitOfPlayersPerGame = async (gameId) => {
   return true;
 };
 
+const removeUserFromAGame = async (participantId, gameId) => {
+  const noOfAffectedRows = await Game.destroy({
+    where: { participantId, gameId },
+  });
+
+  if (!noOfAffectedRows) throw new ServiceError("Player deletion failed", 404);
+  return noOfAffectedRows;
+};
+
 module.exports = {
   isGameOwner,
   createGame,
@@ -212,4 +221,5 @@ module.exports = {
   updateGameIfGameIdIsValid,
   validateMaxLimitOfPlayersPerGame,
   getGamesHistoryByParticipantId,
+  removeUserFromAGame,
 };

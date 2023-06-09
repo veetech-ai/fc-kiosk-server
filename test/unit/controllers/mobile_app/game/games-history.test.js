@@ -119,6 +119,13 @@ describe("Get: /games", () => {
       expect(response.status).toBe(200);
     });
     it("should return empty array if no games found", async () => {
+      const secondGolferId = jwt.decode(secondGolferToken).id;
+      await models.Game.destroy({
+        where: {
+          participantId: secondGolferId,
+        },
+      });
+
       const response = await helper.get_request_with_authorization({
         endpoint: `games`,
         token: secondGolferToken, // Using a different user token to simulate no games found

@@ -63,7 +63,7 @@ exports.getUnAttendedUserGameInvitations = async (userId) => {
   return userGameInvitations;
 };
 
-exports.invalidAllUnAcceptedInvitation = async (gameId) => {
+exports.invalidAllUnAcceptedInvitations = async (gameId) => {
   return await User_Game_Invitation.update(
     {
       status: "invalid",
@@ -77,4 +77,21 @@ exports.invalidAllUnAcceptedInvitation = async (gameId) => {
       },
     },
   );
+};
+
+exports.deletePlayerInvitationsForAParticularGame = async (userId, gameId) => {
+  const noOfAffectedRows = await User_Game_Invitation.destroy({
+    where: {
+      userId,
+      gameId,
+    },
+  });
+
+  return noOfAffectedRows;
+};
+
+exports.deleteUserGameInvitationsWhere = async (where) => {
+  return await User_Game_Invitation.destroy({
+    where,
+  });
 };
