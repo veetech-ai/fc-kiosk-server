@@ -4,7 +4,7 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const { mobileGame } = require("../../config/config");
 const Game = models.Game;
-const {Sequelize } = require("sequelize");
+const { Sequelize } = require("sequelize");
 async function createGame(reqBody) {
   const game = await Game.create({
     ...reqBody,
@@ -22,7 +22,13 @@ async function findStatisticsByParticipantId(participantId) {
   });
 
   if (!rounds)
-    return { rounds: rounds, bestScore: null, worstScore: null, avg: null, girPercentage: null};
+    return {
+      rounds: rounds,
+      bestScore: null,
+      worstScore: null,
+      avg: null,
+      girPercentage: null,
+    };
 
   const scores = await Game.findAll({
     where: {
@@ -44,9 +50,7 @@ async function findStatisticsByParticipantId(participantId) {
   });
 
   const girPercentage = await Game.findOne({
-    attributes: [
-      [Sequelize.fn("SUM", Sequelize.col("girPercentage")), "sum"],
-    ],
+    attributes: [[Sequelize.fn("SUM", Sequelize.col("girPercentage")), "sum"]],
     where: {
       participantId,
       endTime: { [Op.ne]: null },
@@ -59,7 +63,7 @@ async function findStatisticsByParticipantId(participantId) {
     worstScore: scores[scores.length - 1].totalShotsTaken,
     bestScore: scores[0].totalShotsTaken,
     avg: totalShotsTaken.sum / rounds,
-    girPercentage: girPercentage.sum / rounds
+    girPercentage: girPercentage.sum / rounds,
   };
 }
 
@@ -71,7 +75,7 @@ async function findBestRoundsByParticipantId(participantId, limit) {
       "startTime",
       "endTime",
       "score",
-      "girPercentage"
+      "girPercentage",
     ],
     include: [
       {
