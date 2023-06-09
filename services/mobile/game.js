@@ -43,11 +43,23 @@ async function findStatisticsByParticipantId(participantId) {
     raw: true,
   });
 
+  const girPercentage = await Game.findOne({
+    attributes: [
+      [Sequelize.fn("SUM", Sequelize.col("girPercentage")), "sum"],
+    ],
+    where: {
+      participantId,
+      endTime: { [Op.ne]: null },
+    },
+    raw: true,
+  });
+
   return {
     rounds,
     worstScore: scores[scores.length - 1].totalShotsTaken,
     bestScore: scores[0].totalShotsTaken,
     avg: totalShotsTaken.sum / rounds,
+    girPercentage: girPercentage.sum / rounds
   };
 }
 
@@ -59,6 +71,7 @@ async function findBestRoundsByParticipantId(participantId, limit) {
       "startTime",
       "endTime",
       "score",
+      "girPercentage"
     ],
     include: [
       {
