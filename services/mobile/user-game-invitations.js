@@ -28,6 +28,11 @@ exports.getOneUserGameInvitation = async (where) => {
         as: "Invited_By",
         attributes: ["name"],
       },
+      {
+        model: models.User,
+        as: "Participant",
+        attributes: ["name"],
+      },
     ],
   });
 

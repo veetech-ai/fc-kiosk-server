@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
   User_Game_Invitation.associate = function (models) {
     // associations can be defined here
     User_Game_Invitation.belongsTo(models.User, {
-      as: "User",
+      as: "Participant",
       foreignKey: "userId",
     });
 

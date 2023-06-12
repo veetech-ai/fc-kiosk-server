@@ -193,6 +193,9 @@ describe("POST: /games", () => {
       Invited_By: {
         name: "Golfer",
       },
+      Participant: {
+        name: "Player",
+      },
       invitedBy: firstGolferData.id,
       gameId: firstGolferGameId,
       status: "pending",
@@ -206,6 +209,7 @@ describe("POST: /games", () => {
     const params = {
       phone: nonExistingPhoneNo,
       gameId: firstGolferGameId,
+      name: "Player",
     };
 
     const noOfRecords = await userServices.PhoneExists(nonExistingPhoneNo);
