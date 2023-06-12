@@ -238,7 +238,6 @@ const removeUserFromAGame = async (participantId, gameId) => {
     where: { participantId, gameId },
   });
 
-  if (!noOfAffectedRows) throw new ServiceError("Player deletion failed", 404);
   return noOfAffectedRows;
 };
 

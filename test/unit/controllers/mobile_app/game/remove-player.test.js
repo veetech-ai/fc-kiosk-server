@@ -149,23 +149,20 @@ describe("POST: /games", () => {
     expect(response.statusCode).toEqual(403);
   });
 
-  it("should return an error if the player does not exist or does not belong to the specified game", async () => {
-    const expectedResponse = {
-      success: false,
-      data: "Player deletion failed",
-    };
-
+  it("should not send the mqtt message if the player does not exist or does not belong to the specified game", async () => {
     const params = {
       participantId: -1,
       gameId: createdGame.gameId,
     };
-    const response = await makeRemovePlayerFromAGameApiRequest(
-      params,
-      gameOwnerToken,
+    const mqttPublishMessageSpy = jest.spyOn(
+      mainHelper,
+      "mqtt_publish_message",
     );
+    mqttPublishMessageSpy.mockReset();
+    await makeRemovePlayerFromAGameApiRequest(params, gameOwnerToken);
 
-    expect(response.body).toEqual(expectedResponse);
-    expect(response.statusCode).toEqual(404);
+    expect(mqttPublishMessageSpy).not.toHaveBeenCalled();
+    mqttPublishMessageSpy.mockRestore();
   });
 
   it("should delete the anonymous player successfully", async () => {
@@ -195,12 +192,36 @@ describe("POST: /games", () => {
       },
     });
     expect(holesBeforeRemoval).not.toBe(null);
+    const mqttPublishMessageSpy = jest.spyOn(
+      mainHelper,
+      "mqtt_publish_message",
+    );
+    mqttPublishMessageSpy.mockReset();
+    mqttPublishMessageSpy.mockImplementation(
+      (channel, message, retained = true, qos = 1, stringify = true) => {
+        const expectedResponse = {
+          channel: `game/${createdGame.gameId}/screens`,
+          message: {
+            action: "scorecard",
+          },
+          retained: false,
+          qos: 1,
+          stringify: true,
+        };
+        expect({ channel, message, retained, qos, stringify }).toEqual(
+          expectedResponse,
+        );
+      },
+    );
     const response = await makeRemovePlayerFromAGameApiRequest(
       params,
       gameOwnerToken,
     );
 
     expect(response.body).toEqual(expectedResponse);
+    expect(mqttPublishMessageSpy).toHaveBeenCalled();
+    mqttPublishMessageSpy.mockRestore();
+
     expect(response.statusCode).toEqual(200);
 
     const holesAfterRemoval = await models.Hole.findOne({

@@ -478,10 +478,20 @@ exports.removePlayerFromAGame = async (req, res) => {
       );
     }
 
-    await gameService.removeUserFromAGame(participantId, gameId);
+    const noOfAffectedRows = await gameService.removeUserFromAGame(
+      participantId,
+      gameId,
+    );
 
     await deletePlayerInvitationsForAParticularGame(participantId, gameId);
 
+    if (noOfAffectedRows) {
+      helpers.mqtt_publish_message(
+        `game/${game.gameId}/screens`,
+        { action: "scorecard" },
+        false,
+      );
+    }
     return apiResponse.success(
       res,
       req,
