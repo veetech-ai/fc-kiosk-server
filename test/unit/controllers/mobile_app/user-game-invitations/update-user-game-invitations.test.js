@@ -18,6 +18,7 @@ const nonExistingPhoneNo = "+923345233206";
 describe("POST: /games", () => {
   let superAdminToken;
   let gameOwnerToken;
+  let gameOwnerData;
   let invitedPlayerToken;
   let invitedPlayerData;
   const golfCourseId = 1;
@@ -103,6 +104,8 @@ describe("POST: /games", () => {
     superAdminToken = await helper.get_token_for();
 
     gameOwnerToken = await helper.get_token_for("golfer");
+    gameOwnerData = jwt.decode(gameOwnerToken);
+
     invitedPlayerToken = await helper.get_token_for("testGolfer");
     invitedPlayerData = jwt.decode(invitedPlayerToken);
   });
@@ -381,7 +384,18 @@ describe("POST: /games", () => {
           invitedPlayerToken,
         );
       expect(gameInvitationResponse.body).toEqual(expectedResponse);
-      expect(mqttPublishMessageSpy).not.toHaveBeenCalled();
+      expect(mqttPublishMessageSpy).not.toHaveBeenCalledWith(
+        `game/${invitations[0].id}/screens`,
+        { action: "scorecard" },
+        false,
+      );
+      expect(mqttPublishMessageSpy).toHaveBeenCalledWith(
+        `game/users/${gameOwnerData.id}`,
+        {
+          action: "invite-decline",
+          user: invitedPlayerData.id,
+        },
+      );
       expect(gameInvitationResponse.statusCode).toEqual(200);
       mqttPublishMessageSpy.mockRestore();
     });

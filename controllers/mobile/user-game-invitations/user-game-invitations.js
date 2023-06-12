@@ -221,12 +221,12 @@ exports.updateInvitations = async (req, res) => {
    *       - auth: []
    *     summary: Update single or multiple invites
    *     description: |
-   *              - This API can be used to mark all invites as "invalid", "declined", "seen", "ignoted", if status is specified using "statusForMultipleInvitations" query param.
+   *              - This API can be used to mark all invites as "invalid", "declined", "seen", "ignored", if status is specified using "statusForMultipleInvitations" query param.
    *                - Note: "accepted" status can not be passed in "statusForMultipleInvitations"
    *                - If ids are specified in the body using "invitationIds" as the key in comma separated string format then only corresponding invites are going to be updated
    *                - Keep in mind that if same invitation id is passed using "invitationId" as well as "invitationIds" then the status under "statusForSingleInvitation" would get precedence
    *                  - Example:
-   *                    Body -> invitationId: 1, invidationIds: "1"
+   *                    Body -> invitationId: 1, invitationIds: "1"
    *                    Query -> statusForSingleInvitation: "accepted", statusForMultipleInvitations: "declined"
    *                    In this example, the invitation corresponding to id 1 would get "accepted" status instead of "declined".
    *              - This API can also be used to mark single invite as "accepted", "declined" etc if status is specified using "statusForSingleInvitation" and "invitationId" is set in the body.
@@ -295,11 +295,10 @@ exports.updateInvitations = async (req, res) => {
       statusForMultipleInvitations,
     );
 
-    let invitation = null,
-      noOfAffectedRowsForSingleInvitation = 0;
+    let noOfAffectedRowsForSingleInvitation = 0;
 
     // update multiple invitations
-    const noOfAffectedRowsForMulitpleInvitation =
+    const noOfAffectedRowsForMultipleInvitation =
       await userGameInvitationServices.updateInvitationsWithASingleStatus(
         loggedInUserId,
         statusForMultipleInvitations,
@@ -309,21 +308,25 @@ exports.updateInvitations = async (req, res) => {
     // update status of a single invitation
     if (invitationId) {
       // Logic for updating the single invitation
-      invitation = await userGameInvitationServices.getOneUserGameInvitation({
-        id: invitationId,
-        userId: loggedInUserId,
-      });
+      let invitation =
+        await userGameInvitationServices.getOneUserGameInvitation({
+          id: invitationId,
+          userId: loggedInUserId,
+        });
+
       if (invitation) {
         const game = await gameServices.getOneGame({
           gameId: invitation.gameId,
           ownerId: invitation.invitedBy,
         });
+
         if (statusForSingleInvitation == "accepted") {
           await gameServices.validateMaxLimitOfPlayersPerGame(game.gameId);
           if (game.endTime) {
             throw new ServiceError("The game has already ended", 400);
           }
         }
+
         noOfAffectedRowsForSingleInvitation =
           await userGameInvitationServices.updateInvitationById(
             statusForSingleInvitation,
@@ -344,18 +347,28 @@ exports.updateInvitations = async (req, res) => {
             false,
           );
         }
+
+        if (
+          noOfAffectedRowsForSingleInvitation &&
+          statusForSingleInvitation == "declined"
+        ) {
+          helper.mqtt_publish_message(`game/users/${invitation.invitedBy}`, {
+            action: "invite-decline",
+            user: invitation.userId,
+          });
+        }
       }
     }
 
     if (
       !noOfAffectedRowsForSingleInvitation &&
-      !noOfAffectedRowsForMulitpleInvitation
+      !noOfAffectedRowsForMultipleInvitation
     ) {
       throw new ServiceError("Failed to update the invitation/s", 404);
     }
 
     const totalUpdatedRecords =
-      noOfAffectedRowsForMulitpleInvitation +
+      noOfAffectedRowsForMultipleInvitation +
       noOfAffectedRowsForSingleInvitation;
     const response = `${totalUpdatedRecords} invitation${
       totalUpdatedRecords > 1 ? "s" : ""
