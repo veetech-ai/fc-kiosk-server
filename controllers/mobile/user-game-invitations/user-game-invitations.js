@@ -352,10 +352,13 @@ exports.updateInvitations = async (req, res) => {
           noOfAffectedRowsForSingleInvitation &&
           statusForSingleInvitation == "declined"
         ) {
-          helper.mqtt_publish_message(`game/users/${invitation.invitedBy}`, {
-            action: "invite-decline",
-            user: invitation.userId,
-          });
+          helper.mqtt_publish_message(
+            `game/${invitation.gameId}/users/${invitation.invitedBy}`,
+            {
+              action: "invite-decline",
+              userId: invitation.userId,
+            },
+          );
         }
       }
     }

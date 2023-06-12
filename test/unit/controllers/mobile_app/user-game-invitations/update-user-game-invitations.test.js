@@ -356,7 +356,7 @@ describe("POST: /games", () => {
       }
     });
 
-    it("Should decline the single pending invitation successully", async () => {
+    it("Should decline the single pending invitation successfully", async () => {
       const expectedResponse = {
         success: true,
         data: "1 invitation updated successfully",
@@ -390,10 +390,10 @@ describe("POST: /games", () => {
         false,
       );
       expect(mqttPublishMessageSpy).toHaveBeenCalledWith(
-        `game/users/${gameOwnerData.id}`,
+        `game/${invitations[0].gameId}/users/${gameOwnerData.id}`,
         {
           action: "invite-decline",
-          user: invitedPlayerData.id,
+          userId: invitedPlayerData.id,
         },
       );
       expect(gameInvitationResponse.statusCode).toEqual(200);
