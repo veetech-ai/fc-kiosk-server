@@ -40,7 +40,7 @@ describe("POST /api/v1/ads", () => {
     customerToken = await helper.get_token_for("testCustomer");
   });
   afterAll(async () => {
-    await adsService.deleteAd({ id: courseId });
+    await adsService.deleteAd({ gcId: courseId });
   });
 
   const makeAdApiRequest = async (params, token = adminToken) => {

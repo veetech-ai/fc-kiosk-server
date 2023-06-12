@@ -6,7 +6,6 @@ const adsService = require("../../../../../services/mobile/ads");
 
 let mockFields;
 let mockFiles;
-let adId;
 let course;
 let fields = {
   state: "Alabama",
@@ -54,31 +53,33 @@ describe("Delete ads/:adId", () => {
 
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
-    const createAds = async () => {
-      const where = {
-        state: fields.state,
-      };
-      const { dataValues } = await courseService.getCourseFromDb(where);
-      course = dataValues;
-      courseId = course.id;
-      fields.gcId = courseId;
-
-      mockFormidable(fields, files);
-      return await helper.post_request_with_authorization({
-        endpoint: `ads`,
-        token: adminToken,
-        params: fields,
-      });
-    };
-
-    const response = await createAds();
-    adId = response.body.data.id;
   });
 
+  afterAll(async () => {
+    await adsService.deleteAd({ gcId: courseId });
+  });
+
+  const createAds = async () => {
+    const where = {
+      state: fields.state,
+    };
+    const { dataValues } = await courseService.getCourseFromDb(where);
+    course = dataValues;
+    courseId = course.id;
+    fields.gcId = courseId;
+
+    mockFormidable(fields, files);
+    return await helper.post_request_with_authorization({
+      endpoint: `ads`,
+      token: adminToken,
+      params: fields,
+    });
+  };
   describe("success", () => {
     it("should return success message if ad id is correct", async () => {
+      const adCreationResponse = await createAds();
       const response = await helper.delete_request_with_authorization({
-        endpoint: `ads/${adId}`,
+        endpoint: `ads/${adCreationResponse.body.data.id}`,
         token: adminToken,
       });
       const expectedResponse = { success: true, data: "Deleted Successfully" };
@@ -87,6 +88,11 @@ describe("Delete ads/:adId", () => {
     });
   });
   describe("fail", () => {
+    let adId;
+    beforeAll(async () => {
+      const adCreationResponse = await createAds();
+      adId = adCreationResponse.body.data.id;
+    });
     it("should throw exception if ad id is not correct", async () => {
       const response = await helper.delete_request_with_authorization({
         endpoint: `ads/${-adId}`,

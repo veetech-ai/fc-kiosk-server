@@ -24,7 +24,9 @@ async function createAd(reqBody) {
 async function getAds(where) {
   const ads = await AdsModel.findAll({
     where,
-    include: [{ model: Course, as: "Golf_Course", attributes: ["name"] }],
+    include: [
+      { model: Course, as: "Golf_Course", attributes: ["name", "state"] },
+    ],
   });
   if (ads.length) {
     for (const ad of ads) {

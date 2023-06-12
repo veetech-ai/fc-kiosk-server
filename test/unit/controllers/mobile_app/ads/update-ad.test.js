@@ -48,24 +48,23 @@ const mockFormidable = (fields, files) => {
 describe("PATCH /api/v1/ads/{adId}", () => {
   let adminToken;
   let customerToken;
-
+  const createAd = async () => {
+    mockFormidable(fields, files);
+    const adCreationResponse = await helper.post_request_with_authorization({
+      endpoint: `ads`,
+      token: adminToken,
+      params: fields,
+    });
+    return adCreationResponse.body.data;
+  };
   beforeAll(async () => {
     // Create some courses for the test organization
-
+    await adsService.deleteAd({});
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
     const course = await courseService.getCourseFromDb({ state: fields.state });
     fields.gcId = course.id;
-    const createAd = async () => {
-      mockFormidable(fields, files);
-      const response = await helper.post_request_with_authorization({
-        endpoint: `ads`,
-        token: adminToken,
-        params: fields,
-      });
-      createdAd = response.body.data;
-    };
-    await createAd();
+    createdAd = await createAd();
   });
   afterAll(async () => {
     await adsService.deleteAd({ id: createdAd.id });

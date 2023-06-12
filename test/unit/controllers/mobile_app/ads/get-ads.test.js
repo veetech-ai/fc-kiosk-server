@@ -55,25 +55,23 @@ describe("GET /api/v1/ads", () => {
 
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
-    const createAds = async () => {
-      const where = {
-        state: fields.state,
-      };
-      const { dataValues } = await courseService.getCourseFromDb(where);
-      course = dataValues;
-      courseId = course.id;
-      fields.gcId = courseId;
-
-      mockFormidable(fields, files);
-      return await helper.post_request_with_authorization({
-        endpoint: `ads`,
-        token: adminToken,
-        params: fields,
-      });
-    };
-    const response = await createAds();
-    adId = response.body.data.id;
   });
+  const createAds = async () => {
+    const where = {
+      state: fields.state,
+    };
+    const { dataValues } = await courseService.getCourseFromDb(where);
+    course = dataValues;
+    courseId = course.id;
+    fields.gcId = courseId;
+
+    mockFormidable(fields, files);
+    return await helper.post_request_with_authorization({
+      endpoint: `ads`,
+      token: adminToken,
+      params: fields,
+    });
+  };
   const makegetAdApi = (params, token = adminToken) => {
     return helper.get_request_with_authorization({
       endpoint: `ads`,
@@ -83,6 +81,7 @@ describe("GET /api/v1/ads", () => {
   };
 
   it("should return array of all ads if no param is defined", async () => {
+    const adCreationResponse = await createAds();
     const expectedResponse = {
       success: true,
       data: [
@@ -98,15 +97,18 @@ describe("GET /api/v1/ads", () => {
           updatedAt: expect.any(String),
           Golf_Course: {
             name: course.name,
+            state: course.state,
           },
         },
       ],
     };
 
     const response = await makegetAdApi();
+    await adsService.deleteAd({ id: adCreationResponse.body.data.id });
     expect(response.body).toEqual(expectedResponse);
   });
   it("should return course on the basis of gcId param", async () => {
+    const adCreationResponse = await createAds();
     const expectedResponse = {
       success: true,
       data: [
@@ -122,21 +124,20 @@ describe("GET /api/v1/ads", () => {
           updatedAt: expect.any(String),
           Golf_Course: {
             name: course.name,
+            state: course.state,
           },
         },
       ],
     };
-
     const response = await makegetAdApi({ gcId: courseId });
+    await adsService.deleteAd({ id: adCreationResponse.body.data.id });
     expect(response.body).toEqual(expectedResponse);
-    await adsService.deleteAd({ id: adId });
   });
   it("should return empty array if no ad is present", async () => {
     const expectedResponse = {
       success: true,
       data: [],
     };
-
     const response = await makegetAdApi();
     expect(response.body).toEqual(expectedResponse);
   });
