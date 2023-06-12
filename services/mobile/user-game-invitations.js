@@ -3,7 +3,9 @@ const { User_Game_Invitation } = require("../../models");
 const models = require("../../models");
 
 const { Op } = require("sequelize");
+const ServiceError = require("../../utils/serviceError");
 
+const typesOfUpdatableInvitations = ["seen", "ignored", "pending"];
 exports.createUserGameInvitations = async (body) => {
   const existingInvitation = await this.getOneUserGameInvitation({
     userId: body.userId,
@@ -32,12 +34,12 @@ exports.getOneUserGameInvitation = async (where) => {
   return invitation;
 };
 
-exports.getUnAttendedUserGameInvitations = async (userId) => {
+exports.getUnAttendedUserGameInvitationsByUserId = async (userId) => {
   const userGameInvitations = await User_Game_Invitation.findAll({
     where: {
       userId,
       status: {
-        [Op.in]: ["seen", "pending", "ignored"],
+        [Op.in]: typesOfUpdatableInvitations,
       },
     },
     order: [["id", "DESC"]],
@@ -63,6 +65,58 @@ exports.getUnAttendedUserGameInvitations = async (userId) => {
   return userGameInvitations;
 };
 
+exports.updateInvitationsWithASingleStatus = async (
+  userId,
+  status,
+  ids = [],
+) => {
+  let noOfAffectedRows = 0;
+  if (!status || status == "accepted") return noOfAffectedRows;
+
+  const where = {
+    status: {
+      [Op.in]: typesOfUpdatableInvitations,
+    },
+    userId,
+  };
+
+  if (ids && ids.length > 0) {
+    where.id = {
+      [Op.in]: ids,
+    };
+  }
+
+  const response = await User_Game_Invitation.update(
+    {
+      status,
+    },
+    {
+      where,
+    },
+  );
+
+  noOfAffectedRows = response[0];
+  return noOfAffectedRows;
+};
+
+exports.updateInvitationById = async (status, id) => {
+  const response = await User_Game_Invitation.update(
+    {
+      status,
+    },
+    {
+      where: {
+        id,
+        status: {
+          [Op.in]: typesOfUpdatableInvitations,
+        },
+      },
+    },
+  );
+
+  const noOfAffectedRows = response[0];
+  return noOfAffectedRows;
+};
 exports.invalidAllUnAcceptedInvitations = async (gameId) => {
   return await User_Game_Invitation.update(
     {
@@ -72,7 +126,7 @@ exports.invalidAllUnAcceptedInvitations = async (gameId) => {
       where: {
         gameId,
         status: {
-          [Op.in]: ["seen", "pending", "ignored"],
+          [Op.in]: typesOfUpdatableInvitations,
         },
       },
     },

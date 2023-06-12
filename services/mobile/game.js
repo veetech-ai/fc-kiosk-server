@@ -3,6 +3,8 @@ const { Op } = require("sequelize");
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const { mobileGame } = require("../../config/config");
+const { validateObject } = require("../../common/helper");
+const holeServices = require("./hole");
 const Game = models.Game;
 const { Sequelize } = require("sequelize");
 async function createGame(reqBody) {
@@ -201,6 +203,36 @@ const validateMaxLimitOfPlayersPerGame = async (gameId) => {
   return true;
 };
 
+const createGameForInvitedUser = async (existingGame, invitedUserId) => {
+  let response;
+  if (existingGame.endTime)
+    throw new ServiceError("The game has already ended", 400);
+  const holes = await holeServices.getHolesByWhere(
+    { gId: existingGame.id },
+    { attributes: ["par", "holeNumber", "holeId"] },
+  );
+  const gameDataForInvitedUser = validateObject(existingGame, [
+    "ownerId",
+    "orgId",
+    "gcId",
+    "startTime",
+    "teeColor",
+    "totalIdealShots",
+    "gameId",
+  ]);
+  gameDataForInvitedUser.participantId = invitedUserId;
+  response = await createGame(gameDataForInvitedUser);
+
+  await holeServices.createGameHoles(
+    holes,
+    invitedUserId,
+    response.id,
+    gameDataForInvitedUser.gameId,
+    gameDataForInvitedUser.gcId,
+  );
+
+  return response;
+};
 const removeUserFromAGame = async (participantId, gameId) => {
   const noOfAffectedRows = await Game.destroy({
     where: { participantId, gameId },
@@ -208,6 +240,12 @@ const removeUserFromAGame = async (participantId, gameId) => {
 
   if (!noOfAffectedRows) throw new ServiceError("Player deletion failed", 404);
   return noOfAffectedRows;
+};
+
+const deleteGames = async (where) => {
+  await Game.destroy({
+    where,
+  });
 };
 
 module.exports = {
@@ -220,6 +258,8 @@ module.exports = {
   updateGame,
   updateGameIfGameIdIsValid,
   validateMaxLimitOfPlayersPerGame,
+  createGameForInvitedUser,
   getGamesHistoryByParticipantId,
   removeUserFromAGame,
+  deleteGames,
 };

@@ -613,3 +613,9 @@ exports.delete = async (userId, loggedInUser) => {
 
   return "User deleted successfully";
 };
+
+exports.deleteUsers = async (where) => {
+  await User.destroy({
+    where,
+  });
+};

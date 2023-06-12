@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const {
   createUserGameInvitations,
+  deleteUserGameInvitationsWhere,
 } = require("../../../../../services/mobile/user-game-invitations");
 const { getCourseFromDb } = require("../../../../../services/mobile/courses");
 const statuses = [
@@ -61,7 +62,7 @@ describe("POST: /games", () => {
       gcId: 1,
       holes,
     };
-
+    await deleteUserGameInvitationsWhere({ userId: secondGolferData.id });
     const golfCourse = await getCourseFromDb({ id: gameCreationBody.gcId });
     for await (const status of statuses) {
       const gameCreationResponse = await makeCreateGameApiRequest(

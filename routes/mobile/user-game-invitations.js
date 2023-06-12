@@ -1,5 +1,5 @@
 const config = require("../../config/config");
-const UserGameInvitationsController = require("../../controllers/mobile/user-game-invitations");
+const UserGameInvitationsController = require("../../controllers/mobile/user-game-invitations/user-game-invitations");
 const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
@@ -13,5 +13,10 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["manageGames"]),
     UserGameInvitationsController.getUserGameInvitations,
+  ]);
+  router.put(game + "/", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["manageGames"]),
+    UserGameInvitationsController.updateInvitations,
   ]);
 };
