@@ -156,6 +156,7 @@ async function getGamesHistoryByParticipantId(participantId) {
         attributes: ["name"],
       },
     ],
+    order: [["createdAt", "DESC"]],
   });
 
   return games;
