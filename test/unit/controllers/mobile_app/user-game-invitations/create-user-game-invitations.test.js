@@ -6,7 +6,10 @@ const jwt = require("jsonwebtoken");
 const nonExistingPhoneNo = "+12021262192";
 const { v4: uuidv4 } = require("uuid");
 const models = require("../../../../../models/index");
-
+const {
+  deleteUserGameInvitationsWhere,
+  getOneUserGameInvitation,
+} = require("../../../../../services/mobile/user-game-invitations");
 describe("POST: /games", () => {
   let firstGolferGameId;
   let secondGolferGameId;
@@ -37,6 +40,19 @@ describe("POST: /games", () => {
       endpoint: "user-game-invitations",
       token: token,
       params: params,
+    });
+  };
+
+  const makeUpdateUserGameInvitationApiRequest = async (
+    body,
+    queryParams,
+    token,
+  ) => {
+    return await helper.put_request_with_authorization({
+      endpoint: "user-game-invitations",
+      token: token,
+      params: body,
+      queryParams: queryParams,
     });
   };
 
@@ -82,6 +98,9 @@ describe("POST: /games", () => {
       where: {
         gameId: secondGolferGameId,
       },
+    });
+    await models.User_Game_Invitation.destroy({
+      where: {},
     });
   });
 
@@ -212,8 +231,7 @@ describe("POST: /games", () => {
       name: "Player",
     };
 
-    const noOfRecords = await userServices.PhoneExists(nonExistingPhoneNo);
-    expect(noOfRecords).toBe(0);
+    await deleteUserGameInvitationsWhere({});
 
     const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
       params,
@@ -226,6 +244,73 @@ describe("POST: /games", () => {
     expect(gameInvitationResponse.statusCode).toBe(200);
     expect(mqttMessageSpy).toHaveBeenCalledWith(
       `u/${gameInvitationResponse.body.data.userId}/data`,
+      { action: "invitations" },
+      false,
+    );
+    mqttMessageSpy.mockRestore();
+  });
+
+  it("Should successfully create and invite the user even if the user already declined the previous invitation on the specified game", async () => {
+    const mqttMessageSpy = jest
+      .spyOn(mainHelper, "mqtt_publish_message")
+      .mockImplementation(
+        (channel, message, retained = true, qos = 1, stringify = true) => {
+          expect({
+            qos,
+            stringify,
+          }).toEqual({ qos: 1, stringify: true });
+        },
+      );
+    const expectedResponse = {
+      Invited_By: {
+        name: "Golfer",
+      },
+      Participant: {
+        name: "Golfer",
+      },
+      invitedBy: firstGolferData.id,
+      gameId: firstGolferGameId,
+      status: "pending",
+      userId: secondGolferData.id,
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+      id: expect.any(Number),
+      gameStartTime: expect.any(String),
+      gcId: golfCourseId,
+    };
+    const params = {
+      phone: secondGolferData.phone,
+      gameId: firstGolferGameId,
+    };
+
+    await deleteUserGameInvitationsWhere({});
+
+    const gameInvitationResponse = await makeCreateUserGameInvitationApiRequest(
+      params,
+      firstGolferToken,
+    );
+
+    await makeUpdateUserGameInvitationApiRequest(
+      { statusForSingleInvitation: "declined" },
+      { invitationId: gameInvitationResponse.body.data.id },
+      secondGolferToken,
+    );
+
+    const declinedInvitation = await getOneUserGameInvitation({
+      userId: secondGolferData.id,
+      gameId: firstGolferGameId,
+    });
+
+    expect(declinedInvitation.status).toBe("declined");
+
+    const secondTimeInvitationResponse =
+      await makeCreateUserGameInvitationApiRequest(params, firstGolferToken);
+    expect(secondTimeInvitationResponse.body.data).toEqual(expectedResponse);
+    expect(secondTimeInvitationResponse.body.success).toBe(true);
+
+    expect(secondTimeInvitationResponse.statusCode).toBe(200);
+    expect(mqttMessageSpy).toHaveBeenCalledWith(
+      `u/${secondGolferData.id}/data`,
       { action: "invitations" },
       false,
     );

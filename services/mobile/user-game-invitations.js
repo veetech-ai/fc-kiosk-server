@@ -7,16 +7,30 @@ const ServiceError = require("../../utils/serviceError");
 
 const typesOfUpdatableInvitations = ["seen", "ignored", "pending"];
 exports.createUserGameInvitations = async (body) => {
-  const existingInvitation = await this.getOneUserGameInvitation({
+  let invitation;
+  invitation = await this.getOneUserGameInvitation({
     userId: body.userId,
     gameId: body.gameId,
   });
-  if (existingInvitation) return existingInvitation;
 
-  const newCreatedInvitation = await User_Game_Invitation.create(body);
+  if (!invitation) {
+    invitation = await User_Game_Invitation.create(body);
+  } else if (invitation && invitation.status == "declined") {
+    await models.User_Game_Invitation.update(
+      {
+        status: "pending",
+        createdAt: new Date(),
+      },
+      {
+        where: {
+          id: invitation.id,
+        },
+      },
+    );
+  }
 
   // Calling this service again because the created invite does not have the invited by name
-  return await this.getOneUserGameInvitation({ id: newCreatedInvitation.id });
+  return await this.getOneUserGameInvitation({ id: invitation.id });
 };
 
 exports.getOneUserGameInvitation = async (where) => {
