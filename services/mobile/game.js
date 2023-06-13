@@ -140,6 +140,11 @@ async function getGames(where, holeId = null) {
         ],
         where: holeWhere,
       },
+      {
+        as: "Participant",
+        model: models.User,
+        attributes: ["name"],
+      },
     ],
   });
 }

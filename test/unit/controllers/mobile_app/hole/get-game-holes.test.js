@@ -99,6 +99,9 @@ describe("Get: /game/{gameId}/holes", () => {
           ]),
           id: createdGame.id,
           teeColor: "Red",
+          Participant: {
+            name: "Golfer",
+          },
           startTime: expect.any(String),
           endTime: null,
           score: null,
@@ -142,6 +145,9 @@ describe("Get: /game/{gameId}/holes", () => {
           ownerId: golferUser.id,
           participantId: golferUser.id,
           participantName: "Golfer",
+          Participant: {
+            name: "Golfer",
+          },
           updatedAt: expect.any(String),
         },
       ];
