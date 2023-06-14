@@ -362,11 +362,6 @@ exports.updateHoles = async (req, res) => {
       ["userId", "gameId"],
     );
 
-    await gameService.updateGameIfGameIdIsValid(
-      { gameId, participantId },
-      filteredBodyForGame,
-    );
-
     const hole = await holeService.getHoleByWhere(filteredQueryParamsForHoles);
     filteredBodyForHoles.isGir =
       hole?.par - filteredBodyForHoles?.noOfShots >= 2;
@@ -374,6 +369,18 @@ exports.updateHoles = async (req, res) => {
     const noOfAffectedRows = await holeService.updateHoleByWhere(
       filteredQueryParamsForHoles,
       filteredBodyForHoles,
+    );
+
+    // calculate the total score for all the holes of the particular gameId for given userId
+    const totalShotsTaken =
+      await holeService.getUserTotalShotsTakenForGameHoles(
+        participantId,
+        gameId,
+      );
+
+    await gameService.updateGameIfGameIdIsValid(
+      { gameId, participantId },
+      { ...filteredBodyForGame, totalShotsTaken },
     );
 
     if (noOfAffectedRows) {

@@ -24,12 +24,12 @@ describe("Get: /games", () => {
     },
     {
       holeId: 31931,
-      holeNumber: 1,
+      holeNumber: 2,
       par: 4,
     },
     {
       holeId: 31931,
-      holeNumber: 1,
+      holeNumber: 3,
       par: 4,
     },
   ];
@@ -47,7 +47,6 @@ describe("Get: /games", () => {
     // create game
     const paramsGame = {
       gcId: seededGolfCourseId,
-      totalIdealShots: 5,
       gameId: uuidv4(),
       startTime: new Date(),
       teeColor: "Red",
@@ -96,7 +95,7 @@ describe("Get: /games", () => {
           ownerId: golferUser.id,
           startTime: expect.any(String),
           endTime: null,
-          totalShotsTaken: null,
+          totalShotsTaken: 1,
           totalIdealShots: createdGame.totalIdealShots,
           gcId: seededGolfCourseId,
           Golf_Course: {

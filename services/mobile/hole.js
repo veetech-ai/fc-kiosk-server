@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 
 const models = require("../../models/index");
 const Hole = models.Hole;
@@ -54,10 +54,24 @@ async function getHolesByWhere(
   return await Hole.findAll({ ...findAllParams });
 }
 
+async function getUserTotalShotsTakenForGameHoles(userId, gameId) {
+  const findAllParams = {
+    where: { userId, gameId },
+    attributes: [[Sequelize.fn("SUM", Sequelize.col("noOfShots")), "sum"]],
+    raw: true,
+  };
+
+  const scoreSum = await Hole.findAll(findAllParams);
+  let scoreSumReturnValue = +scoreSum[0]?.sum || 0;
+
+  return scoreSumReturnValue;
+}
+
 module.exports = {
   createGameHoles,
   getGameHole,
   updateHoleByWhere,
   getHoleByWhere,
   getHolesByWhere,
+  getUserTotalShotsTakenForGameHoles,
 };
