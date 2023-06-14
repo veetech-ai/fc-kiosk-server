@@ -58,8 +58,8 @@ async function findStatisticsByParticipantId(participantId) {
     rounds,
     worstScore: scores[scores.length - 1].totalShotsTaken,
     bestScore: scores[0].totalShotsTaken,
-    avg: totalShotsTaken.sum / rounds,
-    avgGirPercentage: girPercentage.sum / rounds,
+    avg: +(totalShotsTaken.sum / rounds).toFixed(1),
+    avgGirPercentage: +(girPercentage.sum / rounds).toFixed(1),
   };
 }
 
