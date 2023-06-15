@@ -32,11 +32,11 @@ const config = require("../../config/config");
 const rolesSchema = require("../../df-commons/data/roles.json");
 const UsersStatus = UserModel.UsersStatus;
 
-const {
-  isOverWrite,
-  send_password_reset_email,
-  get_user_auth_tokens,
-} = require("./helper");
+// Helper
+const helpers = require("../../common/helper");
+
+const { send_password_reset_email, get_user_auth_tokens } = require("./helper");
+const ServiceError = require("../../utils/serviceError");
 
 /**
  * @swagger
@@ -2538,5 +2538,101 @@ exports.getStatistics = async (req, res) => {
     return apiResponse.success(res, req, totalStatistics);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /user/{userId}:
+   *   put:
+   *     security:
+   *       - auth: []
+   *     description: Update user (Only Admin)
+   *     tags: [User]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: userId
+   *         description: User ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *       - name: name
+   *         description: Name of user
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: phone
+   *         description: User's phone number.
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: role
+   *         description: Role of User
+   *         in: formData
+   *         required: false
+   *         type: "string"
+   *         enum: ["super admin", "admin"]
+   *       - name: status
+   *         description: User's status.
+   *         in: formData
+   *         required: false
+   *         type: integer
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const validation = new Validator(req.body, {
+      name: [`regex:${helper.LettersAndSpacesRegex}`],
+      role: "string",
+      phone: [`regex:${helper.PhoneRegex}`],
+      status: "integer|in:0,1",
+    });
+
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
+    const loggedInUserId = req.user.id;
+    const user_id = req.params.userId;
+    if (!Number(user_id))
+      throw new ServiceError("The userId must be an integer", 400);
+
+    const user = await UserModel.findById(user_id);
+    if (!user) throw new ServiceError("User not found", 404);
+
+    const updateUser = helpers.validateObject(req.body, [
+      "name",
+      "phone",
+      "status",
+      "role",
+    ]);
+
+    if (updateUser.status) {
+      if (loggedInUserId == user_id) {
+        throw new ServiceError("You can not inactive yourself", 400);
+      }
+    }
+
+    if (updateUser.role) {
+      if (loggedInUserId == user_id) {
+        throw new ServiceError("You can not change your own role", 400);
+      }
+      const getRole = await RoleModel.getRoleByTitle(updateUser.role);
+
+      if (!getRole) return apiResponse.fail(res, "Role not found", 404);
+      updateUser.roleId = getRole.id;
+    }
+
+    await UserModel.update_user(user_id, updateUser);
+
+    return apiResponse.success(res, req, "User Updated Successfully");
+  } catch (err) {
+    return apiResponse.fail(res, err.message, err.statusCode || 500);
   }
 };

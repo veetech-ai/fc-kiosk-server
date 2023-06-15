@@ -69,6 +69,18 @@ exports.list = async (paginationParams = false) => {
       status: {
         [Op.or]: [0, 1],
       },
+      [Op.or]: {
+        roleId: {
+          [Op.ne]: roleWithAuthorities.golfer.id,
+        },
+        [Op.and]: {
+          // exclude the anonymous players i.e., the golfers with no phone no
+          roleId: roleWithAuthorities.golfer.id,
+          phone: {
+            [Op.ne]: null,
+          },
+        },
+      },
     },
   };
 
@@ -179,7 +191,7 @@ exports.update_user = async (id, user) => {
     },
   });
 
-  if (!result[0]) throw new Error("There is a problem. Please try later.");
+  if (!result[0]) throw new Error(JSON.stringify(user));
 
   return result;
 };

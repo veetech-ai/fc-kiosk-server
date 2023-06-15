@@ -285,4 +285,10 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTNeeded,
     UsersController.getStatistics,
   ]);
+
+  router.put(group + "/:userId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin"]),
+    UsersController.updateUser,
+  ]);
 };
