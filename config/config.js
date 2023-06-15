@@ -255,10 +255,10 @@ module.exports = {
     link: process.env.MOBILE_APP_LINK || "/app-link",
     iOS:
       process.env.MOBILE_APP_IOS_LINK ||
-      "https://apps.apple.com/us/app/facebook/id284882215",
+      "https://testflight.apple.com/join/Jcp75ZHM",
     android:
       process.env.MOBILE_APP_ANDROID_LINK ||
-      "https://play.google.com/store/apps/details?id=com.facebook.katana&hl=en&gl=US",
+      "https://play.google.com/store/apps/details?id=com.veetech.digitalfairways",
   },
   /*
    * Date: 4 Jan 2022
