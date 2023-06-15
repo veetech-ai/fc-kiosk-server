@@ -12,7 +12,7 @@ exports.routesConfig = function (app, router) {
   ]);
 
   router.get(faq, [
-    validation_middleware.validJWTNeeded,
+    validation_middleware.validJWTOptional,
     faqController.getFaqs,
   ]);
   router.put(`${faq}/:id`, [

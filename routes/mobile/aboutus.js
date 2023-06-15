@@ -6,7 +6,7 @@ exports.routesConfig = function (app, router) {
   const aboutus = `${config.app.apiPath}aboutus`;
 
   router.get(aboutus, [
-    validation_middleware.validJWTNeeded,
+    validation_middleware.validJWTOptional,
     aboutusController.getAboutUs,
   ]);
   router.put(`${aboutus}/:id`, [
