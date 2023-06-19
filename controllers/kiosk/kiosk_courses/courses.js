@@ -8,6 +8,7 @@ const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
+const awsS3 = require("../../../common/external_services/aws-s3");
 
 /**
  * @swagger
@@ -278,7 +279,10 @@ exports.create_course_info = async (req, res) => {
     }
     const loggedInUserOrg = req.user?.orgId;
 
-    await courseService.getCourse({ id: courseId }, loggedInUserOrg);
+    const course = await courseService.getCourse(
+      { id: courseId },
+      loggedInUserOrg,
+    );
 
     const form = new formidable.IncomingForm();
     form.multiples = true;
@@ -365,6 +369,9 @@ exports.create_course_info = async (req, res) => {
     }
 
     if (logoImage) {
+      if (course.logo) {
+        await awsS3.deleteObject(course.logo);
+      }
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
