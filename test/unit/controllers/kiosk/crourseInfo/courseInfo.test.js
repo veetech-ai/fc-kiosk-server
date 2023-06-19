@@ -1,5 +1,8 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
+const awsS3 = require("../../../../../common/external_services/aws-s3");
+const ServiceError = require("../../../../../utils/serviceError");
+const { Log } = require("@influxdata/influxdb-client");
 
 // Mocking formidable
 let mockFields;
@@ -22,6 +25,9 @@ let mockedCourseImageUpload = jest
 let mockedLogoImageUpload = jest
   .spyOn(upload_file, "uploadCourseImage")
   .mockImplementation(() => Promise.resolve("mock-ad-url"));
+let mockdeleteImage = jest
+  .spyOn(awsS3, "deleteObject")
+  .mockImplementation(() => Promise.resolve("Image Deleted"));
 const mockFormidable = (fields, files) => {
   mockFields = fields;
   mockFiles = files;
@@ -61,7 +67,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     });
   };
 
-  it("should create a new course info with valid input", async () => {
+  it.only("should create a new course info with valid input", async () => {
     const fields = {
       name: "Sedona Golf Club Exclusive",
       holes: 18,
@@ -113,6 +119,57 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
 
     const response = await makeApiRequest(courseId, params);
     expect(response.body.data).toEqual(1);
+  });
+  it.only("should return error if there is an error while deleting images", async () => {
+    const fields = {
+      name: "Sedona Golf Club Exclusive",
+      holes: 18,
+      par: 72,
+      length: "6900",
+      slope: "113",
+      content: "Amazing course with beautiful landscapes",
+      email: "sample123@gmail.com",
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23423"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674823"),
+    );
+    mockdeleteImage.mockImplementation(() =>
+      Promise.reject(new ServiceError("Something went wrong")),
+    );
+    mockFormidable(fields, files);
+    const params = { ...fields, ...files };
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      success: false,
+      data: "Something went wrong",
+    };
+    expect(response.body).toEqual(expectedResponse);
   });
   it("should return an error if user belongs to same organization but do not have proper rights is not authorized", async () => {
     const params = {};
