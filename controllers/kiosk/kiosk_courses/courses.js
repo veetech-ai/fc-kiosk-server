@@ -8,8 +8,6 @@ const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
-const FeedbackService = require("../../../services/kiosk/feedback");
-const ServiceError = require("../../../utils/serviceError");
 
 /**
  * @swagger
