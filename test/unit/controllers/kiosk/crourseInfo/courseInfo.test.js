@@ -67,7 +67,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     });
   };
 
-  it.only("should create a new course info with valid input", async () => {
+  it("should create a new course info with valid input", async () => {
     const fields = {
       name: "Sedona Golf Club Exclusive",
       holes: 18,
@@ -120,7 +120,55 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     expect(response.body.data).toEqual(1);
   });
-  it.only("should return error if there is an error while deleting images", async () => {
+  it("should call upload course images method based on the number of times F keyword appear in the order array which comes from params or client side", async () => {
+    const fields = {
+      name: "Sedona Golf Club Exclusive",
+      holes: 18,
+      par: 72,
+      length: "6900",
+      slope: "113",
+      content: "Amazing course with beautiful landscapes",
+      email: "sample123@gmail.com",
+      order: JSON.stringify(["L", "L", "F", "F"]),
+      links: JSON.stringify([
+        "3b8c03d1-13c2-46a4-aae2-b4e935b0f4c3",
+        "b4a2d0cd-7e9e-41f2-a632-2f0c36a2a1a8",
+      ]),
+    };
+    const files = {
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+
+    mockFormidable(fields, files);
+
+    const params = {
+      name: "Sedona Golf Club Exclusive",
+      holes: 18,
+      par: 72,
+      length: 6900,
+      slope: 113,
+      content: "Amazing course with beautiful landscapes",
+    };
+    const filteredOrder = JSON.parse(fields.order).filter(
+      (item) => item === "F",
+    );
+    const response = await makeApiRequest(courseId, params);
+    expect(mockedLogoImageUpload).toHaveBeenCalledTimes(filteredOrder.length);
+  });
+  it("should return error if there is an error while deleting images", async () => {
     const fields = {
       name: "Sedona Golf Club Exclusive",
       holes: 18,
