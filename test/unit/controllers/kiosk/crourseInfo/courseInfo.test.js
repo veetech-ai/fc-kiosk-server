@@ -2,51 +2,31 @@ const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
 
 // Mocking formidable
+let mockFields;
+let mockFiles;
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
       return {
         multiples: true,
         parse: (req, cb) => {
-          cb(
-            null,
-            {
-              name: "Sedona Golf Club Exclusive",
-              holes: 18,
-              par: 72,
-              length: "6900",
-              slope: "113",
-              content: "Amazing course with beautiful landscapes",
-              email: "sample123@gmail.com",
-            },
-            {
-              logo: {
-                name: "mock-logo.png",
-                type: "image/png",
-                size: 5000, // bytes
-                path: "/mock/path/to/logo.png",
-              },
-              course_images: [
-                {
-                  name: "mock-course-image1.png",
-                  type: "image/png",
-                  size: 5000, // bytes
-                  path: "/mock/path/to/course-image1.png",
-                },
-                {
-                  name: "mock-course-image2.png",
-                  type: "image/png",
-                  size: 5000, // bytes
-                  path: "/mock/path/to/course-image2.png",
-                },
-              ],
-            },
-          );
+          cb(null, mockFields, mockFiles);
         },
       };
     }),
   };
 });
+let mockedCourseImageUpload = jest
+  .spyOn(upload_file, "uploadCourseImages")
+  .mockImplementation(() => Promise.resolve("mock-ad-url"));
+  let mockedLogoImageUpload = jest
+  .spyOn(upload_file, "uploadCourseImage")
+  .mockImplementation(() => Promise.resolve("mock-ad-url"));
+const mockFormidable = (fields, files) => {
+  mockFields = fields;
+  mockFiles = files;
+};
+
 
 describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
   let adminToken;
@@ -83,12 +63,42 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
   };
 
   it("should create a new course info with valid input", async () => {
-    jest
-      .spyOn(upload_file, "uploadCourseImage")
-      .mockImplementation(() => Promise.resolve("mock-logo-url"));
-    jest
-      .spyOn(upload_file, "uploadCourseImages")
-      .mockImplementation(() => Promise.resolve("mock-images-url"));
+
+    const fields={
+      name: "Sedona Golf Club Exclusive",
+      holes: 18,
+      par: 72,
+      length: "6900",
+      slope: "113",
+      content: "Amazing course with beautiful landscapes",
+      email: "sample123@gmail.com",
+    }
+    const files={
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    }
+    
+    mockedCourseImageUpload.mockImplementation(()=> Promise.resolve(["253487236874=1267348214-23423"]))
+    mockedLogoImageUpload.mockImplementation(()=> Promise.resolve("87498234-432674823"))
+    mockFormidable(fields,files)
 
     const params = {
       name: "Sedona Golf Club Exclusive",

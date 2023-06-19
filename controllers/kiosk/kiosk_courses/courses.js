@@ -326,12 +326,12 @@ exports.create_course_info = async (req, res) => {
     let courseImages = files?.course_images;
     let parsedRemovedUuidList;
 
-    if (fields.order && fields.links) {
+    if (fields?.order && fields?.links) {
       // whenever course images are uploaded fields.order will always be there
       const parsedOrder = JSON.parse(fields.order);
       const parsedUuidList = JSON.parse(fields.links);
 
-      if (fields.removedUUIDs) {
+      if (fields?.removedUUIDs) {
         parsedRemovedUuidList = JSON.parse(fields.removedUUIDs);
       }
 
