@@ -106,7 +106,7 @@ async function getFeedBackDetails(courseId) {
     ],
     group: ["gc_id"],
   });
-  const averageAndTotalRatings = await getAverageRating({ id: courseId });
+  const averageAndTotalRatings = await getAverageRating({ gcId: courseId });
   const defaultResponse = {
     one: 0,
     two: 0,
