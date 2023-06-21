@@ -10,7 +10,17 @@ const dataArr = getGolfCourses().map((course) => ({
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert("Mobile_Courses", dataArr, {
-      updateOnDuplicate: ["lat", "long"],
+      updateOnDuplicate: [
+        "country",
+        "street",
+        "city",
+        "state",
+        "zip",
+        "name",
+        "phone",
+        "lat",
+        "long",
+      ],
     });
   },
 
