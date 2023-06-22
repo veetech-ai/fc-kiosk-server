@@ -88,7 +88,8 @@ exports.createAd = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
-    if (fields.tapLink) {
+
+    if (fields.tapLink && fields.tapLink != "null") {
       const iValidTapLink = helper.regexValidation(fields.tapLink, [
         "email",
         "url",
@@ -299,7 +300,7 @@ exports.updateAd = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    if (fields.tapLink) {
+    if (fields.tapLink && fields.tapLink != "null") {
       const iValidTapLink = helper.regexValidation(fields.tapLink, [
         "email",
         "url",

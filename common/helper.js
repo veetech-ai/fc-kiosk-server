@@ -68,7 +68,7 @@ const filterRegexString = `^(${date})$|^today$|^yesterday$|^[0-9]{1,2}d$|^[0-9]{
 const dateTimeRange = `^${date}${time}\\|${date}${time}$`;
 const dateRegexString = `^${date}$`;
 
-const emailRegex = /^[\w.-]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+$/;
+const emailRegex = /^(mailto:)?[\w.-]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+$/;
 const phoneRegex = /^(tel:)?\d{10}$/; // valid input: tel:3214566554
 const urlRegex =
   /(https?:\/\/(?:www\d*\.|(?!www\d*\.))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\d*\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\d*\.|(?!www\d*\.))[a-zA-Z0-9]+\.[^\s]{2,}|www\d*\.[a-zA-Z0-9]+\.[^\s]{2,})/;

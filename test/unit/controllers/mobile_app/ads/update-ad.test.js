@@ -241,7 +241,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
       state: "Missisipi",
       title: "Secondary Ad",
       screens: ["Hole 15"],
-      tapLink: "exmaple@gmail.com",
+      tapLink: "mailto:exmaple@gmail.com",
     };
 
     const expectedResponse = {
