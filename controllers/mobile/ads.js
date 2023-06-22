@@ -88,6 +88,15 @@ exports.createAd = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+    if (fields.tapLink) {
+      const iValidTapLink = helper.regexValidation(fields.tapLink, [
+        "email",
+        "url",
+        "phone",
+      ]);
+
+      if (!iValidTapLink) throw new ServiceError("Invalid contact method", 400);
+    }
 
     let reqBody = {};
     const courseId = fields.gcId;
@@ -289,6 +298,17 @@ exports.updateAd = async (req, res) => {
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+
+    if (fields.tapLink) {
+      const iValidTapLink = helper.regexValidation(fields.tapLink, [
+        "email",
+        "url",
+        "phone",
+      ]);
+
+      if (!iValidTapLink) throw new ServiceError("Invalid contact method", 400);
+    }
+
     const adSmallImage = files?.smallImage;
     let adBigImage = files?.bigImage;
 

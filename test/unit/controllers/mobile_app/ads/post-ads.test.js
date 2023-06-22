@@ -56,7 +56,7 @@ describe("POST /api/v1/ads", () => {
       state: "Alabama",
       title: "Main Ad",
       screens: ["Hole 1", "Hole 2", "Hole 3", "Hole 4"],
-      tapLink: "google.com",
+      tapLink: "www.google.com",
     };
 
     const course = await courseService.getCourseFromDb({ state: fields.state });
@@ -96,7 +96,7 @@ describe("POST /api/v1/ads", () => {
       state: "Mobile",
       title: "Main Ad",
       screens: ["Hole 5"],
-      tapLink: "google.com",
+      tapLink: "www.google.com",
     };
     const query = {
       where: {
@@ -166,7 +166,7 @@ describe("POST /api/v1/ads", () => {
       state: "Alabama",
       title: "Main Ad",
       screens: "Hole 17",
-      tapLink: "google.com",
+      tapLink: "www.google.com",
     };
 
     const course = await courseService.getCourseFromDb({ state: fields.state });
@@ -186,34 +186,6 @@ describe("POST /api/v1/ads", () => {
     const expectedResponse = {
       success: false,
       data: "Invalid JSON in screens",
-    };
-
-    mockFormidable(fields, files);
-    const response = await makeAdApiRequest(fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return error if tapLink is invalid", async () => {
-    const fields = {
-      state: "Alabama",
-      title: "Secondary Ad",
-      screens: ["Hole 15"],
-      tapLink: "yahoo",
-    };
-    const course = await courseService.getCourseFromDb({ state: fields.state });
-
-    courseId = course.id;
-    fields.gcId = courseId;
-    const files = {
-      smallImage: {
-        name: "mock-logo.png",
-        type: "image/png",
-        size: 5000, // bytes
-      },
-    };
-
-    const expectedResponse = {
-      success: false,
-      data: "Validation error: Validation isUrl on tapLink failed",
     };
 
     mockFormidable(fields, files);
@@ -252,7 +224,7 @@ describe("POST /api/v1/ads", () => {
       state: "Alabama",
       title: "Main Ad",
       screens: ["Hole 7", "Hole 8"],
-      tapLink: "google.com",
+      tapLink: "www.google.com",
     };
 
     const course = await courseService.getCourseFromDb({ state: fields.state });
@@ -280,6 +252,109 @@ describe("POST /api/v1/ads", () => {
     expect(response.body.data).toEqual(
       "Validation error: Both bigImage and tapLink cannot be populated at the same time.",
     );
+  });
+  it("should return validation error for invalid contact method for email", async () => {
+    const fields = {
+      state: "Alabama",
+      title: "Main Ad",
+      screens: ["Hole 7", "Hole 8"],
+      tapLink: "exmaple@@",
+    };
+
+    const course = await courseService.getCourseFromDb({ state: fields.state });
+
+    courseId = course.id;
+    fields.gcId = courseId;
+
+    const files = {
+      smallImage: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      bigImage: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
+
+    mockFormidable(fields, files);
+    const response = await makeAdApiRequest(fields);
+    expect(response.body.data).toEqual("Invalid contact method");
+  });
+  it("should return validation error for invalid contact method for number", async () => {
+    const fields = {
+      state: "Alabama",
+      title: "Main Ad",
+      screens: ["Hole 7", "Hole 8"],
+      tapLink: "tel:43434",
+    };
+
+    const course = await courseService.getCourseFromDb({ state: fields.state });
+
+    courseId = course.id;
+    fields.gcId = courseId;
+
+    const files = {
+      smallImage: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      bigImage: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
+
+    mockFormidable(fields, files);
+    const response = await makeAdApiRequest(fields);
+    expect(response.body.data).toEqual("Invalid contact method");
+  });
+  it("should return update successfully for valid number", async () => {
+    const fields = {
+      state: "Alabama",
+      title: "Main Ad",
+      screens: ["Hole 7", "Hole 8"],
+      tapLink: "tel:5554545455",
+    };
+
+    const course = await courseService.getCourseFromDb({ state: fields.state });
+
+    courseId = course.id;
+    fields.gcId = courseId;
+
+    const files = {
+      smallImage: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+    };
+
+    const expectedResponse = {
+      success: true,
+      data: {
+        id: expect.any(Number),
+        smallImage: expect.any(String),
+        gcId: fields.gcId,
+        title: fields.title,
+        screens: fields.screens,
+        tapLink: fields.tapLink,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      },
+    };
+    mockFormidable(fields, files);
+    const response = await makeAdApiRequest(fields);
+    expect(response.body.data).toEqual(expectedResponse.data);
   });
   it("should return validation error if smallImage which is required is not defined", async () => {
     const fields = {
@@ -317,7 +392,7 @@ describe("POST /api/v1/ads", () => {
       state: "Alabama",
       title: "Main Ad",
       screens: ["Hole 10"],
-      tapLink: "google.com",
+      tapLink: "www.google.com",
     };
 
     const course = await courseService.getCourseFromDb({ state: fields.state });

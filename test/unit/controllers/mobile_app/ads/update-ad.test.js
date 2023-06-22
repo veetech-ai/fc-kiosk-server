@@ -11,7 +11,7 @@ let fields = {
   state: "Alabama",
   title: "Main Ad",
   screens: ["Hole 18"],
-  tapLink: "google.com",
+  tapLink: "www.google.com",
 };
 
 let files = {
@@ -83,7 +83,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
       state: "Missisipi",
       title: "Secondary Ad",
       screens: ["Hole 1", "Hole 2", "Hole 3"],
-      tapLink: "yahoo.com",
+      tapLink: "www.yahoo.com",
     };
 
     const expectedResponse = {
@@ -101,7 +101,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
       state: "Mobile",
       title: "Main Ad",
       screens: ["Hole 4"],
-      tapLink: "google.com",
+      tapLink: "www.google.com",
     };
     const expectedResponse = {
       success: false,
@@ -185,7 +185,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     const response = await updateAdApiRequest(createdAd.id, fields);
     expect(response.body).toEqual(expectedResponse);
   });
-  it("should return error if tapLink is invalid", async () => {
+  it("should return error if contact method is invalid", async () => {
     const fields = {
       state: "Missisipi",
       title: "Secondary Ad",
@@ -195,7 +195,58 @@ describe("PATCH /api/v1/ads/{adId}", () => {
 
     const expectedResponse = {
       success: false,
-      data: "Validation error: Validation isUrl on tapLink failed",
+      data: "Invalid contact method",
+    };
+
+    mockFormidable(fields, files);
+    const response = await updateAdApiRequest(createdAd.id, fields);
+    expect(response.body).toEqual(expectedResponse);
+  });
+  it("should return error if contact method is invalid", async () => {
+    const fields = {
+      state: "Missisipi",
+      title: "Secondary Ad",
+      screens: ["Hole 15"],
+      tapLink: "12333",
+    };
+
+    const expectedResponse = {
+      success: false,
+      data: "Invalid contact method",
+    };
+
+    mockFormidable(fields, files);
+    const response = await updateAdApiRequest(createdAd.id, fields);
+    expect(response.body).toEqual(expectedResponse);
+  });
+  it("should update succesfully if contact method  is valid", async () => {
+    const fields = {
+      state: "Missisipi",
+      title: "Secondary Ad",
+      screens: ["Hole 15"],
+      tapLink: "tel:1236556565",
+    };
+
+    const expectedResponse = {
+      success: true,
+      data: "Updated Successfuly",
+    };
+
+    mockFormidable(fields, files);
+    const response = await updateAdApiRequest(createdAd.id, fields);
+    expect(response.body).toEqual(expectedResponse);
+  });
+  it("should update succesfully if contact method is valid", async () => {
+    const fields = {
+      state: "Missisipi",
+      title: "Secondary Ad",
+      screens: ["Hole 15"],
+      tapLink: "exmaple@gmail.com",
+    };
+
+    const expectedResponse = {
+      success: true,
+      data: "Updated Successfuly",
     };
 
     mockFormidable(fields, files);
@@ -207,7 +258,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
       state: "Alabama",
       title: "Main Ad",
       screens: "Hole 17",
-      tapLink: "google.com",
+      tapLink: "www.google.com",
     };
 
     const course = await courseService.getCourseFromDb({ state: fields.state });
@@ -250,7 +301,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
       state: "Missisipi",
       title: "Secondary Ad",
       screens: ["Hole 6", "Hole 8"],
-      tapLink: "yahoo.com",
+      tapLink: "www.yahoo.com",
     };
 
     mockFormidable(fields, files);

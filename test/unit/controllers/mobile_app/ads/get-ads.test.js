@@ -12,7 +12,7 @@ let fields = {
   state: "Alabama",
   title: "Main Ad",
   screens: ["Hole 1", "Hole 2", "Hole 3", "Hole 4"],
-  tapLink: "google.com",
+  tapLink: "www.google.com",
 };
 
 let files = {

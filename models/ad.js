@@ -18,9 +18,6 @@ module.exports = (sequelize, DataTypes) => {
       tapLink: {
         type: DataTypes.STRING,
         allowNull: true,
-        validate: {
-          isUrl: true,
-        },
       },
       screens: {
         type: DataTypes.JSON,
