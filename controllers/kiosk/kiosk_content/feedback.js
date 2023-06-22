@@ -85,3 +85,35 @@ exports.create_feedback = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+exports.getAverageRating = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /kiosk-content/feedbacks/average:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: get avaerage rating of the golf course.
+   *     tags: [Kiosk-Courses-Content]
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const deviceId = req.device.id;
+
+    const course = await deviceService.getLinkedCourse(deviceId);
+
+    const courseFeedBackSummary = await feedbackService.getAverageRating({
+      gcId: course.id,
+    });
+
+    return apiResponse.success(res, req, courseFeedBackSummary);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
