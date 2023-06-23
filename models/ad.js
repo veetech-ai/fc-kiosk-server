@@ -23,11 +23,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      adType: {
-        field: "ad_type",
-        type: DataTypes.ENUM("kiosk", "mobile"),
-        allowNull: true,
-      },
       screens: {
         type: DataTypes.JSON,
       },
