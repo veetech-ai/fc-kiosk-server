@@ -37,7 +37,7 @@ const mockFormidable = (fields, files) => {
   mockFields = fields;
   mockFiles = files;
 };
-describe("GET /api/v1/screen-config/courses/update-screen/{courseId}", () => {
+describe("PUT /api/v1/screen-config/courses/{courseId}", () => {
   let adminToken;
   let customerToken;
   let testManagerToken;
