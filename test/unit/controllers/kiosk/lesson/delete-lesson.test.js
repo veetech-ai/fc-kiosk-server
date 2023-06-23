@@ -28,7 +28,7 @@ const mockFormidable = (fields, files) => {
   mockFields = fields;
   mockFiles = files;
 };
-describe("GET /api/v1/course-lesson/{lessonId}/contacts", () => {
+describe("DELETE /api/v1/course-lesson/{lessonId}", () => {
   let adminToken;
   let courseId;
   let deviceId;

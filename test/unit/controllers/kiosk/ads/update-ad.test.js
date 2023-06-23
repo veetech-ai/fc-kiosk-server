@@ -42,14 +42,11 @@ const mockFormidable = (fields, files) => {
 describe("PATCH /api/v1/ads/{adId}", () => {
   let adminToken;
   let courseId;
-  let invalidCourseId = -1;
-  let orgId;
   let customerToken;
   let testOperatorToken;
   let testOrganizationId = 1;
   let adId;
   let nonExistingAdId = -1;
-  let invalidateId = "invalidate gcId";
   let differentOrganizationCustomerToken;
 
   const commonAdsBody = {
