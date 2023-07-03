@@ -2,7 +2,6 @@ const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
 const awsS3 = require("../../../../../common/external_services/aws-s3");
 const ServiceError = require("../../../../../utils/serviceError");
-const { Log } = require("@influxdata/influxdb-client");
 
 // Mocking formidable
 let mockFields;
@@ -169,6 +168,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     expect(mockedLogoImageUpload).toHaveBeenCalledTimes(filteredOrder.length);
   });
   it("should return error if there is an error while deleting images", async () => {
+    const errorMessage = "Something went wrong";
     const fields = {
       name: "Sedona Golf Club Exclusive",
       holes: 18,
@@ -208,14 +208,14 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
       Promise.resolve("87498234-432674823"),
     );
     mockdeleteImage.mockImplementation(() =>
-      Promise.reject(new ServiceError("Something went wrong")),
+      Promise.reject(new ServiceError(errorMessage)),
     );
     mockFormidable(fields, files);
     const params = { ...fields, ...files };
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       success: false,
-      data: "Something went wrong",
+      data: errorMessage,
     };
     expect(response.body).toEqual(expectedResponse);
   });
