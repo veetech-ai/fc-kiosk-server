@@ -1,11 +1,14 @@
 const helper = require("../../../helper");
 const { uuid } = require("uuidv4");
 const product = require("../../../../common/products");
+const mainHelper = require("../../../../common/helper");
+
 describe("GET /api/v1/device/{id}/disable-kiosk-mode", () => {
   let superAdminToken;
   let adminToken;
   let customerToken;
   let deviceId;
+  let mqttMessageSpy;
   let invalidDeviceId = 90000000;
   let stringDeviceId = "Not integer";
 
@@ -26,6 +29,25 @@ describe("GET /api/v1/device/{id}/disable-kiosk-mode", () => {
       params: bodyData,
     });
     deviceId = device.body.data.id;
+
+    // Mock MQTT
+    mqttMessageSpy = jest
+      .spyOn(mainHelper, "mqtt_publish_message")
+      .mockImplementation(
+        (channel, message, retained = true, qos = 1, stringify = true) => {
+          const payload = {
+            channel,
+            message,
+            qos,
+            stringify,
+            retained,
+          };
+        },
+      );
+  });
+
+  afterAll(() => {
+    mqttMessageSpy.mockRestore();
   });
 
   const makeApiRequest = async (deviceId, token = superAdminToken) => {
