@@ -276,4 +276,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super"]),
     DeviceController.setDeviceConfig,
   ]);
+  router.get(group + "/:id/disable-kiosk-mode", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super"]),
+    DeviceController.disableKioskMode,
+  ]);
 };

@@ -3866,3 +3866,51 @@ exports.link_device_to_course = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+exports.disableKioskMode = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /device/{id}/disable-kiosk-mode:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: disable kiosk mode.
+   *     tags: [Device]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: id
+   *         description: Device ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+
+    const deviceId = Number(req.params.id);
+    if (!deviceId) {
+      return apiResponse.fail(
+        res,
+        "deviceId and must be a valid number",
+      );
+    }
+    const device = await DeviceModel.findById(deviceId);
+    if (!device) {
+      return apiResponse.fail(res, "Device not found", 404);
+    }
+
+    const mqttPayload = {
+      status: true
+    };
+
+    helper.mqtt_publish_message(`d/${deviceId}/reset`, mqttPayload);
+
+    return apiResponse.success(res, req, "Payload: Disable kiosk mode has been sent successfully",);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
