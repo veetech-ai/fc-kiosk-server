@@ -238,7 +238,7 @@ exports.routesConfig = function (app, router) {
 
   router.put(group + "/slack-notifications/:deviceId", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super"]),
+    validation_middleware.hasAccess(["super", "admin"]),
     DeviceController.update_slack_notifications,
   ]);
 
@@ -278,7 +278,7 @@ exports.routesConfig = function (app, router) {
   ]);
   router.get(group + "/:id/disable-kiosk-mode", [
     validation_middleware.validJWTNeeded,
-    validation_middleware.hasAccess(["super"]),
+    validation_middleware.hasAccess(["super", "admin"]),
     DeviceController.disableKioskMode,
   ]);
 };

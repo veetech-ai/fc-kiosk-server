@@ -3895,7 +3895,7 @@ exports.disableKioskMode = async (req, res) => {
     if (!deviceId) {
       return apiResponse.fail(
         res,
-        "deviceId and must be a valid number",
+        "Device id must be a valid integer",
       );
     }
     const device = await DeviceModel.findById(deviceId);
