@@ -7,10 +7,9 @@ describe("GET /api/v1/device/{id}/disable-kiosk-mode", () => {
   let customerToken;
   let deviceId;
   let invalidDeviceId = 90000000;
-  let stringDeviceId = "Not integer"
+  let stringDeviceId = "Not integer";
 
   beforeAll(async () => {
-
     const bodyData = {
       serial: uuid(),
       pin_code: 1111,
@@ -40,53 +39,52 @@ describe("GET /api/v1/device/{id}/disable-kiosk-mode", () => {
   };
 
   it("should allow admin to successfully disable the kiosk mode", async () => {
-    const response = await makeApiRequest(deviceId,adminToken);
+    const response = await makeApiRequest(deviceId, adminToken);
     const expectedResponse = {
-        message: "Payload: Disable kiosk mode has been sent successfully",
-        statusCode: 200
-    } 
+      message: "Payload: Disable kiosk mode has been sent successfully",
+      statusCode: 200,
+    };
     expect(response.body.data).toBe(expectedResponse.message);
     expect(response.status).toEqual(expectedResponse.statusCode);
   });
 
   it("should allow superadmin successfully disable the kiosk mode", async () => {
-    const response = await makeApiRequest(deviceId,superAdminToken);
+    const response = await makeApiRequest(deviceId, superAdminToken);
     const expectedResponse = {
-        message: "Payload: Disable kiosk mode has been sent successfully",
-        statusCode: 200
-    } 
+      message: "Payload: Disable kiosk mode has been sent successfully",
+      statusCode: 200,
+    };
     expect(response.body.data).toBe(expectedResponse.message);
     expect(response.status).toEqual(expectedResponse.statusCode);
   });
 
   it("should return 404 status code with expected message for an invalid device", async () => {
-    const response = await makeApiRequest(invalidDeviceId,superAdminToken);
+    const response = await makeApiRequest(invalidDeviceId, superAdminToken);
     const expectedResponse = {
-        message: "Device not found",
-        statusCode: 404
-    } 
+      message: "Device not found",
+      statusCode: 404,
+    };
     expect(response.body.data).toBe(expectedResponse.message);
     expect(response.status).toEqual(expectedResponse.statusCode);
   });
 
   it("should return 400 status code with expected message for an non integer device", async () => {
-    const response = await makeApiRequest(stringDeviceId,superAdminToken);
+    const response = await makeApiRequest(stringDeviceId, superAdminToken);
     const expectedResponse = {
-        message: "Device id must be a valid integer",
-        statusCode: 400
-    } 
+      message: "Device id must be a valid integer",
+      statusCode: 400,
+    };
     expect(response.body.data).toBe(expectedResponse.message);
     expect(response.status).toEqual(expectedResponse.statusCode);
   });
 
   it("should not allow customer to disable kiosk mode", async () => {
-    const response = await makeApiRequest(stringDeviceId,customerToken);
+    const response = await makeApiRequest(stringDeviceId, customerToken);
     const expectedResponse = {
-        message: "You are not allowed",
-        statusCode: 403
-    } 
+      message: "You are not allowed",
+      statusCode: 403,
+    };
     expect(response.body.data).toBe(expectedResponse.message);
     expect(response.status).toEqual(expectedResponse.statusCode);
   });
-
 });

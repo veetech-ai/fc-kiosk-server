@@ -3890,13 +3890,9 @@ exports.disableKioskMode = async (req, res) => {
    */
 
   try {
-
     const deviceId = Number(req.params.id);
     if (!deviceId) {
-      return apiResponse.fail(
-        res,
-        "Device id must be a valid integer",
-      );
+      return apiResponse.fail(res, "Device id must be a valid integer");
     }
     const device = await DeviceModel.findById(deviceId);
     if (!device) {
@@ -3904,12 +3900,16 @@ exports.disableKioskMode = async (req, res) => {
     }
 
     const mqttPayload = {
-      status: true
+      status: true,
     };
 
     helper.mqtt_publish_message(`d/${deviceId}/reset`, mqttPayload);
 
-    return apiResponse.success(res, req, "Payload: Disable kiosk mode has been sent successfully",);
+    return apiResponse.success(
+      res,
+      req,
+      "Payload: Disable kiosk mode has been sent successfully",
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
