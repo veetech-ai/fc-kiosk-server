@@ -12,6 +12,8 @@ const {
   deletePlayerInvitationsForAParticularGame,
 } = require("../../services/mobile/user-game-invitations");
 const ServiceError = require("../../utils/serviceError");
+const statisticService = require("../../services/mobile/statistics");
+const { Op } = require("sequelize");
 
 /**
  * @swagger
@@ -142,6 +144,11 @@ exports.endGame = async (req, res) => {
    *     consumes:
    *       - application/json
    *     parameters:
+   *       - in: path
+   *         name: gameId
+   *         description: ID of the game
+   *         required: true
+   *         type: string
    *       - in: body
    *         name: body
    *         schema:
@@ -175,11 +182,15 @@ exports.endGame = async (req, res) => {
 
     const games = await gameService.getGames({
       gameId,
+      endTime: { [Op.eq]: null },
     });
 
     if (!games.length || games[0].ownerId !== req.user.id)
       return apiResponse.fail(res, "Game not found", 400);
 
+    const filteredGamesList = games.filter((game) => {
+      return game.score !== null;
+    });
     for await (const game of games) {
       const totalGir = game.Holes.filter((hole) => hole.isGir).length;
       const girPercentage = ((totalGir / game.Holes.length) * 100).toFixed(2);
@@ -203,6 +214,38 @@ exports.endGame = async (req, res) => {
       },
       retain,
     );
+    for await (const game of filteredGamesList) {
+      const existingStats = await statisticService.getStatistic(
+        game.participantId,
+      );
+
+      if (existingStats) {
+        const statistics =
+          await gameService.calculateStatisticsBasedOnExistingRecord(
+            existingStats.dataValues,
+            gameId,
+          );
+        await statisticService.createStatistic(statistics);
+        continue;
+      }
+      const statistics = await gameService.findStatisticsByParticipantId(
+        game.participantId,
+      );
+
+      let reqBody = {
+        userId: game.participantId,
+        rounds: statistics.rounds,
+        avgGirPercentage: statistics.avgGirPercentage,
+        bestScore: statistics.bestScore,
+        worstScore: statistics.worstScore,
+        avg: statistics.avg,
+      };
+      if (!existingStats) {
+        reqBody.bestScoreRelativeToPar = game.score;
+        reqBody.worstScoreRelativeToPar = game.score;
+      }
+      await statisticService.createStatistic(reqBody);
+    }
 
     return apiResponse.success(res, req, "Game ended successfully");
   } catch (error) {

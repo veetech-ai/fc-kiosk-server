@@ -63,6 +63,38 @@ async function findStatisticsByParticipantId(participantId) {
   };
 }
 
+async function calculateStatisticsBasedOnExistingRecord(existingStats, gameId) {
+  let clonedExistingStats = { ...existingStats };
+
+  const existingGame = await Game.findOne({
+    where: { gameId, participantId: clonedExistingStats.userId },
+  });
+  if (existingGame.score < clonedExistingStats.bestScoreRelativeToPar) {
+    clonedExistingStats.bestScoreRelativeToPar = existingGame.score;
+    clonedExistingStats.bestScore = existingGame.totalShotsTaken;
+  }
+  if (existingGame.score > clonedExistingStats.worstScoreRelativeToPar) {
+    clonedExistingStats.worstScoreRelativeToPar = existingGame.score;
+    clonedExistingStats.worstScore = existingGame.totalShotsTaken;
+  }
+
+  let scoreSum = clonedExistingStats.avg * clonedExistingStats.rounds;
+
+  scoreSum = scoreSum + existingGame.totalShotsTaken;
+
+  let girSum =
+    clonedExistingStats.avgGirPercentage * clonedExistingStats.rounds;
+
+  girSum = girSum + existingGame.girPercentage;
+
+  let updatedRounds = clonedExistingStats.rounds + 1;
+
+  clonedExistingStats.avg = +(scoreSum / updatedRounds).toFixed(1);
+  clonedExistingStats.avgGirPercentage = +(girSum / updatedRounds).toFixed(1);
+  clonedExistingStats.rounds = updatedRounds;
+  return clonedExistingStats;
+}
+
 async function findBestRoundsByParticipantId(participantId, limit = 5) {
   const bestRounds = await Game.findAll({
     attributes: [
@@ -83,6 +115,7 @@ async function findBestRoundsByParticipantId(participantId, limit = 5) {
     where: {
       participantId,
       endTime: { [Op.ne]: null },
+      totalShotsTaken: { [Op.ne]: null },
     },
     order: [[Sequelize.literal("score"), "ASC"]],
     limit,
@@ -267,4 +300,5 @@ module.exports = {
   getGamesHistoryByParticipantId,
   removeUserFromAGame,
   deleteGames,
+  calculateStatisticsBasedOnExistingRecord,
 };

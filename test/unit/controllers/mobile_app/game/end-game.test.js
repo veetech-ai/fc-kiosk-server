@@ -7,7 +7,7 @@ const mainHelper = require("../../../../../common/helper");
 
 const Course = models.Course;
 
-describe("Patch: /games/{gameId}", () => {
+describe("Patch: /games/{gameId}/end-game", () => {
   let golferToken;
   let createdCourses;
   let createdGame;
@@ -143,7 +143,7 @@ describe("Patch: /games/{gameId}", () => {
       expect(endGameResponse.statusCode).toEqual(200);
     });
 
-    it("game game gir percentage should be updated on game end", async () => {
+    it("game gir percentage should be updated on game end", async () => {
       const game = await models.Game.findOne({
         where: { gameId: createdGame.gameId },
       });

@@ -127,6 +127,10 @@ module.exports = (sequelize, DataTypes) => {
       as: "User_Game_Invitations",
       foreignKey: "userId",
     });
+    User.hasOne(models.Statistic, {
+      as: "Statistic",
+      foreignKey: "userId",
+    });
   };
   return User;
 };

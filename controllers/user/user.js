@@ -36,6 +36,7 @@ const UsersStatus = UserModel.UsersStatus;
 const helpers = require("../../common/helper");
 
 const { send_password_reset_email, get_user_auth_tokens } = require("./helper");
+const statisticService = require("../../services/mobile/statistics");
 const ServiceError = require("../../utils/serviceError");
 
 /**
@@ -2522,9 +2523,18 @@ exports.getStatistics = async (req, res) => {
       return apiResponse.fail(res, "Forbidden", 403);
     }
 
-    const statistics = await gameService.findStatisticsByParticipantId(
-      loggedInUserId,
-    );
+    let statistics = await statisticService.getStatistic(loggedInUserId);
+
+    if (!statistics) {
+      // set the default values if statistics not found
+      statistics = {
+        rounds: 0,
+        bestScore: null,
+        worstScore: null,
+        avg: null,
+        avgGirPercentage: null,
+      };
+    }
 
     const bestRounds = await gameService.findBestRoundsByParticipantId(
       loggedInUserId,
