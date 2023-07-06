@@ -49,6 +49,15 @@ Validator.register(
   "Slope value must be an integer and have a minimum value of 1 and a maximum of 500, and contain 1 to 3 digits",
 );
 
+Validator.register(
+  "year_built",
+  function (value, requirement, attribute) {
+    const currentYear = new Date().getFullYear();
+    return validateIntegerRange(value, 1000, currentYear, 4, 4);
+  },
+  "year_built value must between 1000 to currentYear",
+);
+
 module.exports = {
   validateIntegerRange,
 };

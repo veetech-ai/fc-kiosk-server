@@ -303,7 +303,7 @@ exports.create_course_info = async (req, res) => {
       content: "string",
       email: "string",
       yards: "yards",
-      year_built: "integer",
+      year_built: "year_built",
       architects: "string",
       greens: "string",
       fairways: "string",
