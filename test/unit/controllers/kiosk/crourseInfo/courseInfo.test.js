@@ -652,4 +652,138 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
 
     expect(response.body.data.errors).toEqual(expectedResponse);
   });
+
+  it("should return an error when year_built input value is more than current year", async () => {
+    const fields = {
+      year_built: 4000,
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      year_built: ["year_built value must between 1000 to currentYear"],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+  it("should return an error when year_built input value is less than Year 1000", async () => {
+    const fields = {
+      year_built: 999,
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      year_built: ["year_built value must between 1000 to currentYear"],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+
+  it("should return an error when year_built input value does not have 4 digits", async () => {
+    const fields = {
+      year_built: "002021",
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      year_built: ["year_built value must between 1000 to currentYear"],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
 });
