@@ -1,6 +1,7 @@
 // External Module Imports
 const Validator = require("validatorjs");
 const formidable = require("formidable");
+require("../../../utils/customValidators");
 
 // Common Imports
 const apiResponse = require("../../../common/api.response");
@@ -127,6 +128,7 @@ exports.get_courses_for_organization = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
 exports.create_course_info = async (req, res) => {
   /**
    * @swagger
@@ -277,6 +279,7 @@ exports.create_course_info = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
+
     const loggedInUserOrg = req.user?.orgId;
 
     const course = await courseService.getCourse(
@@ -292,16 +295,15 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
-
-    const validation = new Validator(fields, {
+    const validationRules = {
       name: "string",
       holes: "integer",
-      par: "integer",
-      slope: "integer",
+      par: "par",
+      slope: "slope",
       content: "string",
       email: "string",
-      yards: "integer",
-      year_built: "integer",
+      yards: "yards",
+      year_built: "year_built",
       architects: "string",
       greens: "string",
       fairways: "string",
@@ -315,10 +317,14 @@ exports.create_course_info = async (req, res) => {
       long: "numeric",
       lat: "numeric",
       street: "string",
-    });
+    };
+
+    const validation = new Validator(fields, validationRules);
+
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+
     let reqBody = {};
     const uploadedImages = [];
     const uploadedImageFiles = [];
