@@ -31,7 +31,7 @@ async function getAds(where, paginationOptions, searchQuery) {
     totalAdsCount = 0;
   totalAdsCount = await getTotalAdsCount();
   if (totalAdsCount > 0) {
-    const options = {
+    const countOptions = {
       where: searchQuery ? { ...where, ...searchQuery } : where,
       include: [
         {
@@ -40,10 +40,18 @@ async function getAds(where, paginationOptions, searchQuery) {
           attributes: ["name", "state"],
         },
       ],
-
+    };
+    const totalRecordsCountonSearch = await AdsModel.count(countOptions);
+    const options = {
+      ...countOptions,
       ...paginationOptions,
     };
+
+    if (searchQuery || Object.keys(where).length != 0) {
+      totalAdsCount = totalRecordsCountonSearch;
+    }
     adsList = await AdsModel.findAll(options);
+
     if (adsList.length) {
       for (const ad of adsList) {
         if (ad.smallImage)
