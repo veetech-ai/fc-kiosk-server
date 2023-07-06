@@ -277,6 +277,7 @@ exports.create_course_info = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
+
     const loggedInUserOrg = req.user?.orgId;
 
     const course = await courseService.getCourse(
@@ -296,11 +297,11 @@ exports.create_course_info = async (req, res) => {
     const validation = new Validator(fields, {
       name: "string",
       holes: "integer",
-      par: "integer",
-      slope: "integer",
+      par: "par",
+      slope: "slope",
       content: "string",
       email: "string",
-      yards: "integer",
+      yards: "yards",
       year_built: "integer",
       architects: "string",
       greens: "string",
@@ -316,9 +317,92 @@ exports.create_course_info = async (req, res) => {
       lat: "numeric",
       street: "string",
     });
+
+    Validator.register(
+      "par",
+      function (value, requirement, attribute) {
+        const minValue = 0;
+        const maxValue = 1000;
+        const minDigits = 1;
+        const maxDigits = 4;
+
+        if (isNaN(value) || !Number.isInteger(Number(value))) {
+          return false;
+        }
+
+        const intValue = parseInt(value, 10);
+        if (intValue < minValue || intValue > maxValue) {
+          return false;
+        }
+
+        const numDigits = value.length;
+        if (numDigits < minDigits || numDigits > maxDigits) {
+          return false;
+        }
+
+        return true;
+      },
+      "Par value must be an integer and have min value 1 and max 1000 and contain min 1 and max 4 digits",
+    );
+
+    Validator.register(
+      "yards",
+      function (value, requirement, attribute) {
+        const minValue = 0;
+        const maxValue = 10000;
+        const minDigits = 1;
+        const maxDigits = 5;
+
+        if (isNaN(value) || !Number.isInteger(Number(value))) {
+          return false;
+        }
+
+        const intValue = parseInt(value, 10);
+        if (intValue < minValue || intValue > maxValue) {
+          return false;
+        }
+
+        const numDigits = value.length;
+        if (numDigits < minDigits || numDigits > maxDigits) {
+          return false;
+        }
+
+        return true;
+      },
+      "Yards value must be an integer and have min value 1 and max 10000 and contain min 1 and max 5 digits",
+    );
+
+    Validator.register(
+      "slope",
+      function (value, requirement, attribute) {
+        const minValue = 0;
+        const maxValue = 500;
+        const minDigits = 1;
+        const maxDigits = 3;
+
+        if (isNaN(value) || !Number.isInteger(Number(value))) {
+          return false;
+        }
+
+        const intValue = parseInt(value, 10);
+        if (intValue < minValue || intValue > maxValue) {
+          return false;
+        }
+
+        const numDigits = value.length;
+        if (numDigits < minDigits || numDigits > maxDigits) {
+          return false;
+        }
+
+        return true;
+      },
+      "Slope value must be an integer and have min value 1 and max 500 and contain min 1 and max 3 digits",
+    );
+
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+
     let reqBody = {};
     const uploadedImages = [];
     const uploadedImageFiles = [];
