@@ -247,8 +247,9 @@ describe("GET /api/v1/ads", () => {
           return false;
         });
       });
-
+      const totalRecords = parseInt(response.headers["total-records"]);
       expect(response.body.data.length).toEqual(expectedResult.length);
+      expect(totalRecords).toEqual(expectedResult.length);
     });
     it("should return empty result if the searched term does not match the records", async () => {
       const params = {
@@ -269,7 +270,9 @@ describe("GET /api/v1/ads", () => {
           return false;
         });
       });
+      const totalRecords = parseInt(response.headers["total-records"]);
       expect(response.body.data.length).toEqual(expectedResult.length);
+      expect(totalRecords).toEqual(expectedResult.length);
     });
     it("should return empty result if the searched term and golf course does not match the records", async () => {
       const params = {
@@ -304,8 +307,9 @@ describe("GET /api/v1/ads", () => {
           return false;
         });
       });
-
+      const totalRecords = parseInt(response.headers["total-records"]);
       expect(response.body.data.length).toEqual(expectedResult.length);
+      expect(totalRecords).toEqual(expectedResult.length);
     });
   });
 });
