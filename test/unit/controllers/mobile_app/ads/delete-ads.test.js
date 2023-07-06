@@ -3,6 +3,8 @@ const upload_file = require("../../../../../common/upload");
 const courseService = require("../../../../../services/mobile/courses");
 const ServiceError = require("../../../../../utils/serviceError");
 const adsService = require("../../../../../services/mobile/ads");
+const models = require("../../../../../models/index");
+const AdsModel = models.Ad;
 
 let mockFields;
 let mockFiles;
@@ -50,7 +52,7 @@ describe("Delete ads/:adId", () => {
 
   beforeAll(async () => {
     // Create some courses for the test organization
-
+    await AdsModel.destroy({ where: {} });
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
   });

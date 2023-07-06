@@ -21,20 +21,38 @@ async function createAd(reqBody) {
   return ad;
 }
 
-async function getAds(where) {
-  const ads = await AdsModel.findAll({
-    where,
-    include: [
-      { model: Course, as: "Golf_Course", attributes: ["name", "state"] },
-    ],
-  });
-  if (ads.length) {
-    for (const ad of ads) {
-      if (ad.smallImage) ad.smallImage = upload_file.getFileURL(ad.smallImage);
-      if (ad.bigImage) ad.bigImage = upload_file.getFileURL(ad.bigImage);
+async function getTotalAdsCount(where) {
+  const count = await AdsModel.count({ where });
+  return count;
+}
+
+async function getAds(where, paginationOptions, searchQuery) {
+  let adsList = [],
+    totalAdsCount = 0;
+  totalAdsCount = await getTotalAdsCount();
+  if (totalAdsCount > 0) {
+    const options = {
+      where: searchQuery ? { ...where, ...searchQuery } : where,
+      include: [
+        {
+          model: Course,
+          as: "Golf_Course",
+          attributes: ["name", "state"],
+        },
+      ],
+
+      ...paginationOptions,
+    };
+    adsList = await AdsModel.findAll(options);
+    if (adsList.length) {
+      for (const ad of adsList) {
+        if (ad.smallImage)
+          ad.smallImage = upload_file.getFileURL(ad.smallImage);
+        if (ad.bigImage) ad.bigImage = upload_file.getFileURL(ad.bigImage);
+      }
     }
   }
-  return ads;
+  return { adsList, totalAdsCount };
 }
 
 async function deleteAd(where) {
@@ -94,4 +112,5 @@ module.exports = {
   getAd,
   updateAd,
   checkUniqueness,
+  getTotalAdsCount,
 };

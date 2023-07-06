@@ -6,6 +6,7 @@ const adsService = require("../../services/mobile/ads");
 const helper = require("../../common/helper");
 const adsScreenService = require("../../services/mobile/ads-screens");
 const ServiceError = require("../../utils/serviceError");
+const { Op } = require("sequelize");
 
 /**
  * @swagger
@@ -174,18 +175,58 @@ exports.getAds = async (req, res) => {
    *         required: false
    *         type: integer
    *         description: The gcId to filter ads.
+   *       - in: query
+   *         name: pageNumber
+   *         required: false
+   *         type: integer
+   *         description: The page number for pagination.
+   *       - in: query
+   *         name: pageSize
+   *         required: false
+   *         type: integer
+   *         description: The page size for pagination.
+   *       - in: query
+   *         name: search
+   *         required: false
+   *         type: string
+   *         description: The term to search in ad's title, ad's updated At, ad's state and course name.
    *     responses:
    *       200:
    *         description: success
    */
 
   try {
-    let where = {};
-    if (req.query.gcId) {
-      where.gcId = req.query.gcId;
+    let searchQuery;
+    const { gcId, pageNumber, pageSize, search } = req.query;
+    const where = gcId ? { gcId } : {};
+
+    let paginationOptions = {
+      limit: pageSize,
+      page: pageNumber,
+      search,
+    };
+    paginationOptions = helper.get_pagination_params(paginationOptions);
+
+    if (paginationOptions.search) {
+      searchQuery = {
+        [Op.or]: [
+          { title: { [Op.like]: `%${search}%` } }, // Search for the term in the Ad's title
+          {
+            "$Golf_Course.name$": {
+              [Op.like]: `%${search}%`,
+            },
+          }, // Search for the term in the Golf Course's name
+          {
+            "$Golf_Course.state$": {
+              [Op.like]: `%${search}%`,
+            },
+          }, // Search for the term in the Golf Course's state
+        ],
+      };
     }
-    const ads = await adsService.getAds(where);
-    return apiResponse.success(res, req, ads);
+    const ads = await adsService.getAds(where, paginationOptions, searchQuery);
+
+    return apiResponse.pagination(res, req, ads.adsList, ads.totalAdsCount);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
