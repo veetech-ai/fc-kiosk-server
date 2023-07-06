@@ -273,7 +273,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       par: [
-        "Par value must be an integer and have min value 1 and max 1000 and contain min 1 and max 4 digits",
+        "Par value must be an integer and have a minimum value of 1 and a maximum of 1000, and contain 1 to 4 digits",
       ],
     };
 
@@ -319,7 +319,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       par: [
-        "Par value must be an integer and have min value 1 and max 1000 and contain min 1 and max 4 digits",
+        "Par value must be an integer and have a minimum value of 1 and a maximum of 1000, and contain 1 to 4 digits",
       ],
     };
 
@@ -366,7 +366,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       par: [
-        "Par value must be an integer and have min value 1 and max 1000 and contain min 1 and max 4 digits",
+        "Par value must be an integer and have a minimum value of 1 and a maximum of 1000, and contain 1 to 4 digits",
       ],
     };
 
@@ -413,7 +413,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       yards: [
-        "Yards value must be an integer and have min value 1 and max 10000 and contain min 1 and max 5 digits",
+        "Yards value must be an integer and have a minimum value of 1 and a maximum of 10000, and contain 1 to 5 digits",
       ],
     };
 
@@ -459,7 +459,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       yards: [
-        "Yards value must be an integer and have min value 1 and max 10000 and contain min 1 and max 5 digits",
+        "Yards value must be an integer and have a minimum value of 1 and a maximum of 10000, and contain 1 to 5 digits",
       ],
     };
 
@@ -506,7 +506,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       yards: [
-        "Yards value must be an integer and have min value 1 and max 10000 and contain min 1 and max 5 digits",
+        "Yards value must be an integer and have a minimum value of 1 and a maximum of 10000, and contain 1 to 5 digits",
       ],
     };
 
@@ -553,7 +553,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       slope: [
-        "Slope value must be an integer and have min value 1 and max 500 and contain min 1 and max 3 digits",
+        "Slope value must be an integer and have a minimum value of 1 and a maximum of 500, and contain 1 to 3 digits",
       ],
     };
 
@@ -599,7 +599,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       slope: [
-        "Slope value must be an integer and have min value 1 and max 500 and contain min 1 and max 3 digits",
+        "Slope value must be an integer and have a minimum value of 1 and a maximum of 500, and contain 1 to 3 digits",
       ],
     };
 
@@ -646,7 +646,7 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     const response = await makeApiRequest(courseId, params);
     const expectedResponse = {
       slope: [
-        "Slope value must be an integer and have min value 1 and max 500 and contain min 1 and max 3 digits",
+        "Slope value must be an integer and have a minimum value of 1 and a maximum of 500, and contain 1 to 3 digits",
       ],
     };
 
