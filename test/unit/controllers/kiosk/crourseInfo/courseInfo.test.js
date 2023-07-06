@@ -233,4 +233,423 @@ describe("PATCH /api/v1/kiosk-courses/{courseId}/course-info", () => {
     );
     expect(response.body.data).toBe("Course not found");
   });
+  it("should return an error when par input value is more than max value", async () => {
+    const fields = {
+      par: 11172,
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      par: [
+        "Par value must be an integer and have min value 1 and max 1000 and contain min 1 and max 4 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+  it("should return an error when par input value is less than min value", async () => {
+    const fields = {
+      par: -1,
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      par: [
+        "Par value must be an integer and have min value 1 and max 1000 and contain min 1 and max 4 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+
+  it("should return an error when par input value has more than 4 digits", async () => {
+    const fields = {
+      par: "002221",
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      par: [
+        "Par value must be an integer and have min value 1 and max 1000 and contain min 1 and max 4 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+
+  it("should return an error when yards input value is more than max value", async () => {
+    const fields = {
+      yards: 999999,
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      yards: [
+        "Yards value must be an integer and have min value 1 and max 10000 and contain min 1 and max 5 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+  it("should return an error when yards input value is less than min value", async () => {
+    const fields = {
+      yards: -1,
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      yards: [
+        "Yards value must be an integer and have min value 1 and max 10000 and contain min 1 and max 5 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+
+  it("should return an error when yards input value has more than 5 digits", async () => {
+    const fields = {
+      yards: "002221",
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      yards: [
+        "Yards value must be an integer and have min value 1 and max 10000 and contain min 1 and max 5 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+
+  it("should return an error when slope input value is more than max value", async () => {
+    const fields = {
+      slope: 999,
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      slope: [
+        "Slope value must be an integer and have min value 1 and max 500 and contain min 1 and max 3 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+  it("should return an error when slope input value is less than min value", async () => {
+    const fields = {
+      slope: -1,
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      slope: [
+        "Slope value must be an integer and have min value 1 and max 500 and contain min 1 and max 3 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
+
+  it("should return an error when slope input value has more than 3 digits", async () => {
+    const fields = {
+      slope: "00021",
+    };
+    const files = {
+      logo: {
+        name: "mock-logo.png",
+        type: "image/png",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.png",
+      },
+      course_images: [
+        {
+          name: "mock-course-image1.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image1.png",
+        },
+        {
+          name: "mock-course-image2.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/course-image2.png",
+        },
+      ],
+    };
+    mockedCourseImageUpload.mockImplementation(() =>
+      Promise.resolve(["253487236874=1267348214-23420"]),
+    );
+    mockedLogoImageUpload.mockImplementation(() =>
+      Promise.resolve("87498234-432674821"),
+    );
+    mockdeleteImage.mockImplementation(() => Promise.resolve("Image Deleted"));
+    const params = {
+      ...fields,
+    };
+    mockFormidable(fields, files);
+    const response = await makeApiRequest(courseId, params);
+    const expectedResponse = {
+      slope: [
+        "Slope value must be an integer and have min value 1 and max 500 and contain min 1 and max 3 digits",
+      ],
+    };
+
+    expect(response.body.data.errors).toEqual(expectedResponse);
+  });
 });
