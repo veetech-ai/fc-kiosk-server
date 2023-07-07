@@ -138,19 +138,6 @@ exports.set_app_config = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       config: "required|json",
     });

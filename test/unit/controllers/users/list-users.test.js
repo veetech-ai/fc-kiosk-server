@@ -766,7 +766,7 @@ describe("List All Users", () => {
 
         expect(response.status).toEqual(400);
         expect(response.body.data).toStrictEqual({
-          errors: { config: ["The config must be JSON string"] },
+          errors: { config: ["The config must be a JSON string."] },
         });
       });
     });

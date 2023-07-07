@@ -1,18 +1,7 @@
 const UserAddressesModel = require("../services/user_addresses");
 const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
-Validator.register(
-  "json",
-  function (value, requirement, attribute) {
-    try {
-      JSON.parse(value);
-    } catch (e) {
-      return false;
-    }
-    return true;
-  },
-  "The :attribute must be JSON string",
-);
+
 
 /**
  * @swagger

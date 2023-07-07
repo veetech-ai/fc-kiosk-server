@@ -1,7 +1,6 @@
 // External Module Imports
 const Validator = require("validatorjs");
 const formidable = require("formidable");
-require("../../../utils/customValidators");
 
 // Common Imports
 const apiResponse = require("../../../common/api.response");

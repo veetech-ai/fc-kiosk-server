@@ -1029,18 +1029,6 @@ exports.set_device_schedule_old = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
     const validation = new Validator(req.body, {
       schedule: "required|json",
       device_serial: "required",
@@ -1163,18 +1151,6 @@ exports.set_device_schedule = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
     const validation = new Validator(req.body, {
       schedule: "required|json",
       device_serial: "required",
@@ -1311,19 +1287,6 @@ exports.set_device_setting = (req, res) => {
    *          description: Offset settings can not contain any other settings
    */
   try {
-    Validator.register(
-      "json",
-      function (value) {
-        try {
-          JSON.parse(value);
-          return true;
-        } catch (e) {
-          return false;
-        }
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       settings: "required|json",
       deviceId: "required",
@@ -1452,19 +1415,6 @@ exports.set_device_offset_setting = (req, res) => {
    *          description: Offset settings can not contain any other settings
    */
   try {
-    Validator.register(
-      "json",
-      function (value) {
-        try {
-          JSON.parse(value);
-          return true;
-        } catch (e) {
-          return false;
-        }
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       settings: "required|json",
       deviceId: "required",
@@ -1627,19 +1577,6 @@ exports.set_device_setting_config = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       settings_config: "required|json",
       deviceId: "required",
@@ -2439,19 +2376,6 @@ exports.set_device_history = (req, res) => {
    */
 
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       set: "required|json",
       device_serial: "required",
@@ -3082,19 +3006,6 @@ exports.attach_bulk_firmware = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       id: "required",
       devices: "required|json",
@@ -3688,18 +3599,6 @@ exports.setDeviceConfig = async (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      (value) => {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
     const body = {
       config: req.body.config,
       deviceId: req.params.id,

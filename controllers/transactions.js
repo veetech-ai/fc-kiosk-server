@@ -87,19 +87,6 @@ exports.get = (req, res) => {
       req.query.columns = false;
     }
 
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.query, {
       filters: "json",
     });
