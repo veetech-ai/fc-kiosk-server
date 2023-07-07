@@ -64,10 +64,6 @@ exports.create_lesson = async (req, res) => {
 
   try {
     const loggedInUserOrg = req.user?.orgId;
-    const isSuperOrAdmin = helper.hasProvidedRoleRights(req.user.role, [
-      "super",
-      "admin",
-    ]).success;
     const form = new formidable.IncomingForm();
 
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -87,12 +83,8 @@ exports.create_lesson = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const courseId = fields.gcId;
-    const course = await courseService.getCourseById(courseId);
+    const course = await courseService.getCourse(courseId, loggedInUserOrg);
     const orgId = course.orgId;
-    const isSameOrganizationResource = loggedInUserOrg === orgId;
-    if (!isSuperOrAdmin && !isSameOrganizationResource) {
-      return apiResponse.fail(res, "", 403);
-    }
     const coachImage = files.coachImage;
 
     const image = await upload_file.uploadImageForCourse(coachImage, courseId);
