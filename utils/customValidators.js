@@ -57,7 +57,3 @@ Validator.register(
   },
   "year_built value must between 1000 to currentYear",
 );
-
-module.exports = {
-  validateIntegerRange,
-};
