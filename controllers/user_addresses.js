@@ -2,7 +2,6 @@ const UserAddressesModel = require("../services/user_addresses");
 const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
 
-
 /**
  * @swagger
  * tags:
