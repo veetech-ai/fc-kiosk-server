@@ -1,5 +1,7 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
+const models = require("../../../../../models/index");
+const CourseModel = models.Course;
 
 // Mocking formidable
 let mockFields;
@@ -33,6 +35,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
   let orgId;
 
   beforeAll(async () => {
+    await CourseModel.destroy({ where: {} });
     // Create some courses for the test organization
     const courses = {
       name: "Course 1",
