@@ -57,3 +57,24 @@ Validator.register(
   },
   "year_built value must between 1000 to currentYear",
 );
+
+Validator.register(
+  "gender",
+  function (value) {
+    return value === "male" || value === "female";
+  },
+  'The :attribute field must be either "male" or "female".',
+);
+
+Validator.register(
+  "json",
+  function (value) {
+    try {
+      JSON.parse(value);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  },
+  "The :attribute must be a JSON string.",
+);

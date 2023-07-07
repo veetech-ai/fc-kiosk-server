@@ -1,7 +1,5 @@
 const apiResponse = require("../../common/api.response");
 const helper = require("../../common/helper");
-require("../../utils/careerValidator");
-
 const Validator = require("validatorjs");
 const CoursesServices = require("../../services/kiosk/course");
 const CareersServices = require("../../services/kiosk/career");

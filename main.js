@@ -5,6 +5,7 @@ const rateLimit = require("express-rate-limit");
 const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
+require("./utils/customValidators");
 
 // Logger Imports
 const { logger } = require("./logger");
