@@ -83,7 +83,7 @@ exports.create_lesson = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const courseId = fields.gcId;
-    const course = await courseService.getCourse(courseId,loggedInUserOrg);
+    const course = await courseService.getCourse(courseId, loggedInUserOrg);
     const orgId = course.orgId;
     const coachImage = files.coachImage;
 
