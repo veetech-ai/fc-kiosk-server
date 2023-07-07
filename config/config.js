@@ -121,7 +121,7 @@ module.exports = {
     contactLink:
       process.env.CONTACT_LINK ||
       "https://www.digital-fairways.com/contact-us/",
-    entityTitle: process.env.CONTACT_TITLE || "Fairways Connect Dashboard",
+    entityTitle: process.env.CONTACT_TITLE || "Digital Fairways Dashboard",
     transporter: {
       host: process.env.EMAIL_HOST_NAME || "smtp.mailtrap.io",
       service: process.env.EMAIL_SERVICE || "mailtrap",
