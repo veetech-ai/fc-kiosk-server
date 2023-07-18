@@ -167,8 +167,8 @@ exports.getAds = async (req, res) => {
     }
 
     const paginationOptions = {
-      limit: pageSize,
-      page: pageNumber,
+      limit: parseInt(pageSize, 10), // Convert pageSize to an integer
+      page: parseInt(pageNumber, 10), // Convert pageNumber to an integer
     };
 
     const ads = await adsService.getAds(where, paginationOptions);
