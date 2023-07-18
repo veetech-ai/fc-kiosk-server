@@ -48,7 +48,8 @@ async function getAds(where, paginationOptions) {
           attributes: ["name", "state"],
         },
       ],
-      ...paginationOptions,
+      limit: paginationOptions.limit, // Add the limit property for pagination
+      offset: (paginationOptions.page - 1) * paginationOptions.limit, // Add the offset property for pagination
     };
 
     adsList = await AdsModel.findAll(options);
