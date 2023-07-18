@@ -7,7 +7,7 @@ const adsService = require("../../services/kiosk/ads");
 const screenConfigService = require("../../services/screenConfig/screens");
 const helper = require("../../common/helper");
 const { validateObject } = require("../../common/helper");
-
+const { Op } = require("sequelize");
 /**
  * @swagger
  * tags:
@@ -125,16 +125,55 @@ exports.getAds = async (req, res) => {
    *     tags: [Ads]
    *     produces:
    *       - application/json
+   *     parameters:
+   *       - in: query
+   *         name: pageNumber
+   *         required: false
+   *         type: integer
+   *         description: The page number for pagination.
+   *       - in: query
+   *         name: pageSize
+   *         required: false
+   *         type: integer
+   *         description: The page size for pagination.
+   *       - in: query
+   *         name: search
+   *         required: false
+   *         type: string
+   *         description: The term to search in ad's title, ad's updated At, ad's state and course name.
    *     responses:
    *       200:
    *         description: success
    */
 
   try {
-    const loggedInUserOrg = req.user?.orgId;
+    const { pageNumber, pageSize, search } = req.query;
 
-    const ads = await adsService.getAds({}, loggedInUserOrg);
-    return apiResponse.success(res, req, ads);
+    const where = {};
+    if (search) {
+      where[Op.or] = [
+        { title: { [Op.like]: `%${search}%` } }, // Search for the term in the Ad's title
+        {
+          "$Course.name$": {
+            [Op.like]: `%${search}%`,
+          },
+        }, // Search for the term in the Course's name
+        {
+          "$Course.state$": {
+            [Op.like]: `%${search}%`,
+          },
+        }, // Search for the term in the Course's state
+      ];
+    }
+
+    const paginationOptions = {
+      limit: parseInt(pageSize, 10), // Convert pageSize to an integer
+      page: parseInt(pageNumber, 10), // Convert pageNumber to an integer
+    };
+
+    const ads = await adsService.getAds(where, paginationOptions);
+
+    return apiResponse.pagination(res, req, ads.adsList, ads.totalAdsCount);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
