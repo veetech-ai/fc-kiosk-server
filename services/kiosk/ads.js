@@ -16,25 +16,53 @@ async function createAd(reqBody) {
   return ad;
 }
 
-async function getAds(where, loggedInUserOrgId) {
-  const clonedWhere = { ...where };
-  if (loggedInUserOrgId) clonedWhere.orgId = loggedInUserOrgId;
-  const ads = await AdsModel.findAll({
-    where: clonedWhere,
+async function getTotalAdsCount(where) {
+  const countOptions = {
+    where,
     include: [
       {
         model: Course,
         as: "Course",
-        attributes: ["name"],
+        attributes: ["name", "state"],
       },
     ],
-  });
-  if (ads.length) {
-    ads.forEach((ad) => {
-      ad.smallImage = upload_file.getFileURL(ad.smallImage);
-    });
+  };
+
+  const totalAdsCount = await AdsModel.count(countOptions);
+
+  return totalAdsCount;
+}
+
+async function getAds(where, paginationOptions) {
+  let adsList = [],
+    totalAdsCount = 0;
+  totalAdsCount = await getTotalAdsCount(where);
+
+  if (totalAdsCount > 0) {
+    const options = {
+      where,
+      include: [
+        {
+          model: Course,
+          as: "Course",
+          attributes: ["name", "state"],
+        },
+      ],
+      ...paginationOptions,
+    };
+
+    adsList = await AdsModel.findAll(options);
+
+    if (adsList.length) {
+      for (const ad of adsList) {
+        if (ad.smallImage)
+          ad.smallImage = upload_file.getFileURL(ad.smallImage);
+        if (ad.bigImage) ad.bigImage = upload_file.getFileURL(ad.bigImage);
+      }
+    }
   }
-  return ads;
+
+  return { adsList, totalAdsCount };
 }
 
 async function updateAdsByCourseId(gcId, screens) {
