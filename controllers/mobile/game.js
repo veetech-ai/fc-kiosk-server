@@ -348,7 +348,7 @@ exports.updateHoles = async (req, res) => {
    *              example: 1
    *            updatedAt:
    *              type: string
-   *              example: 2019-05-22T10:30:00+03:00
+   *              example: 2030-05-22T10:30:00+03:00
    *            score:
    *              type: integer
    *              description: It is the difference of no of shots and par (noOfShots - par).
