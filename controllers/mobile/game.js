@@ -371,9 +371,9 @@ exports.updateHoles = async (req, res) => {
     });
 
     const queryValidation = new Validator(req.query, {
-      userId: "required:integer",
-      holeNumber: "required:integer",
-      gameId: "required:string",
+      userId: "required|integer",
+      holeNumber: "required|integer",
+      gameId: "required|string",
     });
 
     if (bodyValidation.fails())
@@ -495,20 +495,21 @@ exports.updateTrackShots = async (req, res) => {
    */
   try {
     const bodyValidation = new Validator(req.body, {
-      updatedAt: "required:string",
-      trackedShots: "required:json",
+      updatedAt: "required|string",
+      trackedShots: "required|json",
     });
 
     const queryValidation = new Validator(req.query, {
-      userId: "required:integer",
-      holeNumber: "required:integer",
-      gameId: "required:string",
+      userId: "required|integer",
+      holeNumber: "required|integer",
+      gameId: "required|string",
     });
 
     if (bodyValidation.fails())
       return apiResponse.fail(res, bodyValidation.errors);
-    if (queryValidation.fails())
+    if (queryValidation.fails()) {
       return apiResponse.fail(res, queryValidation.errors);
+    }
 
     // Filter out the query params
     const filteredQueryParamsForHoles = helpers.validateObject(req.query, [

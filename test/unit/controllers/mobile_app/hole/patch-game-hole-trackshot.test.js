@@ -210,19 +210,31 @@ describe("Patch: /games/holes/track-shot", () => {
       expect(response.statusCode).toEqual(400);
     });
 
-    it("should throw exception if hole field no of shots have string value", async () => {
+    it("should throw exception if holeNumber has string value", async () => {
       const response = await helper.patch_request_with_authorization({
-        endpoint: `games/holes`,
+        endpoint: `games/holes/track-shot`,
         token: golferToken,
         params: {
-          noOfShots: "hello",
+          trackedShots: '[{"lat":"35.5","long":"100.1"}]',
           updatedAt: new Date(),
-          score: 1,
+        },
+        queryParams: {
+          userId: golferUser.id,
+          holeNumber: "abc",
+          gameId: createdGame.gameId,
         },
       });
-      expect(response.body.data.errors.noOfShots).toEqual(
-        expect.arrayContaining(["The noOfShots must be an integer."]),
-      );
+
+      const expectedResponse = expect.objectContaining({
+        success: false,
+        data: {
+          errors: {
+            holeNumber: ["The holeNumber must be an integer."],
+          },
+        },
+      });
+
+      expect(response.body).toEqual(expectedResponse);
       expect(response.statusCode).toEqual(400);
     });
   });
