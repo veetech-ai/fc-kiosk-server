@@ -522,7 +522,7 @@ exports.updateTrackShots = async (req, res) => {
       "updatedAt",
     ]);
 
-    const noOfAffectedRows = await holeService.updateHoleByWhere(
+    const noOfAffectedRows = await holeService.updateHoleTrackShotByWhere(
       filteredQueryParamsForHoles,
       filteredBodyForTrackedShots,
     );

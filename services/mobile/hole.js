@@ -29,23 +29,23 @@ async function getGameHole(gId) {
 }
 
 async function updateHoleByWhere(where, data) {
-  let updateResponse;
+  const updateResponse = await Hole.update(
+    { ...data },
+    {
+      where: { ...where, updatedAt: { [Op.lte]: data.updatedAt } },
+    },
+  );
 
-  if (data.trackedShots) {
-    updateResponse = await Hole.update(
-      { ...data, trackedShots: JSON.parse(data.trackedShots) },
-      {
-        where: { ...where, updatedAt: { [Op.lte]: data.updatedAt } },
-      },
-    );
-  } else {
-    updateResponse = await Hole.update(
-      { ...data },
-      {
-        where: { ...where, updatedAt: { [Op.lte]: data.updatedAt } },
-      },
-    );
-  }
+  return updateResponse[0];
+}
+
+async function updateHoleTrackShotByWhere(where, data) {
+  const updateResponse = await Hole.update(
+    { ...data, trackedShots: JSON.parse(data.trackedShots) },
+    {
+      where: { ...where, updatedAt: { [Op.lte]: data.updatedAt } },
+    },
+  );
 
   return updateResponse[0];
 }
@@ -88,4 +88,5 @@ module.exports = {
   getHoleByWhere,
   getHolesByWhere,
   getUserTotalShotsTakenForGameHoles,
+  updateHoleTrackShotByWhere,
 };
