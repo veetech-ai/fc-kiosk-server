@@ -342,10 +342,6 @@ exports.updateHoles = async (req, res) => {
    *         name: body
    *         schema:
    *          type: object
-   *          required:
-   *           - noOfShots
-   *           - updatedAt
-   *           - score
    *          properties:
    *            noOfShots:
    *              type: integer
@@ -357,6 +353,9 @@ exports.updateHoles = async (req, res) => {
    *              type: integer
    *              description: It is the difference of no of shots and par (noOfShots - par).
    *              example: -3
+   *            trackedShots:
+   *              type: string
+   *              example: '[{"latitude":"34.8697", "longitude":"111.7610"}]'
    *     produces:
    *       - application/json
    *     responses:
@@ -364,10 +363,12 @@ exports.updateHoles = async (req, res) => {
    *         description: success
    */
   try {
+    console.log("AAAAAAAA");
     const bodyValidation = new Validator(req.body, {
-      noOfShots: "required|integer",
-      updatedAt: "required|string",
-      score: "required|integer",
+      noOfShots: "integer",
+      updatedAt: "string",
+      score: "integer",
+      trackedShots: "json",
     });
 
     const queryValidation = new Validator(req.query, {
@@ -381,7 +382,36 @@ exports.updateHoles = async (req, res) => {
     if (queryValidation.fails())
       return apiResponse.fail(res, queryValidation.errors);
 
-    // Filter out the body
+    // Filter out the query params
+    const filteredQueryParamsForHoles = helpers.validateObject(req.query, [
+      "userId",
+      "holeNumber",
+      "gameId",
+    ]);
+    // Filter out the body for TrackedShots
+    const filteredBodyForTrackedShots = helpers.validateObject(req.body, [
+      "trackedShots",
+      "updatedAt",
+
+    ]);
+
+    if (filteredBodyForTrackedShots.trackedShots) {
+      console.log(filteredBodyForTrackedShots);
+      const noOfAffectedRows = await holeService.updateHoleByWhere(
+        filteredQueryParamsForHoles,
+        filteredBodyForTrackedShots,
+      );
+      console.log(noOfAffectedRows);
+      return apiResponse.success(
+        res,
+        req,
+        noOfAffectedRows
+          ? "Scorecard updated successfully"
+          : "Scorecard already up to date",
+      );
+    }
+    console.log("BB");
+    // Filter out the body  to update noOfShots
     const filteredBodyForHoles = helpers.validateObject(req.body, [
       "noOfShots",
       "trackedShots",
@@ -393,34 +423,27 @@ exports.updateHoles = async (req, res) => {
       "updatedAt",
     ]);
 
-    // Filter out the query params
-    const filteredQueryParamsForHoles = helpers.validateObject(req.query, [
-      "userId",
-      "holeNumber",
-      "gameId",
-    ]);
-
     const { gameId, userId: participantId } = helpers.validateObject(
       req.query,
       ["userId", "gameId"],
     );
-
+    console.log("11111");
     const hole = await holeService.getHoleByWhere(filteredQueryParamsForHoles);
     filteredBodyForHoles.isGir =
       hole?.par - filteredBodyForHoles?.noOfShots >= 2;
-
+    console.log("3333333");
     const noOfAffectedRows = await holeService.updateHoleByWhere(
       filteredQueryParamsForHoles,
       filteredBodyForHoles,
     );
-
+    console.log("2222222");
     // calculate the total score for all the holes of the particular gameId for given userId
     const totalShotsTaken =
       await holeService.getUserTotalShotsTakenForGameHoles(
         participantId,
         gameId,
       );
-
+      console.log("CCC");
     await gameService.updateGameIfGameIdIsValid(
       { gameId, participantId },
       { ...filteredBodyForGame, totalShotsTaken },
@@ -434,6 +457,7 @@ exports.updateHoles = async (req, res) => {
         retain,
       );
     }
+    console.log("DDD");
     return apiResponse.success(
       res,
       req,
