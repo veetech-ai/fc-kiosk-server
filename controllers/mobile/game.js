@@ -531,8 +531,8 @@ exports.updateTrackShots = async (req, res) => {
       res,
       req,
       noOfAffectedRows
-        ? "Scorecard updated successfully"
-        : "Scorecard already up to date",
+        ? "Trackshot updated successfully"
+        : "Trackshot already up to date",
     );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
