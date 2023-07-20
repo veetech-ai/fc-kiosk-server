@@ -371,9 +371,9 @@ exports.updateHoles = async (req, res) => {
     });
 
     const queryValidation = new Validator(req.query, {
-      userId: "required:integer",
-      holeNumber: "required:integer",
-      gameId: "required:string",
+      userId: "required|integer",
+      holeNumber: "required|integer",
+      gameId: "required|string",
     });
 
     if (bodyValidation.fails())
@@ -440,6 +440,94 @@ exports.updateHoles = async (req, res) => {
       noOfAffectedRows
         ? "Scorecard updated successfully"
         : "Scorecard already up to date",
+    );
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+exports.updateTrackShots = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /games/holes/track-shot:
+   *   patch:
+   *     security:
+   *       - auth: []
+   *     description: logged In user can update trackshot record by game Id + user Id + hole number .
+   *     tags: [Games]
+   *     consumes:
+   *       - application/json
+   *     parameters:
+   *       - name: gameId
+   *         description: Id of the game
+   *         in: query
+   *         required: true
+   *         type: string
+   *       - name: userId
+   *         description: Id of the user
+   *         in: query
+   *         required: true
+   *         type: integer
+   *       - name: holeNumber
+   *         description: hole number
+   *         in: query
+   *         required: true
+   *         type: integer
+   *       - in: body
+   *         name: body
+   *         schema:
+   *          type: object
+   *          required:
+   *           - trackedShots
+   *          properties:
+   *            trackedShots:
+   *              type: string
+   *              example: '[{"latitude":"34.8697", "longitude":"111.7610"}]'
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const bodyValidation = new Validator(req.body, {
+      trackedShots: "required|json",
+    });
+
+    const queryValidation = new Validator(req.query, {
+      userId: "required|integer",
+      holeNumber: "required|integer",
+      gameId: "required|string",
+    });
+
+    if (bodyValidation.fails())
+      return apiResponse.fail(res, bodyValidation.errors);
+    if (queryValidation.fails()) {
+      return apiResponse.fail(res, queryValidation.errors);
+    }
+
+    // Filter out the query params
+    const filteredQueryParamsForHoles = helpers.validateObject(req.query, [
+      "userId",
+      "holeNumber",
+      "gameId",
+    ]);
+    // Filter out the body for TrackedShots
+    const filteredBodyForTrackedShots = helpers.validateObject(req.body, [
+      "trackedShots",
+    ]);
+
+    const noOfAffectedRows = await holeService.updateHoleTrackShotByWhere(
+      filteredQueryParamsForHoles,
+      filteredBodyForTrackedShots,
+    );
+
+    return apiResponse.success(
+      res,
+      req,
+      noOfAffectedRows
+        ? "Trackshot updated successfully"
+        : "Trackshot already up to date",
     );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

@@ -24,6 +24,11 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["manageGames"]),
     GameController.updateHoles,
   ]);
+  router.patch(game + "/holes/track-shot", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["manageGames"]),
+    GameController.updateTrackShots,
+  ]);
   router.patch(game + "/:gameId/end-game", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["manageGames"]),
