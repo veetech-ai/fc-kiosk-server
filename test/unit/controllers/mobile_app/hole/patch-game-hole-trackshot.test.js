@@ -13,7 +13,6 @@ describe("Patch: /games/holes/track-shot", () => {
   let createdGame;
   let getHoles;
   let golferUser;
-  let mqttMessageSpy;
   const holes = [
     {
       holeId: 31931,
