@@ -40,10 +40,12 @@ async function updateHoleByWhere(where, data) {
 }
 
 async function updateHoleTrackShotByWhere(where, data) {
+  const trackedShots = JSON.parse(data.trackedShots);
+
   const updateResponse = await Hole.update(
-    { ...data, trackedShots: JSON.parse(data.trackedShots) },
+    { ...data, trackedShots }, // Use the updated trackedShots without updatedAt
     {
-      where: { ...where, updatedAt: { [Op.lte]: data.updatedAt } },
+      where: { ...where },
     },
   );
 

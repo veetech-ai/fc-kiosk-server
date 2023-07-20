@@ -62,6 +62,7 @@ module.exports = (sequelize, DataTypes) => {
           fields: ["gId", "gcId"],
         },
       ],
+      timestamps: false,
     },
   );
   Hole.associate = function (models) {

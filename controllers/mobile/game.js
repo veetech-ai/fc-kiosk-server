@@ -479,11 +479,7 @@ exports.updateTrackShots = async (req, res) => {
    *          type: object
    *          required:
    *           - trackedShots
-   *           - updatedAt
    *          properties:
-   *            updatedAt:
-   *              type: string
-   *              example: 2030-05-22T10:30:00+03:00
    *            trackedShots:
    *              type: string
    *              example: '[{"latitude":"34.8697", "longitude":"111.7610"}]'
@@ -495,7 +491,6 @@ exports.updateTrackShots = async (req, res) => {
    */
   try {
     const bodyValidation = new Validator(req.body, {
-      updatedAt: "required|string",
       trackedShots: "required|json",
     });
 
@@ -520,7 +515,6 @@ exports.updateTrackShots = async (req, res) => {
     // Filter out the body for TrackedShots
     const filteredBodyForTrackedShots = helpers.validateObject(req.body, [
       "trackedShots",
-      "updatedAt",
     ]);
 
     const noOfAffectedRows = await holeService.updateHoleTrackShotByWhere(
