@@ -91,7 +91,6 @@ describe("Patch: /games/holes/track-shot", () => {
         },
         params: {
           trackedShots: '[{"lat":"35.5","long":"100.1"}]',
-          updatedAt: new Date(),
         },
       });
       const expectedResponse = expect.objectContaining({
@@ -107,48 +106,11 @@ describe("Patch: /games/holes/track-shot", () => {
         token: golferToken,
         params: {
           trackedShots: '[{"lat":"35.5","long":"100.1"}]',
-          updatedAt: new Date(),
         },
         queryParams: {
           userId: golferUser.id,
           holeNumber: -1,
           gameId: createdGame.gameId,
-        },
-      });
-      const expectedResponse = expect.objectContaining({
-        success: true,
-        data: "Trackshot already up to date",
-      });
-      expect(response.body).toEqual(expectedResponse);
-    });
-
-    it("should return already up to date if updateAt has old date, time", async () => {
-      // create game
-      const params = {
-        gcId: createdCourses[0].id,
-        teeColor: "Red",
-        gameId: uuidv4(),
-        startTime: new Date(),
-        holes,
-      };
-      const createdGame = (
-        await helper.post_request_with_authorization({
-          endpoint: "games",
-          token: golferToken,
-          params: params,
-        })
-      )?.body?.data;
-      const response = await helper.patch_request_with_authorization({
-        endpoint: `games/holes/track-shot`,
-        token: golferToken,
-        queryParams: {
-          userId: golferUser.id,
-          holeNumber: holes[0].holeNumber,
-          gameId: createdGame.gameId,
-        },
-        params: {
-          trackedShots: '[{"lat":"35.5","long":"100.1"}]',
-          updatedAt: "2019-05-22T10:30:00+03:00",
         },
       });
       const expectedResponse = expect.objectContaining({
@@ -166,7 +128,6 @@ describe("Patch: /games/holes/track-shot", () => {
         token: golferToken,
         params: {
           trackedShots: '[{"lat":"35.5","long":"100.1"}]',
-          updatedAt: new Date(),
         },
         queryParams: {
           userId: golferUser.id,
@@ -191,7 +152,6 @@ describe("Patch: /games/holes/track-shot", () => {
         token: golferToken,
         params: {
           trackedShots: '[{"lat":"35.5","long":"100.1"}]',
-          updatedAt: new Date(),
         },
         queryParams: {
           holeNumber: holes[0].holeNumber,
@@ -216,7 +176,6 @@ describe("Patch: /games/holes/track-shot", () => {
         token: golferToken,
         params: {
           trackedShots: '[{"lat":"35.5","long":"100.1"}]',
-          updatedAt: new Date(),
         },
         queryParams: {
           userId: golferUser.id,
