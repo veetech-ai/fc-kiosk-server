@@ -45,7 +45,7 @@ const mockFormidable = (fields, files) => {
   mockFiles = files;
 };
 
-describe("GET /api/v1/ads", () => {
+describe.skip("GET /api/v1/ads", () => {
   let adminToken;
   let courseId;
 

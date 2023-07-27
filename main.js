@@ -201,6 +201,7 @@ AppLinkRouter.routesConfig(app, router);
 ScreenConfigRouter.routesConfig(app, router);
 AdsScreensRouter.routesConfig(app, router);
 AdsRouter.routesConfig(app, router);
+
 if (config.env === "test") {
   // for test case server
   app.use(router);

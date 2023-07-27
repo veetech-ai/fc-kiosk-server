@@ -3,10 +3,6 @@ module.exports = (sequelize, DataTypes) => {
   const Ad = sequelize.define(
     "Ad",
     {
-      gcId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       smallImage: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -18,10 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       tapLink: {
         type: DataTypes.STRING,
         allowNull: true,
-      },
-      screens: {
-        type: DataTypes.JSON,
-        allowNull: false,
       },
       title: {
         type: DataTypes.STRING,
@@ -64,10 +56,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Ad.associate = function (models) {
     // associations can be defined here
-    Ad.belongsTo(models.Mobile_Course, {
-      as: "Golf_Course",
-      foreignKey: "gcId",
-    });
+    Ad.hasMany(models.Course_Ad);
   };
   return Ad;
 };

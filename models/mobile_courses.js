@@ -44,8 +44,8 @@ module.exports = (sequelize, DataTypes) => {
       as: "Holes",
       foreignKey: "gcId",
     });
-    Mobile_Course.hasMany(models.Ad, {
-      as: "Ads",
+    Mobile_Course.hasMany(models.Course_Ad, {
+      as: "Course_Ads",
       foreignKey: "gcId",
     });
   };

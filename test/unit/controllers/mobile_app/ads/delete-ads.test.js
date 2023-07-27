@@ -9,10 +9,11 @@ const AdsModel = models.Ad;
 let mockFields;
 let mockFiles;
 let course;
+
 let fields = {
   state: "Alabama",
   title: "Main Ad",
-  screens: ["Hole 1", "Hole 2", "Hole 3", "Hole 4"],
+  courses: '{"1":["Hole 1", "Hole 2", "Hole 3", "Hole 4"]}',
   tapLink: "www.google.com",
 };
 
@@ -57,10 +58,6 @@ describe("Delete ads/:adId", () => {
     customerToken = await helper.get_token_for("testCustomer");
   });
 
-  afterAll(async () => {
-    await adsService.deleteAd({ gcId: courseId });
-  });
-
   const createAds = async () => {
     const where = {
       state: fields.state,
@@ -77,6 +74,7 @@ describe("Delete ads/:adId", () => {
       params: fields,
     });
   };
+
   describe("success", () => {
     it("should return success message if ad id is correct", async () => {
       const adCreationResponse = await createAds();
@@ -87,8 +85,11 @@ describe("Delete ads/:adId", () => {
       const expectedResponse = { success: true, data: "Deleted Successfully" };
       expect(response.body).toEqual(expectedResponse);
       expect(response.statusCode).toEqual(200);
+
+      await adsService.deleteAd({ id: adCreationResponse.body.data.id });
     });
   });
+
   describe("fail", () => {
     let adId;
     beforeAll(async () => {

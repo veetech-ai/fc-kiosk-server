@@ -14,6 +14,11 @@ exports.routesConfig = function (app, router) {
     validation_middleware.validJWTOptional,
     adsController.getAds,
   ]);
+  router.get(ads + "/:adId", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin"]),
+    adsController.getAd,
+  ]);
   router.patch(ads + "/:adId", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin"]),

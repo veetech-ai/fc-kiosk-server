@@ -1,9 +1,10 @@
-const models = require("../../models/index");
-const AdsModel = models.Ad;
-const Course = models.Mobile_Course;
-const upload_file = require("../../common/upload");
 const { Op, literal } = require("sequelize");
+
+const upload_file = require("../../common/upload");
 const ServiceError = require("../../utils/serviceError");
+const models = require("../../models/index");
+
+const { Ad: AdsModel, Mobile_Course: Course, Course_Ad: CourseAds } = models;
 
 async function createAd(reqBody) {
   const ad = await AdsModel.create({
@@ -21,6 +22,45 @@ async function createAd(reqBody) {
   return ad;
 }
 
+/**
+ * Delete a row from Course_Ads table
+ * @param {Object} options Sequelize `options` object
+ * @returns {Promise}
+ */
+function deleteAssignment(options) {
+  return CourseAds.destroy(options);
+}
+
+/**
+ * Creates an ad entry for given screens of a course
+ * @param {Number} courseId `id` of `Mobile_Course`
+ * @param {Number} adId `id` of `Ad`
+ * @param {String[]} screens List of screens names, to put ad on
+ * @returns {Promise<{}>}
+ */
+async function assignAds(courseId, adId, screens) {
+  const course = await Course.findByPk(courseId);
+
+  if (!course) {
+    throw new ServiceError(`Course with id: ${courseId} does not exist`, 404);
+  }
+
+  const exists = await CourseAds.findOne({ where: { adId, gcId: courseId } });
+
+  if (exists) {
+    return CourseAds.update(
+      { screens },
+      { where: { adId, gcId: courseId }, returning: true },
+    );
+  }
+
+  return CourseAds.create({
+    adId,
+    gcId: courseId,
+    screens,
+  });
+}
+
 async function getTotalAdsCount(where) {
   const count = await AdsModel.count({ where });
   return count;
@@ -29,17 +69,11 @@ async function getTotalAdsCount(where) {
 async function getAds(where, paginationOptions, searchQuery) {
   let adsList = [],
     totalAdsCount = 0;
+
   totalAdsCount = await getTotalAdsCount();
   if (totalAdsCount > 0) {
     const countOptions = {
       where: searchQuery ? { ...where, ...searchQuery } : where,
-      include: [
-        {
-          model: Course,
-          as: "Golf_Course",
-          attributes: ["name", "state"],
-        },
-      ],
     };
     const totalRecordsCountonSearch = await AdsModel.count(countOptions);
     const options = {
@@ -67,23 +101,49 @@ async function deleteAd(where) {
   return await AdsModel.destroy({ where });
 }
 
-async function getAd(where) {
-  const ad = await AdsModel.findOne({
-    where,
-  });
-  if (!ad) {
-    throw new ServiceError("Ad not found", 404);
-  }
+async function getAd(where, attributes) {
+  const ad = await AdsModel.findOne({ where, attributes });
+
+  if (!ad) throw new ServiceError("Ad not found", 404);
+
   return ad;
 }
 
-async function updateAd(where, reqBody) {
+function updateAd(where, reqBody) {
   if (!Object.keys(reqBody).length) return 0;
-  const existingAd = await getAd(where);
-  const updatedData = { ...existingAd.dataValues, ...reqBody };
-  const updatedAd = await AdsModel.update({ ...updatedData }, { where });
+  return AdsModel.update({ ...reqBody }, { where, returning: true });
+}
 
-  return 1;
+function getAdDetail(adId) {
+  return AdsModel.findByPk(adId, {
+    attributes: ["id", "bigImage", "smallImage", "tapLink", "title"],
+    include: [
+      {
+        as: "Course_Ads",
+        model: models.Course_Ad,
+        attributes: ["id", "screens"],
+        include: [
+          {
+            as: "Mobile_Courses",
+            model: models.Mobile_Course,
+            attributes: [
+              "id",
+              "golfbert_id",
+              "name",
+              "phone",
+              "country",
+              "street",
+              "city",
+              "state",
+              "zip",
+              "lat",
+              "long",
+            ],
+          },
+        ],
+      },
+    ],
+  });
 }
 
 const checkUniqueness = async (inputedScreens, gcId, adId) => {
@@ -104,7 +164,7 @@ const checkUniqueness = async (inputedScreens, gcId, adId) => {
       };
     }
 
-    hasAdOnUniqueAdScreens = await AdsModel.findAll({
+    hasAdOnUniqueAdScreens = await Course.findAll({
       where: whereCondition,
     });
 
@@ -113,12 +173,16 @@ const checkUniqueness = async (inputedScreens, gcId, adId) => {
     }
   }
 };
+
 module.exports = {
   createAd,
   getAds,
   deleteAd,
   getAd,
+  getAdDetail,
   updateAd,
   checkUniqueness,
   getTotalAdsCount,
+  assignAds,
+  deleteAssignment,
 };

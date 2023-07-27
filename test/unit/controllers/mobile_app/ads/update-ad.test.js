@@ -6,11 +6,11 @@ const adsService = require("../../../../../services/mobile/ads");
 
 let mockFields;
 let mockFiles;
-let courseId;
+
 let fields = {
   state: "Alabama",
   title: "Main Ad",
-  screens: ["Hole 18"],
+  courses: '{ "1": ["Hole 1", "Hole 2", "Hole 3"] }',
   tapLink: "www.google.com",
 };
 
@@ -22,8 +22,10 @@ let files = {
     path: "/mock/path/to/logo.png",
   },
 };
+
 let createdAd;
 const errorMessage = "Something went wrong";
+
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -40,6 +42,7 @@ jest.mock("formidable", () => {
 let mockedFileUpload = jest
   .spyOn(upload_file, "upload_file")
   .mockImplementation(() => Promise.resolve("mock-ad-url"));
+
 const mockFormidable = (fields, files) => {
   mockFields = fields;
   mockFiles = files;
@@ -48,6 +51,7 @@ const mockFormidable = (fields, files) => {
 describe("PATCH /api/v1/ads/{adId}", () => {
   let adminToken;
   let customerToken;
+
   const createAd = async () => {
     mockFormidable(fields, files);
     const adCreationResponse = await helper.post_request_with_authorization({
@@ -57,6 +61,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     });
     return adCreationResponse.body.data;
   };
+
   beforeAll(async () => {
     // Create some courses for the test organization
     await adsService.deleteAd({});
@@ -66,6 +71,7 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     fields.gcId = course.id;
     createdAd = await createAd();
   });
+
   afterAll(async () => {
     await adsService.deleteAd({ id: createdAd.id });
   });
@@ -78,238 +84,263 @@ describe("PATCH /api/v1/ads/{adId}", () => {
     });
   };
 
-  it("should successfully update the ad with given body", async () => {
-    const fields = {
-      state: "Missisipi",
-      title: "Secondary Ad",
-      screens: ["Hole 1", "Hole 2", "Hole 3"],
-      tapLink: "www.yahoo.com",
-    };
+  describe("Success", () => {
+    it("should successfully update the ad with given body", async () => {
+      const fields = {
+        state: "Missisipi",
+        title: "Secondary Ad",
+        courses: '{ "1": ["Hole 1", "Hole 2", "Hole 3"] }',
+        tapLink: "www.yahoo.com",
+      };
 
-    const expectedResponse = {
-      success: true,
-      data: "Updated Successfuly",
-    };
+      const expectedResponse = {
+        success: true,
+        data: "Record is updated successfully",
+      };
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
+      mockFormidable(fields, files);
+
+      const response = await updateAdApiRequest(createdAd.id, fields);
+
+      expect(response.body).toEqual(expectedResponse);
+    });
+
+    it("should update succesfully if contact method  is valid", async () => {
+      const fields = {
+        state: "Missisipi",
+        title: "Secondary Ad",
+        courses: '{"1": ["Hole 5"]}',
+        tapLink: "tel:1236556565",
+      };
+
+      const expectedResponse = {
+        success: true,
+        data: "Record is updated successfully",
+      };
+
+      mockFormidable(fields, files);
+      const response = await updateAdApiRequest(createdAd.id, fields);
+      expect(response.body).toEqual(expectedResponse);
+    });
+
+    it("should update succesfully if contact method is valid", async () => {
+      const fields = {
+        state: "Missisipi",
+        title: "Secondary Ad",
+        courses: '{"1": ["Hole 5"]}',
+        tapLink: "mailto:exmaple@gmail.com",
+      };
+
+      const expectedResponse = {
+        success: true,
+        data: "Record is updated successfully",
+      };
+
+      mockFormidable(fields, files);
+      const response = await updateAdApiRequest(createdAd.id, fields);
+      expect(response.body).toEqual(expectedResponse);
+    });
+
+    it("should delete rows with gcId from Course_Ads which are not in the req payload", async () => {
+      const creationFields = {
+        state: "Missisipi",
+        title: "Secondary Ad",
+        courses: '{"1": ["Hole 5"], "2": ["Hole 1"]}',
+        tapLink: "mailto:exmaple@gmail.com",
+      };
+      mockFormidable(creationFields, files);
+      const adResponse = await helper.post_request_with_authorization({
+        endpoint: `ads`,
+        token: adminToken,
+        params: creationFields,
+      });
+
+      const udpationFields = {
+        state: "Missisipi",
+        title: "Secondary Ad",
+        courses: '{"1": ["Hole 5", "Scorecard"]}',
+        tapLink: "mailto:exmaple@gmail.com",
+      };
+
+      const expectedResponse = {
+        success: true,
+        data: "Record is updated successfully",
+      };
+
+      mockFormidable(udpationFields, files);
+      const response = await updateAdApiRequest(
+        adResponse.body.data.id,
+        udpationFields,
+      );
+
+      expect(response.body).toEqual(expectedResponse);
+
+      const result = await helper.get_request_with_authorization({
+        endpoint: `ads/${adResponse.body.data.id}`,
+        token: adminToken,
+      });
+
+      expect(result.body.data.Course_Ads.length).toEqual(1);
+    });
   });
-  it("should return error with invalid adId", async () => {
-    let nonexistingAdId = -1;
-    const fields = {
-      state: "Mobile",
-      title: "Main Ad",
-      screens: ["Hole 4"],
-      tapLink: "www.google.com",
-    };
-    const expectedResponse = {
-      success: false,
-      data: "Ad not found",
-    };
-    const response = await updateAdApiRequest(nonexistingAdId, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return error with invalid adId", async () => {
-    let invalidAdId = "aa";
-    const expectedResponse = {
-      success: false,
-      data: "adId must be a valid number",
-    };
-    const response = await updateAdApiRequest(invalidAdId, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return validation error if both both tapLink and bigImage is populated. In below case the ad which we are trying to update already has tapLink but when we update it with bigImage it should give error as both cannot be populated for same instance", async () => {
-    const expectedResponse = {
-      success: false,
-      data: "Validation error: Both bigImage and tapLink cannot be populated at the same time.",
-    };
-    const fields = {
-      state: "Alabama",
-      title: "Main Ad",
-      screens: ["Hole 5"],
-    };
-    const files = {
-      bigImage: {
-        name: "mock-bigImage.png",
-        type: "image/png",
-        size: 5000, // bytes
-      },
-    };
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return error if screens given by user are invalid", async () => {
-    const expectedResponse = {
-      success: false,
-      data: "Please enter valid screen names",
-    };
-    const fields = {
-      state: "Alabama",
-      title: "Main Ad",
-      screens: ["Hole 20"],
-    };
-    const files = {
-      smallImage: {
-        name: "mock-bigImage.png",
-        type: "image/png",
-        size: 5000, // bytes
-      },
-    };
+  describe("Failure", () => {
+    it("should return error with invalid adId", async () => {
+      let nonexistingAdId = -1;
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return error if screens given by user are already occupied", async () => {
-    const expectedResponse = {
-      success: true,
-      data: "Updated Successfuly",
-    };
-    const fields = {
-      state: "Alabama",
-      title: "Main Ad",
-      screens: ["Hole 1", "Hole 2", "Hole 3"],
-    };
-    const files = {
-      smallImage: {
-        name: "mock-bigImage.png",
-        type: "image/png",
-        size: 5000, // bytes
-      },
-    };
+      const fields = {
+        state: "Mobile",
+        title: "Main Ad",
+        screens: ["Hole 4"],
+        tapLink: "www.google.com",
+      };
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return error if contact method is invalid", async () => {
-    const fields = {
-      state: "Missisipi",
-      title: "Secondary Ad",
-      screens: ["Hole 15"],
-      tapLink: "yahoo",
-    };
+      const expectedResponse = {
+        success: false,
+        data: "Ad not found",
+      };
 
-    const expectedResponse = {
-      success: false,
-      data: "Invalid contact method",
-    };
+      const response = await updateAdApiRequest(nonexistingAdId, fields);
+      expect(response.body).toEqual(expectedResponse);
+    });
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return error if contact method is invalid", async () => {
-    const fields = {
-      state: "Missisipi",
-      title: "Secondary Ad",
-      screens: ["Hole 15"],
-      tapLink: "12333",
-    };
+    it("should return error with invalid adId", async () => {
+      const expectedResponse = {
+        success: false,
+        data: "adId must be a valid number",
+      };
 
-    const expectedResponse = {
-      success: false,
-      data: "Invalid contact method",
-    };
+      const response = await updateAdApiRequest("abc", fields);
+      expect(response.body).toEqual(expectedResponse);
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should update succesfully if contact method  is valid", async () => {
-    const fields = {
-      state: "Missisipi",
-      title: "Secondary Ad",
-      screens: ["Hole 15"],
-      tapLink: "tel:1236556565",
-    };
+      const response1 = await updateAdApiRequest("12dd", fields);
+      expect(response1.body).toEqual(expectedResponse);
 
-    const expectedResponse = {
-      success: true,
-      data: "Updated Successfuly",
-    };
+      const response3 = await updateAdApiRequest(null, fields);
+      expect(response3.body).toEqual(expectedResponse);
+    });
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should update succesfully if contact method is valid", async () => {
-    const fields = {
-      state: "Missisipi",
-      title: "Secondary Ad",
-      screens: ["Hole 15"],
-      tapLink: "mailto:exmaple@gmail.com",
-    };
+    it("should return validation error if both both tapLink and bigImage is populated. In below case the ad which we are trying to update already has tapLink but when we update it with bigImage it should give error as both cannot be populated for same instance", async () => {
+      const expectedResponse = {
+        success: false,
+        data: "Validation error: Both bigImage and tapLink cannot be populated at the same time.",
+      };
 
-    const expectedResponse = {
-      success: true,
-      data: "Updated Successfuly",
-    };
+      const fields = {
+        state: "Alabama",
+        title: "Main Ad",
+        tapLink: "www.youtube.com",
+        courses: '{"1": ["Hole 5"]}',
+      };
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return validation error in case of invalid input for screens", async () => {
-    const fields = {
-      state: "Alabama",
-      title: "Main Ad",
-      screens: "Hole 17",
-      tapLink: "www.google.com",
-    };
+      const files = {
+        bigImage: {
+          name: "mock-bigImage.png",
+          type: "image/png",
+          size: 5000, // bytes
+        },
+      };
 
-    const course = await courseService.getCourseFromDb({ state: fields.state });
+      mockFormidable(fields, files);
 
-    courseId = course.id;
-    fields.gcId = courseId;
+      const response = await updateAdApiRequest(createdAd.id, fields);
+      expect(response.body).toEqual(expectedResponse);
+    });
 
-    const files = {
-      smallImage: {
-        name: "mock-logo.png",
-        type: "image/png",
-        size: 5000, // bytes
-        path: "/mock/path/to/logo.png",
-      },
-    };
+    it("should return error if screens given by user are invalid", async () => {
+      const expectedResponse = {
+        success: false,
+        data: "Please enter valid screen names",
+      };
 
-    const expectedResponse = {
-      success: false,
-      data: "Invalid JSON in screens",
-    };
+      const fields = {
+        state: "Alabama",
+        title: "Main Ad",
+        tapLink: "www.youtube.com",
+        courses: '{"1": ["Invalid Screen"]}',
+      };
 
-    mockFormidable(fields, files);
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return validation error if api is accessed by the user other than admin", async () => {
-    const expectedResponse = {
-      success: false,
-      data: "You are not allowed",
-    };
-    const response = await updateAdApiRequest(createdAd.id, {}, customerToken);
-    expect(response.body).toEqual(expectedResponse);
-  });
-  it("should return error if an error occurred while image uploading", async () => {
-    const expectedResponse = {
-      success: false,
-      data: errorMessage,
-    };
-    const fields = {
-      state: "Missisipi",
-      title: "Secondary Ad",
-      screens: ["Hole 6", "Hole 8"],
-      tapLink: "www.yahoo.com",
-    };
+      const files = {
+        smallImage: {
+          name: "mock-bigImage.png",
+          type: "image/png",
+          size: 5000, // bytes
+        },
+      };
 
-    mockFormidable(fields, files);
-    mockedFileUpload.mockImplementation(() =>
-      Promise.reject(new ServiceError("Something went wrong")),
-    );
+      mockFormidable(fields, files);
 
-    const response = await updateAdApiRequest(createdAd.id, fields);
-    expect(response.body).toEqual(expectedResponse);
+      const response = await updateAdApiRequest(createdAd.id, fields);
+      expect(response.body).toEqual(expectedResponse);
+    });
+
+    it("should return error if contact method is invalid", async () => {
+      const fields = {
+        state: "Missisipi",
+        title: "Secondary Ad",
+        courses: '{"1": ["Hole 5"]}',
+        tapLink: "yahoo",
+      };
+
+      const expectedResponse = {
+        success: false,
+        data: "Invalid contact method",
+      };
+
+      mockFormidable(fields, files);
+      const response = await updateAdApiRequest(createdAd.id, fields);
+      expect(response.body).toEqual(expectedResponse);
+    });
+
+    it("should return error if contact method is invalid", async () => {
+      const fields = {
+        state: "Missisipi",
+        title: "Secondary Ad",
+        courses: '{"1", ["Hole 5"]}',
+        tapLink: "12333",
+      };
+
+      const expectedResponse = {
+        success: false,
+        data: "Invalid contact method",
+      };
+
+      mockFormidable(fields, files);
+      const response = await updateAdApiRequest(createdAd.id, fields);
+      expect(response.body).toEqual(expectedResponse);
+    });
+    it("should return validation error if api is accessed by the user other than admin", async () => {
+      const expectedResponse = {
+        success: false,
+        data: "You are not allowed",
+      };
+      const response = await updateAdApiRequest(
+        createdAd.id,
+        {},
+        customerToken,
+      );
+      expect(response.body).toEqual(expectedResponse);
+    });
+
+    it("should return error if an error occurred while image uploading", async () => {
+      const expectedResponse = {
+        success: false,
+        data: errorMessage,
+      };
+      const fields = {
+        state: "Missisipi",
+        title: "Secondary Ad",
+        courses: '{"1": ["Hole 5"]}',
+        tapLink: "www.yahoo.com",
+      };
+
+      mockFormidable(fields, files);
+      mockedFileUpload.mockImplementation(() =>
+        Promise.reject(new ServiceError("Something went wrong")),
+      );
+
+      const response = await updateAdApiRequest(createdAd.id, fields);
+      expect(response.body).toEqual(expectedResponse);
+    });
   });
 });

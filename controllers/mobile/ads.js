@@ -7,6 +7,8 @@ const helper = require("../../common/helper");
 const adsScreenService = require("../../services/mobile/ads-screens");
 const ServiceError = require("../../utils/serviceError");
 const { Op } = require("sequelize");
+const { sequelize } = require("../../models");
+const { isValidNumber } = require("../../utils/validators");
 
 /**
  * @swagger
@@ -22,21 +24,11 @@ exports.createAd = async (req, res) => {
    *   post:
    *     security:
    *       - auth: []
-   *     description: CREATE ads.
+   *     description: Create an ad.
    *     tags: [Ads]
    *     consumes:
    *       - multipart/form-data
    *     parameters:
-   *       - name: gcId
-   *         description: id of golf course
-   *         in: formData
-   *         required: true
-   *         type: integer
-   *       - name: state
-   *         description: select which state to present the ads in
-   *         in: formData
-   *         required: false
-   *         type: string
    *       - name: title
    *         description: title of the ad
    *         in: formData
@@ -58,11 +50,11 @@ exports.createAd = async (req, res) => {
    *         required: false
    *         type: file
    *       - in: formData
-   *         name: screens
-   *         description: Multi-select options in JSON format such as ['Hole 1' , 'Hole 2']
+   *         name: courses
+   *         description: A map of course id and corresponding list of screens
    *         required: true
    *         type: object
-   *         example: ['Hole 1', 'Hole 2']
+   *         example: {"1": ["Hole 1", "Hole 2"], "5": ["Hole 4", "Hole 5"]}
    *     produces:
    *       - application/json
    *     responses:
@@ -70,6 +62,7 @@ exports.createAd = async (req, res) => {
    *         description: success
    */
 
+  let transact = null;
   try {
     const form = new formidable.IncomingForm();
 
@@ -79,19 +72,23 @@ exports.createAd = async (req, res) => {
         resolve({ fields, files });
       });
     });
+
     const validation = new Validator(fields, {
-      gcId: "required|integer",
       state: "string",
       title: "string",
       tapLink: "string",
-      screens: "required",
+      courses: "required",
     });
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
 
-    if (fields.tapLink && fields.tapLink != "null") {
-      const iValidTapLink = helper.regexValidation(fields.tapLink, [
+    if (validation.fails()) return apiResponse.fail(res, validation.errors);
+
+    const allowedFields = ["courses", "state", "title", "tapLink"];
+    const filteredObject = helper.validateObject(fields, allowedFields);
+
+    let { tapLink, courses } = filteredObject;
+
+    if (tapLink && tapLink != "null") {
+      const iValidTapLink = helper.regexValidation(tapLink, [
         "email",
         "url",
         "phone",
@@ -100,61 +97,75 @@ exports.createAd = async (req, res) => {
       if (!iValidTapLink) throw new ServiceError("Invalid contact method", 400);
     }
 
-    let reqBody = {};
-    const courseId = fields.gcId;
-    const adSmallImage = files.smallImage;
-    const adBigImage = files.bigImage;
+    try {
+      courses = Object.entries(JSON.parse(courses));
+      if (!courses || !courses.length) throw new Error();
+    } catch (err) {
+      throw new ServiceError("Invalid courses payload", 400);
+    }
 
-    if (typeof fields.screens === "string") {
-      try {
-        fields.screens = JSON.parse(fields.screens);
-      } catch (error) {
-        throw new ServiceError("Invalid JSON in screens", 400);
+    const { smallImage, bigImage } = files;
+
+    if (smallImage) {
+      filteredObject.smallImage = await upload_file.upload_file(
+        smallImage,
+        `uploads/ads-small-image/`,
+        ["jpg", "jpeg", "png", "webp"],
+      );
+    }
+
+    if (bigImage) {
+      filteredObject.bigImage = await upload_file.upload_file(
+        bigImage,
+        `uploads/ads-big-image/`,
+        ["jpg", "jpeg", "png", "webp"],
+      );
+    }
+
+    transact = await sequelize.transaction();
+
+    const postedAd = await adsService.createAd(filteredObject);
+
+    /*
+    courses : {
+      1: ['screen1', 'screen2'],
+      2: ['hole1', 'hole2'],
+      47: ['screen1', 'screen2', 'hole1'],
+    }
+    */
+
+    const mapings = [];
+
+    for (const [gcId, screens] of courses) {
+      if (!gcId || !Array.isArray(screens) || !screens.length) {
+        throw new ServiceError("List of screens names is required", 400);
       }
-    }
-    if (!fields.screens || !fields.screens.length) {
-      throw new ServiceError("Screens field cannot be null", 400);
-    }
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
 
-    await adsScreenService.validateScreens(fields.screens);
-    await adsService.checkUniqueness(fields.screens, courseId);
+      const _gcId = Number.parseInt(gcId);
 
-    if (adSmallImage) {
-      const smallImage = await upload_file.upload_file(
-        adSmallImage,
-        `uploads/ads-small-image/${courseId}`,
-        ["jpg", "jpeg", "png", "webp"],
+      if (typeof _gcId !== "number" || isNaN(_gcId)) {
+        throw new ServiceError(`Invalid gcId: '${gcId}' in courses payload`);
+      }
+
+      await adsScreenService.validateScreens(screens);
+
+      mapings.push(await adsService.assignAds(_gcId, postedAd.id, screens));
+
+      helper.mqtt_publish_message(
+        `gc/${gcId}/screens`,
+        { action: "ad" },
+        false,
       );
-      reqBody.smallImage = smallImage;
     }
-    if (adBigImage) {
-      const bigImage = await upload_file.upload_file(
-        adBigImage,
-        `uploads/ads-big-image/${courseId}`,
-        ["jpg", "jpeg", "png", "webp"],
-      );
-      reqBody.bigImage = bigImage;
-    }
-    const allowedFields = ["gcId", "state", "title", "tapLink", "screens"];
-    const filteredObject = helper.validateObject(fields, allowedFields);
-    reqBody = {
-      ...reqBody,
-      ...filteredObject,
-    };
 
-    const postedAd = await adsService.createAd(reqBody);
+    await transact.commit();
 
-    helper.mqtt_publish_message(
-      `gc/${courseId}/screens`,
-      { action: "ad" },
-      false,
-    );
-
-    return apiResponse.success(res, req, postedAd);
+    return apiResponse.success(res, req, {
+      ...postedAd.dataValues,
+      courses: mapings,
+    });
   } catch (error) {
+    if (transact) transact.rollback();
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
@@ -205,28 +216,63 @@ exports.getAds = async (req, res) => {
       page: pageNumber,
       search,
     };
+
     paginationOptions = helper.get_pagination_params(paginationOptions);
 
     if (paginationOptions.search) {
       searchQuery = {
         [Op.or]: [
           { title: { [Op.like]: `%${search}%` } }, // Search for the term in the Ad's title
-          {
-            "$Golf_Course.name$": {
-              [Op.like]: `%${search}%`,
-            },
-          }, // Search for the term in the Golf Course's name
-          {
-            "$Golf_Course.state$": {
-              [Op.like]: `%${search}%`,
-            },
-          }, // Search for the term in the Golf Course's state
+          // {
+          //   "$Golf_Course.name$": {
+          //     [Op.like]: `%${search}%`,
+          //   },
+          // }, // Search for the term in the Golf Course's name
+          // {
+          //   "$Golf_Course.state$": {
+          //     [Op.like]: `%${search}%`,
+          //   },
+          // }, // Search for the term in the Golf Course's state
         ],
       };
     }
     const ads = await adsService.getAds(where, paginationOptions, searchQuery);
 
     return apiResponse.pagination(res, req, ads.adsList, ads.totalAdsCount);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.getAd = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /ads/{adId}:
+   *   get:
+   *     description: GET ads.
+   *     tags: [Ads]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - in: path
+   *         name: adId
+   *         required: true
+   *         type: integer
+   *         description: The id of a ad.
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const adId = Number(req.params.adId);
+    if (!adId) {
+      return apiResponse.fail(res, "adId must be a valid number");
+    }
+    const ad = await adsService.getAdDetail(adId);
+
+    return apiResponse.success(res, req, ad);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -306,11 +352,11 @@ exports.updateAd = async (req, res) => {
    *         required: false
    *         type: file
    *       - in: formData
-   *         name: screens
-   *         description: Multi-select options in JSON format such as ['Hole 1' , 'Hole 2']
-   *         required: false
+   *         name: courses
+   *         description: A map of gcId and corresponding array of screens
+   *         required: true
    *         type: object
-   *         example: ['Hole 1', 'Hole 2']
+   *         example: '{"1": ["Hole 1"], "56": ["Hole 9", "Hole 12"]}'
    *     produces:
    *       - application/json
    *     responses:
@@ -318,13 +364,18 @@ exports.updateAd = async (req, res) => {
    *         description: success
    */
 
+  let transact = null;
   try {
-    const adId = Number(req.params.adId);
-    if (!adId) {
+    const _adId = req.params.adId;
+
+    if (!isValidNumber(_adId)) {
       return apiResponse.fail(res, "adId must be a valid number");
     }
-    const ad = await adsService.getAd({ id: adId });
-    const courseId = ad.gcId;
+
+    const adId = Number.parseInt(_adId);
+
+    await adsService.getAd({ id: adId }, ["id"]);
+
     const form = new formidable.IncomingForm();
 
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -333,16 +384,23 @@ exports.updateAd = async (req, res) => {
         resolve({ fields, files });
       });
     });
+
     const validation = new Validator(fields, {
+      state: "string",
       title: "string",
       tapLink: "string",
+      courses: "required",
     });
-    if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
-    }
 
-    if (fields.tapLink && fields.tapLink != "null") {
-      const iValidTapLink = helper.regexValidation(fields.tapLink, [
+    if (validation.fails()) return apiResponse.fail(res, validation.errors);
+
+    const allowedFields = ["courses", "state", "title", "tapLink"];
+    const filteredObject = helper.validateObject(fields, allowedFields);
+
+    let { tapLink, courses } = filteredObject;
+
+    if (tapLink && tapLink != "null") {
+      const iValidTapLink = helper.regexValidation(tapLink, [
         "email",
         "url",
         "phone",
@@ -351,70 +409,71 @@ exports.updateAd = async (req, res) => {
       if (!iValidTapLink) throw new ServiceError("Invalid contact method", 400);
     }
 
-    const adSmallImage = files?.smallImage;
-    let adBigImage = files?.bigImage;
+    try {
+      courses = Object.entries(JSON.parse(courses));
+      if (!courses || !courses.length) throw new Error();
+    } catch (err) {
+      throw new ServiceError("Invalid courses payload", 400);
+    }
 
-    if (typeof fields.screens === "string") {
-      try {
-        fields.screens = JSON.parse(fields.screens);
-      } catch (error) {
-        throw new ServiceError("Invalid JSON in screens", 400);
+    const { smallImage, bigImage } = files;
+
+    if (smallImage) {
+      filteredObject.smallImage = await upload_file.upload_file(
+        smallImage,
+        `uploads/ads-small-image/`,
+        ["jpg", "jpeg", "png", "webp"],
+      );
+    }
+
+    if (bigImage) {
+      filteredObject.bigImage = await upload_file.upload_file(
+        bigImage,
+        `uploads/ads-big-image/`,
+        ["jpg", "jpeg", "png", "webp"],
+      );
+    }
+
+    transact = await sequelize.transaction();
+
+    await adsService.updateAd({ id: adId }, filteredObject);
+
+    await adsService.deleteAssignment({
+      where: { adId, gcId: { [Op.notIn]: courses.map(([gcId]) => gcId) } },
+    });
+
+    const mapings = [];
+
+    for (const [gcId, screens] of courses) {
+      if (!isValidNumber(gcId)) {
+        throw new ServiceError(`Invalid gcId: '${gcId}' in courses payload`);
       }
-    }
-    if (!fields.screens || !fields.screens.length) {
-      throw new ServiceError("Screens field cannot be null", 400);
-    }
-    await adsScreenService.validateScreens(fields.screens);
-    await adsService.checkUniqueness(fields.screens, courseId, adId);
-    fields.screens = Array.from(new Set(fields.screens));
 
-    if (adSmallImage) {
-      const smallImage = await upload_file.upload_file(
-        adSmallImage,
-        `uploads/ads-small-image/${courseId}`,
-        ["jpg", "jpeg", "png", "webp"],
-      );
-      fields.smallImage = smallImage;
-    }
-    if (adBigImage) {
-      const bigImage = await upload_file.upload_file(
-        adBigImage,
-        `uploads/ads-small-image/${courseId}`,
-        ["jpg", "jpeg", "png", "webp"],
-      );
-      fields.bigImage = bigImage;
-    }
-    const allowedFields = [
-      "title",
-      "tapLink",
-      "smallImage",
-      "bigImage",
-      "screens",
-    ];
-    const filteredObject = helper.validateObject(fields, allowedFields);
-    if (filteredObject.bigImage === "null") {
-      filteredObject.bigImage = null;
-    }
-    if (filteredObject.tapLink === "null") {
-      filteredObject.tapLink = null;
-    }
-    const reqBody = filteredObject;
-    const updatedAd = await adsService.updateAd({ id: adId }, reqBody);
+      if (!Array.isArray(screens) || !screens.length) {
+        throw new ServiceError(
+          "Invalid list of screen names in courses payload",
+          400,
+        );
+      }
 
-    if (updatedAd) {
+      await adsScreenService.validateScreens(screens);
+
+      mapings.push(
+        await adsService.assignAds(Number.parseInt(gcId), adId, screens),
+      );
+
       helper.mqtt_publish_message(
-        `gc/${courseId}/screens`,
+        `gc/${gcId}/screens`,
         { action: "ad" },
         false,
       );
     }
 
-    return apiResponse.success(
-      res,
-      req,
-      updatedAd ? "Updated Successfuly" : "Already Updated",
-    );
+    await transact.commit();
+
+    return apiResponse.success(res, req, "Record is updated successfully");
   } catch (error) {
+    if (transact) transact.rollback();
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };

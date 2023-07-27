@@ -85,10 +85,6 @@ module.exports = (sequelize, DataTypes) => {
       as: "Careers",
       foreignKey: "gc_id",
     });
-    Course.hasMany(models.Ad, {
-      as: "Ads",
-      foreignKey: "gcId",
-    });
     Course.hasMany(models.ContactCareer, {
       as: "ContactCareer",
       foreignKey: "gc_id",
