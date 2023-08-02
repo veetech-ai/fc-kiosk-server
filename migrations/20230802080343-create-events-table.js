@@ -14,11 +14,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      description: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        defaultValue: null,
-      },
       imageUrl: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -30,6 +25,27 @@ module.exports = {
       closingTime: {
         type: Sequelize.TIME,
         allowNull: false,
+      },
+      address: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      corousal: {
+        type: Sequelize.JSON,
+        allowNull: true,
+        description: "Array of URLs of images",
+      },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      details: {
+        // There's open discussion here: whether to use VARCHAR(255), MEDIUMTEXT or LONGTEXT
+        type: Sequelize.LONGTEXT,
+        allowNull: true,
+        defaultValue: null,
+        description: "A rich text log description in HTML format",
       },
       createdAt: {
         type: Sequelize.DATE,
