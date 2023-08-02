@@ -1525,6 +1525,49 @@ exports.validateObject = (objectToBeValidated, allowedFields) => {
   return pick(cloneObject, allowedFields);
 };
 
+/**
+ * Validates an object based on provided validations and returns a filtered object.
+ * @param {object} inputObject - The raw object to be validated.
+ * @param {object} [validations={}] - Validation options for the given object.
+ * @param {string[]} [validations.allowedKeys] - An array of keys to retain in the filtered object.
+ * @param {boolean} [validations.allowedKeysOnly=false] - Set to true to ensure that all the keys in `inputObject` are a subset of `allowedKeys`.
+ * @param {boolean} [validations.exactMatch=false] - Set to true to enforce an exact match of keys in `inputObject` with `allowedKeys`. Setting this to `true` will overwrite `allowedKeysOnly` option.
+ * @returns {object} The filtered object containing only the allowed keys.
+ */
+exports.validateObjectV2 = (inputObject, validations = {}) => {
+  const {
+    allowedKeys = [],
+    allowedKeysOnly = false,
+    exactMatch = false,
+  } = validations;
+
+  const objectClone = { ...inputObject };
+  const inputKeys = Object.keys(objectClone);
+
+  const inValidFields = inputKeys.filter((f) => !allowedKeys.includes(f));
+
+  if (
+    exactMatch &&
+    inValidFields.length &&
+    inputKeys.length != allowedKeys.length
+  ) {
+    throw new ServiceError(
+      `Payload should exactly contain: ${allowedKeys.join(", ")}`,
+      400,
+    );
+  }
+
+  if (allowedKeysOnly && inValidFields.length) {
+    throw new ServiceError("Invalid keys in the payload", 400);
+  }
+
+  if (inValidFields.length == inputKeys.length) {
+    throw new ServiceError("Payload is invalid", 400);
+  }
+
+  return pick(objectClone, allowedKeys);
+};
+
 exports.getRequestOriginOperatingSystem = (req) => {
   let os;
   const userAgent = req.headers["user-agent"] || "";
