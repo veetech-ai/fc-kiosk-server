@@ -1,5 +1,7 @@
 // External Modules
 const jwt = require("jsonwebtoken");
+const sanitizeHtml = require("sanitize-html");
+
 const { SignatureV4 } = require("@aws-sdk/signature-v4");
 const { Sha256 } = require("@aws-crypto/sha256-js");
 const bcrypt = require("bcryptjs");
@@ -52,6 +54,7 @@ const alertsCategories = require("./../df-commons/data/alerts-categories.json");
 const definitionsValidations = require("./../df-commons/definitions/validations.json");
 const { globalMQTT } = require("./mqtt-init");
 const ServiceError = require("../utils/serviceError");
+const formidable = require("formidable");
 
 // Setting Up Ajv
 const ajv = new Ajv({ allErrors: true, useDefaults: true }); // options can be passed, e.g. {allErrors: true}
@@ -1566,6 +1569,16 @@ exports.validateObjectV2 = (inputObject, validations = {}) => {
   }
 
   return pick(objectClone, allowedKeys);
+};
+
+exports.sanitizeHtml = (dirtyHTML, options = {}) => {
+  return sanitizeHtml(dirtyHTML, {
+    allowedTags: sanitizeHtml.defaults.allowedTags,
+    disallowedTagsMode: "discard",
+    allowedAttributes: sanitizeHtml.defaults.allowedAttributes,
+    allowedIframeHostnames: [],
+    ...options,
+  });
 };
 
 exports.getRequestOriginOperatingSystem = (req) => {

@@ -116,6 +116,7 @@ const AppLinkRouter = require("./routes/mobile/app-link");
 
 const AdsScreensRouter = require("./routes/mobile/ads-screens");
 const AdsRouter = require("./routes/mobile/ads");
+const EventsRouter = require("./routes/mobile/events");
 const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
 
@@ -201,6 +202,7 @@ AppLinkRouter.routesConfig(app, router);
 ScreenConfigRouter.routesConfig(app, router);
 AdsScreensRouter.routesConfig(app, router);
 AdsRouter.routesConfig(app, router);
+EventsRouter.routesConfig(app, router);
 
 if (config.env === "test") {
   // for test case server

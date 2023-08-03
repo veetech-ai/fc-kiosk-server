@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     details: {
       // There's open discussion here: whether to use VARCHAR(255), MEDIUMTEXT or LONGTEXT
-      type: DataTypes.LONGTEXT,
+      type: DataTypes.TEXT,
       allowNull: true,
       defaultValue: null,
       description: "A rich text log description in HTML format",

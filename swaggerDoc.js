@@ -72,6 +72,7 @@ const options = {
     "./controllers/mobile/faq.js",
     "./controllers/mobile/app-link.js",
     "./controllers/mobile/aboutus.js",
+    "./controllers/mobile/event.js",
   ],
 };
 
