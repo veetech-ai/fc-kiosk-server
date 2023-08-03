@@ -10,6 +10,16 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
+      gcId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Mobile_Courses",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       title: {
         type: Sequelize.STRING,
         allowNull: false,

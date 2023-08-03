@@ -1,6 +1,6 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("Event", {
+  const EventModel = sequelize.define("Event", {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -47,4 +47,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
   });
+
+  EventModel.associate = function (models) {
+    EventModel.belongsTo(models.Mobile_Course, {
+      as: "Mobile_Courses",
+      foreignKey: "gcId",
+    });
+  };
+  return EventModel;
 };
