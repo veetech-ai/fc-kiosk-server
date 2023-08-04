@@ -109,6 +109,7 @@ const KioskCoursesRouter = require("./routes/kiosk/kiosk_courses");
 const KioskCoursesContentRouter = require("./routes/kiosk/kiosk_content");
 const CoursesRouter = require("./routes/mobile/courses");
 const ScreenConfigRouter = require("./routes/screenConfig/screens");
+const EventsRouter = require("./routes/mobile/events");
 const MQTTController = require("./controllers/mqtt/mqtt");
 const Roles = require("./routes/roles");
 const DeviceOnboardingCode = require("./routes/kiosk/device_onboarding_code");
@@ -205,6 +206,8 @@ CareersRouter.routesConfig(app, router);
 CourseMemberships.routesConfig(app, router);
 ContactCareerRouter.routesConfig(app, router);
 AdsRouter.routesConfig(app, router);
+
+EventsRouter.routesConfig(app, router);
 
 global.messageQueue = [];
 
