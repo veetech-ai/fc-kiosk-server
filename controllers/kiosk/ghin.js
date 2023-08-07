@@ -77,7 +77,7 @@ exports.update = async (req, res) => {
     const { gcId } = req.params;
 
     const course = await Courses.findOne({
-      attributs: ["id"],
+      attributs: ["id", "name"],
       where: { id: gcId },
     });
 
@@ -93,7 +93,12 @@ exports.update = async (req, res) => {
 
     await Courses.update({ ghin_url: url }, { where: { id: gcId } });
 
-    return apiResponse.success(res, req, `URL: ${url} is set for ${gcId}`, 200);
+    return apiResponse.success(
+      res,
+      req,
+      `URL: ${url} is set for course: ${course.name} having id: ${gcId}`,
+      200,
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
