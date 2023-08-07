@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       zip: DataTypes.STRING,
       lat: DataTypes.DOUBLE,
       long: DataTypes.DOUBLE,
+      ghin_url: DataTypes.STRING,
 
       createdAt: {
         field: "created_at",

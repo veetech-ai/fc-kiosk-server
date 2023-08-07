@@ -1,15 +1,15 @@
 "use strict";
 
-const ghinUrl = "https://www.ghin.com/login";
+const ghin_url = "https://www.ghin.com/login";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface) => {
-    await queryInterface.bulkUpdate("Mobile_Course", { ghinUrl }, {});
+    await queryInterface.bulkUpdate("Mobile_Courses", { ghin_url }, {});
   },
 
   down: async (queryInterface) => {
     // Remove the added data
-    await queryInterface.bulkDelete("Mobile_Course", { ghinUrl });
+    await queryInterface.bulkDelete("Mobile_Courses", { ghin_url });
   },
 };
