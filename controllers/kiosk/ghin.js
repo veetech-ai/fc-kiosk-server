@@ -91,10 +91,7 @@ exports.update = async (req, res) => {
       throw new ServiceError("Given url is invalid", 400);
     }
 
-    const result = await Courses.update(
-      { ghin_url: url },
-      { where: { id: gcId } },
-    );
+    await Courses.update({ ghin_url: url }, { where: { id: gcId } });
 
     return apiResponse.success(res, req, `URL: ${url} is set for ${gcId}`, 200);
   } catch (error) {
