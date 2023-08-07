@@ -1,5 +1,9 @@
 const helper = require("../../../../helper");
 
+const models = require("../../../../models");
+
+const Courses = models.Mobile_Course;
+
 describe("GHIN API", () => {
   describe("PATCH /ghin/{gcId}", () => {
     let adminToken = null;
@@ -26,6 +30,15 @@ describe("GHIN API", () => {
           token: adminToken,
         });
 
+        // Make sure its updated in db
+        const udpatedCourse = await Courses.findOne({
+          where: { id: 1 },
+          attributes: ["id", "name", "ghin_url"],
+        });
+
+        expect(udpatedCourse.ghin_url).toEqual(payload.url);
+
+        // Validate API response
         expect(res.body).toEqual({
           sucess: true,
           data: `URL: ${payload.url} is set for course: ${
