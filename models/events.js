@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     corousal: {
       type: DataTypes.JSON,
       allowNull: true,
-      description: "Array of URLs of images",
+      description: "Array of URLs/filenames of images",
     },
     description: {
       type: DataTypes.STRING,
@@ -37,6 +37,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: null,
       description: "A rich text log description in HTML format",
+    },
+    gcId: {
+      field: "gcId",
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Mobile_Courses",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     },
     createdAt: {
       type: DataTypes.DATE,

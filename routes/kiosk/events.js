@@ -1,5 +1,5 @@
 const config = require("../../config/config");
-const eventsController = require("../../controllers/mobile/event");
+const eventsController = require("../../controllers/kiosk/event");
 const validation_middleware = require("../../middlewares/auth.validation");
 
 exports.routesConfig = function (app, router) {
