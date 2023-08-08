@@ -136,6 +136,6 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
       params,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toEqual("Course not found");
+    expect(response.body.data).toEqual("Not found");
   });
 });
