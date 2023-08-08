@@ -121,6 +121,8 @@ const CareersRouter = require("./routes/kiosk/careers");
 const CourseMemberships = require("./routes/kiosk/membership");
 const ContactCareerRouter = require("./routes/kiosk/contact-careers");
 const AdsRouter = require("./routes/kiosk/ads");
+const EventRouter = require("./routes/kiosk/events");
+
 swaggerDoc(router);
 
 router.use(function (req, res, next) {
@@ -205,6 +207,7 @@ CareersRouter.routesConfig(app, router);
 CourseMemberships.routesConfig(app, router);
 ContactCareerRouter.routesConfig(app, router);
 AdsRouter.routesConfig(app, router);
+EventRouter.routesConfig(app, router);
 
 global.messageQueue = [];
 
