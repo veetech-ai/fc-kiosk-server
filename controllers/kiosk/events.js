@@ -6,6 +6,7 @@ const formidable = require("formidable");
 const apiResponse = require("../../common/api.response");
 
 const eventService = require("../../services/kiosk/events");
+const courseService = require("../../services/kiosk/course");
 const ServiceError = require("../../utils/serviceError");
 const { upload_file, getFileURL } = require("../../common/upload");
 const {
@@ -133,6 +134,8 @@ exports.createEvent = async (req, res) => {
     if (!files.thumbnail) {
       throw new ServiceError("thumbnail image is required", 400);
     }
+
+    await courseService.getCourseById(fields.gcId);
 
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
 

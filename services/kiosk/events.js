@@ -1,4 +1,4 @@
-const _ = require("lodash");
+const { validateObjectV2, sanitizeHtml } = require("../../common/helper");
 const ServiceError = require("../../utils/serviceError");
 const models = require("../../models/index");
 
@@ -8,50 +8,6 @@ const _RESTRICTED_KEYS = ["id", "createdAt", "updatedAt"];
 const ALLOWED_FIELDS = Object.keys(EventModel.rawAttributes).filter(
   (key) => !_RESTRICTED_KEYS.includes(key),
 );
-
-const validateObjectV2 = (inputObject, validations = {}) => {
-  const {
-    allowedKeys = [],
-    allowedKeysOnly = false,
-    exactMatch = false,
-  } = validations;
-
-  const objectClone = { ...inputObject };
-  const inputKeys = Object.keys(objectClone);
-
-  const inValidFields = inputKeys.filter((f) => !allowedKeys.includes(f));
-
-  if (
-    exactMatch &&
-    inValidFields.length &&
-    inputKeys.length != allowedKeys.length
-  ) {
-    throw new ServiceError(
-      `Payload should exactly contain: ${allowedKeys.join(", ")}`,
-      400,
-    );
-  }
-
-  if (allowedKeysOnly && inValidFields.length) {
-    throw new ServiceError("Invalid keys in the payload", 400);
-  }
-
-  if (inValidFields.length == inputKeys.length) {
-    throw new ServiceError("Payload is invalid", 400);
-  }
-
-  return _.pick(objectClone, allowedKeys);
-};
-
-const sanitizeHtml = (dirtyHTML, options = {}) => {
-  return sanitizeHtml(dirtyHTML, {
-    allowedTags: sanitizeHtml.defaults.allowedTags,
-    disallowedTagsMode: "discard",
-    allowedAttributes: sanitizeHtml.defaults.allowedAttributes,
-    allowedIframeHostnames: [],
-    ...options,
-  });
-};
 
 exports.getEvents = async ({ where = {}, paginationOptions = {} }) => {
   const events = await EventModel.findAll({
