@@ -72,16 +72,26 @@ async function createCourseInfo(reqBody, courseId) {
   );
   return updatedCourse[0];
 }
-async function getLinkedCourse(courseId, orgId) {
-  const course = await Course.findOne({
-    where: {
-      id: courseId,
-      orgId,
-    },
-    attributes: {
-      exclude: ["org_id"],
-    },
-  });
+async function getLinkedCourse(where, loggedInUserOrgId) {
+  let clonedWhere = { ...where };
+  let course;
+  if (loggedInUserOrgId) {
+    clonedWhere.orgId = loggedInUserOrgId;
+
+    course = await Course.findOne({
+      where: clonedWhere,
+    });
+  } else {
+    course = await Course.findOne({
+      where: {
+        id: where,
+      },
+      attributes: {
+        exclude: ["org_id"],
+      },
+    });
+  }
+
   if (!course) {
     throw new ServiceError("Not found", 404);
   }
