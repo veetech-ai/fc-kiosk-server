@@ -34,7 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       members: DataTypes.STRING,
       season: DataTypes.STRING,
       email: DataTypes.STRING,
-      ghin_url: DataTypes.STRING,
+      ghin_url: {
+        type: DataTypes.STRING,
+        default: "https://www.ghin.com/login",
+      },
       orgId: {
         field: "org_id",
         type: DataTypes.INTEGER,
