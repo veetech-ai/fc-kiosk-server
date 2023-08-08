@@ -1,5 +1,3 @@
-const URL = require("url").URL;
-
 const { validateObjectV2, sanitizeHtml } = require("../../common/helper");
 const ServiceError = require("../../utils/serviceError");
 const models = require("../../models/index");
@@ -11,30 +9,13 @@ const ALLOWED_FIELDS = Object.keys(EventModel.rawAttributes).filter(
   (key) => !_RESTRICTED_KEYS.includes(key),
 );
 
-const validateEventBody = (body) => {
-  if (!body) throw new ServiceError("Inalid payload", 400);
-
-  validateObjectV2(body, {
-    allowedKeys: ALLOWED_FIELDS,
-    allowedKeysOnly: true,
-  });
-
-  const { corousal } = body;
-  // strings also have `length` property, so adding array check as well
-  if (!corousal || !corousal.length || !Array.isArray(corousal)) {
-    throw new ServiceError("Invalid corousal payload", 400);
-  }
-
-  body.details = sanitizeHtml(body.details);
-
-  return body;
-};
-
 exports.getEvents = (where) => {
   return EventModel.findAll({
     where,
     attributes: [
+      "id",
       "title",
+      "gcId",
       "imageUrl",
       "openingTime",
       "closingTime",
@@ -46,7 +27,7 @@ exports.getEvents = (where) => {
 exports.getSingleEvent = async (where) => {
   const event = await EventModel.findOne({ where });
 
-  if (!event) throw new ServiceError("Not Found", 404);
+  if (!event) throw new ServiceError(`Event Not Found`, 404);
 
   return event;
 };
@@ -57,11 +38,42 @@ exports.delelteEvent = async (id) => {
 };
 
 exports.createEvent = async (body) => {
-  return EventModel.create(validateEventBody(body));
+  if (!body) throw new ServiceError("Invalid payload", 400);
+
+  validateObjectV2(body, {
+    allowedKeys: ALLOWED_FIELDS,
+    allowedKeysOnly: true,
+  });
+
+  if (body.corousal) {
+    if (!Array.isArray(body.corousal)) {
+      throw new ServiceError("Invalid corousal payload", 400);
+    }
+
+    if (body.corousal.some((item) => typeof item !== "string")) {
+      throw new ServiceError("'corousal' array can contain strings only");
+    }
+  }
+
+  if (body.details) {
+    body.details = sanitizeHtml(body.details);
+  }
+
+  return EventModel.create(body);
 };
 
 exports.updateEvent = async (body, id) => {
-  await this.getSingleEvent({ id });
+  const event = await this.getSingleEvent({ id });
 
-  return EventModel.update(validateEventBody(body), { where: { id } });
+  if (!body) throw new ServiceError("Invalid payload", 400);
+
+  body = validateObjectV2(body, { allowedKeys: ALLOWED_FIELDS });
+
+  if (body.details) {
+    body.details = sanitizeHtml(body.details);
+  }
+
+  await EventModel.update(body, { where: { id } });
+
+  return { ...event.dataValues, ...body };
 };
