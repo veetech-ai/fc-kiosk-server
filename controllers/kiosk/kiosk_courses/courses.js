@@ -87,6 +87,9 @@ exports.create_courses = async (req, res) => {
       zip,
       phone,
     };
+
+    reqBody.ghin_url = "https://www.ghin.com/login";
+
     const course = await courseService.createCourse(reqBody, orgId);
     return apiResponse.success(res, req, course);
   } catch (error) {
