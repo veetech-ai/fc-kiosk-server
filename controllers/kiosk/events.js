@@ -131,7 +131,7 @@ exports.createEvent = async (req, res) => {
     }
 
     if (!files.thumbnail) {
-      return apiResponse.fail(res, "thumbnail image is required", 400);
+      throw new ServiceError("thumbnail image is required", 400);
     }
 
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
