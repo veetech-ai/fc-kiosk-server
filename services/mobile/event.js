@@ -9,19 +9,15 @@ const ALLOWED_FIELDS = Object.keys(EventModel.rawAttributes).filter(
   (key) => !_RESTRICTED_KEYS.includes(key),
 );
 
-exports.getEvents = (where) => {
-  return EventModel.findAll({
+exports.getEvents = async ({ where = {}, paginationOptions = {} }) => {
+  const events = await EventModel.findAll({
+    ...paginationOptions,
     where,
-    attributes: [
-      "id",
-      "title",
-      "gcId",
-      "imageUrl",
-      "openingTime",
-      "closingTime",
-      "description",
-    ],
   });
+
+  const count = await EventModel.count();
+
+  return { events, count };
 };
 
 exports.getSingleEvent = async (where) => {
@@ -63,7 +59,7 @@ exports.createEvent = async (body) => {
 };
 
 exports.updateEvent = async (body, id) => {
-  const event = await this.getSingleEvent({ id });
+  const event = await this.getSingleEvent({ id }); // to throw error, if not found
 
   if (!body) throw new ServiceError("Invalid payload", 400);
 

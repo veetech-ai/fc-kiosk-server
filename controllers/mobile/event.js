@@ -7,7 +7,10 @@ const apiResponse = require("../../common/api.response");
 const eventService = require("../../services/mobile/event");
 const ServiceError = require("../../utils/serviceError");
 const { upload_file, getFileURL } = require("../../common/upload");
-const { getURLOfImages } = require("../../common/helper");
+const {
+  getURLOfImages,
+  get_pagination_params,
+} = require("../../common/helper");
 const formidable = require("formidable");
 
 /**
@@ -328,14 +331,36 @@ exports.getEvents = async (req, res) => {
    *         description: Something went wrong on server side
    */
   try {
-    let events = await eventService.getEvents();
+    const validation = new Validator(req.query, {
+      page: "integer",
+      size: "integer",
+    });
 
-    events = events.map((event) => {
+    if (validation.fails()) {
+      throw new ServiceError(
+        validation.errors.first("page") || validation.errors.first("size"),
+        400,
+      );
+    }
+
+    const paginationOptions = get_pagination_params({
+      limit: req.query.size || 10,
+      page: req.query.page || 1,
+    });
+
+    let data = await eventService.getEvents({ paginationOptions });
+
+    data.events = data.events.map((event) => {
       event.imageUrl = getFileURL(event.imageUrl);
       return event;
     });
 
-    apiResponse.success(res, req, events, 200);
+    apiResponse.success(
+      res,
+      req,
+      { ...data, pagination: paginationOptions },
+      200,
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
