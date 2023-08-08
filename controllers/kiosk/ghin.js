@@ -3,10 +3,10 @@ const URL = require("url").URL;
 const Validator = require("validatorjs");
 
 const apiResponse = require("../../common/api.response");
-const models = require("../../models");
 const ServiceError = require("../../utils/serviceError");
+const models = require("../../models");
 
-const Courses = models.Mobile_Course;
+const { Course } = models;
 
 /**
  * @swagger
@@ -76,7 +76,7 @@ exports.update = async (req, res) => {
     const { url } = req.body;
     const { gcId } = req.params;
 
-    const course = await Courses.findOne({
+    const course = await Course.findOne({
       attributs: ["id", "name"],
       where: { id: gcId },
     });
@@ -91,7 +91,7 @@ exports.update = async (req, res) => {
       throw new ServiceError("Given url is invalid", 400);
     }
 
-    await Courses.update({ ghin_url: url }, { where: { id: gcId } });
+    await Course.update({ ghin_url: url }, { where: { id: gcId } });
 
     return apiResponse.success(
       res,
