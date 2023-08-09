@@ -1,4 +1,4 @@
-const { validateObjectV2, sanitizeHtml } = require("../../common/helper");
+const { validateObjectV2, sanitizeHtmlInput } = require("../../common/helper");
 const ServiceError = require("../../utils/serviceError");
 const models = require("../../models/index");
 
@@ -52,7 +52,7 @@ exports.createEvent = async (body) => {
   }
 
   if (body.details) {
-    body.details = sanitizeHtml(body.details);
+    body.details = sanitizeHtmlInput(body.details);
   }
 
   return EventModel.create(body);
@@ -66,7 +66,7 @@ exports.updateEvent = async (body, id) => {
   body = validateObjectV2(body, { allowedKeys: ALLOWED_FIELDS });
 
   if (body.details) {
-    body.details = sanitizeHtml(body.details);
+    body.details = sanitizeHtmlInput(body.details);
   }
 
   await EventModel.update(body, { where: { id } });

@@ -1,5 +1,11 @@
+const { uuid } = require("uuidv4");
+
 const helper = require("../../../../helper");
-const upload_file = require("../../../../../common/upload");
+const awsS3 = require("../../../../../common/external_services/aws-s3");
+
+const models = require("../../../../../models");
+
+const { Course } = models;
 
 let mockFields,
   mockFiles,
@@ -19,7 +25,7 @@ jest.mock("formidable", () => {
   };
 });
 
-// upload_file.upload_file = jest.fn(() => Promise.resolve("mock-logo-url"));
+awsS3.uploadFile = jest.fn(() => Promise.resolve(uuid()));
 
 const filesData = {
   thumbnail: {
@@ -60,6 +66,11 @@ const payload = {
   details: "<p>This is <b>cool</b> event </p>",
 };
 
+/**
+ * Make post request for an event
+ * @param {{fields: object, files: object[]}} options request body
+ * @returns {Promise<Response>}
+ */
 const makePostEventRequest = (options = {}) => {
   const { fields = payload, files = filesData } = options;
   mockFields = fields;
@@ -69,6 +80,7 @@ const makePostEventRequest = (options = {}) => {
     endpoint: "events",
     token: adminToken,
     params: payload,
+    fileupload: true,
   });
 };
 
@@ -87,169 +99,215 @@ describe("POST /events", () => {
     payload.gcId = testCourse.id;
   });
 
+  afterAll(async () => {
+    await Course.destroy({ where: { id: testCourse.id } });
+  });
+
   describe("success", () => {
-    it.only("should create new event", async () => {
+    it("should create new event", async () => {
       const res = await makePostEventRequest();
 
-      expect(res.body).toEqual({
-        success: true,
-        data: {
-          id: expect.any(Number),
-          imageUrl: expect.any(URL),
-          openingTime: "10:00:00",
-          closingTime: "12:00:00",
-          address: expect.any(String),
-          corousal: expect.arrayContaining([expect.any(URL)]),
-          description: expect.any(String),
-          details: expect.any(String),
-        },
-      });
+      expect(res.body.success).toEqual(true);
+      expect(res.body.data.id).toEqual(expect.any(Number));
+      expect(res.body.data.title).toEqual(payload.title);
+      expect(res.body.data.openingTime).toEqual(payload.openingTime);
+      expect(res.body.data.closingTime).toEqual(payload.closingTime);
+      expect(res.body.data.address).toEqual(payload.address);
+      expect(res.body.data.description).toEqual(payload.description);
+      expect(res.body.data.details).toEqual(payload.details);
+      expect(res.body.data.gcId).toEqual(testCourse.id);
+
+      expect(() => new URL(res.body.data.imageUrl)).not.toThrowError();
+      if (res.body.data.corousal && res.body.data.corousal.length) {
+        res.body.data.corousal.forEach((url) => {
+          expect(() => new URL(url)).not.toThrowError();
+        });
+      }
+      expect(Date.parse(res.body.data.createdAt)).not.toBeNaN();
+      expect(Date.parse(res.body.data.updatedAt)).not.toBeNaN();
+
+      expect(res.statusCode).toEqual(201);
     });
   });
 
   describe("failure", () => {
     it("should throw error if title is not given", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       delete _payload["title"];
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The title field is required",
+        data: "The title field is required.",
       });
       expect(res.statusCode).toEqual(400);
     });
     it("should throw error if title is not valid string", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       _payload["title"] = 45678;
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The title field is not a valid string",
+        data: "The title must be a string.",
       });
       expect(res.statusCode).toEqual(400);
     });
 
     it("should throw error if gcId is not given", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       delete _payload["gcId"];
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The gcId field is required",
+        data: "The gcId field is required.",
       });
       expect(res.statusCode).toEqual(400);
     });
     it("should throw error if gcId is not valid numb er", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       _payload["gcId"] = "invalid id";
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The gcId field is not a valid integer",
+        data: "The gcId must be an integer.",
       });
       expect(res.statusCode).toEqual(400);
     });
 
     it("should throw error if openingTime is not given", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       delete _payload["openingTime"];
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The openingTime field is required",
+        data: "The openingTime field is required.",
       });
       expect(res.statusCode).toEqual(400);
     });
     it("should throw error if openingTime is not valid hour 24 format time", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       _payload["openingTime"] = "invalid time";
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The openingTime field is not a hour 24 format time",
+        data: "The openingTime format is invalid.",
       });
       expect(res.statusCode).toEqual(400);
     });
 
     it("should throw error if closingTime is not given", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       delete _payload["closingTime"];
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The closingTime field is required",
+        data: "The closingTime field is required.",
       });
       expect(res.statusCode).toEqual(400);
     });
     it("should throw error if closingTime is not valid hour 24 format time", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       _payload["closingTime"] = "invalid time";
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The closingTime field is not a hour 24 format time",
+        data: "The closingTime format is invalid.",
       });
       expect(res.statusCode).toEqual(400);
     });
 
     it("should throw error if address is not given", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       delete _payload["address"];
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The address field is required",
+        data: "The address field is required.",
       });
       expect(res.statusCode).toEqual(400);
     });
     it("should throw error if address is not valid string", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       _payload["address"] = 45678;
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The address field is not a valid string",
+        data: "The address must be a string.",
       });
       expect(res.statusCode).toEqual(400);
     });
 
     it("should throw error if details is not valid string", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       _payload["details"] = 45678;
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The details field is not a valid string",
+        data: "The details must be a string.",
       });
       expect(res.statusCode).toEqual(400);
     });
 
     it("should throw error if description is not valid string", async () => {
-      const _payload = payload;
+      const _payload = { ...payload };
       _payload["description"] = 45678;
       const res = await makePostEventRequest({ fields: _payload });
 
       expect(res.body).toEqual({
         success: false,
-        data: "The description field is not a valid string",
+        data: "The description must be a string.",
       });
       expect(res.statusCode).toEqual(400);
     });
 
-    it("should throw error if thumbnail is not provided", async () => {});
-    it("should throw error if thumbnail is not a valid image", async () => {});
+    it("should throw error if thumbnail is not provided", async () => {
+      delete filesData["thumbnail"];
+      const res = await makePostEventRequest({ fields: payload });
 
-    it("should throw error if course with gcId doesn't exist", async () => {});
+      expect(res.body).toEqual({
+        success: false,
+        data: "The thumbnail image is required.",
+      });
+      expect(res.statusCode).toEqual(400);
+    });
+
+    it("should throw error if thumbnail is not of type one of: ('jpg', 'jpeg', 'png', 'webp')", async () => {
+      filesData.thumbnail = {
+        name: "mock-logo.svg",
+        type: "image/svg",
+        size: 5000, // bytes
+        path: "/mock/path/to/logo.svg",
+      };
+      const res = await makePostEventRequest({ files: filesData });
+
+      expect(res.body).toEqual({
+        success: false,
+        data: "Only jpg, jpeg, png, webp files are allowed",
+      });
+      expect(res.statusCode).toEqual(500);
+    });
+
+    it("should throw error if course with gcId doesn't exist", async () => {
+      payload.gcId = 79853321;
+
+      const res = await makePostEventRequest({ fields: payload });
+
+      expect(res.body).toEqual({
+        success: false,
+        data: "Course not found",
+      });
+
+      expect(res.statusCode).toEqual(404);
+    });
   });
 });

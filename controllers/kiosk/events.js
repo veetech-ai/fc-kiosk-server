@@ -8,16 +8,13 @@ const apiResponse = require("../../common/api.response");
 const eventService = require("../../services/kiosk/events");
 const courseService = require("../../services/kiosk/course");
 const ServiceError = require("../../utils/serviceError");
-const { upload_file, getFileURL } = require("../../common/upload");
-const {
-  getURLOfImages,
-  get_pagination_params,
-} = require("../../common/helper");
+const fileUploader = require("../../common/upload");
+const helper = require("../../common/helper");
 
 Validator.prototype.firstError = function () {
-  const rules = Object.keys(this.rules);
-  for (let i = 0; i < rules.length; i++) {
-    const err = this.errors.first(rules[i]);
+  const fields = Object.keys(this.rules);
+  for (let i = 0; i < fields.length; i++) {
+    const err = this.errors.first(fields[i]);
     if (err) return err;
   }
 };
@@ -120,8 +117,8 @@ exports.createEvent = async (req, res) => {
     const validation = new Validator(fields, {
       title: "required|string",
       gcId: "required|integer",
-      openingTime: ["required", "regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]/"],
-      closingTime: ["required", "regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]/"],
+      openingTime: ["required", `regex:${helper.hour24timeRegex}`],
+      closingTime: ["required", `regex:${helper.hour24timeRegex}`],
       address: "required|string",
       details: "string",
       description: "string",
@@ -132,14 +129,15 @@ exports.createEvent = async (req, res) => {
     }
 
     if (!files.thumbnail) {
-      throw new ServiceError("thumbnail image is required", 400);
+      throw new ServiceError("The thumbnail image is required.", 400);
     }
 
+    // to throw error if course is not found
     await courseService.getCourseById(fields.gcId);
 
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
 
-    fields.imageUrl = await upload_file(
+    fields.imageUrl = await fileUploader.upload_file(
       files.thumbnail,
       `uploads/events/`,
       imageFormats,
@@ -148,7 +146,9 @@ exports.createEvent = async (req, res) => {
     if (files.corousal && files.corousal.length) {
       const promises = [];
       for (const image of files.corousal) {
-        promises.push(upload_file(image, `uploads/events/`, imageFormats));
+        promises.push(
+          fileUploader.upload_file(image, `uploads/events/`, imageFormats),
+        );
       }
 
       fields.corousal = await Promise.all(promises);
@@ -158,8 +158,12 @@ exports.createEvent = async (req, res) => {
 
     const event = await eventService.createEvent(fields);
 
-    event.imageUrl = getFileURL(event.imageUrl);
-    event.corousal = getURLOfImages(event.corousal);
+    if (event.imageUrl) {
+      event.imageUrl = fileUploader.getFileURL(event.imageUrl);
+    }
+    if (event.corousal && event.corousal.length) {
+      event.corousal = helper.getURLOfImages(event.corousal);
+    }
 
     apiResponse.success(res, req, event, 201);
   } catch (error) {
@@ -253,7 +257,7 @@ exports.updateEvent = async (req, res) => {
   try {
     const form = new formidable.IncomingForm();
     form.multiples = true;
-    form.maxFileSize = 50 * 1024 * 1024; // 5 Megabytes
+    form.maxFileSize = 5 * 1024 * 1024; // 5 Megabytes
 
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
@@ -265,8 +269,8 @@ exports.updateEvent = async (req, res) => {
     const validation = new Validator(fields, {
       title: "string",
       gcId: "integer",
-      openingTime: ["regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]/"],
-      closingTime: ["regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]/"],
+      openingTime: [`regex:${helper.hour24timeRegex}`],
+      closingTime: [`regex:${helper.hour24timeRegex}`],
       address: "string",
       details: "string",
       description: "string",
@@ -276,10 +280,13 @@ exports.updateEvent = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
+    // to throw error if course is not found
+    await courseService.getCourseById(fields.gcId);
+
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
 
     if (fields.thumbnail) {
-      fields.imageUrl = await upload_file.upload_file(
+      fields.imageUrl = await fileUploader.upload_file(
         files.thumbnail,
         `uploads/events/`,
         imageFormats,
@@ -291,7 +298,9 @@ exports.updateEvent = async (req, res) => {
     if (files.corousal && files.corousal.length) {
       const promises = [];
       for (const image of files.corousal) {
-        promises.push(upload_file(image, `uploads/events/`, imageFormats));
+        promises.push(
+          fileUploader.upload_file(image, `uploads/events/`, imageFormats),
+        );
       }
 
       fields.corousal = await Promise.all(promises);
@@ -299,8 +308,8 @@ exports.updateEvent = async (req, res) => {
 
     const event = await eventService.updateEvent(fields, req.params.id);
 
-    event.imageUrl = getFileURL(event.imageUrl);
-    event.corousal = getURLOfImages(event.corousal);
+    event.imageUrl = fileUploader.getFileURL(event.imageUrl);
+    event.corousal = helper.getURLOfImages(event.corousal);
 
     apiResponse.success(res, req, event, 200);
   } catch (error) {
@@ -353,7 +362,7 @@ exports.getEvents = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
-    const paginationOptions = get_pagination_params({
+    const paginationOptions = helper.get_pagination_params({
       limit: req.query.size || 10,
       page: req.query.page || 1,
     });
@@ -361,7 +370,7 @@ exports.getEvents = async (req, res) => {
     let data = await eventService.getEvents({ paginationOptions });
 
     data.events = data.events.map((event) => {
-      event.imageUrl = getFileURL(event.imageUrl);
+      event.imageUrl = fileUploader.getFileURL(event.imageUrl);
       return event;
     });
 
@@ -420,7 +429,7 @@ exports.getEventsOfCourse = async (req, res) => {
     if (!events.length) throw new ServiceError("Not Found", 404);
 
     events = events.map((event) => {
-      event.imageUrl = getFileURL(event.imageUrl);
+      event.imageUrl = fileUploader.getFileURL(event.imageUrl);
       return event;
     });
 
@@ -469,9 +478,9 @@ exports.getSingleEvent = async (req, res) => {
 
     const event = await eventService.getSingleEvent({ id: req.params.id });
 
-    event.imageUrl = getFileURL(event.imageUrl);
+    event.imageUrl = fileUploader.getFileURL(event.imageUrl);
 
-    if (event.corousal) event.corousal = getURLOfImages(event.corousal);
+    if (event.corousal) event.corousal = helper.getURLOfImages(event.corousal);
 
     apiResponse.success(res, req, event, 200);
   } catch (error) {

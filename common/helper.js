@@ -74,6 +74,7 @@ exports.filterRegex = new RegExp(filterRegexString);
 exports.productIdRegex = new RegExp(/((\w{1,})[\s-]?)+(\|[\w-?\s?]+)*$/);
 exports.dateTimeRangeRegex = new RegExp(dateTimeRange);
 exports.dateRegex = new RegExp(dateRegexString);
+exports.hour24timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]/;
 
 // eslint-disable-next-line no-useless-escape
 const phone = "^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$";
