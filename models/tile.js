@@ -18,5 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
 
+  Tile.associate = function (models) {};
+
   return Tile;
 };
