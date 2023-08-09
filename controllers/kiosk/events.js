@@ -105,7 +105,7 @@ exports.createEvent = async (req, res) => {
   try {
     const form = new formidable.IncomingForm();
     form.multiples = true;
-    form.maxFileSize = 50 * 1024 * 1024; // 5 Megabytes
+    form.maxFileSize = 5 * 1024 * 1024; // 5 Megabytes
 
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
@@ -226,8 +226,15 @@ exports.updateEvent = async (req, res) => {
    *         defaul: "132 street XYZ"
    *         type: string
    *
+   *       - name: corousalUrls
+   *         description: Corousal image urls for event. Use these to update existing images in corousal
+   *         in: formData
+   *         type: array
+   *         items:
+   *           type: string
+   *
    *       - name: corousal
-   *         description: corousal image for event
+   *         description: New images for corousal of an event. Use this to upload new images
    *         in: formData
    *         type: array
    *         items:
@@ -271,6 +278,7 @@ exports.updateEvent = async (req, res) => {
       gcId: "integer",
       openingTime: [`regex:${helper.hour24timeRegex}`],
       closingTime: [`regex:${helper.hour24timeRegex}`],
+      corousalUrls: "string",
       address: "string",
       details: "string",
       description: "string",
@@ -281,11 +289,11 @@ exports.updateEvent = async (req, res) => {
     }
 
     // to throw error if course is not found
-    await courseService.getCourseById(fields.gcId);
+    if (fields.gcId) await courseService.getCourseById(fields.gcId);
 
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
 
-    if (fields.thumbnail) {
+    if (files.thumbnail) {
       fields.imageUrl = await fileUploader.upload_file(
         files.thumbnail,
         `uploads/events/`,
@@ -293,6 +301,37 @@ exports.updateEvent = async (req, res) => {
       );
 
       delete fields["thumbnail"];
+    }
+
+    fields.corousal = [];
+
+    // update existing images in db, if we recieved the urls
+    if (fields.corousalUrls) {
+      try {
+        fields.corousalUrls = JSON.parse(fields.corousalUrls);
+
+        // throw error if every item in the array is not valid url
+        fields.corousalUrls.forEach((url) => new URL(url));
+
+        if (!Array.isArray(fields.corousalUrls)) throw new Error();
+      } catch (err) {
+        throw new ServiceError(
+          "The corousalUrls must be a valid JSON array of urls",
+          400,
+        );
+      }
+
+      try {
+        const uuids = fields.corousalUrls.map(
+          (url) => url.split(".com/")[1].split("?")[0],
+        );
+        fields.corousal.concat(uuids);
+      } catch (err) {
+        throw new ServiceError(
+          "Unable to update existing urls for corousal images",
+          400,
+        );
+      }
     }
 
     if (files.corousal && files.corousal.length) {
@@ -303,13 +342,16 @@ exports.updateEvent = async (req, res) => {
         );
       }
 
-      fields.corousal = await Promise.all(promises);
+      fields.corousal.concat(await Promise.all(promises));
     }
 
     const event = await eventService.updateEvent(fields, req.params.id);
 
     event.imageUrl = fileUploader.getFileURL(event.imageUrl);
-    event.corousal = helper.getURLOfImages(event.corousal);
+
+    if (event.corousal && event.corousal.length) {
+      event.corousal = helper.getURLOfImages(event.corousal);
+    }
 
     apiResponse.success(res, req, event, 200);
   } catch (error) {
