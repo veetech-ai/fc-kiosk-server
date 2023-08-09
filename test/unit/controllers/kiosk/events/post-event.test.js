@@ -106,6 +106,7 @@ describe("POST /events", () => {
   describe("success", () => {
     it("should create new event", async () => {
       const res = await makePostEventRequest();
+      console.log(res.body.data.corousal);
 
       expect(res.body.success).toEqual(true);
       expect(res.body.data.id).toEqual(expect.any(Number));
