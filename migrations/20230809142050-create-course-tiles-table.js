@@ -18,12 +18,12 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       },
-      order: {
+      orderNumber: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
       layoutNumber: {
-        type: Sequelize.ENUM(0, 1, 2, 3),
+        type: Sequelize.INTEGER,
         defaultValue: 0,
       },
       tileId: {

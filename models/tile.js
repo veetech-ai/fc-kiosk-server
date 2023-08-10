@@ -1,16 +1,14 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Tile = sequelize.define(
-    "Tile", // to be used for kiosk
+    "Tile",
     {
       name: DataTypes.STRING,
       createdAt: {
-        field: "created_at",
         type: DataTypes.DATE,
         allowNull: false,
       },
       updatedAt: {
-        field: "updated_at",
         type: DataTypes.DATE,
         allowNull: false,
       },
@@ -19,9 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Tile.associate = function (models) {
-    Tile.belongsTo(models.CourseTile, {
-      foreignKey: "tileId",
-    });
+    Tile.hasOne(models.Course_Tile, { foreignKey: "tileId" });
   };
 
   return Tile;

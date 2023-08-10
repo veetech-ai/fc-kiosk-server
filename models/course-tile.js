@@ -17,12 +17,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
-      order: {
+      orderNumber: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
       layoutNumber: {
-        type: DataTypes.ENUM(0, 1, 2, 3),
+        type: DataTypes.INTEGER,
         allowNull: false,
         description:
           "Which layout to show for the particular tile, 0 for default, and 1,2, and 3 for custom layouts",
@@ -48,25 +48,23 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       },
       createdAt: {
-        allowNull: false,
         type: DataTypes.DATE,
-        defaultValue: DataTypes.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
       },
       updatedAt: {
-        allowNull: false,
         type: DataTypes.DATE,
-        defaultValue: DataTypes.literal("CURRENT_TIMESTAMP"),
-        onUpdate: DataTypes.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
       },
     },
     {},
   );
+
   CourseTile.associate = function (models) {
-    CourseTile.hasMany(models.Tile, {
-      foreignKey: "tileId",
+    CourseTile.hasOne(models.Tile, {
+      foreignKey: "id",
     });
     CourseTile.belongsTo(models.Course, {
-      foreignKey: "gcId",
+      foreignKey: "id",
     });
   };
   return CourseTile;
