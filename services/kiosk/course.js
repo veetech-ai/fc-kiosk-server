@@ -73,13 +73,13 @@ async function createCourseInfo(reqBody, courseId) {
   return updatedCourse[0];
 }
 async function getLinkedCourse(where, loggedInUserOrgId) {
-  let clonedWhere = { ...where };
   let course;
   if (loggedInUserOrgId) {
-    clonedWhere.orgId = loggedInUserOrgId;
-
     course = await Course.findOne({
-      where: clonedWhere,
+      where: {
+        id: where,
+        orgId: loggedInUserOrgId,
+      },
     });
   } else {
     course = await Course.findOne({
