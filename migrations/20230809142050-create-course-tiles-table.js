@@ -23,8 +23,8 @@ module.exports = {
         allowNull: true,
       },
       layoutNumber: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+        type: Sequelize.ENUM(0, 1, 2, 3),
+        defaultValue: 0,
       },
       tileId: {
         type: Sequelize.INTEGER,
@@ -60,7 +60,7 @@ module.exports = {
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     return queryInterface.dropTable("Course_Tiles");
   },
 };

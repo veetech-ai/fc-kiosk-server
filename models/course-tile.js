@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const CourseTile = sequelize.define(
-    "Course_Tile", // to be used for kiosk
+    "Course_Tile",
     {
       id: {
         allowNull: false,
@@ -22,8 +22,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       layoutNumber: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.ENUM(0, 1, 2, 3),
         allowNull: false,
+        description:
+          "Which layout to show for the particular tile, 0 for default, and 1,2, and 3 for custom layouts",
       },
       tileId: {
         type: DataTypes.INTEGER,
@@ -61,11 +63,9 @@ module.exports = (sequelize, DataTypes) => {
   );
   CourseTile.associate = function (models) {
     CourseTile.hasMany(models.Tile, {
-      as: "Tile",
       foreignKey: "tileId",
     });
     CourseTile.belongsTo(models.Course, {
-      as: "Course",
       foreignKey: "gcId",
     });
   };

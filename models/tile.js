@@ -18,7 +18,11 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
 
-  Tile.associate = function (models) {};
+  Tile.associate = function (models) {
+    Tile.belongsTo(models.CourseTile, {
+      foreignKey: "tileId",
+    });
+  };
 
   return Tile;
 };
