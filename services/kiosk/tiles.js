@@ -231,11 +231,7 @@ exports.assignDefaultTiles = async (gcId) => {
     orderNumber: tile.id,
   }));
   await Course_Tile.bulkCreate(payload);
-  return Course_Tile.findAll({
-    where: { gcId },
-    order: [["orderNumber", "ASC"]],
-    include: Tile,
-  });
+  return this.getCourseTiles(gcId);
 };
 
 exports.deleteCourseTile = async (tileId, gcId) => {

@@ -6,8 +6,10 @@ const formidable = require("formidable");
 const apiResponse = require("../../../common/api.response");
 const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
+const models = require("../../../models");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
+const tileService = require("../../../services/kiosk/tiles");
 const awsS3 = require("../../../common/external_services/aws-s3");
 
 /**
@@ -65,6 +67,7 @@ exports.create_courses = async (req, res) => {
    *       200:
    *         description: success
    */
+  const transact = await models.sequelize.transaction();
   try {
     const validation = new Validator(req.body, {
       name: "required|string",
@@ -87,9 +90,17 @@ exports.create_courses = async (req, res) => {
       zip,
       phone,
     };
+
     const course = await courseService.createCourse(reqBody, orgId);
-    return apiResponse.success(res, req, course);
+
+    // using one service inside another, and other way round as well causes circluar dependency issue
+    // so multi service stuff should be handled inside controller
+    const tiles = await tileService.assignDefaultTiles(course.id);
+    await transact.commit();
+
+    return apiResponse.success(res, req, { ...course.dataValues, tiles });
   } catch (error) {
+    await transact.rollback();
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
