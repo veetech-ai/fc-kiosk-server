@@ -4,7 +4,7 @@ const GhinController = require("../../controllers/kiosk/ghin");
 exports.routesConfig = function (app, router) {
   const ghin = `${config.app.apiPath}ghin`;
 
-  router.patch(ads + `/:gcId`, [
+  router.patch(ghin + `/:gcId`, [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin"]),
     GhinController.update,
