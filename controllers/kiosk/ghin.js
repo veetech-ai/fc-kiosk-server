@@ -77,7 +77,7 @@ exports.update = async (req, res) => {
     const { gcId } = req.params;
 
     const course = await Course.findOne({
-      attributs: ["id", "name"],
+      attributes: ["id", "name"],
       where: { id: gcId },
     });
 
