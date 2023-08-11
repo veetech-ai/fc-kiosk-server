@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
     "Tile",
     {
       name: DataTypes.STRING,
+      builtIn: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -17,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Tile.associate = function (models) {
-    Tile.hasOne(models.Course_Tile, { foreignKey: "tileId" });
+    Tile.hasMany(models.Course_Tile, { foreignKey: "tileId" });
   };
 
   return Tile;

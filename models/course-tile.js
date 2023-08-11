@@ -1,4 +1,5 @@
 "use strict";
+
 module.exports = (sequelize, DataTypes) => {
   const CourseTile = sequelize.define(
     "Course_Tile",
@@ -60,12 +61,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   CourseTile.associate = function (models) {
-    CourseTile.hasOne(models.Tile, {
-      foreignKey: "id",
-    });
-    CourseTile.belongsTo(models.Course, {
-      foreignKey: "id",
-    });
+    CourseTile.belongsTo(models.Tile);
+    CourseTile.belongsTo(models.Course, { foreignKey: "gcId" });
   };
   return CourseTile;
 };
