@@ -40,7 +40,7 @@ describe("GHIN API", () => {
         const res = await makeUpdateRequest();
 
         // Make sure its updated in db
-        const udpatedCourse = await Course.findOne({
+        const updatedCourse = await Course.findOne({
           where: { id: courseId },
           attributes: ["id", "name", "ghin_url"],
         });
