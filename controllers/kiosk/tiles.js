@@ -343,6 +343,82 @@ exports.getCourseTiles = async (req, res) => {
   }
 };
 
+exports.updateTile = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /tiles/{id}:
+   *   patch:
+   *     security:
+   *       - auth: []
+   *     description: Update tile information.
+   *     consumes:
+   *       - application/json
+   *     parameters:
+   *        - in: path
+   *          name: id
+   *          description: id of the tile to update
+   *
+   *        - in: body
+   *          name: body
+   *          description: >
+   *            * `name`: New name for the tile
+   *
+   *            * `layoutNumber`: New layoutNumber for the tile
+   *
+   *          schema:
+   *             type: object
+   *             properties:
+   *                name:
+   *                   type: string
+   *
+   *                layoutNumber:
+   *                   type: number
+   *                   default: 0
+   *
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   *       400:
+   *         description: Request body is not valid
+   *       404:
+   *         description: Golf course or tile not found
+   *       500:
+   *         description: Something went wrong on server side
+   */
+
+  try {
+    const paramValidation = new Validator(req.params, {
+      id: "required|integer",
+    });
+
+    const bodyValidation = new Validator(req.body, {
+      name: "required|string",
+      layoutNumber: "integer",
+    });
+
+    if (paramValidation.fails()) {
+      throw new ServiceError(paramValidation.firstError(), 400);
+    }
+
+    if (bodyValidation.fails()) {
+      throw new ServiceError(bodyValidation.firstError(), 400);
+    }
+
+    if (req.body.name && !req.body.name.trim().length) {
+      throw new ServiceError("Invalid tile name provided.", 400);
+    }
+
+    const tile = await tileService.updateTile(req.params.id, req.body);
+
+    return apiResponse.success(res, req, tile, 200);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
 exports.updateSuperTile = async (req, res) => {
   /**
    * @swagger

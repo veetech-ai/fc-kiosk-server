@@ -16,6 +16,12 @@ const allowedFields = Object.keys(Tile.rawAttributes)
     ),
   );
 
+const validateLayoutNumber = (number) => {
+  if (number < 0 || number > 3) {
+    throw new ServiceError("The layoutNumber must one of 0, 1, 2 or 4.", 400);
+  }
+};
+
 exports.get = async ({ where = {}, paginationOptions }) => {
   const count = await Tile.count();
   const tiles = await Tile.findAll({ where, ...paginationOptions });
@@ -168,9 +174,7 @@ exports.create = async (data) => {
     } = validateObject(data, allowedFields);
 
     // 0. check if layout number is valid
-    if (layoutNumber < 0 || layoutNumber > 3) {
-      throw new ServiceError("The layoutNumber must one of 0, 1, 2 or 4.", 400);
-    }
+    validateLayoutNumber(layoutNumber);
 
     // 1. check if the course exists
     await CousreService.getCourseById(gcId);
@@ -218,6 +222,25 @@ exports.delete = async (id) => {
   await this.getOne(id);
 
   return Tile.destroy({ where: { id } });
+};
+
+exports.updateTile = async (id, data) => {
+  const tileToUpdate = await this.getOne({ id });
+  if (!tileToUpdate) {
+    throw new ServiceError("Tile Not Found.", 404);
+  }
+
+  if (tileToUpdate.builtIn) {
+    throw new ServiceError("Can not update a built in tile.", 400);
+  }
+
+  if (data.layoutNumber) {
+    validateLayoutNumber(data.layoutNumber);
+  }
+
+  return Tile.update(validateObject(data, ["name", "layoutNumber"]), {
+    where: { id },
+  });
 };
 
 exports.assignDefaultTiles = async (gcId) => {

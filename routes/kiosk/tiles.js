@@ -29,6 +29,12 @@ exports.routesConfig = function (app, router) {
     TilesController.udpatePublishedStatus,
   ]);
 
+  router.patch(tiles + "/:id", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
+    TilesController.updateTile,
+  ]);
+
   router.get(tiles + "/course/:id", [
     validation_middleware.validJWTNeeded,
     TilesController.getCourseTiles,
