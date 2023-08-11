@@ -3,6 +3,7 @@ const apiResponse = require("../../common/api.response");
 const ServiceError = require("../../utils/serviceError");
 
 const tileService = require("./../../services/kiosk/tiles");
+const { get_pagination_params } = require("../../common/helper");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -16,7 +17,7 @@ Validator.prototype.firstError = function () {
  * @swagger
  * tags:
  *   name: Tiles
- *   description: Web Portal Courses API's
+ *   description: Tile Management APIs
  */
 exports.create = async (req, res) => {
   /**
@@ -26,7 +27,7 @@ exports.create = async (req, res) => {
    *   post:
    *     security:
    *       - auth: []
-   *     description: Create a Tile.
+   *     description: Create a new Tile.
    *     tags: [Tiles]
    *     consumes:
    *       - application/json
@@ -57,6 +58,7 @@ exports.create = async (req, res) => {
    *             properties:
    *                name:
    *                   type: string
+   *                   default: "Test Tile"
    *
    *                isPublished:
    *                   type: boolean
@@ -73,6 +75,7 @@ exports.create = async (req, res) => {
    *
    *                gcId:
    *                   type: number
+   *                   default: 1
    *     produces:
    *       - application/json
    *     responses:
@@ -139,9 +142,11 @@ exports.changeOrder = async (req, res) => {
    *             properties:
    *                newOrder:
    *                   type: number
+   *                   default: 1
    *
    *                gcId:
    *                   type: number
+   *                   default: 1
    *
    *     produces:
    *       - application/json
@@ -196,6 +201,26 @@ exports.getAll = async (req, res) => {
    *       - auth: []
    *     description: Create a Tile.
    *     tags: [Tiles]
+   *     parameters:
+   *       - name: builtInOnly
+   *         in: query
+   *         description: Get built-in tiles only, if it is set to true
+   *         default: true
+   *         type: boolean
+   *
+   *       - name: page
+   *         in: query
+   *         description: page number
+   *         required: false
+   *         default: 1
+   *         type: integer
+   *
+   *       - name: size
+   *         in: query
+   *         description: page size
+   *         required: false
+   *         default: 10
+   *         type: integer
    *
    *     produces:
    *       - application/json
@@ -207,9 +232,32 @@ exports.getAll = async (req, res) => {
    */
 
   try {
-    const tile = await tileService.get();
+    const validation = new Validator(req.query, {
+      builtInOnly: "boolean",
+      page: "integer",
+      size: "integer",
+    });
 
-    return apiResponse.success(res, req, tile, 200);
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
+
+    const paginationOptions = get_pagination_params({
+      limit: req.query.size || 10,
+      page: req.query.page || 1,
+    });
+
+    const data = await tileService.get({
+      where: { builtIn: req.query.builtInOnly == "true" },
+      paginationOptions,
+    });
+
+    return apiResponse.success(
+      res,
+      req,
+      { ...data, pagination: paginationOptions },
+      200,
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -303,8 +351,7 @@ exports.updateSuperTile = async (req, res) => {
    *   patch:
    *     security:
    *       - auth: []
-   *     description: Create a Tile.
-   *     tags: [Tiles]
+   *     description: Change super tile status of a tile.
    *     consumes:
    *       - application/json
    *     parameters:
@@ -327,9 +374,11 @@ exports.updateSuperTile = async (req, res) => {
    *             properties:
    *                status:
    *                   type: number
+   *                   default: 1
    *
    *                gcId:
    *                   type: number
+   *                   default: 1
    *
    *     produces:
    *       - application/json
@@ -382,7 +431,7 @@ exports.udpatePublishedStatus = async (req, res) => {
    *   patch:
    *     security:
    *       - auth: []
-   *     description: Create a Tile.
+   *     description: Publish or un publish a tile.
    *     tags: [Tiles]
    *     consumes:
    *       - application/json
@@ -406,9 +455,11 @@ exports.udpatePublishedStatus = async (req, res) => {
    *             properties:
    *                status:
    *                   type: number
+   *                   default: 1
    *
    *                gcId:
    *                   type: number
+   *                   default: 1
    *
    *     produces:
    *       - application/json
@@ -461,7 +512,7 @@ exports.deleteTile = async (req, res) => {
    *   delete:
    *     security:
    *       - auth: []
-   *     description: Create a Tile.
+   *     description: Delete any Tile. (Only super admin can delete built in tiles)
    *     tags: [Tiles]
    *     parameters:
    *        - in: path
@@ -474,6 +525,8 @@ exports.deleteTile = async (req, res) => {
    *         description: success
    *       400:
    *         description: Request body is not valid
+   *       403:
+   *         description: Unauthorized request
    *       404:
    *         description: Golf course or tile not found
    *       500:
@@ -514,6 +567,7 @@ exports.deleteCourseTile = async (req, res) => {
    *
    *        - in: path
    *          name: gcId
+   *          default: 1
    *          description: id of the golf course
    *     produces:
    *       - application/json

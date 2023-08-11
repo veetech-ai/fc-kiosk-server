@@ -3,7 +3,6 @@ const { validateObject } = require("../../common/helper");
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const CousreService = require("./course");
-const { async } = require("crypto-random-string");
 
 const { Tile, Course_Tile } = models;
 
@@ -17,13 +16,20 @@ const allowedFields = Object.keys(Tile.rawAttributes)
     ),
   );
 
-exports.get = async (where) => {
-  return Course_Tile.findAll({ where, include: Tile });
+exports.get = async ({ where = {}, paginationOptions }) => {
+  const count = await Tile.count();
+  const tiles = await Tile.findAll({ where, ...paginationOptions });
+
+  return { count, tiles };
 };
 
-exports.getCourseTiles = async (id) => {
-  await CousreService.getCourseById(id);
-  return Course_Tile.findAll({ where: { gcId: id }, include: Tile });
+exports.getCourseTiles = async (gcId) => {
+  await CousreService.getCourseById(gcId);
+  return Course_Tile.findAll({
+    where: { gcId },
+    order: [["orderNumber", "ASC"]],
+    include: Tile,
+  });
 };
 
 exports.getOne = async (where) => {
@@ -69,20 +75,54 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
       to: newOrder,
     };
 
-    const validMaxOrderNumber = await Course_Tile.count({
+    const maxOrderNumber = await Course_Tile.count({
       where: { gcId },
     });
 
     const isNewOrderValid =
-      order.to <= validMaxOrderNumber &&
+      order.to <= maxOrderNumber &&
       order.to >= 1 &&
-      order.from <= validMaxOrderNumber &&
+      order.from <= maxOrderNumber &&
       order.from >= 1;
 
-    if (validMaxOrderNumber && !isNewOrderValid) {
+    if (maxOrderNumber && !isNewOrderValid) {
       throw new ServiceError(
-        `The order must a number min: 1 and max: ${validMaxOrderNumber}`,
+        `The order must a number min: 1 and max: ${maxOrderNumber}`,
         400,
+      );
+    }
+
+    const beingMovedDownward = order.from - order.to < 0;
+    const beingMovedUpward = order.from - order.to > 0;
+
+    // update the order of other tiles accordingly
+    if (beingMovedDownward) {
+      await Course_Tile.update(
+        { orderNumber: models.sequelize.literal("orderNumber - 1") },
+        {
+          where: {
+            [Op.and]: {
+              orderNumber: {
+                [Op.gt]: order.from,
+                [Op.lte]: order.to,
+              },
+            },
+          },
+        },
+      );
+    } else if (beingMovedUpward) {
+      await Course_Tile.update(
+        { orderNumber: models.sequelize.literal("orderNumber + 1") },
+        {
+          where: {
+            [Op.and]: {
+              orderNumber: {
+                [Op.lt]: order.from,
+                [Op.gte]: order.to,
+              },
+            },
+          },
+        },
       );
     }
 
@@ -97,44 +137,8 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
       },
     );
 
-    // update the order of other tiles accordingly
-    if (order.from - order.to > 0) {
-      await Course_Tile.update(
-        { orderNumber: models.sequelize.literal("orderNumber + 1") },
-        {
-          where: {
-            [Op.and]: {
-              orderNumber: {
-                [Op.lt]: order.from,
-                [Op.gte]: order.to,
-              },
-            },
-          },
-        },
-      );
-    } else {
-      await Course_Tile.update(
-        { orderNumber: models.sequelize.literal("orderNumber - 1") },
-        {
-          where: {
-            [Op.and]: {
-              orderNumber: {
-                [Op.gt]: order.from,
-                [Op.lte]: order.to,
-              },
-            },
-          },
-        },
-      );
-    }
-
     await transact.commit();
     return true;
-    //   return Course_Tile.findAll({
-    //     order: [["order", "ASC"]],
-    //     include: Tile,
-    //     where: { gcId },
-    //   });
   } catch (err) {
     transact.rollback();
     throw err;
@@ -162,6 +166,11 @@ exports.create = async (data) => {
       isSuperTile = false,
       layoutNumber = 0,
     } = validateObject(data, allowedFields);
+
+    // 0. check if layout number is valid
+    if (layoutNumber < 0 || layoutNumber > 3) {
+      throw new ServiceError("The layoutNumber must one of 0, 1, 2 or 4.", 400);
+    }
 
     // 1. check if the course exists
     await CousreService.getCourseById(gcId);
@@ -212,10 +221,20 @@ exports.delete = async (id) => {
 };
 
 exports.deleteCourseTile = async (tileId, gcId) => {
-  await this.getOne({ id: tileId });
-  await CousreService.getCourseById(gcId);
+  const transact = await models.sequelize.transation();
+  try {
+    await this.getOne({ id: tileId });
+    await CousreService.getCourseById(gcId);
 
-  // TODO destroy corresponding Tile entry too, if its created by user
+    await Course_Tile.destroy({ where: { tileId, gcId } });
 
-  return Course_Tile.destroy({ where: { tileId, gcId } });
+    // destroy corresponding Tile entry too, if its created by user
+    await Tile.destroy({ where: { id: tileId, builtIn: false } });
+
+    transact.commit();
+    return true;
+  } catch (err) {
+    transact.rollback();
+    throw err;
+  }
 };
