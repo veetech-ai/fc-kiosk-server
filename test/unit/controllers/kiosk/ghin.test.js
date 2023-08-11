@@ -45,7 +45,7 @@ describe("GHIN API", () => {
           attributes: ["id", "name", "ghin_url"],
         });
 
-        expect(udpatedCourse.ghin_url).toEqual(payload.url);
+        expect(updatedCourse.ghin_url).toEqual(payload.url);
 
         // Validate API response
         expect(res.body).toEqual({
