@@ -127,7 +127,7 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
     }
 
     // update order of requested tile
-    const res = await Course_Tile.update(
+    await Course_Tile.update(
       { orderNumber: order.to },
       {
         where: {
@@ -218,6 +218,24 @@ exports.delete = async (id) => {
   await this.getOne(id);
 
   return Tile.destroy({ where: { id } });
+};
+
+exports.assignDefaultTiles = async (gcId) => {
+  const defaultTiles = await Tile.findAll({ where: { builtIn: true } });
+
+  const payload = defaultTiles.map((tile) => ({
+    tileId: tile.id,
+    gcId,
+    layoutNumber: 0,
+    isPublished: true,
+    orderNumber: tile.id,
+  }));
+  await Course_Tile.bulkCreate(payload);
+  return Course_Tile.findAll({
+    where: { gcId },
+    order: [["orderNumber", "ASC"]],
+    include: Tile,
+  });
 };
 
 exports.deleteCourseTile = async (tileId, gcId) => {

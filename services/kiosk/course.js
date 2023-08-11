@@ -2,6 +2,7 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const screenConfigServices = require("../screenConfig/screens");
 const membershipService = require("./membership");
+const tileService = require("./tiles");
 const upload_file = require("../../common/upload");
 
 const Course = models.Course;
@@ -11,24 +12,34 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 async function createCourse(reqBody, orgId) {
-  // Check if organization exists with the specified org_id
-  const organization = await Organization.findOne({ where: { id: orgId } });
-  if (!organization) {
-    throw new ServiceError(`Organization not found`, 404);
+  const transact = await models.sequelize.transaction();
+  try {
+    // Check if organization exists with the specified org_id
+    const organization = await Organization.findOne({ where: { id: orgId } });
+    if (!organization) {
+      throw new ServiceError(`Organization not found`, 404);
+    }
+
+    // Create a new course record
+    const course = await Course.create({
+      ...reqBody,
+      orgId,
+    });
+
+    // Create Screen Config to allow toggling visibility of content sections on kiosk
+    const gcId = course.id;
+    await screenConfigServices.createScreenConfig(gcId, orgId);
+    await membershipService.createMembership(gcId, orgId);
+
+    const tiles = await tileService.assignDefaultTiles(gcId);
+
+    await transact.commit();
+    return { ...course.dataValues, tiles };
+  } catch (err) {
+    await transact.rollback();
+
+    throw err;
   }
-
-  // Create a new course record
-  const course = await Course.create({
-    ...reqBody,
-    orgId,
-  });
-
-  // Create Screen Config to allow toggling visibility of content sections on kiosk
-  const gcId = course.id;
-  await screenConfigServices.createScreenConfig(gcId, orgId);
-  await membershipService.createMembership(gcId, orgId);
-
-  return course;
 }
 async function getCoursesByOrganization(orgId) {
   // Check if organization exists with the specified org_id
