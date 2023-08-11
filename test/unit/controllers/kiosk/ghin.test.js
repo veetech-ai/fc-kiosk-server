@@ -50,7 +50,7 @@ describe("GHIN API", () => {
         // Validate API response
         expect(res.body).toEqual({
           success: true,
-          data: `URL: ${payload.url} is set for course: ${udpatedCourse.name} having id: ${courseId}`,
+          data: `URL: ${payload.url} is set for course: ${updatedCourse.name} having id: ${courseId}`,
         });
 
         expect(res.statusCode).toEqual(200);
