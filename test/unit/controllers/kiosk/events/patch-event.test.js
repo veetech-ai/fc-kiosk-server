@@ -162,7 +162,7 @@ describe("POST /events", () => {
       }
     });
 
-    it("should update the corousal images of an event", async () => {
+    it("should not update the corousal images of an event, if both files.corousal and fields.corousalUrls are null", async () => {
       const updationPayload = {
         title: "Updated title",
         openingTime: "15:00",
@@ -192,7 +192,7 @@ describe("POST /events", () => {
 
       expect(() => new URL(updatedEvent.body.data.imageUrl)).not.toThrowError();
 
-      expect(updatedEvent.body.corousal.length).toEqual(
+      expect(updatedEvent.body.data.corousal.length).toEqual(
         filesData.corousal.length,
       );
 
@@ -201,9 +201,80 @@ describe("POST /events", () => {
       });
     });
 
-    it("should set corousal array to null, if corousal is null in request payload", async () => {});
+    it("should update the event corousal images if urls are being sent in corousalUrls", async () => {
+      const {
+        body: { data: event },
+      } = await helper.get_request_with_authorization({
+        endpoint: `events/${testEvent.id}`,
+        token: adminToken,
+      });
 
-    it("should update the thumbnail image of an event, if new image is provided", async () => {});
+      const updationPayload = {
+        title: "Updated title",
+        openingTime: "15:00",
+        closingTime: "23:00",
+        corousalUrls: JSON.stringify([event.corousal[0]]),
+      };
+      const res = await makePatchEventRequest({
+        id: testEvent.id,
+        fields: updationPayload,
+        files: {},
+      });
+
+      expect(res.body.success).toEqual(true);
+
+      const updatedEvent = await helper.get_request_with_authorization({
+        endpoint: `events/${testEvent.id}`,
+        token: adminToken,
+      });
+
+      expect(() => new URL(updatedEvent.body.data.imageUrl)).not.toThrowError();
+
+      expect(updatedEvent.body.data.corousal.length).toEqual(1);
+      expect(
+        updatedEvent.body.data.corousal[0].split(".com/")[1].split("?")[0],
+      ).toEqual(event.corousal[0].split(".com/")[1].split("?")[0]); // it should've deleted rest of the urls
+
+      updatedEvent.body.data.corousal.forEach((url) => {
+        expect(() => new URL(url)).not.toThrowError();
+      });
+    });
+
+    it("should update the thumbnail image of an event, if new image is provided", async () => {
+      const {
+        body: { data: event },
+      } = await helper.get_request_with_authorization({
+        endpoint: `events/${testEvent.id}`,
+        token: adminToken,
+      });
+
+      const updationPayload = {
+        title: "Updated title",
+        openingTime: "15:00",
+        closingTime: "23:00",
+      };
+
+      const res = await makePatchEventRequest({
+        id: testEvent.id,
+        fields: updationPayload,
+        files: {
+          thumbnail: filesData.thumbnail,
+        },
+      });
+
+      expect(res.body.success).toEqual(true);
+
+      const updatedEvent = await helper.get_request_with_authorization({
+        endpoint: `events/${testEvent.id}`,
+        token: adminToken,
+      });
+
+      expect(() => new URL(updatedEvent.body.data.imageUrl)).not.toThrowError();
+
+      expect(
+        updatedEvent.body.data.imageUrl.split(".com/")[1].split("?")[0],
+      ).not.toEqual(event.imageUrl.split(".com/")[1].split("?")[0]);
+    });
   });
 
   describe("failure", () => {

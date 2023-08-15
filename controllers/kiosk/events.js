@@ -311,8 +311,6 @@ exports.updateEvent = async (req, res) => {
       );
     }
 
-    fields.corousal = [];
-
     // update existing images in db, if we recieved the urls
     if (fields.corousalUrls) {
       try {
@@ -334,6 +332,7 @@ exports.updateEvent = async (req, res) => {
           (url) => url.split(".com/")[1].split("?")[0],
         );
 
+        fields.corousal = [];
         // .concat doesn't work here for some reason
         fields.corousal.push(...uuids);
       } catch (err) {
@@ -353,6 +352,8 @@ exports.updateEvent = async (req, res) => {
             fileUploader.upload_file(image, `uploads/events/`, imageFormats),
           );
         }
+
+        if (!Array.isArray(fields.corousal)) fields.corousal = [];
 
         // doing spreading here, because .concat doesn't work for some reason
         fields.corousal.push(...(await Promise.all(promises)));
