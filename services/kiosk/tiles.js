@@ -283,6 +283,7 @@ exports.assignDefaultTiles = async (gcId) => {
     gcId,
     layoutNumber: 0,
     isPublished: true,
+    isSuperTile: false,
     orderNumber: tile.id,
   }));
   await Course_Tile.bulkCreate(payload);
