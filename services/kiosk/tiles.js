@@ -66,10 +66,14 @@ exports.changeSuperTile = async (tileId, gcId, status = false) => {
     throw new ServiceError("A super tile already exists for this course.", 400);
   }
 
-  return Course_Tile.update(
+  const [updatedRows] = await Course_Tile.update(
     { isSuperTile: status },
     { where: { tileId, gcId } },
   );
+
+  if (!updatedRows) return "No change in db";
+
+  return { tileId, gcId, isSuperTile: status };
 };
 
 exports.updateOrder = async (tileId, gcId, newOrder) => {
@@ -148,7 +152,7 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
     }
 
     // update order of requested tile
-    await Course_Tile.update(
+    const [updatedRows] = await Course_Tile.update(
       { orderNumber: order.to },
       {
         where: {
@@ -157,6 +161,8 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
         },
       },
     );
+
+    if (!updatedRows) return "No update in db";
 
     await transact.commit();
     return { tileId, gcId, order };
@@ -171,10 +177,14 @@ exports.changePublishStatus = async (tileId, gcId, status = false) => {
   await this.getOne({ id: tileId });
   await CousreService.getCourseById(gcId);
 
-  return Course_Tile.update(
+  const [updatedRows] = await Course_Tile.update(
     { isPublished: status },
     { where: { tileId, gcId } },
   );
+
+  if (!updatedRows) return "No change in db";
+
+  return { tileId, gcId, isPublished: status };
 };
 
 exports.create = async (data) => {
@@ -253,9 +263,16 @@ exports.updateTile = async (id, data) => {
     validateLayoutNumber(data.layoutNumber);
   }
 
-  return Tile.update(validateObject(data, ["name", "layoutNumber"]), {
-    where: { id },
-  });
+  const [updatedRows] = await Tile.update(
+    validateObject(data, ["name", "layoutNumber"]),
+    {
+      where: { id },
+    },
+  );
+
+  if (!updatedRows) return "No change in db";
+
+  return { tileId: id, data };
 };
 
 exports.assignDefaultTiles = async (gcId) => {
