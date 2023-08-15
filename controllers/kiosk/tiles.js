@@ -179,13 +179,13 @@ exports.changeOrder = async (req, res) => {
       throw new ServiceError(bodyValidation.firstError(), 400);
     }
 
-    const tile = await tileService.updateOrder(
+    const data = await tileService.updateOrder(
       req.params.id,
       req.body.gcId,
       req.body.newOrder,
     );
 
-    return apiResponse.success(res, req, tile, 200);
+    return apiResponse.success(res, req, data, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

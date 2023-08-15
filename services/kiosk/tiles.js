@@ -106,6 +106,13 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
       );
     }
 
+    if (order.to == order.from) {
+      throw new ServiceError(
+        "The newOrder value must not be same as current orderNumber",
+        400,
+      );
+    }
+
     const beingMovedDownward = order.from - order.to < 0;
     const beingMovedUpward = order.from - order.to > 0;
 
@@ -152,7 +159,7 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
     );
 
     await transact.commit();
-    return true;
+    return { tileId, gcId, order };
   } catch (err) {
     transact.rollback();
     throw err;
