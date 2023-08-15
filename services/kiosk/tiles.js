@@ -6,13 +6,13 @@ const CousreService = require("./course");
 
 const { Tile, Course_Tile } = models;
 
-const _RESTRICTED_KEYS = ["id", "tileId", "createdAt", "updatedAt"];
+const _SKIP_KEYS = ["id", "tileId", "TileId", "createdAt", "updatedAt"];
 
 const allowedFields = Object.keys(Tile.rawAttributes)
-  .filter((key) => !_RESTRICTED_KEYS.includes(key))
+  .filter((key) => !_SKIP_KEYS.includes(key))
   .concat(
     Object.keys(Course_Tile.rawAttributes).filter(
-      (key) => !_RESTRICTED_KEYS.includes(key),
+      (key) => !_SKIP_KEYS.includes(key),
     ),
   );
 
@@ -33,8 +33,16 @@ exports.getCourseTiles = async (gcId) => {
   await CousreService.getCourseById(gcId);
   return Course_Tile.findAll({
     where: { gcId },
+    attributes: [
+      ["id", "courseTileId"],
+      "isSuperTile",
+      "isPublished",
+      "layoutNumber",
+      "orderNumber",
+      "gcId",
+    ],
     order: [["orderNumber", "ASC"]],
-    include: Tile,
+    include: { model: Tile, attributes: ["id", "name", "builtIn"] },
   });
 };
 
@@ -54,7 +62,7 @@ exports.changeSuperTile = async (tileId, gcId, status = false) => {
     where: { gcId, isSuperTile: true },
   });
 
-  if (existingSuperTile) {
+  if (status && existingSuperTile) {
     throw new ServiceError("A super tile already exists for this course.", 400);
   }
 

@@ -352,6 +352,7 @@ exports.updateTile = async (req, res) => {
    *     security:
    *       - auth: []
    *     description: Update tile information.
+   *     tags: [Tiles]
    *     consumes:
    *       - application/json
    *     parameters:
@@ -428,6 +429,7 @@ exports.updateSuperTile = async (req, res) => {
    *     security:
    *       - auth: []
    *     description: Change super tile status of a tile.
+   *     tags: [Tiles]
    *     consumes:
    *       - application/json
    *     parameters:
