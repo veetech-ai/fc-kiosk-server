@@ -143,18 +143,28 @@ exports.createEvent = async (req, res) => {
       imageFormats,
     );
 
-    if (files.corousal && files.corousal.length) {
-      const promises = [];
-      for (const image of files.corousal) {
-        promises.push(
-          fileUploader.upload_file(image, `uploads/events/`, imageFormats),
+    fields.corousal = [];
+
+    if (files.corousal) {
+      if (Array.isArray(files.corousal)) {
+        const promises = [];
+        for (const image of files.corousal) {
+          promises.push(
+            fileUploader.upload_file(image, `uploads/events/`, imageFormats),
+          );
+        }
+
+        fields.corousal = await Promise.all(promises);
+      } else {
+        const url = await fileUploader.upload_file(
+          files.corousal,
+          `uploads/events/`,
+          imageFormats,
         );
+
+        fields.corousal.push(url);
       }
-
-      fields.corousal = await Promise.all(promises);
     }
-
-    delete fields["thumbnail"];
 
     const event = await eventService.createEvent(fields);
 
@@ -299,8 +309,6 @@ exports.updateEvent = async (req, res) => {
         `uploads/events/`,
         imageFormats,
       );
-
-      delete fields["thumbnail"];
     }
 
     fields.corousal = [];
