@@ -128,9 +128,9 @@ exports.createEvent = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
-    // if (!files.thumbnail) {
-    //   throw new ServiceError("The thumbnail image is required.", 400);
-    // }
+    if (!files.thumbnail) {
+      throw new ServiceError("The thumbnail image is required.", 400);
+    }
 
     // to throw error if course is not found
     await courseService.getCourseById(fields.gcId);
