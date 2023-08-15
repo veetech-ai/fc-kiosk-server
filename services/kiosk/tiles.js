@@ -126,6 +126,7 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
         { orderNumber: models.sequelize.literal("orderNumber - 1") },
         {
           where: {
+            gcId,
             [Op.and]: {
               orderNumber: {
                 [Op.gt]: order.from,
@@ -140,6 +141,7 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
         { orderNumber: models.sequelize.literal("orderNumber + 1") },
         {
           where: {
+            gcId,
             [Op.and]: {
               orderNumber: {
                 [Op.lt]: order.from,
@@ -171,6 +173,8 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
     throw err;
   }
 };
+
+const sortByOrder = () => {};
 
 exports.changePublishStatus = async (tileId, gcId, status = false) => {
   // throw error, if ids are not valid
