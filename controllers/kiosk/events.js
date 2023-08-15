@@ -228,9 +228,7 @@ exports.updateEvent = async (req, res) => {
    *       - name: corousalUrls
    *         description: Corousal image urls for event. Use these to update existing images in corousal
    *         in: formData
-   *         type: array
-   *         items:
-   *           type: string
+   *         type: json
    *
    *       - name: corousal
    *         description: New images for corousal of an event. Use this to upload new images
@@ -324,7 +322,9 @@ exports.updateEvent = async (req, res) => {
         const uuids = fields.corousalUrls.map(
           (url) => url.split(".com/")[1].split("?")[0],
         );
-        fields.corousal.concat(uuids);
+
+        // .concat doesn't work here for some reason
+        fields.corousal.push(...uuids);
       } catch (err) {
         throw new ServiceError(
           "Unable to update existing urls for corousal images",
@@ -333,15 +333,27 @@ exports.updateEvent = async (req, res) => {
       }
     }
 
-    if (files.corousal && files.corousal.length) {
-      const promises = [];
-      for (const image of files.corousal) {
-        promises.push(
-          fileUploader.upload_file(image, `uploads/events/`, imageFormats),
-        );
-      }
+    if (files.corousal) {
+      // if multiple images, then it will be a File Array
+      if (Array.isArray(files.corousal)) {
+        const promises = [];
+        for (const image of files.corousal) {
+          promises.push(
+            fileUploader.upload_file(image, `uploads/events/`, imageFormats),
+          );
+        }
 
-      fields.corousal.concat(await Promise.all(promises));
+        // doing spreading here, because .concat doesn't work for some reason
+        fields.corousal.push(...(await Promise.all(promises)));
+      } else {
+        // if single image is sent, it will not be in an array
+        const url = await fileUploader.upload_file(
+          files.corousal,
+          `uploads/events/`,
+          imageFormats,
+        );
+        fields.corousal.push(url);
+      }
     }
 
     const event = await eventService.updateEvent(fields, req.params.id);
