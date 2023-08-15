@@ -435,7 +435,7 @@ exports.updateSuperTile = async (req, res) => {
    *     parameters:
    *        - in: path
    *          name: id
-   *          description: id of the tile to move
+   *          description: id of the tile
    *
    *        - in: body
    *          name: body
@@ -516,7 +516,7 @@ exports.udpatePublishedStatus = async (req, res) => {
    *     parameters:
    *        - in: path
    *          name: id
-   *          description: id of the tile to move
+   *          description: id of the tile to publish or unpublish
    *
    *        - in: body
    *          name: body
@@ -595,7 +595,7 @@ exports.deleteTile = async (req, res) => {
    *     parameters:
    *        - in: path
    *          name: id
-   *          description: id of the tile to move
+   *          description: id of the tile to delete
    *     produces:
    *       - application/json
    *     responses:
