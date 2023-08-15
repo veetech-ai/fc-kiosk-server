@@ -165,6 +165,9 @@ exports.createEvent = async (req, res) => {
       event.corousal = helper.getURLOfImages(event.corousal);
     }
 
+    helper.mqtt_publish_message(`we/${event.id}/created`, {
+      eventId: event.id,
+    });
     apiResponse.success(res, req, event, 201);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -364,6 +367,13 @@ exports.updateEvent = async (req, res) => {
       event.corousal = helper.getURLOfImages(event.corousal);
     }
 
+    helper.mqtt_publish_message(
+      `we/${req.params.id}/updated`,
+      {
+        eventId: req.params.id,
+      },
+      false,
+    );
     apiResponse.success(res, req, event, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -582,6 +592,9 @@ exports.deleteEvent = async (req, res) => {
 
     await eventService.delelteEvent(req.params.id);
 
+    helper.mqtt_publish_message(`we/${req.params.id}/deleted`, {
+      eventId: req.params.id,
+    });
     apiResponse.success(res, req, null, 204);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
