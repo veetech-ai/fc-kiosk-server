@@ -37,7 +37,7 @@ describe("GHIN API", () => {
       it("should update the ghin url for the course", async () => {
         const courseId = course.id;
 
-        const res = await makeUpdateRequest({ url: payload.url });
+        const res = await makeUpdateRequest({ url: payload.url }, courseId);
 
         // Make sure its updated in db
         const updatedCourse = await Course.findOne({
