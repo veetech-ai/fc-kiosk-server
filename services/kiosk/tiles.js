@@ -54,8 +54,18 @@ exports.getOne = async (where) => {
 
 exports.changeSuperTile = async (tileId, gcId, status = false) => {
   // throw error, if ids are not valid
-  await this.getOne({ id: tileId });
   await CousreService.getCourseById(gcId);
+
+  const courseTile = await Course_Tile.findOne({ where: { tileId, gcId } });
+
+  if (!courseTile) throw new ServiceError("Tile Not Found", 404);
+
+  if (courseTile.orderNumber != 1) {
+    throw new ServiceError(
+      "Only the tile with orderNumber 1 can be declared as super tile",
+      400,
+    );
+  }
 
   const existingSuperTile = await Course_Tile.findOne({
     attributes: ["id"],
