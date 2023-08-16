@@ -40,8 +40,14 @@ exports.sign = async (req, res) => {
    *       - in: formData
    *         name: email
    *         description: Email of the signatory
-   *         required: false
+   *         required: true
    *         type: string
+   *
+   *       - in: formData
+   *         name: signature
+   *         description: Upload image of the user signaure
+   *         required: true
+   *         type: file
    *     produces:
    *       - application/json
    *     responses:
@@ -102,12 +108,12 @@ exports.update = async (req, res) => {
    *         required: true
    *         type: integer
    *
-   *        - in: body
-   *          name: body
-   *          description: >
+   *       - in: body
+   *         name: body
+   *         description: >
    *            * `content`: New content of the waiver.
    *
-   *          schema:
+   *         schema:
    *             type: object
    *             required:
    *                - content
@@ -152,7 +158,7 @@ exports.getCourseSignedWaivers = async (req, res) => {
    *   patch:
    *     security:
    *       - auth: []
-   *     description: Get the paginated list of singed waivers against a course id.
+   *     description: Get the paginated list of signed waivers against a course id.
    *     tags: [Waiver]
    *     consumes:
    *       - application/json
