@@ -121,6 +121,7 @@ const CareersRouter = require("./routes/kiosk/careers");
 const CourseMemberships = require("./routes/kiosk/membership");
 const ContactCareerRouter = require("./routes/kiosk/contact-careers");
 const AdsRouter = require("./routes/kiosk/ads");
+const GhinRouter = require("./routes/kiosk/ghin");
 const TilesRouter = require("./routes/kiosk/tiles");
 const EventRouter = require("./routes/kiosk/events");
 
@@ -209,6 +210,7 @@ CourseMemberships.routesConfig(app, router);
 ContactCareerRouter.routesConfig(app, router);
 AdsRouter.routesConfig(app, router);
 EventRouter.routesConfig(app, router);
+GhinRouter.routesConfig(app, router);
 TilesRouter.routesConfig(app, router);
 
 global.messageQueue = [];

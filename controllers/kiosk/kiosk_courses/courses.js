@@ -91,6 +91,8 @@ exports.create_courses = async (req, res) => {
       phone,
     };
 
+    reqBody.ghin_url = "https://www.ghin.com/login";
+
     const course = await courseService.createCourse(reqBody, orgId);
 
     // using one service inside another, and other way round as well causes circluar dependency issue
