@@ -3,7 +3,7 @@ const apiResponse = require("../../common/api.response");
 const ServiceError = require("../../utils/serviceError");
 
 const tileService = require("./../../services/kiosk/tiles");
-const { get_pagination_params } = require("../../common/helper");
+const helper = require("../../common/helper");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -104,6 +104,12 @@ exports.create = async (req, res) => {
 
     const tile = await tileService.create(req.body);
 
+    helper.mqtt_publish_message(
+      `ta/${req.body.gcId}/created`,
+      { tileId: tile.id },
+      false,
+    );
+
     return apiResponse.success(res, req, tile, 201);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -185,6 +191,8 @@ exports.changeOrder = async (req, res) => {
       req.body.newOrder,
     );
 
+    helper.mqtt_publish_message(`ta/${req.body.gcId}/order`, data, false);
+
     return apiResponse.success(res, req, data, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -242,7 +250,7 @@ exports.getAll = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
-    const paginationOptions = get_pagination_params({
+    const paginationOptions = helper.get_pagination_params({
       limit: req.query.size || 10,
       page: req.query.page || 1,
     });
@@ -414,6 +422,12 @@ exports.updateTile = async (req, res) => {
 
     const tile = await tileService.updateTile(req.params.id, req.body);
 
+    helper.mqtt_publish_message(
+      `ta/${req.body.gcId}/updated`,
+      { tileId: tile.id },
+      false,
+    );
+
     return apiResponse.success(res, req, tile, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -489,13 +503,15 @@ exports.updateSuperTile = async (req, res) => {
       throw new ServiceError(bodyValidation.firstError(), 400);
     }
 
-    const tile = await tileService.changeSuperTile(
+    const data = await tileService.changeSuperTile(
       req.params.id,
       req.body.gcId,
       req.body.status,
     );
 
-    return apiResponse.success(res, req, tile, 200);
+    helper.mqtt_publish_message(`ta/${req.body.gcId}/super`, data, false);
+
+    return apiResponse.success(res, req, data, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -570,13 +586,15 @@ exports.udpatePublishedStatus = async (req, res) => {
       throw new ServiceError(bodyValidation.firstError(), 400);
     }
 
-    const tile = await tileService.changePublishStatus(
+    const data = await tileService.changePublishStatus(
       req.params.id,
       req.body.gcId,
       req.body.status,
     );
 
-    return apiResponse.success(res, req, tile, 200);
+    helper.mqtt_publish_message(`ta/${req.body.gcId}/publish`, data, false);
+
+    return apiResponse.success(res, req, data, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -620,9 +638,9 @@ exports.deleteTile = async (req, res) => {
       throw new ServiceError(paramValidation.firstError(), 400);
     }
 
-    const tile = await tileService.delete(req.params.id);
+    await tileService.delete(req.params.id);
 
-    return apiResponse.success(res, req, tile, 200);
+    return apiResponse.success(res, req, null, 204);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -675,7 +693,13 @@ exports.deleteCourseTile = async (req, res) => {
       req.params.gcId,
     );
 
-    return apiResponse.success(res, req, tile, 200);
+    helper.mqtt_publish_message(
+      `ta/${tile.gcId}/deleted`,
+      { tileId: tile.id },
+      false,
+    );
+
+    return apiResponse.success(res, req, null, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

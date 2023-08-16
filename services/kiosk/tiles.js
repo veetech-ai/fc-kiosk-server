@@ -248,9 +248,11 @@ exports.create = async (data) => {
 };
 
 exports.delete = async (id) => {
-  await this.getOne(id);
+  const tile = await this.getOne(id);
 
-  return Tile.destroy({ where: { id } });
+  Tile.destroy({ where: { id } });
+
+  return tile;
 };
 
 exports.updateTile = async (id, data) => {
@@ -297,7 +299,7 @@ exports.assignDefaultTiles = async (gcId) => {
 exports.deleteCourseTile = async (tileId, gcId) => {
   const transact = await models.sequelize.transation();
   try {
-    await this.getOne({ id: tileId });
+    const tile = await this.getOne({ id: tileId });
     await CousreService.getCourseById(gcId);
 
     await Course_Tile.destroy({ where: { tileId, gcId } });
@@ -306,7 +308,7 @@ exports.deleteCourseTile = async (tileId, gcId) => {
     await Tile.destroy({ where: { id: tileId, builtIn: false } });
 
     transact.commit();
-    return true;
+    return tile;
   } catch (err) {
     transact.rollback();
     throw err;
