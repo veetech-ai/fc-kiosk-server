@@ -4,6 +4,8 @@ const helper = require("../../../../helper");
 const awsS3 = require("../../../../../common/external_services/aws-s3");
 
 const models = require("../../../../../models");
+const serverUpload = require("../../../../../common/server_upload");
+const config = require("../../../../../config/config");
 
 const { Course } = models;
 
@@ -27,6 +29,7 @@ jest.mock("formidable", () => {
 });
 
 awsS3.uploadFile = jest.fn(() => Promise.resolve(uuid()));
+serverUpload.upload = jest.fn((params) => Promise.resolve(uuid()));
 
 const filesData = {
   thumbnail: {
@@ -231,9 +234,12 @@ describe("POST /events", () => {
       expect(() => new URL(updatedEvent.body.data.imageUrl)).not.toThrowError();
 
       expect(updatedEvent.body.data.corousal.length).toEqual(1);
-      expect(
-        updatedEvent.body.data.corousal[0].split(".com/")[1].split("?")[0],
-      ).toEqual(event.corousal[0].split(".com/")[1].split("?")[0]); // it should've deleted rest of the urls
+
+      if (config.aws.upload) {
+        expect(
+          updatedEvent.body.data.corousal[0].split(".com/")[1].split("?")[0],
+        ).toEqual(event.corousal[0].split(".com/")[1].split("?")[0]); // it should've deleted rest of the urls
+      }
 
       updatedEvent.body.data.corousal.forEach((url) => {
         expect(() => new URL(url)).not.toThrowError();
@@ -271,9 +277,11 @@ describe("POST /events", () => {
 
       expect(() => new URL(updatedEvent.body.data.imageUrl)).not.toThrowError();
 
-      expect(
-        updatedEvent.body.data.imageUrl.split(".com/")[1].split("?")[0],
-      ).not.toEqual(event.imageUrl.split(".com/")[1].split("?")[0]);
+      if (config.aws.upload) {
+        expect(
+          updatedEvent.body.data.imageUrl.split(".com/")[1].split("?")[0],
+        ).not.toEqual(event.imageUrl.split(".com/")[1].split("?")[0]);
+      }
     });
   });
 

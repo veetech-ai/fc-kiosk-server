@@ -10,6 +10,7 @@ const courseService = require("../../services/kiosk/course");
 const ServiceError = require("../../utils/serviceError");
 const fileUploader = require("../../common/upload");
 const helper = require("../../common/helper");
+const config = require("../../config/config");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -18,6 +19,8 @@ Validator.prototype.firstError = function () {
     if (err) return err;
   }
 };
+
+const UPLOAD_PATH = "uploads/events";
 
 /**
  * @swagger
@@ -139,7 +142,7 @@ exports.createEvent = async (req, res) => {
 
     fields.imageUrl = await fileUploader.upload_file(
       files.thumbnail,
-      `uploads/events/`,
+      UPLOAD_PATH,
       imageFormats,
     );
 
@@ -150,7 +153,7 @@ exports.createEvent = async (req, res) => {
         const promises = [];
         for (const image of files.corousal) {
           promises.push(
-            fileUploader.upload_file(image, `uploads/events/`, imageFormats),
+            fileUploader.upload_file(image, UPLOAD_PATH, imageFormats),
           );
         }
 
@@ -158,7 +161,7 @@ exports.createEvent = async (req, res) => {
       } else {
         const url = await fileUploader.upload_file(
           files.corousal,
-          `uploads/events/`,
+          UPLOAD_PATH,
           imageFormats,
         );
 
@@ -306,7 +309,7 @@ exports.updateEvent = async (req, res) => {
     if (files.thumbnail) {
       fields.imageUrl = await fileUploader.upload_file(
         files.thumbnail,
-        `uploads/events/`,
+        UPLOAD_PATH,
         imageFormats,
       );
     }
@@ -328,9 +331,17 @@ exports.updateEvent = async (req, res) => {
       }
 
       try {
-        const uuids = fields.corousalUrls.map(
-          (url) => url.split(".com/")[1].split("?")[0],
-        );
+        let uuids = [];
+
+        if (config.aws.upload) {
+          uuids = fields.corousalUrls.map(
+            (url) => url.split(".com/")[1].split("?")[0],
+          );
+        } else if (config.azure.upload) {
+          throw new Error("Not implemented");
+        } else {
+          uuids = fields.corousalUrls.map((url) => url.split("/")[2]);
+        }
 
         fields.corousal = [];
         // .concat doesn't work here for some reason
@@ -349,7 +360,7 @@ exports.updateEvent = async (req, res) => {
         const promises = [];
         for (const image of files.corousal) {
           promises.push(
-            fileUploader.upload_file(image, `uploads/events/`, imageFormats),
+            fileUploader.upload_file(image, UPLOAD_PATH, imageFormats),
           );
         }
 
@@ -361,7 +372,7 @@ exports.updateEvent = async (req, res) => {
         // if single image is sent, it will not be in an array
         const url = await fileUploader.upload_file(
           files.corousal,
-          `uploads/events/`,
+          UPLOAD_PATH,
           imageFormats,
         );
         fields.corousal.push(url);
