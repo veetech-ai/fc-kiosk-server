@@ -83,12 +83,14 @@ exports.create_lesson = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
     const courseId = fields.gcId;
-    const course = await courseService.getCourse(courseId, loggedInUserOrg);
+    const course = await courseService.getLinkedCourse(
+      courseId,
+      loggedInUserOrg,
+    );
     const orgId = course.orgId;
     const coachImage = files.coachImage;
 
     const image = await upload_file.uploadImageForCourse(coachImage, courseId);
-
     const reqBody = { ...fields, image };
     const coach = await courseLesson.createLesson(reqBody, orgId);
     helper.mqtt_publish_message(
