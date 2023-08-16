@@ -113,6 +113,9 @@ module.exports = (sequelize, DataTypes) => {
       as: "Course_Coupons",
       foreignKey: "gcId",
     });
+    Course.hasMany(models.Course_Tile, {
+      foreignKey: "gcId",
+    });
   };
   return Course;
 };

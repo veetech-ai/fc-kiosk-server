@@ -87,6 +87,7 @@ const options = {
     "./controllers/kiosk/contact-careers.js",
     "./controllers/kiosk/ads.js",
     "./controllers/kiosk/kiosk_content/ads.js",
+    "./controllers/kiosk/tiles.js",
   ],
 };
 
