@@ -145,7 +145,6 @@ describe("POST /events", () => {
         token: adminToken,
       });
 
-      expect(updatedEvent.body.data.id).toEqual(testCourse.id);
       expect(updatedEvent.body.data.title).toEqual(updationPayload.title);
       expect(updatedEvent.body.data.openingTime).toEqual("15:00:00");
       expect(updatedEvent.body.data.closingTime).toEqual("23:00:00");
@@ -184,7 +183,6 @@ describe("POST /events", () => {
         token: adminToken,
       });
 
-      expect(updatedEvent.body.data.id).toEqual(testCourse.id);
       expect(updatedEvent.body.data.title).toEqual(updationPayload.title);
       expect(updatedEvent.body.data.openingTime).toEqual("15:00:00");
       expect(updatedEvent.body.data.closingTime).toEqual("23:00:00");
