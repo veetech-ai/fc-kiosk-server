@@ -2,7 +2,7 @@ const Validator = require("validatorjs");
 const formidable = require("formidable");
 const apiResponse = require("../../common/api.response");
 const ServiceError = require("../../utils/serviceError");
-
+const waiverService = require("../../services/kiosk/waiver");
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
   for (let i = 0; i < fields.length; i++) {
@@ -155,7 +155,7 @@ exports.getCourseSignedWaivers = async (req, res) => {
    * @swagger
    *
    * /waiver/course/{id}:
-   *   patch:
+   *   get:
    *     security:
    *       - auth: []
    *     description: Get the paginated list of signed waivers against a course id.
@@ -219,7 +219,7 @@ exports.deleteSignedWaiver = async (req, res) => {
    * @swagger
    *
    * /waiver/signed/{id}:
-   *   patch:
+   *   delete:
    *     security:
    *       - auth: []
    *     description: Delete a particular signature entry.

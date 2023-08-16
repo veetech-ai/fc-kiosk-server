@@ -24,9 +24,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      signatureImage: {
+      signature: {
         type: Sequelize.STRING,
         allowNull: false,
+        description: "The url of the image of the signatures",
       },
       createdAt: {
         allowNull: false,
