@@ -13,6 +13,7 @@ exports.getEvents = async ({ where = {}, paginationOptions = {} }) => {
   const events = await EventModel.findAll({
     ...paginationOptions,
     where,
+    order: [["updatedAt", "DESC"]],
   });
 
   const count = await EventModel.count();
