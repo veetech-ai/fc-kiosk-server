@@ -4,6 +4,7 @@ const helper = require("../../../../helper");
 const awsS3 = require("../../../../../common/external_services/aws-s3");
 
 const models = require("../../../../../models");
+const serverUpload = require("../../../../../common/server_upload");
 
 const { Course } = models;
 
@@ -26,6 +27,7 @@ jest.mock("formidable", () => {
 });
 
 awsS3.uploadFile = jest.fn(() => Promise.resolve(uuid()));
+serverUpload.upload = jest.fn(() => Promise.resolve(uuid()));
 
 const filesData = {
   thumbnail: {
