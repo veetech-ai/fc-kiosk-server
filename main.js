@@ -122,6 +122,7 @@ const CourseMemberships = require("./routes/kiosk/membership");
 const ContactCareerRouter = require("./routes/kiosk/contact-careers");
 const AdsRouter = require("./routes/kiosk/ads");
 const GhinRouter = require("./routes/kiosk/ghin");
+const TilesRouter = require("./routes/kiosk/tiles");
 swaggerDoc(router);
 
 router.use(function (req, res, next) {
@@ -207,6 +208,7 @@ CourseMemberships.routesConfig(app, router);
 ContactCareerRouter.routesConfig(app, router);
 AdsRouter.routesConfig(app, router);
 GhinRouter.routesConfig(app, router);
+TilesRouter.routesConfig(app, router);
 
 global.messageQueue = [];
 
