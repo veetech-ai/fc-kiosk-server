@@ -123,6 +123,8 @@ const ContactCareerRouter = require("./routes/kiosk/contact-careers");
 const AdsRouter = require("./routes/kiosk/ads");
 const GhinRouter = require("./routes/kiosk/ghin");
 const TilesRouter = require("./routes/kiosk/tiles");
+const EventRouter = require("./routes/kiosk/events");
+
 swaggerDoc(router);
 
 router.use(function (req, res, next) {
@@ -207,6 +209,7 @@ CareersRouter.routesConfig(app, router);
 CourseMemberships.routesConfig(app, router);
 ContactCareerRouter.routesConfig(app, router);
 AdsRouter.routesConfig(app, router);
+EventRouter.routesConfig(app, router);
 GhinRouter.routesConfig(app, router);
 TilesRouter.routesConfig(app, router);
 
