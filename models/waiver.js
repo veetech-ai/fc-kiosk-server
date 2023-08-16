@@ -10,20 +10,27 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    gcId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Courses",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: DataTypes.literal("CURRENT_TIMESTAMP"),
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: DataTypes.literal("CURRENT_TIMESTAMP"),
-      onUpdate: DataTypes.literal("CURRENT_TIMESTAMP"),
     },
   });
   Waiver.associate = function (models) {
-    models.Waiver.belongsTo(models.SignedWaiver, {
+    models.Waiver.belongsTo(models.Signed_Waiver, {
       foreignKey: "waiverId",
     });
   };

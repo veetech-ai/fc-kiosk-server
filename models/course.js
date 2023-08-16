@@ -113,6 +113,9 @@ module.exports = (sequelize, DataTypes) => {
       as: "Course_Coupons",
       foreignKey: "gcId",
     });
+    Course.hasMany(models.Waiver, {
+      foreignKey: "gcId",
+    });
   };
   return Course;
 };
