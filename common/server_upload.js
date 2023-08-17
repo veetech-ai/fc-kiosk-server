@@ -1,7 +1,5 @@
 const mv = require("mv");
 const config = require("../config/config");
-const { v4: uuidv4 } = require("uuid");
-const fs = require("fs");
 
 exports.upload = (file, file_name) => {
   return new Promise((resolve, reject) => {
@@ -19,26 +17,6 @@ exports.upload = (file, file_name) => {
       });
     } catch (err) {
       reject({ message: err });
-    }
-  });
-};
-
-exports.uploadv1 = (file, directory = "") => {
-  return new Promise((resolve, reject) => {
-    try {
-      const uuid = uuidv4();
-      const ext = file.name.split(".").pop();
-      const fileName = `${uuid}.${ext}`;
-      const filePath = `files/${directory}${fileName}`; // Change the path as needed
-
-      fs.rename(file.path, filePath, (err) => {
-        if (err) reject(err.message);
-
-        const fileUrl = `${config.app.backendURL}${filePath}`;
-        resolve({ uuid, fileUrl });
-      });
-    } catch (err) {
-      reject(err.message);
     }
   });
 };

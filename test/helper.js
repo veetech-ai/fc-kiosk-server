@@ -183,7 +183,7 @@ exports.post_request = async (data) => {
 
 /**
  * Makes a post request against given endpoint and payload
- * @param {{endpoint: string, token: string, fileupload: boolean, params: {file_key: string, file_path: string, [fieldName: string]: any}}} data Configuration for the request
+ * @param {{endpoint: string, token: string, params: {file_key: string, file_path: string, [fieldName: string]: any}}} data Configuration for the request
  * @returns Promise <any>
  */
 exports.post_request_with_authorization = async (
