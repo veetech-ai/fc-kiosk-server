@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       members: DataTypes.STRING,
       season: DataTypes.STRING,
       email: DataTypes.STRING,
+      ghin_url: DataTypes.STRING,
       orgId: {
         field: "org_id",
         type: DataTypes.INTEGER,
@@ -111,6 +112,13 @@ module.exports = (sequelize, DataTypes) => {
     });
     Course.hasMany(models.Coupon, {
       as: "Course_Coupons",
+      foreignKey: "gcId",
+    });
+    Course.hasMany(models.Event, {
+      as: "Events",
+      foreignKey: "gcId",
+    });
+    Course.hasMany(models.Course_Tile, {
       foreignKey: "gcId",
     });
   };

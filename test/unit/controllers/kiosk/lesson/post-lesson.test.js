@@ -1,35 +1,8 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
+const models = require("../../../../../models/index");
+const CourseModel = models.Course;
 
-// Mocking formidable
-// jest.mock("formidable", () => {
-//   return {
-//     IncomingForm: jest.fn().mockImplementation(() => {
-//       return {
-//         multiples: true,
-//         parse: (req, cb) => {
-//           cb(
-//             null,
-//             {
-//               name: "Mark Rober",
-//               title: "Assistant",
-//               content: "asdasdasdas asdasdasda",
-//               timings: "9:00-10:00",
-//             },
-//             {
-//               image: {
-//                 name: "mock-logo.png",
-//                 type: "image/png",
-//                 size: 5000, // bytes
-//                 path: "/mock/path/to/logo.png",
-//               },
-//             },
-//           );
-//         },
-//       };
-//     }),
-//   };
-// });
 // Mocking formidable
 let mockFields;
 let mockFiles;
@@ -55,12 +28,14 @@ const mockFormidable = (fields, files) => {
 describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
   let adminToken;
   let courseId;
-  let orgId;
   let customerToken;
   let testOperatorToken;
+  let differentOrganizationCustomerToken;
   let testOrganizationId = 1;
+  let orgId;
 
   beforeAll(async () => {
+    await CourseModel.destroy({ where: {} });
     // Create some courses for the test organization
     const courses = {
       name: "Course 1",
@@ -72,6 +47,9 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
     adminToken = await helper.get_token_for("admin");
     customerToken = await helper.get_token_for("testCustomer");
     testOperatorToken = await helper.get_token_for("testOperator");
+    differentOrganizationCustomerToken = await helper.get_token_for(
+      "zongCustomer",
+    );
     const course = await helper.post_request_with_authorization({
       endpoint: "kiosk-courses",
       token: adminToken,
@@ -118,7 +96,7 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
     expect(response.body.data.content).toEqual(fields.content);
     expect(response.body.data.timings).toEqual(fields.timings);
   });
-  it("should create a new course with the customer token who is the part of same organization", async () => {
+  it("should create a new course with the customer token who is the part of same organization as course", async () => {
     const fields = {
       gcId: courseId,
       name: "Mark -o plier",
@@ -147,9 +125,17 @@ describe("POST /api/v1/kiosk-courses/{orgId}/{courseId}/lesson", () => {
     expect(response.body.data.content).toEqual(fields.content);
     expect(response.body.data.timings).toEqual(fields.timings);
   });
-  it("should return an error if user belongs to different organization", async () => {
+  it("should return an error if user belongs to different organization and is not a customer", async () => {
     const params = {};
     const response = await makeApiRequest(params, testOperatorToken);
     expect(response.body.data).toEqual("You are not allowed");
+  });
+  it("should return an error if customer belongs to different organization", async () => {
+    const params = {};
+    const response = await makeApiRequest(
+      params,
+      differentOrganizationCustomerToken,
+    );
+    expect(response.body.data).toEqual("Not found");
   });
 });

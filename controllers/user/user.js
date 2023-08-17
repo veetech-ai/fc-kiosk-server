@@ -559,14 +559,6 @@ exports.update_user = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "gender",
-      function (value) {
-        return value === "male" || value === "female";
-      },
-      'The :attribute field must be either "male" or "female".',
-    );
-
     const validation = new Validator(req.body, {
       name: ["regex:/^([a-zA-Z][a-zA-Z0-9.' ]*)([a-zA-Z0-9.])$/"],
       phone: [`regex:${helper.PhoneRegex}`],
@@ -1513,19 +1505,6 @@ exports.set_user_settings = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       config: "required|json",
     });
@@ -1976,19 +1955,6 @@ exports.save_login_info = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       info: "required|json",
     });

@@ -1,6 +1,5 @@
 const apiResponse = require("../../common/api.response");
 const helper = require("../../common/helper");
-
 const Validator = require("validatorjs");
 const CoursesServices = require("../../services/kiosk/course");
 const CareersServices = require("../../services/kiosk/career");
@@ -64,18 +63,6 @@ exports.create = async (req, res) => {
    *       200:
    *         description: success
    */
-  Validator.register(
-    "json",
-    function (value) {
-      try {
-        JSON.parse(value);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    },
-    "The :attribute must be a JSON string.",
-  );
   const validation = new Validator(req.body, {
     title: "required|string",
     gcId: "required|integer",
@@ -198,18 +185,7 @@ exports.updateCareerById = async (req, res) => {
    *       200:
    *         description: success
    */
-  Validator.register(
-    "json",
-    function (value) {
-      try {
-        JSON.parse(value);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    },
-    "The :attribute must be a JSON string.",
-  );
+
   const validation = new Validator(req.body, {
     title: "string",
     content: "string",

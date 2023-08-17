@@ -237,7 +237,7 @@ exports.forget_password = (user, token) => {
       user_name: user.name,
       email: user.email,
       acctivation_url: config.app.frontendURL + "reset-password?token=" + token,
-      icon_url: config.app.frontendURL + "/img/icons/mstile-310x150.png",
+      icon_url: new URL("img/icons/mstile-310x150.png", config.app.frontendURL),
     });
 
     this.send({

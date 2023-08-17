@@ -6,8 +6,10 @@ const formidable = require("formidable");
 const apiResponse = require("../../../common/api.response");
 const helper = require("../../../common/helper");
 const upload_file = require("../../../common/upload");
+const models = require("../../../models");
 // Logger Imports
 const courseService = require("../../../services/kiosk/course");
+const tileService = require("../../../services/kiosk/tiles");
 const awsS3 = require("../../../common/external_services/aws-s3");
 
 /**
@@ -65,6 +67,7 @@ exports.create_courses = async (req, res) => {
    *       200:
    *         description: success
    */
+  const transact = await models.sequelize.transaction();
   try {
     const validation = new Validator(req.body, {
       name: "required|string",
@@ -87,9 +90,19 @@ exports.create_courses = async (req, res) => {
       zip,
       phone,
     };
+
+    reqBody.ghin_url = "https://www.ghin.com/login";
+
     const course = await courseService.createCourse(reqBody, orgId);
-    return apiResponse.success(res, req, course);
+
+    // using one service inside another, and other way round as well causes circluar dependency issue
+    // so multi service stuff should be handled inside controller
+    const tiles = await tileService.assignDefaultTiles(course.id);
+    await transact.commit();
+
+    return apiResponse.success(res, req, { ...course.dataValues, tiles });
   } catch (error) {
+    await transact.rollback();
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
@@ -127,6 +140,7 @@ exports.get_courses_for_organization = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
 exports.create_course_info = async (req, res) => {
   /**
    * @swagger
@@ -277,6 +291,7 @@ exports.create_course_info = async (req, res) => {
     if (!courseId) {
       return apiResponse.fail(res, "courseId must be a valid number");
     }
+
     const loggedInUserOrg = req.user?.orgId;
 
     const course = await courseService.getCourse(
@@ -292,16 +307,15 @@ exports.create_course_info = async (req, res) => {
         resolve({ fields, files });
       });
     });
-
-    const validation = new Validator(fields, {
+    const validationRules = {
       name: "string",
       holes: "integer",
-      par: "integer",
-      slope: "integer",
+      par: "par",
+      slope: "slope",
       content: "string",
       email: "string",
-      yards: "integer",
-      year_built: "integer",
+      yards: "yards",
+      year_built: "year_built",
       architects: "string",
       greens: "string",
       fairways: "string",
@@ -315,10 +329,14 @@ exports.create_course_info = async (req, res) => {
       long: "numeric",
       lat: "numeric",
       street: "string",
-    });
+    };
+
+    const validation = new Validator(fields, validationRules);
+
     if (validation.fails()) {
       return apiResponse.fail(res, validation.errors);
     }
+
     let reqBody = {};
     const uploadedImages = [];
     const uploadedImageFiles = [];

@@ -269,19 +269,6 @@ exports.create = (req, res) => {
   form.parse(req, function (err, fields, files) {
     if (err) return apiResponse.fail(res, err.message);
 
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(fields, {
       title: "required",
       price: "required",
