@@ -94,7 +94,7 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
     await CousreService.getCourseById(gcId);
 
     const requestedTileInfo = await Course_Tile.findOne({
-      where: { tileId },
+      where: { tileId, gcId },
       attributes: ["orderNumber"],
     });
 
