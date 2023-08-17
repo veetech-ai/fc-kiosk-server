@@ -78,6 +78,6 @@ describe("PATCH /api/v1/course-membership/{id}", () => {
       reqBody,
       differentOrganizationCustomerToken,
     );
-    expect(response.body.data).toBe("You are not allowed");
+    expect(response.body.data).toBe("Membership not found");
   });
 });
