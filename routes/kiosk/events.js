@@ -6,7 +6,7 @@ exports.routesConfig = function (app, router) {
   const events = `${config.app.apiPath}events`;
 
   router.get(events, [
-    validation_middleware.validJWTOptional,
+    validation_middleware.validJWTNeeded,
     eventsController.getEvents,
   ]);
   router.get(events + "/course/:id", [
