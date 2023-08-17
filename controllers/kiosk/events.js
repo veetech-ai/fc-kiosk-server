@@ -507,16 +507,14 @@ exports.getEventsOfCourse = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
-    let events = await eventService.getEvents({ gcId: req.params.id });
+    let data = await eventService.getEvents({ gcId: req.params.id });
 
-    if (!events.length) throw new ServiceError("Not Found", 404);
-
-    events = events.map((event) => {
+    data.events = data.events.map((event) => {
       event.imageUrl = fileUploader.getFileURL(event.imageUrl);
       return event;
     });
 
-    apiResponse.success(res, req, events, 200);
+    apiResponse.success(res, req, data, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
