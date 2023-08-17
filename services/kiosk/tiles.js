@@ -184,8 +184,6 @@ exports.updateOrder = async (tileId, gcId, newOrder) => {
   }
 };
 
-const sortByOrder = () => {};
-
 exports.changePublishStatus = async (tileId, gcId, status = false) => {
   // throw error, if ids are not valid
   await this.getOne({ id: tileId });
@@ -236,7 +234,17 @@ exports.create = async (data) => {
       where: { gcId },
     });
 
-    // 4. create new tile with max order
+    // 4. check if current course already has a same tile with name
+    const duplicateTile = await Tile.findOne({ where: { name } });
+
+    if (duplicateTile) {
+      throw new ServiceError(
+        "A tile with same name already exist for this course",
+        400,
+      );
+    }
+
+    // 5. create new tile with max order
     const tile = await Tile.create({ name });
     const courseTile = await Course_Tile.create({
       tileId: tile.id,
@@ -249,7 +257,7 @@ exports.create = async (data) => {
 
     await transact.commit();
 
-    // 5. prepare and send the response
+    // 6. prepare and send the response
     return { ...tile.dataValues, ...courseTile.dataValues, id: tile.id };
   } catch (err) {
     transact.rollback();
@@ -258,9 +266,9 @@ exports.create = async (data) => {
 };
 
 exports.delete = async (id) => {
-  const tile = await this.getOne(id);
+  const tile = await this.getOne({ id });
 
-  Tile.destroy({ where: { id } });
+  await Tile.destroy({ where: { id } });
 
   return tile;
 };
@@ -302,6 +310,7 @@ exports.assignDefaultTiles = async (gcId) => {
     isSuperTile: false,
     orderNumber: tile.id,
   }));
+
   await Course_Tile.bulkCreate(payload);
   return this.getCourseTiles(gcId);
 };

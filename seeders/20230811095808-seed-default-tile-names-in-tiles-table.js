@@ -1,6 +1,8 @@
 "use strict";
 
-const screenNames = [
+const { Op } = require("sequelize");
+
+const builtInTiles = [
   { name: "Course Info", builtIn: true },
   { name: "Coupons", builtIn: true },
   { name: "Lessons", builtIn: true },
@@ -13,14 +15,27 @@ const screenNames = [
   { name: "Wedding Event", builtIn: true },
   { name: "FAQs", builtIn: true },
 ];
+const tileNames = builtInTiles.map((tile) => tile.name);
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface) {
-    await queryInterface.bulkInsert("Tiles", screenNames);
+    const existingTiles = await queryInterface.select(null, "Tiles", {
+      where: { name: { [Op.in]: tileNames } },
+    });
+
+    for (const tile of builtInTiles) {
+      const exists = existingTiles.find((_tile) => _tile.name == tile.name);
+
+      if (exists) continue;
+
+      await queryInterface.insert(null, "Tiles", tile);
+    }
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete("Tiles", { name: screenNames });
+    await queryInterface.bulkDelete("Tiles", {
+      where: { name: { [Op.in]: tileNames } },
+    });
   },
 };
