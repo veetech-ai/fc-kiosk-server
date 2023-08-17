@@ -18,10 +18,14 @@ exports.sign = async (gcId, email, signatureUrl) => {
   });
 };
 
+exports.generateSignedPDF = () => {};
+
 exports.updateContent = async (id, content) => {
   const waiver = await Waiver.findOne({ where: { id } });
 
   if (!waiver) throw new ServiceError(`Not Found`, 404);
+
+  // TODO sanitize HTML content
 
   const [rowsUpdated] = Waiver.update({ content }, { where: { id } });
 
