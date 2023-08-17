@@ -88,6 +88,9 @@ const options = {
     "./controllers/kiosk/ads.js",
     "./controllers/kiosk/kiosk_content/ads.js",
     "./controllers/kiosk/waiver.js",
+    "./controllers/kiosk/events.js",
+    "./controllers/kiosk/ghin.js",
+    "./controllers/kiosk/tiles.js",
   ],
 };
 
