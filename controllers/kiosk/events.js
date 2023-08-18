@@ -692,11 +692,14 @@ exports.create_contact_wedding_event = async (req, res) => {
       contactMedium: contact_medium,
     };
 
-    console.log(users);
-
     await send_wedding_event(res, req, weddingEventName, contact_info, users);
 
-    return apiResponse.success(res, req, null, 200);
+    return apiResponse.success(
+      res,
+      req,
+      "Emails Sent we will contact you",
+      200,
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

@@ -400,9 +400,7 @@ exports.get_users_by_organizations = async (orgId) => {
     where: { orgId: orgId, role_id: 3 },
   });
 
-  const newUsers  = users.map((e)=>e.dataValues);
-
-  console.log(newUsers);
+  const newUsers = users.map((e) => e.dataValues);
 
   // if (user.Organization.name === config.testOrganization) {
   //   throw new Error("testOrganizationUser");

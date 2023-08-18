@@ -258,7 +258,7 @@ exports.forget_password = (user, token) => {
 
 exports.wedding_event = (event_name, contact_info, users) => {
   return new Promise((resolve, reject) => {
-    const template = fs.readFile("./views/emails/wedding-event.html", {
+    const template = fs.readFileSync("./views/emails/wedding_event.html", {
       encoding: "utf-8",
     });
     const html = ejs.render(template, {
