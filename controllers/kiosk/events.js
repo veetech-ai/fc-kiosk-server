@@ -178,7 +178,7 @@ exports.createEvent = async (req, res) => {
       event.corousal = helper.getURLOfImages(event.corousal);
     }
 
-    helper.mqtt_publish_message(`we/${event.id}/created`, {
+    helper.mqtt_publish_message(`we/${fields.gcId}/created`, {
       eventId: event.id,
     });
     apiResponse.success(res, req, event, 201);
@@ -388,7 +388,7 @@ exports.updateEvent = async (req, res) => {
     }
 
     helper.mqtt_publish_message(
-      `we/${req.params.id}/updated`,
+      `we/${fields.gcId}/updated`,
       {
         eventId: req.params.id,
       },
