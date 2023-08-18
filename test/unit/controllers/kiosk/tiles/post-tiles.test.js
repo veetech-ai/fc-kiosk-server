@@ -54,7 +54,7 @@ describe("POST /tiles", () => {
       expect(res.body.data.gcId).toEqual(testCourse.id);
       expect(res.body.data.isPublished).toEqual(tilePayload.isPublished);
       expect(res.body.data.isSuperTile).toEqual(tilePayload.isSuperTile);
-      expect(res.body.data.orderNumber).toEqual(12);
+      expect(res.body.data.orderNumber).toEqual(13);
       expect(res.body.data.layoutNumber).toEqual(expect.any(Number));
 
       // Make sure relevant tables have been updated
@@ -72,7 +72,7 @@ describe("POST /tiles", () => {
       expect(courseTile).not.toBe(null);
       expect(courseTile.isPublished).toBe(tilePayload.isPublished);
       expect(courseTile.isSuperTile).toBe(tilePayload.isSuperTile);
-      expect(courseTile.orderNumber).toBe(12);
+      expect(courseTile.orderNumber).toBe(13);
       expect(courseTile.layoutNumber).toBe(tilePayload.layoutNumber);
 
       // clean up
