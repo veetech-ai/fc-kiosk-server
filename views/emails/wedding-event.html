@@ -3,49 +3,41 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>New Wedding Event Application</title>
-    <style type="text/css">
-        .style1 {
-            color: #000000;
-            font-family: Georgia, "Times New Roman", Times, serif;
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
-        .style4 {
-            color: #666666;
-            font-family: Arial, Helvetica, sans-serif;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #6DC06F;
+        }
+        p {
+            color: #333333;
         }
     </style>
 </head>
 <body>
-    <div style="background-color:#ffffff; margin:0;font-family:sans-serif;font-style:normal;font-weight:400">
-        <table style="background-color:#ffffff; font-family:sans-serif;font-style:normal;font-weight:400" width="100%" cellspacing="0" cellpadding="0">
-            <tbody>
-                <tr>
-                    <td style="padding:30px 20px 30px 20px;font-family:sans-serif;font-style:normal;font-weight:400">
-                        <table style="background-color: #fff; font-family: sans-serif; font-style: normal; font-weight: 400; border-radius: 10px; border: 1px solid#e8ecec; box-shadow: 10px 10px 0px rgba(0,0,0,0.05);"
-                            width="500" cellspacing="0" cellpadding="0" align="center">
-                            <tbody>
-                                <tr>
-                                    <td style="font-size:32px;font-weight:400;padding:0px 30px 0px 30px;line-height:1.3em;color:#333333; font-family:Roboto,sans-serif;font-style:normal"
-                                        align="center"><span class="style1">New Wedding Event Application</span></td>
-                                </tr>
-                                <tr>
-                                    <td style="font-size:16px;font-style:normal;font-weight:400;color:#666666; line-height:1.8;padding:20px 30px 0px 30px;font-family:Roboto,sans-serif"align="center"><span class="style4" style="max-width:400px;display:block">
-                                        <p>Hello,</p>
-                                        <p>A new wedding event application has been received:</p>
-                                        <% if(show_phone_number){ %>
-                                            <p><strong>Contact User:</strong> Please use the phone number to contact the applicant: <%= phone_number %></p>
-                                        <% } else { %>
-                                            <p><strong>Contact User:</strong> Please use the email address to contact the applicant: <%= email %></p>
-                                        <% } %>
-                                    </td>
-                                </tr>
-                                <!-- ... other rows ... -->
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <!-- ... other rows ... -->
-            </tbody>
-        </table>
+    <div class="container">
+        <h1>New Wedding Event Application</h1>
+        <p>Hello,</p>
+        <p>A new wedding event application has been received:</p>
+        <p><strong>Event Name:</strong> <%= event_name %></p>
+        <% if (show_phone_number) { %>
+            <p><strong>Contact User:</strong> Please use the phone number to contact the applicant: <%= phone_number %></p>
+        <% } else { %>
+            <p><strong>Contact User:</strong> Please use the email address to contact the applicant: <%= email %></p>
+        <% } %>
+        <p>Thank you!</p>
     </div>
 </body>
 </html>
