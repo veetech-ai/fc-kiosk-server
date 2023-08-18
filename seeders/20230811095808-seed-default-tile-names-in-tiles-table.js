@@ -10,6 +10,7 @@ const builtInTiles = [
   { name: "Feedback", builtIn: true },
   { name: "Careers", builtIn: true },
   { name: "Shop", builtIn: true },
+  { name: "Statistics", builtIn: true },
   { name: "Rent A Cart", builtIn: true },
   { name: "Ghin App", builtIn: true },
   { name: "Wedding Event", builtIn: true },
