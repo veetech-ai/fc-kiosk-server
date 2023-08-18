@@ -395,10 +395,14 @@ exports.remove_by_id = async (id, loggedInUser) => {
 };
 
 exports.get_users_by_organizations = async (orgId) => {
-  const users = await this.findById({
-    orgId,
-    role_id: 3,
+  console.log(typeof orgId);
+  const users = await User.findAll({
+    where: { orgId: orgId, role_id: 3 },
   });
+
+  const newUsers  = users.map((e)=>e.dataValues);
+
+  console.log(newUsers);
 
   // if (user.Organization.name === config.testOrganization) {
   //   throw new Error("testOrganizationUser");
@@ -410,7 +414,7 @@ exports.get_users_by_organizations = async (orgId) => {
   //   throw new Error("Operation can not be performed");
   // }
 
-  return users;
+  return newUsers;
 };
 
 exports.enable_by_id = async (idOfUserToBeEnabled, loggedInUser) => {

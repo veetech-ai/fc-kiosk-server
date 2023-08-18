@@ -40,9 +40,14 @@ exports.send_password_reset_email = async (req, res, user) => {
     return apiResponse.fail(res, err.message, 500);
   }
 };
-exports.send_wedding_event = async (event_name, contact_info, users) => {
+exports.send_wedding_event = async (
+  res,
+  req,
+  event_name,
+  contact_info,
+  users,
+) => {
   try {
-
     await email.wedding_event(event_name, contact_info, users);
 
     return apiResponse.success(res, req, "Wedding Event Email sent", 200);

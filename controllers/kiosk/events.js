@@ -684,7 +684,7 @@ exports.create_contact_wedding_event = async (req, res) => {
     const courseData = await courseService.getCourseById(weddingEventgcId, {
       exclude: [],
     });
-    const orgId = courseData.org_id;
+    const orgId = courseData.dataValues.org_id;
     const users = await UserModel.get_users_by_organizations(orgId);
     const contact_info = {
       userPhone: phone,
@@ -694,7 +694,7 @@ exports.create_contact_wedding_event = async (req, res) => {
 
     console.log(users);
 
-    await send_wedding_event(weddingEventName, contact_info, users);
+    await send_wedding_event(res, req, weddingEventName, contact_info, users);
 
     return apiResponse.success(res, req, null, 200);
   } catch (error) {
