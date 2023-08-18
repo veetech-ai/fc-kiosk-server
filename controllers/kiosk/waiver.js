@@ -1,10 +1,14 @@
 const Validator = require("validatorjs");
 const formidable = require("formidable");
+const { uuid } = require("uuidv4");
+
 const apiResponse = require("../../common/api.response");
 const ServiceError = require("../../utils/serviceError");
 const waiverService = require("../../services/kiosk/waiver");
 const fileUploader = require("../../common/upload");
 const helper = require("../../common/helper");
+const email = require("../../common/email");
+
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
   for (let i = 0; i < fields.length; i++) {
@@ -93,13 +97,21 @@ exports.sign = async (req, res) => {
     // 3. send an email to signatory
     // 4. send an emial to course owner
 
-    const waiver = await waiverService.sign(
+    const html = await waiverService.getSignedWaiverHTML(
       fields.gcId,
       fields.email,
-      fields.signaturePath,
+      fileUploader.getFileURL(fields.signaturePath),
     );
 
-    waiver.signature = fileUploader.getFileURL(fields.signaturePath);
+    const pdfPath = `${UPLOAD_PATH}/${uuid()}.pdf`;
+
+    await helper.printPDF(html, { pdf: { path: "./public/" + pdfPath } });
+
+    const waiver = await waiverService.sign(fields.gcId, fields.email, pdfPath);
+
+    waiver.signature = fileUploader.getFileURL("files/" + pdfPath);
+
+    email.send({ to: fields.email, subject: "Rent A Cart (Agreement)" });
 
     return apiResponse.success(res, req, waiver);
   } catch (error) {

@@ -54,6 +54,8 @@ const alertsCategories = require("./../df-commons/data/alerts-categories.json");
 const definitionsValidations = require("./../df-commons/definitions/validations.json");
 const { globalMQTT } = require("./mqtt-init");
 const ServiceError = require("../utils/serviceError");
+const puppeteer = require("puppeteer");
+const { uuid } = require("uuidv4");
 
 // Setting Up Ajv
 const ajv = new Ajv({ allErrors: true, useDefaults: true }); // options can be passed, e.g. {allErrors: true}
@@ -1623,4 +1625,26 @@ exports.sanitizeHtmlInput = (dirtyHTML, options = {}) => {
     allowedIframeHostnames: [],
     ...options,
   });
+};
+
+/**
+ * Converts the html to pdf
+ * @param {String} html A valid html string
+ * @param {object} [options= {}] Options to configure to your needs
+ * @param {puppeteer.PDFOptions} [options.pdf]
+ * @param {puppeteer.PuppeteerLaunchOptions} [options.launch]
+ * @returns {Promise<{path: string, pdf:Buffer}>} pdf buffer
+ */
+exports.printPDF = async (html, options = {}) => {
+  const path = `./public/uploads/${uuid()}.pdf`;
+
+  const browser = await puppeteer.launch({ headless: true, ...options.launch });
+  const page = await browser.newPage();
+
+  await page.setContent(html);
+
+  const pdf = await page.pdf({ path, format: "A4", ...options.pdf });
+
+  await browser.close();
+  return { path, pdf };
 };

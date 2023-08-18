@@ -3,7 +3,53 @@ const models = require("../../models");
 const ServiceError = require("../../utils/serviceError");
 const { sanitizeHtmlInput } = require("../../common/helper");
 
-const { Signed_Waiver, Waiver } = models;
+const { Signed_Waiver, Waiver, Course } = models;
+
+exports.getSignedWaiverHTML = async (gcId, signatoryEmail, signatureUrl) => {
+  const waiver = await Waiver.findOne({
+    where: { gcId },
+    attributes: ["content"],
+  });
+
+  const course = await Course.findOne({
+    where: { id: gcId },
+    attributes: ["name"],
+  });
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rent A Cart</title>
+  </head>
+  <body>
+    <main>
+      ${waiver.content}
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        "
+      >
+        <p>${course.name}</p>
+        <div>
+          <div style="height: 100px">
+            <img style="height: 100%" src="${signatureUrl}" alt="signature" />
+          </div>
+          <p><u>${Date.now().toLocaleString()}</u></p>
+          <p>Signatory: ${signatoryEmail}</p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
+  `;
+
+  return html;
+};
 
 exports.sign = async (gcId, email, signatureUrl) => {
   const waiver = await Waiver.findOne({ where: { gcId } });
@@ -34,8 +80,6 @@ exports.sign = async (gcId, email, signatureUrl) => {
     waiverId: waiver.id,
   });
 };
-
-exports.generateSignedPDF = () => {};
 
 exports.updateContent = async (id, content) => {
   const waiver = await Waiver.findOne({ where: { id } });
