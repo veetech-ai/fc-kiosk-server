@@ -29,16 +29,16 @@ exports.uploadv1 = (file, directory = "") => {
       const uuid = uuidv4();
       const ext = file.name.split(".").pop();
       const fileName = `${uuid}.${ext}`;
-      const filePath = `files/${directory}${fileName}`; // Change the path as needed
 
-      fs.rename(file.path, filePath, (err) => {
-        if (err) reject(err.message);
+      const filePath = `${directory}/${fileName}`;
 
-        const fileUrl = `${config.app.backendURL}${filePath}`;
-        resolve({ uuid, fileUrl });
+      fs.rename(file.path, filePath, function (err) {
+        if (err) reject(err);
+
+        resolve(filePath.replace("./public", "files"));
       });
     } catch (err) {
-      reject(err.message);
+      reject(err);
     }
   });
 };
