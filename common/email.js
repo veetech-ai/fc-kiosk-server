@@ -256,6 +256,42 @@ exports.forget_password = (user, token) => {
   });
 };
 
+exports.wedding_event = (event_name, contact_info, users) => {
+  return new Promise((resolve, reject) => {
+    const template = fs.readFile("./views/emails/wedding-event.html", {
+      encoding: "utf-8",
+    });
+    const html = ejs.render(template, {
+      event_name: event_name,
+      show_phone_number: contact_info.contact_medium,
+      phone_number: contact_info.phone,
+      email: contact_info.email,
+    });
+
+    const promises = [];
+
+    for (const user of users) {
+      promises.push(
+        this.send({
+          to: user.email,
+          subject: "Wedding Event Applciation",
+          message: html,
+        }),
+      );
+    }
+
+    Promise.all(promises)
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => {
+        reject({
+          message: err,
+        });
+      });
+  });
+};
+
 exports.send_tranfer_device_verification = (to_user, from_user, token) => {
   return new Promise((resolve, reject) => {
     const test_template = fs.readFileSync(
