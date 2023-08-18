@@ -102,13 +102,13 @@ async function getOne(where) {
   return await Course.findOne({ where });
 }
 
-async function getCourseById(courseId) {
+async function getCourseById(courseId, { exclude = ["org_id", "gc_id"] }) {
   const course = await Course.findOne({
     where: {
       id: courseId,
     },
     attributes: {
-      exclude: ["org_id", "gc_id"],
+      exclude,
     },
   });
 
