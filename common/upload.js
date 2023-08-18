@@ -119,7 +119,7 @@ exports.upload_file = async (
 
     switch (defaultUploadOn) {
       case 1:
-        return await server_upload.upload(file, `${newpath}/${fileName}`);
+        return await server_upload.uploadv1(file, newpath);
       // case 2:
       //   return await azureUpload.upload(file, `${path}/${fileName}`);
       case 3:

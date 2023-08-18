@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Waiver", {
+    await queryInterface.createTable("Waivers", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,8 +15,18 @@ module.exports = {
         allowNull: false,
       },
       content: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT("medium"),
         allowNull: false,
+      },
+      gcId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Courses",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,
@@ -33,6 +43,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    return queryInterface.dropTable("Waiver");
+    return queryInterface.dropTable("Waivers");
   },
 };

@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     content: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT("medium"),
       allowNull: false,
     },
     gcId: {
@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
   Waiver.associate = function (models) {
-    models.Waiver.belongsTo(models.Signed_Waiver, {
+    models.Waiver.hasMany(models.Signed_Waiver, {
       foreignKey: "waiverId",
     });
   };

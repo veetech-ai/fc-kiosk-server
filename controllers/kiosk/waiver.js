@@ -3,6 +3,8 @@ const formidable = require("formidable");
 const apiResponse = require("../../common/api.response");
 const ServiceError = require("../../utils/serviceError");
 const waiverService = require("../../services/kiosk/waiver");
+const fileUploader = require("../../common/upload");
+const helper = require("../../common/helper");
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
   for (let i = 0; i < fields.length; i++) {
@@ -10,6 +12,8 @@ Validator.prototype.firstError = function () {
     if (err) return err;
   }
 };
+
+const UPLOAD_PATH = "uploads/waiver";
 
 /**
  * @swagger
@@ -67,7 +71,7 @@ exports.sign = async (req, res) => {
 
     const validation = new Validator(fields, {
       gcId: "required|integer",
-      email: "required|string",
+      email: ["required", `regex:${helper.emailRegex}`],
     });
 
     if (validation.fails()) throw new ServiceError(validation.firstError());
@@ -76,14 +80,28 @@ exports.sign = async (req, res) => {
       throw new ServiceError("The signature image is required");
     }
 
-    // get a waiver against current gcId
-    // get the id of the waiver
-    // insert new row, email, waiverId, signature
-    // create a pdf of content + signature
-    // send an email to signatory
-    // send an emial to course owner
+    const imageFormats = ["jpg", "jpeg", "png", "webp"];
 
-    return apiResponse.success(res, req, {});
+    fields.signaturePath = await fileUploader.upload_file(
+      files.signature,
+      UPLOAD_PATH,
+      imageFormats,
+    );
+
+    // 1. insert new row, email, waiverId, signature
+    // 2. create a pdf of content + signature
+    // 3. send an email to signatory
+    // 4. send an emial to course owner
+
+    const waiver = await waiverService.sign(
+      fields.gcId,
+      fields.email,
+      fields.signaturePath,
+    );
+
+    waiver.signature = fileUploader.getFileURL(fields.signaturePath);
+
+    return apiResponse.success(res, req, waiver);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -143,8 +161,12 @@ exports.update = async (req, res) => {
     if (validation.fails()) throw new ServiceError(validation.firstError());
 
     // update the waiver with given id
+    const data = await waiverService.updateContent(
+      req.params.id,
+      req.body.content,
+    );
 
-    return apiResponse.success(res, req, {});
+    return apiResponse.success(res, req, data);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -206,9 +228,20 @@ exports.getCourseSignedWaivers = async (req, res) => {
 
     if (validation.fails()) throw new ServiceError(validation.firstError());
 
-    // get pagingated list of signed waivers against given course
+    const pagination = helper.get_pagination_params({
+      limit: req.query.size,
+      page: req.query.page,
+    });
 
-    return apiResponse.success(res, req, {});
+    // get pagingated list of signed waivers against given course
+    const data = await waiverService.getSigned(req.params.id, pagination);
+
+    // get file urls
+    data.waivers.forEach(
+      (wv) => (wv.signature = fileUploader.getFileURL(wv.signature)),
+    );
+
+    return apiResponse.success(res, req, { ...data, pagination });
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -247,6 +280,7 @@ exports.deleteSignedWaiver = async (req, res) => {
     if (validation.fails()) throw new ServiceError(validation.firstError());
 
     // delete the record
+    await waiverService.deleteSigned(req.params.id);
 
     return apiResponse.success(res, req, null, 204);
   } catch (error) {

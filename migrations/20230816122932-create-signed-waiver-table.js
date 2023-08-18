@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Signed_Waiver", {
+    await queryInterface.createTable("Signed_Waivers", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,7 +14,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Waiver",
+          model: "Waivers",
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -44,6 +44,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    return queryInterface.dropTable("Signed_Waiver");
+    return queryInterface.dropTable("Signed_Waivers");
   },
 };

@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Waiver",
+        model: "Waivers",
         key: "id",
       },
       onUpdate: "CASCADE",
@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
   SignedWaiver.associate = function (models) {
-    models.Signed_Waiver.hasMany(models.Waiver, {
+    models.Signed_Waiver.belongsTo(models.Waiver, {
       foreignKey: "waiverId",
     });
   };

@@ -70,6 +70,8 @@ const filterRegexString = `^(${date})$|^today$|^yesterday$|^[0-9]{1,2}d$|^[0-9]{
 const dateTimeRange = `^${date}${time}\\|${date}${time}$`;
 const dateRegexString = `^${date}$`;
 
+exports.emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
+
 exports.filterRegex = new RegExp(filterRegexString);
 exports.productIdRegex = new RegExp(/((\w{1,})[\s-]?)+(\|[\w-?\s?]+)*$/);
 exports.dateTimeRangeRegex = new RegExp(dateTimeRange);
