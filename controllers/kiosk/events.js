@@ -685,6 +685,9 @@ exports.create_contact_wedding_event = async (req, res) => {
     const weddingEvent = await eventService.getEvents({
       where: { id: weddingEventId },
     });
+    if (weddingEvent.events.length == 0) {
+      throw new Error("No Users in this Organization");
+    }
     const weddingEventName = weddingEvent.events[0].dataValues.title;
     const weddingEventgcId = weddingEvent.events[0].dataValues.gcId;
     const courseData = await courseService.getCourseById(weddingEventgcId, {
