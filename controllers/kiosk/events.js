@@ -608,11 +608,15 @@ exports.deleteEvent = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
+    let specificEvent = await eventService.getEvents({ id: req.params.id });
     await eventService.delelteEvent(req.params.id);
 
-    helper.mqtt_publish_message(`we/${req.params.id}/deleted`, {
-      eventId: req.params.id,
-    });
+    helper.mqtt_publish_message(
+      `we/${specificEvent.events[0].dataValues.gcId}/deleted`,
+      {
+        eventId: req.params.id,
+      },
+    );
     apiResponse.success(res, req, null, 204);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
