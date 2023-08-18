@@ -49,8 +49,6 @@ exports.send_wedding_event = async (
 ) => {
   try {
     await email.wedding_event(event_name, contact_info, users);
-
-    return apiResponse.success(res, req, "Wedding Event Email sent", 200);
   } catch (err) {
     return apiResponse.fail(res, err.message, 500);
   }

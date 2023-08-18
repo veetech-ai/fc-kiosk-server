@@ -697,7 +697,7 @@ exports.create_contact_wedding_event = async (req, res) => {
     return apiResponse.success(
       res,
       req,
-      "Emails Sent we will contact you",
+      "Emails Sent. We will contact you",
       200,
     );
   } catch (error) {

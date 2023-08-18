@@ -265,7 +265,7 @@ exports.wedding_event = (event_name, contact_info, users) => {
       event_name: event_name,
       show_phone_number: contact_info.contact_medium,
       phone_number: contact_info.phone,
-      email: contact_info.email,
+      email: contact_info.userEmail,
     });
 
     const promises = [];
