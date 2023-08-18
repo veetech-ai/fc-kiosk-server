@@ -507,7 +507,7 @@ exports.getEventsOfCourse = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
-    let data = await eventService.getEvents({ gcId: req.params.id });
+    let data = await eventService.getEvents({ where: { gcId: req.params.id } });
 
     data.events = data.events.map((event) => {
       event.imageUrl = fileUploader.getFileURL(event.imageUrl);
@@ -608,7 +608,9 @@ exports.deleteEvent = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
-    let specificEvent = await eventService.getEvents({ id: req.params.id });
+    let specificEvent = await eventService.getEvents({
+      where: { id: req.params.id },
+    });
     await eventService.delelteEvent(req.params.id);
 
     helper.mqtt_publish_message(
