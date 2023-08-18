@@ -685,7 +685,7 @@ exports.create_contact_wedding_event = async (req, res) => {
       exclude: [],
     });
     const orgId = courseData.org_id;
-    const users = await awaitUserModel.get_users_by_organizations(orgId);
+    const users = await UserModel.get_users_by_organizations(orgId);
     const contact_info = {
       userPhone: phone,
       userEmail: email,
