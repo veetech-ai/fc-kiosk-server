@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>New Wedding Event Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #6DC06F;
+        }
+        p {
+            color: #333333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>New Wedding Event Application</h1>
+        <p>Hello,</p>
+        <p>A new wedding event application has been received:</p>
+        <p><strong>Event Name:</strong> <%= event_name %></p>
+        <% if (show_phone_number) { %>
+            <p><strong>Contact User:</strong> Please use the phone number to contact the applicant: <%= phone_number %></p>
+        <% } else { %>
+            <p><strong>Contact User:</strong> Please use the email address to contact the applicant: <%= email %></p>
+        <% } %>
+        <p>Thank you!</p>
+    </div>
+</body>
+</html>

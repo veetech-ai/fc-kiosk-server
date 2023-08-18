@@ -11,7 +11,8 @@ const ServiceError = require("../../utils/serviceError");
 const fileUploader = require("../../common/upload");
 const helper = require("../../common/helper");
 const config = require("../../config/config");
-
+const UserModel = require("../../services/user");
+const { send_wedding_event } = require("../user/helper");
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
   for (let i = 0; i < fields.length; i++) {
@@ -620,6 +621,91 @@ exports.deleteEvent = async (req, res) => {
       },
     );
     apiResponse.success(res, req, null, 204);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+exports.create_contact_wedding_event = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /events/contacts:
+   *   post:
+   *     security:
+   *       - auth: []
+   *     description: contact with golf owner of golf course.
+   *     tags: [Events]
+   *     consumes:
+   *       - application/x-www-form-urlencoded
+   *     parameters:
+   *       - name: weddingEventId
+   *         description: id of wedding event
+   *         in: formData
+   *         required: true
+   *         type: integer
+   *       - name: phone
+   *         description: phone of golfer
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: email
+   *         description: email of golfer
+   *         in: formData
+   *         required: false
+   *         type: string
+   *       - name: contact_medium
+   *         description: contact_medium
+   *         in: formData
+   *         enum: ['text', 'call']
+   *         required: false
+   *         type: string
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+  try {
+    const validation = new Validator(req.body, {
+      weddingEventId: "required|integer",
+      phone: "string",
+      email: "string",
+      contact_medium: "string",
+    });
+    // based on eventId, get organiuzation id
+    // organization people
+    // get role_id 3
+    // send to role id 3
+
+    if (validation.fails()) {
+      return apiResponse.fail(res, validation.errors);
+    }
+
+    const { weddingEventId, phone, email, contact_medium } = req.body;
+    const weddingEvent = await eventService.getEvents({
+      where: { id: weddingEventId },
+    });
+    const weddingEventName = weddingEvent.events[0].dataValues.title;
+    const weddingEventgcId = weddingEvent.events[0].dataValues.gcId;
+    const courseData = await courseService.getCourseById(weddingEventgcId, {
+      exclude: [],
+    });
+    const orgId = courseData.dataValues.org_id;
+    const users = await UserModel.get_users_by_organizations(orgId);
+    const contact_info = {
+      userPhone: phone,
+      userEmail: email,
+      contactMedium: contact_medium,
+    };
+
+    await send_wedding_event(res, req, weddingEventName, contact_info, users);
+
+    return apiResponse.success(
+      res,
+      req,
+      "Emails Sent. We will contact you",
+      200,
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

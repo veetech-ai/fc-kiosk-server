@@ -40,6 +40,19 @@ exports.send_password_reset_email = async (req, res, user) => {
     return apiResponse.fail(res, err.message, 500);
   }
 };
+exports.send_wedding_event = async (
+  res,
+  req,
+  event_name,
+  contact_info,
+  users,
+) => {
+  try {
+    await email.wedding_event(event_name, contact_info, users);
+  } catch (err) {
+    return apiResponse.fail(res, err.message, 500);
+  }
+};
 
 exports.get_user_auth_tokens = (req, user) => {
   const user_obj = JSON.parse(JSON.stringify(user));

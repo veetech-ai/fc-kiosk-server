@@ -22,6 +22,10 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
     eventsController.createEvent,
   ]);
+  router.post(events + "/contacts", [
+    validation_middleware.validJWTNeeded,
+    eventsController.create_contact_wedding_event,
+  ]);
   router.patch(events + "/:id", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
