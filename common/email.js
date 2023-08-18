@@ -263,8 +263,8 @@ exports.wedding_event = (event_name, contact_info, users) => {
     });
     const html = ejs.render(template, {
       event_name: event_name,
-      show_phone_number: contact_info.contact_medium,
-      phone_number: contact_info.phone,
+      show_phone_number: contact_info.contactMedium,
+      phone_number: contact_info.userPhone,
       email: contact_info.userEmail,
     });
 
