@@ -178,7 +178,7 @@ exports.createEvent = async (req, res) => {
       event.corousal = helper.getURLOfImages(event.corousal);
     }
 
-    helper.mqtt_publish_message(`we/${event.id}/created`, {
+    helper.mqtt_publish_message(`we/${fields.gcId}/created`, {
       eventId: event.id,
     });
     apiResponse.success(res, req, event, 201);
@@ -388,7 +388,7 @@ exports.updateEvent = async (req, res) => {
     }
 
     helper.mqtt_publish_message(
-      `we/${req.params.id}/updated`,
+      `we/${fields.gcId}/updated`,
       {
         eventId: req.params.id,
       },
@@ -507,7 +507,7 @@ exports.getEventsOfCourse = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
-    let data = await eventService.getEvents({ gcId: req.params.id });
+    let data = await eventService.getEvents({ where: { gcId: req.params.id } });
 
     data.events = data.events.map((event) => {
       event.imageUrl = fileUploader.getFileURL(event.imageUrl);
@@ -608,11 +608,17 @@ exports.deleteEvent = async (req, res) => {
       throw new ServiceError(validation.firstError(), 400);
     }
 
+    let specificEvent = await eventService.getEvents({
+      where: { id: req.params.id },
+    });
     await eventService.delelteEvent(req.params.id);
 
-    helper.mqtt_publish_message(`we/${req.params.id}/deleted`, {
-      eventId: req.params.id,
-    });
+    helper.mqtt_publish_message(
+      `we/${specificEvent.events[0].dataValues.gcId}/deleted`,
+      {
+        eventId: req.params.id,
+      },
+    );
     apiResponse.success(res, req, null, 204);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
