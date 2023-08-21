@@ -182,9 +182,15 @@
                                                 <strong>Event Name:</strong> <%= event_name %>
                                             </p>
                                             <% if (show_phone_number) { %>
-                                                <p style="color: #595E61; font-size: 19px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
-                                                    <strong>Contact User:</strong> Please use the phone number to contact the applicant: <%= phone_number %>
-                                                </p>
+                                                <% if (contact_medium == "text") { %>
+                                                    <p style="color: #595E61; font-size: 19px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
+                                                        <strong>Contact User:</strong> Please use the phone number to contact the applicant (<strong>text</strong>): <%= phone_number %>
+                                                    </p>
+                                                <% } else { %>
+                                                    <p style="color: #595E61; font-size: 19px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
+                                                        <strong>Contact User:</strong> Please use the phone number to contact the applicant (<strong>call</strong>): <%= phone_number %>
+                                                    </p>
+                                                <% } %>
                                             <% } else { %>
                                                 <p style="color: #595E61; font-size: 19px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
                                                     <strong>Contact User:</strong> Please use the email address to contact the applicant: <%= email %>
