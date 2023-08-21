@@ -2,42 +2,206 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <title>New Wedding Event Application</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+	<title>New Wedding Event Application</title>
+	<style type="text/css">
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap');
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        color: #6DC06F;
+    }
+    p {
+        color: #333333;
+    }
+    .center-image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    .logo {
+        width: 350px;
+    }
+    .heading1 {
+        color: #595E61;
+        font-size: 44px;
+        font-weight: 500;
+        font-family: 'Poppins', sans-serif;
+    }
+    .heading2 {
+        color: #595E61;
+        font-size: 27px;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+    }
+    .heading3 {
+        color: #595E61;
+        font-size: 21px;
+        font-family: 'Poppins', sans-serif;
+    }
+    .heading4 {
+        color: #052A42;
+        font-size: 19px;
+        font-family: 'Poppins', sans-serif;
+    }
+    .heading5 {
+        color: #595E61;
+        font-size: 16px;
+        font-family: 'Poppins', sans-serif;
+    }
+    .button {
+        font-size: 21px;
+        background: #035fed;
+        box-shadow: 0px 0px 20px rgba(3, 95, 237, 0.2);
+        color:#ffffff;
+        border-radius: 40px;
+        padding: 0 30px;
+        text-decoration: none;
+        display: inline-block;
+        line-height: 57px;
+        font-weight: 600;
+    }
+    .table-width{
+        width: 560px;
+    }
+    .table-padding {
+        padding: 65px 25px 30px 25px !important;
+    }
+    .outer-table-padding {
+        padding:30px 20px 30px 20px !important;
+    }
+
+    @media only screen and (max-width: 600px){
+        .table-width{
+            width: auto;
+            max-width: 410px;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .table-padding {
+            padding: 25px 12px 12px 12px !important;
         }
-        h1 {
-            color: #6DC06F;
+        .outer-table-padding {
+            padding:10px 5px 10px 5px !important;
         }
-        p {
-            color: #333333;
+        .logo {
+            width: 250px;
         }
-    </style>
+        .heading1 {
+            font-size: 28px;
+        }
+        .heading2 {
+            font-size: 20px;
+        }
+        .heading3 {
+            font-size: 15px;
+        }
+        .heading4 {
+            font-size: 14px;
+        }
+        .heading5 {
+            font-size: 12px;
+        }
+        .button {
+            font-size: 17.6px;
+            line-height: 50px;
+        }
+    }
+
+    @media only screen and (max-width: 480px){
+        .outer-table-padding {
+            padding:2px 1px 2px 1px !important;
+        }
+        .table-width{
+            width: auto;
+            max-width: 310px;
+        }
+        .table-padding {
+            padding: 25px 5px 0px 5px !important;
+        }
+        .logo {
+            width: 200px;
+        }
+        .heading1 {
+            font-size: 24px;
+        }
+        .heading2 {
+            font-size: 17px;
+        }
+        .heading3 {
+            font-size: 14px;
+        }
+        .heading4 {
+            font-size: 13px;
+        }
+        .heading5 {
+            font-size: 10.5px;
+            line-height: 3rem !important;
+        }
+        .button {
+            line-height: 40px;
+            font-size: 13px;
+        }
+    }
+</style>
 </head>
 <body>
     <div class="container">
-        <h1>New Wedding Event Application</h1>
-        <p>Hello,</p>
-        <p>A new wedding event application has been received:</p>
-        <p><strong>Event Name:</strong> <%= event_name %></p>
-        <% if (show_phone_number) { %>
-            <p><strong>Contact User:</strong> Please use the phone number to contact the applicant: <%= phone_number %></p>
-        <% } else { %>
-            <p><strong>Contact User:</strong> Please use the email address to contact the applicant: <%= email %></p>
-        <% } %>
-        <p>Thank you!</p>
+        <table width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+                <td align="center">
+                    <table width="560px" style="background-color: #fff; width: 560px; font-family: 'Poppins', sans-serif; font-style: normal; font-weight: 400; border-radius: 10px; border: 1px solid #e8ecec; box-shadow: 10px 10px 0px rgba(0,0,0,0.05);" cellspacing="0" cellpadding="0" align="center">
+                        <tr>
+                            <td style="font-size: 0; line-height: 0; text-align: center; font-family: 'Poppins', sans-serif; font-style: normal; font-weight: 400; padding: 45px 25px 30px 25px !important; border: 1px solid #e8ecec; box-shadow: 10px 10px 0px rgba(0,0,0,0.05);">
+                                <table width="100%" cellspacing="0" cellpadding="0" align="center">
+                                    <tr>
+                                        <td align="center">
+                                            <img src="<%= icon_url %>" style="display: block; margin-left:auto; margin-right: auto; margin-bottom: 20px; width: 50%; width: 350px" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">
+                                            <p style="color: #595E61; font-size: 19px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
+                                                Hello <%= receiver_name %>,
+                                            </p>
+                                            <p style="color: #595E61; font-size: 19px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
+                                                A new wedding event application has been received:
+                                            </p>
+                                            <p style="color: #595E61; font-size: 21px; font-weight: 500; font-family: 'Poppins', sans-serif;">
+                                                <strong>Event Name:</strong> <%= event_name %>
+                                            </p>
+                                            <% if (show_phone_number) { %>
+                                                <p style="color: #595E61; font-size: 19px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
+                                                    <strong>Contact User:</strong> Please use the phone number to contact the applicant: <%= phone_number %>
+                                                </p>
+                                            <% } else { %>
+                                                <p style="color: #595E61; font-size: 19px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
+                                                    <strong>Contact User:</strong> Please use the email address to contact the applicant: <%= email %>
+                                                </p>
+                                            <% } %>
+                                            <p style="color: #595E61; font-size: 16px; font-weight: 400; font-family: 'Poppins', sans-serif; line-height:1.8em;">
+                                                Thank you!
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>
