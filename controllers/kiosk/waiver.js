@@ -106,7 +106,18 @@ exports.sign = async (req, res) => {
 
     // 3. generating pdf
     const pdfPath = `${UPLOAD_PATH}/${uuid()}.pdf`;
-    await helper.printPDF(html, { pdf: { path: "./public/" + pdfPath } });
+    await helper.printPDF(html, {
+      pdf: {
+        path: "./public/" + pdfPath,
+        printBackground: true,
+        margin: {
+          top: "10mm",
+          bottom: "0",
+          left: "0",
+          right: "0",
+        },
+      },
+    });
 
     // 4. inserting new waiver sign record
     const waiver = await waiverService.sign(fields.gcId, fields.email, pdfPath);
@@ -207,7 +218,7 @@ exports.getCourseSignedWaivers = async (req, res) => {
   /**
    * @swagger
    *
-   * /waiver/course/{id}:
+   * /waiver/signed/course/{id}:
    *   get:
    *     security:
    *       - auth: []
@@ -269,7 +280,7 @@ exports.getCourseSignedWaivers = async (req, res) => {
 
     // get file urls
     data.waivers.forEach(
-      (wv) => (wv.signature = fileUploader.getFileURL(wv.signature)),
+      (wv) => (wv.signature = fileUploader.getFileURL("files/" + wv.signature)),
     );
 
     return apiResponse.success(res, req, { ...data, pagination });
@@ -299,7 +310,7 @@ exports.deleteSignedWaiver = async (req, res) => {
    *     produces:
    *       - application/json
    *     responses:
-   *       200:
+   *       204:
    *         description: success
    */
 
@@ -314,6 +325,47 @@ exports.deleteSignedWaiver = async (req, res) => {
     await waiverService.deleteSigned(req.params.id);
 
     return apiResponse.success(res, req, null, 204);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.getWaiverContent = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /waiver/course/{id}:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: Get the waiver content of a particular golf course.
+   *     tags: [Waiver]
+   *
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: The id of the golf course
+   *         required: true
+   *         type: integer
+   *
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const validation = new Validator(req.params, {
+      id: "required|integer",
+    });
+
+    if (validation.fails()) throw new ServiceError(validation.firstError());
+
+    // delete the record
+    const waiver = await waiverService.getContent(req.params.id);
+
+    return apiResponse.success(res, req, waiver, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

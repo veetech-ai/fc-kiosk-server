@@ -19,9 +19,15 @@ exports.routesConfig = function (app, router) {
     WaiverController.deleteSignedWaiver,
   ]);
 
-  router.get(waiver + "/course/:id", [
+  router.get(waiver + "/signed/course/:id", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     WaiverController.getCourseSignedWaivers,
+  ]);
+
+  router.get(waiver + "/course/:id", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin", "getCourses"]),
+    WaiverController.getWaiverContent,
   ]);
 };

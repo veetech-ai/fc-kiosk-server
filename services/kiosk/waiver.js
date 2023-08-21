@@ -1,7 +1,11 @@
+const fs = require("fs");
+const ejs = require("ejs");
 const { Op } = require("sequelize");
+const minify = require("html-minifier").minify;
 const models = require("../../models");
 const ServiceError = require("../../utils/serviceError");
 const { sanitizeHtmlInput } = require("../../common/helper");
+const { getFileURL } = require("../../common/upload");
 
 const { Signed_Waiver, Waiver } = models;
 
@@ -11,42 +15,22 @@ exports.getSignedWaiverHTML = async (course, signatoryEmail, signatureUrl) => {
     attributes: ["content"],
   });
 
-  const html = `
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rent A Cart</title>
-  </head>
-  <body>
-    <main>
-      ${waiver.content}
-      <div
-        style="
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-        "
-      >
-        <div>
-          <h3>Course Owner</h3>
-          <p>${course.name}</p>
-          <p>${course.email}</p>
-        </div>
-        <div>
-        <h3>Signatory</h3>
-          <div style="height: 80px">
-            <img style="height: 100%" src="${signatureUrl}" alt="signature" />
-          </div>
-          <p><u>${new Date().toDateString()}</u></p>
-          <p>${signatoryEmail}</p>
-        </div>
-      </div>
-    </main>
-  </body>
-</html>
-  `;
+  const template = fs.readFileSync("./views/pdfs/waiver.html", {
+    encoding: "utf-8",
+  });
+
+  const html = ejs.render(template, {
+    title: "Waiver Document",
+    body: waiver.content,
+    signatoryEmail,
+    signatureUrl,
+    date: new Date().toDateString(),
+    images: {
+      headerLeft: getFileURL("files/images/waiver/header-left.png"),
+      headerRight: getFileURL("files/images/waiver/header-right.png"),
+      bottomRight: getFileURL("files/images/waiver/dots-bottom-right.png"),
+    },
+  });
 
   return html;
 };
@@ -71,7 +55,6 @@ exports.sign = async (gcId, email, signatureUrl) => {
   });
 
   if (conflict) {
-    // ! Commenting for testing
     // throw new ServiceError("You already have signed this waiver", 409);
   }
 
@@ -93,6 +76,13 @@ exports.updateContent = async (id, content) => {
 
   // sanitize HTML content
   content = sanitizeHtmlInput(content);
+
+  // minify html
+  content = minify(content, {
+    removeComments: true,
+    removeRedundantAttributes: true,
+    removeEmptyAttributes: true,
+  });
 
   // check if this content is different from existing
   const unchanged = await Waiver.findOne({ where: { content } });
@@ -139,9 +129,9 @@ exports.getSigned = async (gcId, pagination) => {
   return { waivers, count };
 };
 
-exports.getContent = (id) => {
-  return Waiver.destroy({
-    where: { id },
+exports.getContent = (gcId) => {
+  return Waiver.findOne({
+    where: { gcId },
     attributes: ["id", "name", "content", "gcId"],
   });
 };

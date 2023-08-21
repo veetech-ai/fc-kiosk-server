@@ -52,6 +52,7 @@
     "fast-csv": "^4.3.6",
     "formidable": "^1.2.1",
     "geolib": "^3.3.3",
+    "html-minifier": "^4.0.0",
     "html-pdf": "^3.0.1",
     "influx": "^5.5.1",
     "jest": "^29.4.0",
