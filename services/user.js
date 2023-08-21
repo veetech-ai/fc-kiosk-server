@@ -394,6 +394,27 @@ exports.remove_by_id = async (id, loggedInUser) => {
   }
 };
 
+exports.get_users_by_organizations = async (orgId) => {
+  console.log(typeof orgId);
+  const users = await User.findAll({
+    where: { orgId: orgId, role_id: 3 },
+  });
+
+  const newUsers = users.map((e) => e.dataValues);
+
+  // if (user.Organization.name === config.testOrganization) {
+  //   throw new Error("testOrganizationUser");
+  // } else if (user.super_admin) {
+  //   throw new Error("you can't delete super admin");
+  // } else if (loggedInUser.id === user.id) {
+  //   throw new Error("Action can not be performed, you can't delete yourself.");
+  // } else {
+  //   throw new Error("Operation can not be performed");
+  // }
+
+  return newUsers;
+};
+
 exports.enable_by_id = async (idOfUserToBeEnabled, loggedInUser) => {
   const userToBeEnabled = await this.findById(idOfUserToBeEnabled);
   const isTestOrgUser =
