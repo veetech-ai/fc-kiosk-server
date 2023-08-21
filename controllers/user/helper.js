@@ -12,6 +12,7 @@ const UsersStatus = UserModel.UsersStatus;
 
 // Configuration Imports
 const config = require("../../config/config");
+const ServiceError = require("../../utils/serviceError");
 
 // update the user if any user have the same card serial
 // remove the card serial of existing user
@@ -50,7 +51,7 @@ exports.send_wedding_event = async (
   try {
     await email.wedding_event(event_name, contact_info, users);
   } catch (err) {
-    return apiResponse.fail(res, err.message, 500);
+    throw new ServiceError("Error Occured", 500);
   }
 };
 
