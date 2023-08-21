@@ -71,14 +71,14 @@ exports.updateContent = async (id, content) => {
   if (!waiver) throw new ServiceError(`Not Found`, 404);
 
   if (!content.trim().length) {
-    throw new ServiceError("Content can not be emtpy", 400);
+    throw new ServiceError("The content can not be emtpy", 400);
   }
 
   // sanitize HTML content
-  content = sanitizeHtmlInput(content);
+  content = sanitizeHtmlInput(content.trim());
 
   // minify html
-  content = minify(content, {
+  content = minify(content.replace(/(?<=>)\s+(?=<)/g, ""), {
     removeComments: true,
     removeRedundantAttributes: true,
     removeEmptyAttributes: true,
