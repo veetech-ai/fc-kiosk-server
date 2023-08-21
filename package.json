@@ -53,8 +53,6 @@
     "formidable": "^1.2.1",
     "geolib": "^3.3.3",
     "html-pdf": "^3.0.1",
-    "html-to-image": "^1.11.11",
-    "html2canvas": "^1.4.1",
     "influx": "^5.5.1",
     "jest": "^29.4.0",
     "jest-junit": "^13.0.0",

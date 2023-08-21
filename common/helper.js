@@ -1635,10 +1635,13 @@ exports.sanitizeHtmlInput = (dirtyHTML, options = {}) => {
  * @param {puppeteer.PuppeteerLaunchOptions} [options.launch]
  * @returns {Promise<{path: string, pdf:Buffer}>} pdf buffer
  */
-exports.printPDF = async (html, options = {}) => {
+exports.printPDF = async (html, options = { launch: {}, pdf: {} }) => {
   const path = `./public/uploads/${uuid()}.pdf`;
 
-  const browser = await puppeteer.launch({ headless: true, ...options.launch });
+  const browser = await puppeteer.launch({
+    headless: "new",
+    ...options.launch,
+  });
   const page = await browser.newPage();
 
   await page.setContent(html);

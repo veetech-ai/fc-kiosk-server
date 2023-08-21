@@ -3,17 +3,12 @@ const models = require("../../models");
 const ServiceError = require("../../utils/serviceError");
 const { sanitizeHtmlInput } = require("../../common/helper");
 
-const { Signed_Waiver, Waiver, Course } = models;
+const { Signed_Waiver, Waiver } = models;
 
-exports.getSignedWaiverHTML = async (gcId, signatoryEmail, signatureUrl) => {
+exports.getSignedWaiverHTML = async (course, signatoryEmail, signatureUrl) => {
   const waiver = await Waiver.findOne({
-    where: { gcId },
+    where: { gcId: course.id },
     attributes: ["content"],
-  });
-
-  const course = await Course.findOne({
-    where: { id: gcId },
-    attributes: ["name"],
   });
 
   const html = `
@@ -34,13 +29,18 @@ exports.getSignedWaiverHTML = async (gcId, signatoryEmail, signatureUrl) => {
           justify-content: space-between;
         "
       >
-        <p>${course.name}</p>
         <div>
-          <div style="height: 100px">
+          <h3>Course Owner</h3>
+          <p>${course.name}</p>
+          <p>${course.email}</p>
+        </div>
+        <div>
+        <h3>Signatory</h3>
+          <div style="height: 80px">
             <img style="height: 100%" src="${signatureUrl}" alt="signature" />
           </div>
-          <p><u>${Date.now().toLocaleString()}</u></p>
-          <p>Signatory: ${signatoryEmail}</p>
+          <p><u>${new Date().toDateString()}</u></p>
+          <p>${signatoryEmail}</p>
         </div>
       </div>
     </main>
@@ -71,7 +71,8 @@ exports.sign = async (gcId, email, signatureUrl) => {
   });
 
   if (conflict) {
-    throw new ServiceError("You already have signed this waiver", 409);
+    // ! Commenting for testing
+    // throw new ServiceError("You already have signed this waiver", 409);
   }
 
   return Signed_Waiver.create({

@@ -8,6 +8,8 @@ const waiverService = require("../../services/kiosk/waiver");
 const fileUploader = require("../../common/upload");
 const helper = require("../../common/helper");
 const email = require("../../common/email");
+const courseService = require("../../services/kiosk/course");
+const config = require("../../config/config");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -86,32 +88,49 @@ exports.sign = async (req, res) => {
 
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
 
+    // 1. uploading signature image
     fields.signaturePath = await fileUploader.upload_file(
       files.signature,
       UPLOAD_PATH,
       imageFormats,
     );
 
-    // 1. insert new row, email, waiverId, signature
-    // 2. create a pdf of content + signature
-    // 3. send an email to signatory
-    // 4. send an emial to course owner
+    // 2. generating waiver html content
+    const course = await courseService.getCourseById(fields.gcId);
 
     const html = await waiverService.getSignedWaiverHTML(
-      fields.gcId,
+      course,
       fields.email,
       fileUploader.getFileURL(fields.signaturePath),
     );
 
+    // 3. generating pdf
     const pdfPath = `${UPLOAD_PATH}/${uuid()}.pdf`;
-
     await helper.printPDF(html, { pdf: { path: "./public/" + pdfPath } });
 
+    // 4. inserting new waiver sign record
     const waiver = await waiverService.sign(fields.gcId, fields.email, pdfPath);
 
     waiver.signature = fileUploader.getFileURL("files/" + pdfPath);
 
-    email.send({ to: fields.email, subject: "Rent A Cart (Agreement)" });
+    if (config.env === "development") {
+      const mailOptions = {
+        subject: "Rent A Cart (Agreement)",
+        message: html,
+        attachments: [
+          { name: "Rent A Cart (Agreement)", path: "files/" + pdfPath },
+        ],
+      };
+      const course = await courseService.getCourseById(fields.gcId);
+
+      await Promise.allSettled([
+        // 5. sending email to signatory
+        email.send({ to: fields.email, ...mailOptions }),
+
+        // 6. sending email to course owner
+        email.send({ to: course.email, ...mailOptions }),
+      ]);
+    }
 
     return apiResponse.success(res, req, waiver);
   } catch (error) {
