@@ -154,6 +154,9 @@ exports.getHost = () => {
   }
 };
 
+exports.getServerUrl = (path) =>
+  `${config.app.backendURL}${path}`.replace("./public/", "files/");
+
 exports.getFileURL = (key) => {
   const imagesWithCompleteUrl = [];
 

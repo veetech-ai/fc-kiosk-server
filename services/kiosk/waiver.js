@@ -5,7 +5,7 @@ const minify = require("html-minifier").minify;
 const models = require("../../models");
 const ServiceError = require("../../utils/serviceError");
 const { sanitizeHtmlInput } = require("../../common/helper");
-const { getFileURL } = require("../../common/upload");
+const { getServerUrl } = require("../../common/upload");
 
 const { Signed_Waiver, Waiver, Course } = models;
 
@@ -26,9 +26,9 @@ exports.getSignedWaiverHTML = async (course, signatoryEmail, signatureUrl) => {
     signatureUrl,
     date: new Date().toDateString(),
     images: {
-      headerLeft: getFileURL("files/images/waiver/header-left.png"),
-      headerRight: getFileURL("files/images/waiver/header-right.png"),
-      bottomRight: getFileURL("files/images/waiver/dots-bottom-right.png"),
+      headerLeft: getServerUrl("files/images/waiver/header-left.png"),
+      headerRight: getServerUrl("files/images/waiver/header-right.png"),
+      bottomRight: getServerUrl("files/images/waiver/dots-bottom-right.png"),
     },
   });
 
@@ -55,7 +55,7 @@ exports.sign = async (gcId, email, signatureUrl) => {
   });
 
   if (conflict) {
-    // throw new ServiceError("You already have signed this waiver", 409);
+    throw new ServiceError("You already have signed this waiver", 409);
   }
 
   return Signed_Waiver.create({
