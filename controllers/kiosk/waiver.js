@@ -2,6 +2,8 @@ const Validator = require("validatorjs");
 const formidable = require("formidable");
 const { uuid } = require("uuidv4");
 const fs = require("node:fs");
+const ejs = require("ejs");
+const path = require("path");
 
 const apiResponse = require("../../common/api.response");
 const ServiceError = require("../../utils/serviceError");
@@ -10,7 +12,7 @@ const fileUploader = require("../../common/upload");
 const helper = require("../../common/helper");
 const email = require("../../common/email");
 const courseService = require("../../services/kiosk/course");
-const config = require("../../config/config");
+const otpService = require("../../services/otp");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -53,6 +55,12 @@ exports.sign = async (req, res) => {
    *         type: string
    *
    *       - in: formData
+   *         name: otp
+   *         description: OTP sent in the verification email
+   *         required: true
+   *         type: number
+   *
+   *       - in: formData
    *         name: signature
    *         description: Upload image of the user signaure
    *         required: true
@@ -76,6 +84,7 @@ exports.sign = async (req, res) => {
 
     const validation = new Validator(fields, {
       gcId: "required|integer",
+      otp: "required|integer",
       email: ["required", `regex:${helper.emailRegex}`],
     });
 
@@ -83,6 +92,13 @@ exports.sign = async (req, res) => {
 
     if (!files.signature) {
       throw new ServiceError("The signature image is required");
+    }
+
+    try {
+      const otp = await otpService.getByEmail({ email: fields.email });
+      await otpService.verifyCode(otp);
+    } catch (err) {
+      throw new ServiceError(err.message, 400);
     }
 
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
@@ -319,7 +335,7 @@ exports.deleteSignedWaiver = async (req, res) => {
    *     parameters:
    *       - in: path
    *         name: id
-   *         description: The id of the golf course
+   *         description: The signingId of the waiver
    *         required: true
    *         type: integer
    *
@@ -382,6 +398,78 @@ exports.getWaiverContent = async (req, res) => {
     const waiver = await waiverService.getContent(req.params.id);
 
     return apiResponse.success(res, req, waiver, 200);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /email/verify:
+   *   post:
+   *     security:
+   *       - auth: []
+   *     description: Send email verification email containing the OTP, to the user
+   *     tags: [Email]
+   *
+   *     parameters:
+   *       - in: body
+   *         name: body
+   *         description: >
+   *            `email`: Email of the user.
+   *         schema:
+   *             type: object
+   *             required:
+   *                - email
+   *             properties:
+   *                email:
+   *                   type: string
+   *
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const validation = new Validator(req.body, {
+      email: ["required", `regex:${helper.emailRegex}`],
+    });
+
+    if (validation.fails()) throw new ServiceError(validation.firstError());
+
+    const template = fs.readFileSync(
+      path.join(__dirname, "../../views/emails/email_verification.ejs"),
+      {
+        encoding: "utf-8",
+      },
+    );
+
+    const expiry = 50000;
+    const otpNumber = Math.floor(1000 + Math.random() * 9000);
+
+    await otpService.createForEmail({
+      email: req.body.email,
+      code: otpNumber,
+    });
+
+    const html = ejs.render(template, {
+      otp: otpNumber,
+      expiration_minutes: expiry,
+    });
+
+    const mailOptions = {
+      subject: "Email Verification",
+      message: html,
+      to: req.body.email,
+    };
+
+    await email.send(mailOptions);
+
+    return apiResponse.success(res, req, "Verification email is sent", 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

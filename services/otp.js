@@ -17,8 +17,31 @@ exports.create = async ({ phone, code }) => {
   return otp;
 };
 
+exports.createForEmail = async ({ email, code }) => {
+  let otp = await OTP.findOne({ where: { email } });
+  if (!otp) {
+    // Create a new OTP record if it does not exist
+    const otpData = { email, code };
+    otp = await OTP.create(otpData);
+  } else {
+    // Update the code if the OTP record already exists
+    otp.code = code;
+    otp.createdAt = new Date();
+    await otp.save();
+  }
+  return otp;
+};
+
 exports.getByPhone = async ({ phone, code }) => {
   return OTP.findOne({ where: { phone, code } });
+};
+
+exports.getByEmail = async ({ email }) => {
+  const otp = await OTP.findOne({ where: { email } });
+
+  if (!otp) throw new Error("OTP is invalid", 400);
+
+  return otp;
 };
 
 exports.verifyCode = async (otp, otpCreationTimeMs = null) => {

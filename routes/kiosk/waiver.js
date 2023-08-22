@@ -3,6 +3,12 @@ const validation_middleware = require("../../middlewares/auth.validation");
 const config = require("../../config/config");
 
 exports.routesConfig = function (app, router) {
+  router.post(
+    `${config.app.apiPath}email/verify`,
+    validation_middleware.validJWTNeeded,
+    WaiverController.verifyEmail,
+  );
+
   const waiver = `${config.app.apiPath}waiver`;
 
   router.post(waiver + "/sign", [WaiverController.sign]);

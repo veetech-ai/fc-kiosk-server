@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       code: DataTypes.STRING,
+      email: { type: DataTypes.STRING, unique: true },
       createdAt: {
         type: DataTypes.DATE,
       },
