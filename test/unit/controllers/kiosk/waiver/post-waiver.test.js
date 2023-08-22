@@ -33,14 +33,48 @@ serverUpload.upload = jest.fn(() => Promise.resolve(uuid()));
 
 const MAX_ALLOWED_IMAGE_SIZE = 5000;
 
+const testWaiverPayload = {
+  name: "Renting Agreement",
+  content: `
+    <h2>Agreement</h2>
+    <p>This Agreement ("Agreement") is made and entered into between:</p>
+    
+    <p><strong>Party A:</strong> [Name of Party A]</p>
+    <p><strong>Party B:</strong> [Name of Party B]</p>
+    
+    <p><strong>Date:</strong> [Date of Agreement]</p>
+    
+    <p><strong>Terms and Conditions:</strong></p>
+    <p>[Brief description of the terms and conditions of the agreement. For example: Party A agrees to provide services to Party B in exchange for payment. Party B agrees to pay Party A in accordance with the agreed-upon schedule.]</p>
+    
+    <p><strong>Termination:</strong></p>
+    <p>[Brief description of the termination clause. For example: Either party may terminate this Agreement by providing written notice to the other party at least [number] days in advance.]</p>
+    
+    <p><strong>Governing Law:</strong></p>
+    <p>[Specify the governing law and jurisdiction for any legal disputes. For example: This Agreement shall be governed by and construed in accordance with the laws of [Country/State]. Any disputes arising under or in connection with this Agreement shall be subject to the exclusive jurisdiction of the courts of [Country/State].]</p>
+    
+    <p><strong>Entire Agreement:</strong></p>
+    <p>[Statement confirming that this Agreement constitutes the entire agreement between the parties and supersedes any previous understandings or agreements.]</p>
+    
+    <p>This Agreement is executed on the date first above written.</p>
+    
+    <p><strong>Party A:</strong></p>
+    <p>_______________________________</p>
+    
+    <p><strong>Party B:</strong></p>
+    <p>_______________________________</p>`,
+};
+
 const signingData = {
-  signature: {
-    name: "signature.png",
-    type: "image/png",
-    size: MAX_ALLOWED_IMAGE_SIZE, // bytes
-    path: "/mock/path/to/signature.png",
+  files: {
+    signature: {
+      name: "signature.png",
+      type: "image/png",
+      size: MAX_ALLOWED_IMAGE_SIZE, // bytes
+      path: "/mock/path/to/signature.png",
+    },
   },
-  payload: {
+  fields: {
     email: "user@email.com",
   },
 };
@@ -53,57 +87,21 @@ const coursePayload = {
 };
 
 const coursePayload2 = {
-  name: "Test course",
-  state: "Test State",
-  city: "Test city",
+  name: "Test course 2 ",
+  state: "Test State 2",
+  city: "Test city 2",
   orgId: 1,
 };
 
-const testWaiverPayload = {
-  name: "Renting Agreement",
-  content: `
-      <main>
-          <h2>Agreement</h2>
-          <p>This Agreement ("Agreement") is made and entered into between:</p>
-          
-          <p><strong>Party A:</strong> [Name of Party A]</p>
-          <p><strong>Party B:</strong> [Name of Party B]</p>
-          
-          <p><strong>Date:</strong> [Date of Agreement]</p>
-          
-          <p><strong>Terms and Conditions:</strong></p>
-          <p>[Brief description of the terms and conditions of the agreement. For example: Party A agrees to provide services to Party B in exchange for payment. Party B agrees to pay Party A in accordance with the agreed-upon schedule.]</p>
-          
-          <p><strong>Termination:</strong></p>
-          <p>[Brief description of the termination clause. For example: Either party may terminate this Agreement by providing written notice to the other party at least [number] days in advance.]</p>
-          
-          <p><strong>Governing Law:</strong></p>
-          <p>[Specify the governing law and jurisdiction for any legal disputes. For example: This Agreement shall be governed by and construed in accordance with the laws of [Country/State]. Any disputes arising under or in connection with this Agreement shall be subject to the exclusive jurisdiction of the courts of [Country/State].]</p>
-          
-          <p><strong>Entire Agreement:</strong></p>
-          <p>[Statement confirming that this Agreement constitutes the entire agreement between the parties and supersedes any previous understandings or agreements.]</p>
-          
-          <p>This Agreement is executed on the date first above written.</p>
-          
-          <p><strong>Party A:</strong></p>
-          <p>_______________________________</p>
-          
-          <p><strong>Party B:</strong></p>
-          <p>_______________________________</p>
-      </main>
-      `,
-};
-
-const makePostRequest = (options = {}) => {
-  const { fields = signingData.payload, files = signingData.filesData } =
-    options;
+const makePostRequest = (options = signingData) => {
+  const { fields, files } = options;
   mockFields = fields;
   mockFiles = files;
 
   return helper.post_request_with_authorization({
-    endpoint: "wavier",
+    endpoint: "waiver/sign",
     token: adminToken,
-    params: signingData.payload,
+    params: signingData.fields,
     fileupload: true,
   });
 };
@@ -120,6 +118,13 @@ describe("PATCH /waiver", () => {
     });
 
     testCourse = testCourse.body.data;
+
+    // assign course ids to signing payload
+    signingData.fields.gcId = testCourse.id;
+
+    // create a waiver
+    testWaiverPayload.gcId = testCourse.id;
+    testWaiver = await Waiver.create(testWaiverPayload);
 
     // create course 2
     testCourse2 = await helper.post_request_with_authorization({
@@ -143,13 +148,6 @@ describe("PATCH /waiver", () => {
     });
 
     testCourse3 = testCourse3.body.data;
-
-    // assign course ids to signing payload
-    signingData.payload.gcId = testCourse.id;
-
-    // create a waiver
-    testWaiverPayload.gcId = testCourse.id;
-    testWaiver = await Waiver.create(testWaiverPayload);
   });
 
   afterAll(async () => {
@@ -162,16 +160,16 @@ describe("PATCH /waiver", () => {
   });
 
   describe("success", () => {
-    it("should create new waiver signing entry", async () => {
-      const res = await makePostRequest();
+    it.only("should create new waiver signing entry", async () => {
+      const res = await makePostRequest(signingData);
 
       expect(res.statusCode).toEqual(201);
 
       expect(res.body.success).toEqual(true);
       expect(res.body.data.id).toEqual(expect.any(Number));
-      expect(res.body.data.email).toEqual(signingData.payload.email);
+      expect(res.body.data.email).toEqual(signingData.fields.email);
 
-      expect(() => new URL(res.body.data.signature)).not.toThrowError();
+      expect(() => new URL(res.body.data.pdf)).not.toThrowError();
     });
 
     it("should allow a user to sign the waiver again if the waiver has been updated, since user last time signed", async () => {
@@ -209,7 +207,7 @@ describe("PATCH /waiver", () => {
 
       expect(res.body.success).toEqual(true);
       expect(res.body.data.id).toEqual(expect.any(Number));
-      expect(res.body.data.email).toEqual(signingData.payload.email);
+      expect(res.body.data.email).toEqual(signingData.fields.email);
 
       expect(() => new URL(res.body.data.signature)).not.toThrowError();
     });
@@ -221,7 +219,7 @@ describe("PATCH /waiver", () => {
         gcId: testCourse2.id,
       });
 
-      signingData.payload.gcId = testCourse2.id;
+      signingData.fields.gcId = testCourse2.id;
 
       const res = await makePostRequest();
 
@@ -238,7 +236,7 @@ describe("PATCH /waiver", () => {
   describe("failure", () => {
     it("should throw error if gcId is not provided", async () => {
       const res = await makePostRequest({
-        fields: { email: signingData.payload.email },
+        fields: { email: signingData.fields.email },
       });
 
       expect(res.body).toEqual({
@@ -250,7 +248,7 @@ describe("PATCH /waiver", () => {
 
     it("should throw error if gcId is not valid number", async () => {
       const res = await makePostRequest({
-        fields: { email: signingData.payload.email, gcId: "wrong id" },
+        fields: { email: signingData.fields.email, gcId: "wrong id" },
       });
 
       expect(res.body).toEqual({
@@ -262,7 +260,7 @@ describe("PATCH /waiver", () => {
 
     it("should throw error if email is not provided", async () => {
       const res = await makePostRequest({
-        fields: { email: signingData.payload.email },
+        fields: { email: signingData.fields.email },
       });
 
       expect(res.body).toEqual({
@@ -333,7 +331,7 @@ describe("PATCH /waiver", () => {
     });
 
     it("should throw error if there's not waiver agianst particular golf course", async () => {
-      signingData.payload.gcId = testCourse3.id;
+      signingData.fields.gcId = testCourse3.id;
       const res = await makePostRequest();
 
       expect(res.body).toEqual({

@@ -22,7 +22,7 @@ if (config.isCloudUpload) {
 exports.upload_path = uploadPath;
 exports.public_path = publicPath;
 
-const validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
+exports.validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
   const fileExtension = this.get_file_extension(file.name)
     .toLowerCase()
     .substring(1);
@@ -44,6 +44,8 @@ const validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
 
   return true;
 };
+
+const validateFile = this.validateFile;
 exports.uploadProfileImage = async (
   imageFile,
   userId,

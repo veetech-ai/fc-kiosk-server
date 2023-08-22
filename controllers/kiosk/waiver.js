@@ -19,8 +19,6 @@ Validator.prototype.firstError = function () {
   }
 };
 
-const UPLOAD_PATH = "uploads/waiver";
-
 /**
  * @swagger
  * tags:
@@ -87,13 +85,11 @@ exports.sign = async (req, res) => {
     }
 
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
+    const uploadPath = "uploads/waiver";
 
-    // 1. uploading signature image
-    fields.signaturePath = await fileUploader.upload_file(
-      files.signature,
-      UPLOAD_PATH,
-      imageFormats,
-    );
+    // 1. getting signature image
+    fileUploader.validateFile(files.signature, imageFormats, 5);
+    fields.signaturePath = files.signature.path;
 
     // 2. generating waiver html content
     const course = await courseService.getCourseById(fields.gcId);
@@ -105,10 +101,12 @@ exports.sign = async (req, res) => {
     );
 
     // 3. generating pdf
-    const pdfPath = `${UPLOAD_PATH}/${uuid()}.pdf`;
+    const pdfPath = `${uploadPath}/${uuid()}.pdf`;
+    let publicPath = `files/${pdfPath}`;
+    const localPath = "./public/" + pdfPath;
     await helper.printPDF(html, {
       pdf: {
-        path: "./public/" + pdfPath,
+        path: localPath,
         printBackground: true,
         margin: {
           top: "10mm",
@@ -119,31 +117,40 @@ exports.sign = async (req, res) => {
       },
     });
 
-    // 4. inserting new waiver sign record
-    const waiver = await waiverService.sign(fields.gcId, fields.email, pdfPath);
+    // 4. uploading on cloud
+    fields.signaturePath = await fileUploader.upload_file(
+      { path: localPath, name: localPath },
+      uploadPath,
+      ["pdf"],
+    );
 
-    waiver.signature = fileUploader.getFileURL("files/" + pdfPath);
+    if (config.aws.upload) publicPath = fields.signaturePath;
 
-    if (config.env === "development") {
-      const mailOptions = {
-        subject: "Rent A Cart (Agreement)",
-        message: html,
-        attachments: [
-          { name: "Rent A Cart (Agreement)", path: "files/" + pdfPath },
-        ],
-      };
-      const course = await courseService.getCourseById(fields.gcId);
+    // 5. inserting new waiver sign record
+    const waiver = await waiverService.sign(
+      fields.gcId,
+      fields.email,
+      publicPath,
+    );
 
-      await Promise.allSettled([
-        // 5. sending email to signatory
-        email.send({ to: fields.email, ...mailOptions }),
+    // 6. sending emails to both parties
+    const mailOptions = {
+      subject: "Rent A Cart (Agreement)",
+      message: html,
+      attachments: [{ name: "Rent A Cart (Agreement)", path: publicPath }],
+    };
 
-        // 6. sending email to course owner
-        email.send({ to: course.email, ...mailOptions }),
-      ]);
-    }
+    await Promise.allSettled([
+      // 5a. sending email to signatory
+      email.send({ to: fields.email, ...mailOptions }),
 
-    return apiResponse.success(res, req, waiver);
+      // 5b. sending email to course owner
+      email.send({ to: course.email, ...mailOptions }),
+    ]);
+
+    waiver.pdf = fileUploader.getFileURL(publicPath);
+
+    return apiResponse.success(res, req, waiver, 201);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
