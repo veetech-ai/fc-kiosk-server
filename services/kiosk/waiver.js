@@ -7,7 +7,7 @@ const ServiceError = require("../../utils/serviceError");
 const { sanitizeHtmlInput } = require("../../common/helper");
 const { getFileURL } = require("../../common/upload");
 
-const { Signed_Waiver, Waiver } = models;
+const { Signed_Waiver, Waiver, Course } = models;
 
 exports.getSignedWaiverHTML = async (course, signatoryEmail, signatureUrl) => {
   const waiver = await Waiver.findOne({
@@ -117,10 +117,19 @@ exports.getSigned = async (gcId, pagination) => {
   const waivers = await Signed_Waiver.findAll({
     where: { waiverId: waiver.id },
     ...pagination,
-    attributes: [["id", "signingId"], "email", "signature"],
+    attributes: [
+      ["id", "signingId"],
+      "email",
+      "signature",
+      ["createdAt", "signingDate"],
+    ],
     include: {
       model: Waiver,
-      attributes: ["id", "name", "gcId"],
+      attributes: ["id", "name"],
+      include: {
+        model: Course,
+        attributes: ["id", "name"],
+      },
     },
   });
 

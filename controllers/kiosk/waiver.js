@@ -287,7 +287,7 @@ exports.getCourseSignedWaivers = async (req, res) => {
 
     // get file urls
     data.waivers.forEach(
-      (wv) => (wv.signature = fileUploader.getFileURL("files/" + wv.signature)),
+      (wv) => (wv.signature = fileUploader.getFileURL(wv.signature)),
     );
 
     return apiResponse.success(res, req, { ...data, pagination });

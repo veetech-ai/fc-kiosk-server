@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
     models.Waiver.hasMany(models.Signed_Waiver, {
       foreignKey: "waiverId",
     });
+
+    models.Waiver.belongsTo(models.Course, {
+      foreignKey: "gcId",
+    });
   };
   return Waiver;
 };
