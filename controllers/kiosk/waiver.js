@@ -1,6 +1,7 @@
 const Validator = require("validatorjs");
 const formidable = require("formidable");
 const { uuid } = require("uuidv4");
+const fs = require("node:fs");
 
 const apiResponse = require("../../common/api.response");
 const ServiceError = require("../../utils/serviceError");
@@ -89,7 +90,17 @@ exports.sign = async (req, res) => {
 
     // 1. getting signature image
     fileUploader.validateFile(files.signature, imageFormats, 5);
-    fields.signaturePath = files.signature.path;
+
+    fields.signaturePath =
+      `data:${files.signature.type};base64,` +
+      (await new Promise((resolve, reject) => {
+        fs.readFile(files.signature.path, (err, data) => {
+          if (err)
+            reject(new ServiceError("Unable to read signature file", 500));
+
+          resolve(data.toString("base64"));
+        });
+      }));
 
     // 2. generating waiver html content
     const course = await courseService.getCourseById(fields.gcId);
@@ -97,13 +108,11 @@ exports.sign = async (req, res) => {
     const html = await waiverService.getSignedWaiverHTML(
       course,
       fields.email,
-      fileUploader.getFileURL(fields.signaturePath),
+      fields.signaturePath,
     );
 
     // 3. generating pdf
-    const pdfPath = `${uploadPath}/${uuid()}.pdf`;
-    let publicPath = `files/${pdfPath}`;
-    const localPath = "./public/" + pdfPath;
+    const localPath = "./public/" + `${uploadPath}/${uuid()}.pdf`;
     await helper.printPDF(html, {
       pdf: {
         path: localPath,
@@ -124,20 +133,20 @@ exports.sign = async (req, res) => {
       ["pdf"],
     );
 
-    if (config.aws.upload) publicPath = fields.signaturePath;
-
     // 5. inserting new waiver sign record
     const waiver = await waiverService.sign(
       fields.gcId,
       fields.email,
-      publicPath,
+      fields.signaturePath,
     );
 
     // 6. sending emails to both parties
     const mailOptions = {
       subject: "Rent A Cart (Agreement)",
       message: html,
-      attachments: [{ name: "Rent A Cart (Agreement)", path: publicPath }],
+      attachments: [
+        { name: "Rent A Cart (Agreement)", path: fields.signaturePath },
+      ],
     };
 
     await Promise.allSettled([
@@ -148,7 +157,7 @@ exports.sign = async (req, res) => {
       email.send({ to: course.email, ...mailOptions }),
     ]);
 
-    waiver.pdf = fileUploader.getFileURL(publicPath);
+    waiver.signature = fileUploader.getFileURL(fields.signaturePath);
 
     return apiResponse.success(res, req, waiver, 201);
   } catch (error) {
