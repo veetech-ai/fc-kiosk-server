@@ -165,7 +165,7 @@ exports.sign = async (req, res) => {
       ],
     };
 
-    await Promise.allSettled([
+    Promise.allSettled([
       // 5a. sending email to signatory
       email.send({ to: fields.email, ...mailOptions }),
 
