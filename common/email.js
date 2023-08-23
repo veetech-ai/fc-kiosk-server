@@ -269,12 +269,7 @@ exports.wedding_event = (event_name, contact_info, users) => {
       for (const user of users) {
         const html = ejs.render(template, {
           event_name: event_name,
-          show_phone_number:
-            contact_info.contactMedium === "" ||
-            contact_info.contactMedium === null ||
-            contact_info.contactMedium === undefined
-              ? false
-              : true,
+          show_phone_number: !contact_info.contactMedium,
           phone_number: contact_info.userPhone,
           email: contact_info.userEmail,
           contact_medium: contact_info.contactMedium,
