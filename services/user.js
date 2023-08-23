@@ -548,8 +548,6 @@ exports.createAndInviteUser = async (params) => {
   if (config.env === "test") {
     params.name = "Guest";
     params.password = "";
-  } else {
-    params.password = "";
   }
 
   const roleTitle = params.role;
