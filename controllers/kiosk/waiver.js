@@ -12,7 +12,8 @@ const fileUploader = require("../../common/upload");
 const helper = require("../../common/helper");
 const email = require("../../common/email");
 const courseService = require("../../services/kiosk/course");
-const otpService = require("../../services/otp");const OtpModel = require("../../services/otp");
+const otpService = require("../../services/otp");
+const OtpModel = require("../../services/otp");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -456,7 +457,7 @@ exports.verifyPhone = async (req, res) => {
     validation.passes(async function () {
       try {
         const phoneNumber = req.body.phone;
-        const receivedOtp = req.body.code;
+        const receivedOtp = req.body.otp;
 
         const userOTP = await OtpModel.getByPhone({
           phone: phoneNumber,
