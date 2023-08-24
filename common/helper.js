@@ -54,6 +54,8 @@ const alertsCategories = require("./../df-commons/data/alerts-categories.json");
 const definitionsValidations = require("./../df-commons/definitions/validations.json");
 const { globalMQTT } = require("./mqtt-init");
 const ServiceError = require("../utils/serviceError");
+const puppeteer = require("puppeteer");
+const { uuid } = require("uuidv4");
 
 // Setting Up Ajv
 const ajv = new Ajv({ allErrors: true, useDefaults: true }); // options can be passed, e.g. {allErrors: true}
@@ -69,6 +71,8 @@ const time =
 const filterRegexString = `^(${date})$|^today$|^yesterday$|^[0-9]{1,2}d$|^[0-9]{1,2}m$|^(${date}\\|${date})$|^(${date}${time}\\|${date}${time})$`;
 const dateTimeRange = `^${date}${time}\\|${date}${time}$`;
 const dateRegexString = `^${date}$`;
+
+exports.emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
 
 exports.filterRegex = new RegExp(filterRegexString);
 exports.productIdRegex = new RegExp(/((\w{1,})[\s-]?)+(\|[\w-?\s?]+)*$/);
@@ -1539,13 +1543,31 @@ exports.validateObject = (objectToBeValidated, allowedFields) => {
   return pick(cloneObject, allowedFields);
 };
 
+// exports.validateExpiryDate = (keyName, date) => {
+//   const dateToBeValidated = moment(date);
+//   if (!dateToBeValidated.isValid()) {
+//     throw new ServiceError(`The ${keyName} must be a valid date`, 400);
+//   }
+//   const currentDate = moment();
+//   if (dateToBeValidated.isBefore(currentDate)) {
+//     throw new ServiceError(
+//       `The ${keyName} must be greater than the current date`,
+//       400,
+//     );
+//   }
+
+//   return true;
+// };
 exports.validateExpiryDate = (keyName, date) => {
-  const dateToBeValidated = moment(date);
-  if (!dateToBeValidated.isValid()) {
+  const dateToBeValidated = new Date(date);
+
+  if (isNaN(dateToBeValidated)) {
     throw new ServiceError(`The ${keyName} must be a valid date`, 400);
   }
-  const currentDate = moment();
-  if (dateToBeValidated.isBefore(currentDate)) {
+
+  const currentDate = new Date();
+
+  if (dateToBeValidated < currentDate) {
     throw new ServiceError(
       `The ${keyName} must be greater than the current date`,
       400,
@@ -1621,4 +1643,44 @@ exports.sanitizeHtmlInput = (dirtyHTML, options = {}) => {
     allowedIframeHostnames: [],
     ...options,
   });
+};
+
+/**
+ * Converts the html to pdf
+ * @param {String} html A valid html string
+ * @param {object} [options= {}] Options to configure to your needs
+ * @param {puppeteer.PDFOptions} [options.pdf]
+ * @param {puppeteer.PuppeteerLaunchOptions} [options.launch]
+ * @returns {Promise<{path: string, pdf:Buffer}>} pdf buffer
+ */
+exports.printPDF = async (html, options = { launch: {}, pdf: {} }) => {
+  const path = `./public/uploads/${uuid()}.pdf`;
+
+  const browser = await puppeteer.launch({
+    headless: "new",
+    ...options.launch,
+  });
+  const page = await browser.newPage();
+
+  await page.setContent(html);
+
+  const pdf = await page.pdf({ path, format: "A4", ...options.pdf });
+
+  await browser.close();
+  return { path, pdf };
+};
+
+/**
+ * Checks if a timestamp is expired based on a given expiry time.
+ * @param {number} timestampMs - The timestamp in milliseconds to check against.
+ * @param {number} [expiryMs] - The expiry time in milliseconds. Defaults to the OTP expiry time from the config.
+ * @returns {boolean} True if the timestamp is expired, false otherwise.
+ */
+exports.isExpired = (
+  timestampMs,
+  expiryMs = config.auth.mobileAuth.otpExpirationInSeconds * 1000,
+) => {
+  const currentTimeMs = new Date().getTime();
+
+  return currentTimeMs >= timestampMs + expiryMs;
 };

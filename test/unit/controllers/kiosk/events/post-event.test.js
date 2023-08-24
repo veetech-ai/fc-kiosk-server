@@ -27,7 +27,7 @@ jest.mock("formidable", () => {
 });
 
 awsS3.uploadFile = jest.fn(() => Promise.resolve(uuid()));
-serverUpload.upload = jest.fn(() => Promise.resolve(uuid()));
+serverUpload.uploadv1 = jest.fn(() => Promise.resolve(uuid()));
 
 const filesData = {
   thumbnail: {
