@@ -15,6 +15,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.removeColumn("Devices", "email");
+    return queryInterface.removeColumn("OTPs", "email");
   },
 };

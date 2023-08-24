@@ -55,10 +55,10 @@ exports.sign = async (req, res) => {
    *         type: string
    *
    *       - in: formData
-   *         name: otp
-   *         description: OTP sent in the verification email
+   *         name: session_id
+   *         description: session_id recieved after email verification
    *         required: true
-   *         type: number
+   *         type: string
    *
    *       - in: formData
    *         name: signature
@@ -84,7 +84,7 @@ exports.sign = async (req, res) => {
 
     const validation = new Validator(fields, {
       gcId: "required|integer",
-      otp: "required|integer",
+      session_id: "required|string",
       email: ["required", `regex:${helper.emailRegex}`],
     });
 
@@ -94,12 +94,11 @@ exports.sign = async (req, res) => {
       throw new ServiceError("The signature image is required");
     }
 
-    try {
-      const otp = await otpService.getByEmail({ email: fields.email });
-      await otpService.verifyCode(otp);
-    } catch (err) {
-      throw new ServiceError(err.message, 400);
-    }
+    // 0. verifying the session
+    await otpService.verifySession({
+      email: fields.email,
+      session_id: fields.session_id,
+    });
 
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
     const uploadPath = "uploads/waiver";
@@ -408,6 +407,73 @@ exports.verifyEmail = async (req, res) => {
    * @swagger
    *
    * /email/verify:
+   *   post:
+   *     security:
+   *       - auth: []
+   *     description: Verify the user's eamil via the OTP sent to the user over the email
+   *     tags: [Email]
+   *
+   *     parameters:
+   *       - in: body
+   *         name: body
+   *         description: >
+   *            * `email`: Email of the user.
+   *            * `otp`: OTP(One Time Password) sent over the email of the user.
+   *         schema:
+   *             type: object
+   *             required:
+   *                - email
+   *             properties:
+   *                email:
+   *                   type: string
+   *                otp:
+   *                   type: string
+   *
+   *     produces:
+   *       - application/json
+   *     responses:
+   *        200:
+   *          description: Session object
+   *          schema:
+   *            type: object
+   *            properties:
+   *              sessionId:
+   *                type: string
+   *                description: Session id to use with APIs.
+   *              email:
+   *                type: string
+   *                description: Email for which this sessionId is valid
+   */
+
+  try {
+    const validation = new Validator(req.body, {
+      email: ["required", `regex:${helper.emailRegex}`],
+      otp: "required|string",
+    });
+
+    if (validation.fails()) throw new ServiceError(validation.firstError());
+
+    const sessionId = await otpService.getSession({
+      email: req.body.email,
+      code: req.body.otp,
+    });
+
+    return apiResponse.success(
+      res,
+      req,
+      { sessionId, email: req.body.email },
+      200,
+    );
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.sendOTP = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /email/otp:
    *   post:
    *     security:
    *       - auth: []

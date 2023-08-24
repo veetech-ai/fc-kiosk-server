@@ -1651,3 +1651,18 @@ exports.printPDF = async (html, options = { launch: {}, pdf: {} }) => {
   await browser.close();
   return { path, pdf };
 };
+
+/**
+ * Checks if a timestamp is expired based on a given expiry time.
+ * @param {number} timestampMs - The timestamp in milliseconds to check against.
+ * @param {number} [expiryMs] - The expiry time in milliseconds. Defaults to the OTP expiry time from the config.
+ * @returns {boolean} True if the timestamp is expired, false otherwise.
+ */
+exports.isExpired = (
+  timestampMs,
+  expiryMs = config.auth.mobileAuth.otpExpirationInSeconds * 1000,
+) => {
+  const currentTimeMs = new Date().getTime();
+
+  return currentTimeMs >= timestampMs + expiryMs;
+};

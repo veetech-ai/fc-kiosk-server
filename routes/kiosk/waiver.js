@@ -9,6 +9,12 @@ exports.routesConfig = function (app, router) {
     WaiverController.verifyEmail,
   );
 
+  router.post(
+    `${config.app.apiPath}email/otp`,
+    validation_middleware.validJWTNeeded,
+    WaiverController.sendOTP,
+  );
+
   const waiver = `${config.app.apiPath}waiver`;
 
   router.post(waiver + "/sign", [WaiverController.sign]);
