@@ -1658,6 +1658,7 @@ exports.printPDF = async (html, options = { launch: {}, pdf: {} }) => {
 
   const browser = await puppeteer.launch({
     headless: "new",
+    args: ["--no-sandbox"],
     ...options.launch,
   });
   const page = await browser.newPage();
