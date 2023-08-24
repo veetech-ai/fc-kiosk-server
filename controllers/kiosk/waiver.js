@@ -473,24 +473,24 @@ exports.sendOTP = async (req, res) => {
   /**
    * @swagger
    *
-   * /email/otp:
+   * /sms/otp:
    *   post:
    *     security:
    *       - auth: []
-   *     description: Send email verification email containing the OTP, to the user
-   *     tags: [Email]
+   *     description: Send text message verification text message containing the OTP, to the user
+   *     tags: [Phone]
    *
    *     parameters:
    *       - in: body
    *         name: body
    *         description: >
-   *            `email`: Email of the user.
+   *            `phone`: phone number of the user.
    *         schema:
    *             type: object
    *             required:
-   *                - email
+   *                - phone
    *             properties:
-   *                email:
+   *                phone:
    *                   type: string
    *
    *     produces:
@@ -502,40 +502,33 @@ exports.sendOTP = async (req, res) => {
 
   try {
     const validation = new Validator(req.body, {
-      email: ["required", `regex:${helper.emailRegex}`],
+      phone: ["required", `regex:${helper.PhoneRegex}`],
     });
 
     if (validation.fails()) throw new ServiceError(validation.firstError());
 
-    const template = fs.readFileSync(
-      path.join(__dirname, "../../views/emails/email_verification.ejs"),
-      {
-        encoding: "utf-8",
-      },
-    );
+    validation.passes(async function () {
+      try {
+        const phoneNumber = req.body.phone;
+        const otpNumber = Math.floor(1000 + Math.random() * 9000);
 
-    const expiry = 50000;
-    const otpNumber = Math.floor(1000 + Math.random() * 9000);
+        const message = `Your ${
+          otpNumber.toString().length
+        } digit verification code is ${otpNumber}`;
+        await helper.send_sms(phoneNumber, message);
 
-    await otpService.createForEmail({
-      email: req.body.email,
-      code: otpNumber,
+        await OtpModel.create({
+          phone: phoneNumber,
+          code: otpNumber,
+        });
+
+        OtpModel.ver
+
+        return apiResponse.success(res, req, "Verification code sent");
+      } catch (err) {
+        return apiResponse.fail(res, err.message, 500);
+      }
     });
-
-    const html = ejs.render(template, {
-      otp: otpNumber,
-      expiration_minutes: expiry,
-    });
-
-    const mailOptions = {
-      subject: "Email Verification",
-      message: html,
-      to: req.body.email,
-    };
-
-    await email.send(mailOptions);
-
-    return apiResponse.success(res, req, "Verification email is sent", 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
