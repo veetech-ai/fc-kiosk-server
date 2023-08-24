@@ -468,7 +468,15 @@ exports.verifyPhone = async (req, res) => {
 
         await OtpModel.verifyCode(userOTP);
 
-        return apiResponse.success(res, req, "OTP is verified");
+        const sessionId = await otpService.getSession({
+          phone: req.body.phone,
+          code: req.body.otp,
+        });
+
+        return apiResponse.success(res, req, {
+          sessionId: sessionId,
+          phone: phoneNumber,
+        });
       } catch (err) {
         return apiResponse.fail(res, err.message, 500);
       }
@@ -530,6 +538,8 @@ exports.sendOTP = async (req, res) => {
           phone: phoneNumber,
           code: otpNumber,
         });
+
+        OtpModel.ver;
 
         return apiResponse.success(res, req, "Verification code sent");
       } catch (err) {

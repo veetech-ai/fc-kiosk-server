@@ -47,8 +47,8 @@ exports.getByEmail = async ({ email, code }) => {
   return otp;
 };
 
-exports.getSession = async ({ email, code }) => {
-  const otp = await this.getByEmail({ email, code });
+exports.getSession = async ({ phone, code }) => {
+  const otp = await this.getByPhone({ phone, code });
 
   await this.checkExpiry(otp);
 
@@ -94,9 +94,9 @@ exports.checkExpiry = async (otp, otpCreationTimeMs = null) => {
 };
 
 exports.verifyCode = async (otp, otpCreationTimeMs = null) => {
-  await this.checkExpiry(otp, otpCreationTimeMs);
-
-  await OTP.destroy({ where: { phone: otp.phone } });
+  let expired = await this.checkExpiry(otp, otpCreationTimeMs);
+  console.log(expired);
+  // await OTP.destroy({ where: { phone: otp.phone } });
 };
 
 exports.destroyOTP = async (phone) => {
