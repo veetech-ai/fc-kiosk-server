@@ -10,7 +10,7 @@ exports.routesConfig = function (app, router) {
   );
 
   router.post(
-    `${config.app.apiPath}email/otp`,
+    `${config.app.apiPath}sms/otp`,
     validation_middleware.validJWTNeeded,
     WaiverController.sendOTP,
   );
