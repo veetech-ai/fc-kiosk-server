@@ -12,7 +12,7 @@ const fileUploader = require("../../common/upload");
 const helper = require("../../common/helper");
 const email = require("../../common/email");
 const courseService = require("../../services/kiosk/course");
-const otpService = require("../../services/otp");
+const otpService = require("../../services/otp");const OtpModel = require("../../services/otp");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -402,29 +402,29 @@ exports.getWaiverContent = async (req, res) => {
   }
 };
 
-exports.verifyEmail = async (req, res) => {
+exports.verifyPhone = async (req, res) => {
   /**
    * @swagger
    *
-   * /email/verify:
+   * /sms/verify:
    *   post:
    *     security:
    *       - auth: []
-   *     description: Verify the user's eamil via the OTP sent to the user over the email
-   *     tags: [Email]
+   *     description: Verify the user's phone via the OTP sent to the user over the phone number
+   *     tags: [Phone]
    *
    *     parameters:
    *       - in: body
    *         name: body
    *         description: >
-   *            * `email`: Email of the user.
+   *            * `phone`: Email of the user.
    *            * `otp`: OTP(One Time Password) sent over the email of the user.
    *         schema:
    *             type: object
    *             required:
-   *                - email
+   *                - phone
    *             properties:
-   *                email:
+   *                phone:
    *                   type: string
    *                otp:
    *                   type: string
@@ -440,30 +440,38 @@ exports.verifyEmail = async (req, res) => {
    *              sessionId:
    *                type: string
    *                description: Session id to use with APIs.
-   *              email:
+   *              phone:
    *                type: string
-   *                description: Email for which this sessionId is valid
+   *                description: phone for which this sessionId is valid
    */
 
   try {
     const validation = new Validator(req.body, {
-      email: ["required", `regex:${helper.emailRegex}`],
+      phone: ["required", `regex:${helper.PhoneRegex}`],
       otp: "required|string",
     });
 
     if (validation.fails()) throw new ServiceError(validation.firstError());
 
-    const sessionId = await otpService.getSession({
-      email: req.body.email,
-      code: req.body.otp,
-    });
+    validation.passes(async function () {
+      try {
+        const phoneNumber = req.body.phone;
+        const receivedOtp = req.body.code;
 
-    return apiResponse.success(
-      res,
-      req,
-      { sessionId, email: req.body.email },
-      200,
-    );
+        const userOTP = await OtpModel.getByPhone({
+          phone: phoneNumber,
+          code: receivedOtp,
+        });
+
+        if (!userOTP) return apiResponse.fail(res, "OTP not valid");
+
+        await OtpModel.verifyCode(userOTP);
+
+        return apiResponse.success(res, req, "OTP is verified");
+      } catch (err) {
+        return apiResponse.fail(res, err.message, 500);
+      }
+    });
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -521,8 +529,6 @@ exports.sendOTP = async (req, res) => {
           phone: phoneNumber,
           code: otpNumber,
         });
-
-        OtpModel.ver
 
         return apiResponse.success(res, req, "Verification code sent");
       } catch (err) {
