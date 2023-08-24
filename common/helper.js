@@ -1543,13 +1543,31 @@ exports.validateObject = (objectToBeValidated, allowedFields) => {
   return pick(cloneObject, allowedFields);
 };
 
+// exports.validateExpiryDate = (keyName, date) => {
+//   const dateToBeValidated = moment(date);
+//   if (!dateToBeValidated.isValid()) {
+//     throw new ServiceError(`The ${keyName} must be a valid date`, 400);
+//   }
+//   const currentDate = moment();
+//   if (dateToBeValidated.isBefore(currentDate)) {
+//     throw new ServiceError(
+//       `The ${keyName} must be greater than the current date`,
+//       400,
+//     );
+//   }
+
+//   return true;
+// };
 exports.validateExpiryDate = (keyName, date) => {
-  const dateToBeValidated = moment(date);
-  if (!dateToBeValidated.isValid()) {
+  const dateToBeValidated = new Date(date);
+
+  if (isNaN(dateToBeValidated)) {
     throw new ServiceError(`The ${keyName} must be a valid date`, 400);
   }
-  const currentDate = moment();
-  if (dateToBeValidated.isBefore(currentDate)) {
+
+  const currentDate = new Date();
+
+  if (dateToBeValidated < currentDate) {
     throw new ServiceError(
       `The ${keyName} must be greater than the current date`,
       400,
