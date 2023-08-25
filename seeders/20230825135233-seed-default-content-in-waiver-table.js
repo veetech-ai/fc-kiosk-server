@@ -5,8 +5,7 @@ const { Course, Waiver } = require("./../models");
 
 // Function to generate HTML content
 function generateHtmlContent() {
-  const content = `
-      <h1>Direct Fairways Cart Rental Waiver Agreement</h1>
+  const content = `<h1>Direct Fairways Cart Rental Waiver Agreement</h1>
 
     <p>
         This Cart Rental Waiver Agreement is entered into between Direct Fairways and the undersigned customer. This Agreement governs the rental of golf carts from the Company.
@@ -50,10 +49,9 @@ function generateHtmlContent() {
 
     <p>
         This Agreement is effective as of the date of the Customer's signature.
-    </p>
-  `;
+    </p>`;
 
-  return content.replace(/(?<=>)\s+(?=<)/g, "").replace(/\r[\n]/g, "");
+  return content.replace(/(?<=>)\s+(?=<)/g, "");
 }
 
 const createdWaiverIds = [];
