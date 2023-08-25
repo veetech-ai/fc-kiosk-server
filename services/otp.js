@@ -59,11 +59,11 @@ exports.getSession = async ({ phone, code }) => {
   return otp.session_id;
 };
 
-exports.verifySession = async ({ email, session_id }) => {
-  const otp = await OTP.findOne({ where: { email, session_id } });
+exports.verifySession = async ({ phone, session_id }) => {
+  const otp = await OTP.findOne({ where: { phone, session_id } });
 
   if (!otp) {
-    throw new ServiceError("Email is not verified", 400);
+    throw new ServiceError("Phone Number is not verified", 400);
   }
 
   const otpCreationTimeMs = new Date(otp.createdAt).getTime();
