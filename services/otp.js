@@ -47,8 +47,8 @@ exports.getByEmail = async ({ email, code }) => {
   return otp;
 };
 
-exports.getSession = async ({ email, code }) => {
-  const otp = await this.getByEmail({ email, code });
+exports.getSession = async ({ phone, code }) => {
+  const otp = await this.getByPhone({ phone, code });
 
   await this.checkExpiry(otp);
 
@@ -59,11 +59,11 @@ exports.getSession = async ({ email, code }) => {
   return otp.session_id;
 };
 
-exports.verifySession = async ({ email, session_id }) => {
-  const otp = await OTP.findOne({ where: { email, session_id } });
+exports.verifySession = async ({ phone, session_id }) => {
+  const otp = await OTP.findOne({ where: { phone, session_id } });
 
   if (!otp) {
-    throw new ServiceError("Email is not verified", 400);
+    throw new ServiceError("Phone Number is not verified", 400);
   }
 
   const otpCreationTimeMs = new Date(otp.createdAt).getTime();
@@ -93,9 +93,12 @@ exports.checkExpiry = async (otp, otpCreationTimeMs = null) => {
   return otp;
 };
 
+exports.verifyCodeWaiver = async (otp, otpCreationTimeMs = null) => {
+  await this.checkExpiry(otp, otpCreationTimeMs);
+};
+
 exports.verifyCode = async (otp, otpCreationTimeMs = null) => {
   await this.checkExpiry(otp, otpCreationTimeMs);
-
   await OTP.destroy({ where: { phone: otp.phone } });
 };
 

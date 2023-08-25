@@ -13,6 +13,7 @@ const helper = require("../../common/helper");
 const email = require("../../common/email");
 const courseService = require("../../services/kiosk/course");
 const otpService = require("../../services/otp");
+const OtpModel = require("../../services/otp");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -49,14 +50,14 @@ exports.sign = async (req, res) => {
    *         type: integer
    *
    *       - in: formData
-   *         name: email
-   *         description: Email of the signatory
+   *         name: phone
+   *         description: phone of the signatory
    *         required: true
    *         type: string
    *
    *       - in: formData
    *         name: session_id
-   *         description: session_id recieved after email verification
+   *         description: session_id recieved after phone verification
    *         required: true
    *         type: string
    *
@@ -85,7 +86,7 @@ exports.sign = async (req, res) => {
     const validation = new Validator(fields, {
       gcId: "required|integer",
       session_id: "required|string",
-      email: ["required", `regex:${helper.emailRegex}`],
+      phone: ["required", `regex:${helper.PhoneRegex}`],
     });
 
     if (validation.fails()) throw new ServiceError(validation.firstError());
@@ -96,7 +97,7 @@ exports.sign = async (req, res) => {
 
     // 0. verifying the session
     await otpService.verifySession({
-      email: fields.email,
+      phone: fields.phone,
       session_id: fields.session_id,
     });
 
@@ -122,7 +123,7 @@ exports.sign = async (req, res) => {
 
     const html = await waiverService.getSignedWaiverHTML(
       course,
-      fields.email,
+      fields.phone,
       fields.signaturePath,
     );
 
@@ -151,7 +152,7 @@ exports.sign = async (req, res) => {
     // 5. inserting new waiver sign record
     const waiver = await waiverService.sign(
       fields.gcId,
-      fields.email,
+      fields.phone,
       fields.signaturePath,
     );
 
@@ -164,17 +165,31 @@ exports.sign = async (req, res) => {
       ],
     };
 
-    Promise.allSettled([
-      // 5a. sending email to signatory
-      email.send({ to: fields.email, ...mailOptions }),
+    // Promise.allSettled([
+    //   // 5a. sending email to signatory
+    //   email.send({ to: fields.email, ...mailOptions }),
 
-      // 5b. sending email to course owner
-      email.send({ to: course.email, ...mailOptions }),
-    ]);
+    //   // 5b. sending email to course owner
+    //   email.send({ to: course.email, ...mailOptions }),
+    // ]);
 
+    // 6.a. send mail to course owner
+    email.send({ to: course.email, ...mailOptions });
+
+    // 6.b. send sms to the customer
     waiver.signature = fileUploader.getFileURL(fields.signaturePath);
+    helper.send_sms(
+      fields.phone,
+      "This is a copy of your signed waiver. Please click the given link to see your waiver " +
+        waiver.signature,
+    );
 
-    return apiResponse.success(res, req, waiver, 201);
+    return apiResponse.success(
+      res,
+      req,
+      { waiver, message: "You'll recieve confirmation sms shortly!" },
+      201,
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -402,29 +417,29 @@ exports.getWaiverContent = async (req, res) => {
   }
 };
 
-exports.verifyEmail = async (req, res) => {
+exports.verifyPhone = async (req, res) => {
   /**
    * @swagger
    *
-   * /email/verify:
+   * /sms/verify:
    *   post:
    *     security:
    *       - auth: []
-   *     description: Verify the user's eamil via the OTP sent to the user over the email
-   *     tags: [Email]
+   *     description: Verify the user's phone via the OTP sent to the user over the phone number
+   *     tags: [Phone]
    *
    *     parameters:
    *       - in: body
    *         name: body
    *         description: >
-   *            * `email`: Email of the user.
+   *            * `phone`: Email of the user.
    *            * `otp`: OTP(One Time Password) sent over the email of the user.
    *         schema:
    *             type: object
    *             required:
-   *                - email
+   *                - phone
    *             properties:
-   *                email:
+   *                phone:
    *                   type: string
    *                otp:
    *                   type: string
@@ -440,30 +455,46 @@ exports.verifyEmail = async (req, res) => {
    *              sessionId:
    *                type: string
    *                description: Session id to use with APIs.
-   *              email:
+   *              phone:
    *                type: string
-   *                description: Email for which this sessionId is valid
+   *                description: phone for which this sessionId is valid
    */
 
   try {
     const validation = new Validator(req.body, {
-      email: ["required", `regex:${helper.emailRegex}`],
+      phone: ["required", `regex:${helper.PhoneRegex}`],
       otp: "required|string",
     });
 
     if (validation.fails()) throw new ServiceError(validation.firstError());
 
-    const sessionId = await otpService.getSession({
-      email: req.body.email,
-      code: req.body.otp,
-    });
+    validation.passes(async function () {
+      try {
+        const phoneNumber = req.body.phone;
+        const receivedOtp = req.body.otp;
 
-    return apiResponse.success(
-      res,
-      req,
-      { sessionId, email: req.body.email },
-      200,
-    );
+        const userOTP = await OtpModel.getByPhone({
+          phone: phoneNumber,
+          code: receivedOtp,
+        });
+
+        if (!userOTP) return apiResponse.fail(res, "OTP not valid");
+
+        await OtpModel.verifyCodeWaiver(userOTP);
+
+        const sessionId = await otpService.getSession({
+          phone: req.body.phone,
+          code: req.body.otp,
+        });
+
+        return apiResponse.success(res, req, {
+          sessionId: sessionId,
+          phone: phoneNumber,
+        });
+      } catch (err) {
+        return apiResponse.fail(res, err.message, 500);
+      }
+    });
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -473,24 +504,24 @@ exports.sendOTP = async (req, res) => {
   /**
    * @swagger
    *
-   * /email/otp:
+   * /sms/otp:
    *   post:
    *     security:
    *       - auth: []
-   *     description: Send email verification email containing the OTP, to the user
-   *     tags: [Email]
+   *     description: Send text message verification text message containing the OTP, to the user
+   *     tags: [Phone]
    *
    *     parameters:
    *       - in: body
    *         name: body
    *         description: >
-   *            `email`: Email of the user.
+   *            `phone`: phone number of the user.
    *         schema:
    *             type: object
    *             required:
-   *                - email
+   *                - phone
    *             properties:
-   *                email:
+   *                phone:
    *                   type: string
    *
    *     produces:
@@ -502,40 +533,31 @@ exports.sendOTP = async (req, res) => {
 
   try {
     const validation = new Validator(req.body, {
-      email: ["required", `regex:${helper.emailRegex}`],
+      phone: ["required", `regex:${helper.PhoneRegex}`],
     });
 
     if (validation.fails()) throw new ServiceError(validation.firstError());
 
-    const template = fs.readFileSync(
-      path.join(__dirname, "../../views/emails/email_verification.ejs"),
-      {
-        encoding: "utf-8",
-      },
-    );
+    validation.passes(async function () {
+      try {
+        const phoneNumber = req.body.phone;
+        const otpNumber = Math.floor(1000 + Math.random() * 9000);
 
-    const expiry = 50000;
-    const otpNumber = Math.floor(1000 + Math.random() * 9000);
+        const message = `Your ${
+          otpNumber.toString().length
+        } digit verification code is ${otpNumber}`;
+        await helper.send_sms(phoneNumber, message);
 
-    await otpService.createForEmail({
-      email: req.body.email,
-      code: otpNumber,
+        await otpService.create({
+          phone: phoneNumber,
+          code: otpNumber,
+        });
+
+        return apiResponse.success(res, req, "Verification code sent");
+      } catch (err) {
+        return apiResponse.fail(res, err.message, 500);
+      }
     });
-
-    const html = ejs.render(template, {
-      otp: otpNumber,
-      expiration_minutes: expiry,
-    });
-
-    const mailOptions = {
-      subject: "Email Verification",
-      message: html,
-      to: req.body.email,
-    };
-
-    await email.send(mailOptions);
-
-    return apiResponse.success(res, req, "Verification email is sent", 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

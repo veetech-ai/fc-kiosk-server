@@ -3,17 +3,15 @@ const validation_middleware = require("../../middlewares/auth.validation");
 const config = require("../../config/config");
 
 exports.routesConfig = function (app, router) {
-  router.post(
-    `${config.app.apiPath}email/verify`,
+  router.post(`${config.app.apiPath}sms/verify`, [
     validation_middleware.validJWTNeeded,
-    WaiverController.verifyEmail,
-  );
+    WaiverController.verifyPhone,
+  ]);
 
-  router.post(
-    `${config.app.apiPath}email/otp`,
+  router.post(`${config.app.apiPath}sms/otp`, [
     validation_middleware.validJWTNeeded,
     WaiverController.sendOTP,
-  );
+  ]);
 
   const waiver = `${config.app.apiPath}waiver`;
 
