@@ -50,14 +50,14 @@ exports.sign = async (req, res) => {
    *         type: integer
    *
    *       - in: formData
-   *         name: email
-   *         description: Email of the signatory
+   *         name: phone
+   *         description: phone of the signatory
    *         required: true
    *         type: string
    *
    *       - in: formData
    *         name: session_id
-   *         description: session_id recieved after email verification
+   *         description: session_id recieved after phone verification
    *         required: true
    *         type: string
    *
@@ -86,7 +86,7 @@ exports.sign = async (req, res) => {
     const validation = new Validator(fields, {
       gcId: "required|integer",
       session_id: "required|string",
-      email: ["required", `regex:${helper.emailRegex}`],
+      phone: ["required", `regex:${helper.PhoneRegex}`],
     });
 
     if (validation.fails()) throw new ServiceError(validation.firstError());
@@ -97,7 +97,7 @@ exports.sign = async (req, res) => {
 
     // 0. verifying the session
     await otpService.verifySession({
-      email: fields.email,
+      phone: fields.phone,
       session_id: fields.session_id,
     });
 
@@ -123,7 +123,7 @@ exports.sign = async (req, res) => {
 
     const html = await waiverService.getSignedWaiverHTML(
       course,
-      fields.email,
+      fields.phone,
       fields.signaturePath,
     );
 
@@ -152,28 +152,33 @@ exports.sign = async (req, res) => {
     // 5. inserting new waiver sign record
     const waiver = await waiverService.sign(
       fields.gcId,
-      fields.email,
+      fields.phone,
       fields.signaturePath,
     );
 
     // 6. sending emails to both parties
-    const mailOptions = {
-      subject: "Rent A Cart (Agreement)",
-      message: html,
-      attachments: [
-        { name: "Rent A Cart (Agreement)", path: fields.signaturePath },
-      ],
-    };
+    // const mailOptions = {
+    //   subject: "Rent A Cart (Agreement)",
+    //   message: html,
+    //   attachments: [
+    //     { name: "Rent A Cart (Agreement)", path: fields.signaturePath },
+    //   ],
+    // };
 
-    Promise.allSettled([
-      // 5a. sending email to signatory
-      email.send({ to: fields.email, ...mailOptions }),
+    // Promise.allSettled([
+    //   // 5a. sending email to signatory
+    //   email.send({ to: fields.email, ...mailOptions }),
 
-      // 5b. sending email to course owner
-      email.send({ to: course.email, ...mailOptions }),
-    ]);
+    //   // 5b. sending email to course owner
+    //   email.send({ to: course.email, ...mailOptions }),
+    // ]);
 
     waiver.signature = fileUploader.getFileURL(fields.signaturePath);
+    await helper.send_sms(
+      fields.phone,
+      "This is a copy of your signed waiver. Please click the given link to see your waiver " +
+        waiver.signature,
+    );
 
     return apiResponse.success(res, req, waiver, 201);
   } catch (error) {
