@@ -157,13 +157,13 @@ exports.sign = async (req, res) => {
     );
 
     // 6. sending emails to both parties
-    // const mailOptions = {
-    //   subject: "Rent A Cart (Agreement)",
-    //   message: html,
-    //   attachments: [
-    //     { name: "Rent A Cart (Agreement)", path: fields.signaturePath },
-    //   ],
-    // };
+    const mailOptions = {
+      subject: "Rent A Cart (Agreement)",
+      message: html,
+      attachments: [
+        { name: "Rent A Cart (Agreement)", path: fields.signaturePath },
+      ],
+    };
 
     // Promise.allSettled([
     //   // 5a. sending email to signatory
@@ -173,14 +173,23 @@ exports.sign = async (req, res) => {
     //   email.send({ to: course.email, ...mailOptions }),
     // ]);
 
+    // 6.a. send mail to course owner
+    email.send({ to: course.email, ...mailOptions });
+
+    // 6.b. send sms to the customer
     waiver.signature = fileUploader.getFileURL(fields.signaturePath);
-    await helper.send_sms(
+    helper.send_sms(
       fields.phone,
       "This is a copy of your signed waiver. Please click the given link to see your waiver " +
         waiver.signature,
     );
 
-    return apiResponse.success(res, req, waiver, 201);
+    return apiResponse.success(
+      res,
+      req,
+      { waiver, message: "You'll recieve confirmation sms shortly!" },
+      201,
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -539,7 +548,7 @@ exports.sendOTP = async (req, res) => {
         } digit verification code is ${otpNumber}`;
         await helper.send_sms(phoneNumber, message);
 
-        await OtpModel.create({
+        await otpService.create({
           phone: phoneNumber,
           code: otpNumber,
         });

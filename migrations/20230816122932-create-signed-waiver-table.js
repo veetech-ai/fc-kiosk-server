@@ -20,7 +20,7 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      phone: {
+      email: {
         type: Sequelize.STRING,
         allowNull: false,
       },
