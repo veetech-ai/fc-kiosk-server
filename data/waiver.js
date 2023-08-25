@@ -15,6 +15,26 @@ exports.generateWaiverHtmlContent = () => {
         2. <strong>Responsibility:</strong> Customer agrees to operate the golf cart responsibly and in accordance with all applicable laws and regulations. Customer is responsible for any damage or loss of the golf cart during the rental period.
     </p>
 
+    <p>
+        3. <strong>Release and Waiver:</strong> Customer releases and waives any claims against Direct Fairways, its employees, and agents, for any injuries, accidents, or damages that may arise from the use of the golf cart, except in cases of gross negligence or willful misconduct.
+    </p>
+
+    <p>
+        4. <strong>Insurance:</strong> Customer is encouraged to have insurance coverage that may provide protection for any potential liabilities arising from the use of the golf cart.
+    </p>
+
+    <p>
+        5. <strong>Indemnification:</strong> Customer agrees to indemnify and hold harmless Direct Fairways, its employees, and agents, from and against any claims, demands, losses, liabilities, and expenses (including attorney's fees) arising out of or in connection with the use of the golf cart.
+    </p>
+
+    <p>
+        6. <strong>Condition of Golf Cart:</strong> Customer acknowledges that the golf cart is in good working condition at the time of rental. Any issues with the golf cart should be reported to Company immediately.
+    </p>
+
+    <p>
+        7. <strong>Rental Period:</strong> The rental period begins on the date of rental and ends on the agreed-upon return date and time. Late returns may incur additional charges.
+    </p>
+
     <h2>Agreement Acknowledgment</h2>
 
     <p>
