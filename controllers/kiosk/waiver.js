@@ -471,7 +471,7 @@ exports.verifyPhone = async (req, res) => {
 
         if (!userOTP) return apiResponse.fail(res, "OTP not valid");
 
-        await OtpModel.verifyCode(userOTP);
+        await OtpModel.verifyCodeWaiver(userOTP);
 
         const sessionId = await otpService.getSession({
           phone: req.body.phone,

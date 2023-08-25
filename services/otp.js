@@ -93,10 +93,13 @@ exports.checkExpiry = async (otp, otpCreationTimeMs = null) => {
   return otp;
 };
 
+exports.verifyCodeWaiver = async (otp, otpCreationTimeMs = null) => {
+  await this.checkExpiry(otp, otpCreationTimeMs);
+};
+
 exports.verifyCode = async (otp, otpCreationTimeMs = null) => {
-  let expired = await this.checkExpiry(otp, otpCreationTimeMs);
-  console.log(expired);
-  // await OTP.destroy({ where: { phone: otp.phone } });
+  await this.checkExpiry(otp, otpCreationTimeMs);
+  await OTP.destroy({ where: { phone: otp.phone } });
 };
 
 exports.destroyOTP = async (phone) => {
