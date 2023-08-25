@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    email: {
+    phone: {
       type: DataTypes.STRING,
       allowNull: false,
     },
