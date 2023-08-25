@@ -124,6 +124,7 @@ exports.getSigned = async (gcId, pagination) => {
     attributes: [
       ["id", "signingId"],
       "email",
+      "phone",
       "signature",
       ["createdAt", "signingDate"],
     ],
