@@ -9,7 +9,7 @@ const { getServerUrl } = require("../../common/upload");
 
 const { Signed_Waiver, Waiver, Course } = models;
 
-exports.getSignedWaiverHTML = async (course, signatoryEmail, signatureUrl) => {
+exports.getSignedWaiverHTML = async (course, signatoryPhone, signatureUrl) => {
   const waiver = await Waiver.findOne({
     where: { gcId: course.id },
     attributes: ["content"],
@@ -22,7 +22,7 @@ exports.getSignedWaiverHTML = async (course, signatoryEmail, signatureUrl) => {
   const html = ejs.render(template, {
     title: "Waiver Document",
     body: waiver.content,
-    signatoryEmail,
+    signatoryPhone,
     signatureUrl,
     date: new Date().toDateString(),
     images: {
@@ -35,7 +35,7 @@ exports.getSignedWaiverHTML = async (course, signatoryEmail, signatureUrl) => {
   return html;
 };
 
-exports.sign = async (gcId, email, signatureUrl) => {
+exports.sign = async (gcId, phone, signatureUrl) => {
   const waiver = await Waiver.findOne({ where: { gcId } });
 
   if (!waiver) {
@@ -43,12 +43,12 @@ exports.sign = async (gcId, email, signatureUrl) => {
   }
 
   // Make sure this waiver is not signed already by this user
-  // i.e a record against same email exists
+  // i.e a record against same phone exists
   // and it was created before any updation in waiver
   const conflict = await Signed_Waiver.findOne({
     where: {
       [Op.and]: {
-        email,
+        phone,
         createdAt: { [Op.gt]: waiver.updatedAt },
       },
     },
@@ -59,7 +59,7 @@ exports.sign = async (gcId, email, signatureUrl) => {
   }
 
   return Signed_Waiver.create({
-    email,
+    phone,
     signature: signatureUrl,
     waiverId: waiver.id,
   });
