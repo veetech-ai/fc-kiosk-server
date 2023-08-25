@@ -114,6 +114,10 @@ exports.deleteSigned = async (id) => {
 exports.getSigned = async (gcId, pagination) => {
   const waiver = await Waiver.findOne({ where: { gcId } });
 
+  if (!waiver) {
+    throw new ServiceError("Waiver not found for this course", 404);
+  }
+
   const waivers = await Signed_Waiver.findAll({
     where: { waiverId: waiver.id },
     ...pagination,
