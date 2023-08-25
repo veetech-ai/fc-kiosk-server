@@ -544,8 +544,6 @@ exports.sendOTP = async (req, res) => {
           code: otpNumber,
         });
 
-        OtpModel.ver;
-
         return apiResponse.success(res, req, "Verification code sent");
       } catch (err) {
         return apiResponse.fail(res, err.message, 500);
