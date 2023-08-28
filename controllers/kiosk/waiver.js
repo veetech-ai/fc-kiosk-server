@@ -520,7 +520,7 @@ exports.sendOTP = async (req, res) => {
    *   post:
    *     security:
    *       - auth: []
-   *     description: Send text message verification text message containing the OTP, to the user
+   *     description: Send verification text message containing the OTP, to the user
    *     tags: [Phone]
    *
    *     parameters:
