@@ -74,11 +74,18 @@ exports.sign = async (req, res) => {
    */
 
   try {
-    const form = new formidable.IncomingForm();
+    const form = new formidable.IncomingForm({ maxFileSize: 1 * 1024 * 1024 });
 
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
+        if (err) {
+          let errMsg = err.message;
+          if (err.message.includes("maxFileSize exceeded")) {
+            errMsg = "The size of signature image can not exceed 1MB";
+          }
+          reject(new ServiceError(errMsg, 400));
+        }
+
         resolve({ fields, files });
       });
     });
@@ -448,8 +455,8 @@ exports.verifyPhone = async (req, res) => {
    *       - in: body
    *         name: body
    *         description: >
-   *            * `phone`: Email of the user.
-   *            * `otp`: OTP(One Time Password) sent over the email of the user.
+   *            * `phone`: Phone number of the user.
+   *            * `otp`: OTP(One Time Password) sent over the phone of the user.
    *         schema:
    *             type: object
    *             required:
@@ -487,19 +494,9 @@ exports.verifyPhone = async (req, res) => {
     }
 
     const phoneNumber = req.body.phone;
-    const receivedOtp = req.body.otp;
-
-    const userOTP = await OtpModel.getByPhone({
-      phone: phoneNumber,
-      code: receivedOtp,
-    });
-
-    if (!userOTP) throw new ServiceError("OTP not valid", 400);
-
-    await OtpModel.verifyCodeWaiver(userOTP);
 
     const sessionId = await otpService.getSession({
-      phone: req.body.phone,
+      phone: phoneNumber,
       code: req.body.otp,
     });
 
