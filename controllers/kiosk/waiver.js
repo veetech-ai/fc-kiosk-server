@@ -448,8 +448,8 @@ exports.verifyPhone = async (req, res) => {
    *       - in: body
    *         name: body
    *         description: >
-   *            * `phone`: Email of the user.
-   *            * `otp`: OTP(One Time Password) sent over the email of the user.
+   *            * `phone`: Phone number of the user.
+   *            * `otp`: OTP(One Time Password) sent over the phone of the user.
    *         schema:
    *             type: object
    *             required:
@@ -487,19 +487,9 @@ exports.verifyPhone = async (req, res) => {
     }
 
     const phoneNumber = req.body.phone;
-    const receivedOtp = req.body.otp;
-
-    const userOTP = await OtpModel.getByPhone({
-      phone: phoneNumber,
-      code: receivedOtp,
-    });
-
-    if (!userOTP) throw new ServiceError("OTP not valid", 400);
-
-    await OtpModel.verifyCodeWaiver(userOTP);
 
     const sessionId = await otpService.getSession({
-      phone: req.body.phone,
+      phone: phoneNumber,
       code: req.body.otp,
     });
 
