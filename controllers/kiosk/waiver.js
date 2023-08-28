@@ -74,11 +74,18 @@ exports.sign = async (req, res) => {
    */
 
   try {
-    const form = new formidable.IncomingForm();
+    const form = new formidable.IncomingForm({ maxFileSize: 1 * 1024 * 1024 });
 
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
+        if (err) {
+          let errMsg = err.message;
+          if (err.message.includes("maxFileSize exceeded")) {
+            errMsg = "The size of signature image can not exceed 1MB";
+          }
+          reject(new ServiceError(errMsg, 400));
+        }
+
         resolve({ fields, files });
       });
     });
