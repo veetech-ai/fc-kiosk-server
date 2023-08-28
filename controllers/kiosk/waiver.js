@@ -89,10 +89,12 @@ exports.sign = async (req, res) => {
       phone: ["required", `regex:${helper.PhoneRegex}`],
     });
 
-    if (validation.fails()) throw new ServiceError(validation.firstError());
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
 
     if (!files.signature) {
-      throw new ServiceError("The signature image is required");
+      throw new ServiceError("The signature image is required", 400);
     }
 
     // 0. verifying the session
@@ -243,11 +245,12 @@ exports.update = async (req, res) => {
     });
 
     if (paramValidation.fails()) {
-      throw new ServiceError(paramValidation.firstError());
+      throw new ServiceError(paramValidation.firstError(), 400);
     }
 
-    if (validation.fails()) throw new ServiceError(validation.firstError());
-
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
     // update the waiver with given id
     const data = await waiverService.updateContent(
       req.params.id,
@@ -307,14 +310,16 @@ exports.getCourseSignedWaivers = async (req, res) => {
     });
 
     if (queryValidation.fails()) {
-      throw new ServiceError(queryValidation.firstError());
+      throw new ServiceError(queryValidation.firstError(), 400);
     }
 
     const validation = new Validator(req.params, {
       id: "required|integer",
     });
 
-    if (validation.fails()) throw new ServiceError(validation.firstError());
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
 
     const pagination = helper.get_pagination_params({
       limit: req.query.size,
@@ -365,7 +370,9 @@ exports.deleteSignedWaiver = async (req, res) => {
       id: "required|integer",
     });
 
-    if (validation.fails()) throw new ServiceError(validation.firstError());
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
 
     // delete the record
     await waiverService.deleteSigned(req.params.id);
@@ -406,7 +413,9 @@ exports.getWaiverContent = async (req, res) => {
       id: "required|integer",
     });
 
-    if (validation.fails()) throw new ServiceError(validation.firstError());
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
 
     // delete the record
     const waiver = await waiverService.getContent(req.params.id);
@@ -416,6 +425,13 @@ exports.getWaiverContent = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+/**
+ * @swagger
+ * tags:
+ *   name: Phone
+ *   description: Phone verification API's
+ */
 
 exports.verifyPhone = async (req, res) => {
   /**
@@ -466,34 +482,30 @@ exports.verifyPhone = async (req, res) => {
       otp: "required|string",
     });
 
-    if (validation.fails()) throw new ServiceError(validation.firstError());
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
 
-    validation.passes(async function () {
-      try {
-        const phoneNumber = req.body.phone;
-        const receivedOtp = req.body.otp;
+    const phoneNumber = req.body.phone;
+    const receivedOtp = req.body.otp;
 
-        const userOTP = await OtpModel.getByPhone({
-          phone: phoneNumber,
-          code: receivedOtp,
-        });
+    const userOTP = await OtpModel.getByPhone({
+      phone: phoneNumber,
+      code: receivedOtp,
+    });
 
-        if (!userOTP) return apiResponse.fail(res, "OTP not valid");
+    if (!userOTP) throw new ServiceError("OTP not valid", 400);
 
-        await OtpModel.verifyCodeWaiver(userOTP);
+    await OtpModel.verifyCodeWaiver(userOTP);
 
-        const sessionId = await otpService.getSession({
-          phone: req.body.phone,
-          code: req.body.otp,
-        });
+    const sessionId = await otpService.getSession({
+      phone: req.body.phone,
+      code: req.body.otp,
+    });
 
-        return apiResponse.success(res, req, {
-          sessionId: sessionId,
-          phone: phoneNumber,
-        });
-      } catch (err) {
-        return apiResponse.fail(res, err.message, 500);
-      }
+    return apiResponse.success(res, req, {
+      sessionId: sessionId,
+      phone: phoneNumber,
     });
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
@@ -508,7 +520,7 @@ exports.sendOTP = async (req, res) => {
    *   post:
    *     security:
    *       - auth: []
-   *     description: Send text message verification text message containing the OTP, to the user
+   *     description: Send verification text message containing the OTP, to the user
    *     tags: [Phone]
    *
    *     parameters:
@@ -536,28 +548,25 @@ exports.sendOTP = async (req, res) => {
       phone: ["required", `regex:${helper.PhoneRegex}`],
     });
 
-    if (validation.fails()) throw new ServiceError(validation.firstError());
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
 
-    validation.passes(async function () {
-      try {
-        const phoneNumber = req.body.phone;
-        const otpNumber = Math.floor(1000 + Math.random() * 9000);
+    const phoneNumber = req.body.phone;
+    const otpNumber = Math.floor(1000 + Math.random() * 9000);
 
-        const message = `Your ${
-          otpNumber.toString().length
-        } digit verification code is ${otpNumber}`;
-        await helper.send_sms(phoneNumber, message);
+    const message = `Your ${
+      otpNumber.toString().length
+    } digit verification code is ${otpNumber}`;
 
-        await otpService.create({
-          phone: phoneNumber,
-          code: otpNumber,
-        });
+    await helper.send_sms(phoneNumber, message);
 
-        return apiResponse.success(res, req, "Verification code sent");
-      } catch (err) {
-        return apiResponse.fail(res, err.message, 500);
-      }
+    await otpService.create({
+      phone: phoneNumber,
+      code: otpNumber,
     });
+
+    return apiResponse.success(res, req, "Verification code sent");
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
