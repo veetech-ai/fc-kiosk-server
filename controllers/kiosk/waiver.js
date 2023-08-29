@@ -1,8 +1,7 @@
 const Validator = require("validatorjs");
 const formidable = require("formidable");
 const { uuid } = require("uuidv4");
-const fs = require("node:fs");
-const ejs = require("ejs");
+const fs = require("fs");
 const path = require("path");
 
 const apiResponse = require("../../common/api.response");
@@ -13,7 +12,8 @@ const helper = require("../../common/helper");
 const email = require("../../common/email");
 const courseService = require("../../services/kiosk/course");
 const otpService = require("../../services/otp");
-const OtpModel = require("../../services/otp");
+const sms = require("../../common/sms");
+const { logger } = require("../../logger");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -110,6 +110,9 @@ exports.sign = async (req, res) => {
       session_id: fields.session_id,
     });
 
+    // 0.5 check if user has signed already
+    await waiverService.ensureNotSignedAlready(fields.gcId, fields.phone);
+
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
     const uploadPath = "uploads/waiver";
 
@@ -137,10 +140,13 @@ exports.sign = async (req, res) => {
     );
 
     // 3. generating pdf
-    const localPath = "./public/" + `${uploadPath}/${uuid()}.pdf`;
+    const pdfDir = path.join(__dirname, "..", "..", "public", uploadPath);
+    const pdfFilePath = path.join(pdfDir, `${uuid()}.pdf`);
+
+    helper.mkdirIfNotExists(pdfDir);
     await helper.printPDF(html, {
       pdf: {
-        path: localPath,
+        path: pdfFilePath,
         printBackground: true,
         margin: {
           top: "10mm",
@@ -151,12 +157,25 @@ exports.sign = async (req, res) => {
       },
     });
 
-    // 4. uploading on cloud
+    // 4. uploading on cloud/server
     fields.signaturePath = await fileUploader.upload_file(
-      { path: localPath, name: localPath },
+      { path: pdfFilePath, name: pdfFilePath },
       uploadPath,
       ["pdf"],
     );
+
+    // 4.a cleanup if uploaded to cloud (aws/azure)
+    const isUploadedToCloud = !fields.signaturePath.includes(uploadPath);
+    if (isUploadedToCloud) {
+      // delete locally saved pdf file
+      fs.unlink(pdfFilePath, (err) => {
+        if (err) {
+          logger.error("Error deleting file:", err);
+          return;
+        }
+        logger.info("File deletion process started.");
+      });
+    }
 
     // 5. inserting new waiver sign record
     const waiver = await waiverService.sign(
@@ -165,7 +184,7 @@ exports.sign = async (req, res) => {
       fields.signaturePath,
     );
 
-    // 6. sending emails to both parties
+    // 6. sending notifications to both parties
     const mailOptions = {
       subject: "Rent A Cart (Agreement)",
       message: html,
@@ -174,24 +193,19 @@ exports.sign = async (req, res) => {
       ],
     };
 
-    // Promise.allSettled([
-    //   // 5a. sending email to signatory
-    //   email.send({ to: fields.email, ...mailOptions }),
-
-    //   // 5b. sending email to course owner
-    //   email.send({ to: course.email, ...mailOptions }),
-    // ]);
+    waiver.signature = fileUploader.getFileURL(fields.signaturePath);
 
     // 6.a. send mail to course owner
-    email.send({ to: course.email, ...mailOptions });
+    const mailPromise = email.send({ to: course.email, ...mailOptions });
 
     // 6.b. send sms to the customer
-    waiver.signature = fileUploader.getFileURL(fields.signaturePath);
-    helper.send_sms(
+    const smsPromise = sms.sendV1(
       fields.phone,
       "This is a copy of your signed waiver. Please click the given link to see your waiver " +
         waiver.signature,
     );
+
+    await Promise.allSettled([mailPromise, smsPromise]);
 
     return apiResponse.success(
       res,
