@@ -56,6 +56,7 @@ const { globalMQTT } = require("./mqtt-init");
 const ServiceError = require("../utils/serviceError");
 const puppeteer = require("puppeteer");
 const { uuid } = require("uuidv4");
+const fs = require("node:fs");
 
 // Setting Up Ajv
 const ajv = new Ajv({ allErrors: true, useDefaults: true }); // options can be passed, e.g. {allErrors: true}
@@ -1654,7 +1655,7 @@ exports.sanitizeHtmlInput = (dirtyHTML, options = {}) => {
  * @returns {Promise<{path: string, pdf:Buffer}>} pdf buffer
  */
 exports.printPDF = async (html, options = { launch: {}, pdf: {} }) => {
-  const path = `./public/uploads/${uuid()}.pdf`;
+  const path = options.pdf?.path || `./public/uploads/${uuid()}.pdf`;
 
   const browser = await puppeteer.launch({
     headless: "new",
@@ -1685,4 +1686,8 @@ exports.isExpired = (
   const currentTimeMs = new Date().getTime();
 
   return currentTimeMs >= timestampMs + expiryMs;
+};
+
+exports.mkdirIfNotExists = (dir) => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 };
