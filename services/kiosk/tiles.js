@@ -55,7 +55,7 @@ exports.getOne = async (where) => {
     return { tile, tileData };
   }
 
-  return tile;
+  return { tile };
 };
 
 exports.changeSuperTile = async (tileId, gcId, status = false) => {

@@ -396,19 +396,21 @@ exports.getOne = async (req, res) => {
     }
     const data = await tileService.getOne({ id: req.params.id });
 
-    const tileImage = data.tile.bgImage;
-    const layoutImages = data.tileData.layoutImages;
-    const layoutData = data.tileData.layoutData;
+    if (!data.tile.builtIn) {
+      const tileImage = data.tile.bgImage;
+      const layoutImages = data.tileData.layoutImages;
+      const layoutData = data.tileData.layoutData;
 
-    if (tileImage) data.tile.bgImage = getFileURL(tileImage);
+      if (tileImage) data.tile.bgImage = getFileURL(tileImage);
 
-    if (layoutImages) {
-      data.tileData.layoutImages = JSON.parse(layoutImages).map((url) =>
-        getFileURL(url),
-      );
+      if (layoutImages) {
+        data.tileData.layoutImages = JSON.parse(layoutImages).map((url) =>
+          getFileURL(url),
+        );
+      }
+
+      if (layoutData) data.tileData.layoutData = JSON.parse(layoutData);
     }
-
-    if (layoutData) data.tileData.layoutData = JSON.parse(layoutData);
 
     return apiResponse.success(res, req, data, 200);
   } catch (error) {
