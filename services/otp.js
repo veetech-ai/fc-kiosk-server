@@ -67,9 +67,9 @@ exports.verifySession = async ({ phone, session_id }) => {
   }
 
   const otpCreationTimeMs = new Date(otp.createdAt).getTime();
-  const fiveMinutesMs = 5 * 60 * 1000; // 5 minutes in milliseconds
+  const fifteenMinutesMs = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-  const sessionExpired = helpers.isExpired(otpCreationTimeMs, fiveMinutesMs);
+  const sessionExpired = helpers.isExpired(otpCreationTimeMs, fifteenMinutesMs);
 
   await otp.destroy();
 
