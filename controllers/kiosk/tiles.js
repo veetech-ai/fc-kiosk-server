@@ -5,7 +5,7 @@ const ServiceError = require("../../utils/serviceError");
 const tileService = require("./../../services/kiosk/tiles");
 const helper = require("../../common/helper");
 const formidable = require("formidable");
-const { upload_file } = require("../../common/upload");
+const { upload_file, getFileURL } = require("../../common/upload");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -138,9 +138,18 @@ exports.create = async (req, res) => {
     }
 
     try {
-      if (fields.layoutData) JSON.parse(fields.layoutData);
-    } catch (error) {
-      throw new ServiceError("Got invalid JSON string for layoutData", 400);
+      if (fields.layoutData) {
+        const json = JSON.parse(fields.layoutData);
+        if (Object.keys(json) < 1) {
+          throw new ServiceError(
+            "The layouData object must have atleast one key",
+            400,
+          );
+        }
+      }
+    } catch (err) {
+      const msg = err.message || "GotGot invalid JSON string for layoutData";
+      throw new ServiceError(msg, 400);
     }
 
     try {
@@ -161,7 +170,7 @@ exports.create = async (req, res) => {
     if (bgImage) {
       fields.bgImage = await upload_file(
         bgImage,
-        `uploads/tiles/`,
+        `uploads/tiles`,
         allowedTypes,
       );
     }
@@ -171,14 +180,14 @@ exports.create = async (req, res) => {
         const promises = [];
 
         for (const image of layoutImages) {
-          promises.push(upload_file(image, `uploads/tiles/`, allowedTypes));
+          promises.push(upload_file(image, `uploads/tiles`, allowedTypes));
         }
 
         fields.layoutImages = JSON.stringify(await Promise.all(promises));
       } else {
         fields.layoutImages = await upload_file(
           layoutImages,
-          `uploads/tiles/`,
+          `uploads/tiles`,
           allowedTypes,
         );
       }
@@ -361,7 +370,7 @@ exports.getOne = async (req, res) => {
    *   get:
    *     security:
    *       - auth: []
-   *     description: Create a Tile.
+   *     description: Get the data of a tile.
    *     tags: [Tiles]
    *     parameters:
    *        - name: id
@@ -385,9 +394,23 @@ exports.getOne = async (req, res) => {
     if (paramValidation.fails()) {
       throw new ServiceError(paramValidation.firstError(), 400);
     }
-    const tile = await tileService.getOne({ id: req.params.id });
+    const data = await tileService.getOne({ id: req.params.id });
 
-    return apiResponse.success(res, req, tile, 200);
+    const tileImage = data.tile.bgImage;
+    const layoutImages = data.tileData.layoutImages;
+    const layoutData = data.tileData.layoutData;
+
+    if (tileImage) data.tile.bgImage = getFileURL(tileImage);
+
+    if (layoutImages) {
+      data.tileData.layoutImages = JSON.parse(layoutImages).map((url) =>
+        getFileURL(url),
+      );
+    }
+
+    if (layoutData) data.tileData.layoutData = JSON.parse(layoutData);
+
+    return apiResponse.success(res, req, data, 200);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
@@ -782,72 +805,6 @@ exports.deleteCourseTile = async (req, res) => {
     );
 
     return apiResponse.success(res, req, null, 200);
-  } catch (error) {
-    return apiResponse.fail(res, error.message, error.statusCode || 500);
-  }
-};
-
-exports.createTileLayout = async (req, res) => {
-  /**
-   * @swagger
-   *
-   * /tile/layout:
-   *   post:
-   *     security:
-   *       - auth: []
-   *     description: Create new tile and layout
-   *     tags: [Tile]
-   *     consumes:
-   *       - application/json
-   *     parameters:
-   *       - in: formData
-   *         name: name
-   *         description: The name of the custom tile
-   *         required: true
-   *         type: string
-   *
-   *       - in: formData
-   *         name: bgImage
-   *         description: The background image for the tile
-   *         required: false
-   *         type: string
-   *
-   *       - in: formData
-   *         name: gcId
-   *         description: The id of the golf course
-   *         required: true
-   *         type: integer
-   *
-   *       - in: formData
-   *         name: layoutData
-   *         description: The content of the layout in JSON form
-   *         required: true
-   *         type: string
-   *
-   *       - in: formData
-   *         name: layoutImages
-   *         description: The array of image of used in layout
-   *         required: false
-   *         items:
-   *            type: file
-   *
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       200:
-   *         description: success
-   */
-
-  try {
-    const validation = new Validator(req.params, {
-      id: "required|integer",
-    });
-
-    if (validation.fails()) {
-      throw new ServiceError(validation.firstError(), 400);
-    }
-
-    return apiResponse.success(res, req, {});
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

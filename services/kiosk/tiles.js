@@ -47,8 +47,14 @@ exports.getCourseTiles = async (gcId) => {
 };
 
 exports.getOne = async (where) => {
-  const tile = Tile.findOne({ where, include: Course_Tile });
+  const tile = await Tile.findOne({ where });
   if (!tile) throw new ServiceError("Tile Not Found", 404);
+
+  if (!tile.builtIn) {
+    const tileData = await Course_Tile.findOne({ where: { tileId: tile.id } });
+    return { tile, tileData };
+  }
+
   return tile;
 };
 
