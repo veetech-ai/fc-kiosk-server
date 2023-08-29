@@ -54,3 +54,33 @@ exports.send = (phone, message) => {
     }
   });
 };
+
+exports.sendV1 = async (phone, content) => {
+  try {
+    const message = await client.messages.create({
+      body: content,
+      from: config.twilio.number,
+      to: phone,
+    });
+
+    smsLogsModel.save(message).catch((err) => {
+      logger.error("SMS log not saved");
+      logger.error(err);
+    });
+
+    return message;
+  } catch (err) {
+    smsLogsModel
+      .save({
+        to: phone,
+        from: config.twilio.number,
+        body: content,
+        exception: err.message,
+      })
+      .catch(() => {
+        logger.error("SMS log not saved");
+      });
+
+    throw err;
+  }
+};
