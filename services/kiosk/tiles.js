@@ -255,6 +255,14 @@ exports.create = async (data) => {
       );
     }
 
+    // 4.b The layoutNumber must not be zero if layoutData is provided
+    if (layoutData && layoutNumber == 0) {
+      throw new ServiceError(
+        "The tile with custom layout can not have layoutNumber '0', use 1, 2 or 3 instead",
+        400,
+      );
+    }
+
     // 5. create new tile with max order
     const tile = await Tile.create({ name, bgImage });
     const courseTile = await Course_Tile.create({
