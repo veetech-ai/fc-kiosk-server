@@ -110,6 +110,9 @@ exports.sign = async (req, res) => {
       session_id: fields.session_id,
     });
 
+    // 0.5 check if user has signed already
+    await waiverService.ensureNotSignedAlready(fields.gcId, fields.phone);
+
     const imageFormats = ["jpg", "jpeg", "png", "webp"];
     const uploadPath = "uploads/waiver";
 

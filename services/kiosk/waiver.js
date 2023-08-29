@@ -35,7 +35,7 @@ exports.getSignedWaiverHTML = async (course, signatoryPhone, signatureUrl) => {
   return html;
 };
 
-exports.sign = async (gcId, phone, signatureUrl) => {
+exports.ensureNotSignedAlready = async (gcId, phone) => {
   const waiver = await Waiver.findOne({ where: { gcId } });
 
   if (!waiver) {
@@ -56,6 +56,14 @@ exports.sign = async (gcId, phone, signatureUrl) => {
 
   if (conflict) {
     throw new ServiceError("You already have signed this waiver", 409);
+  }
+};
+
+exports.sign = async (gcId, phone, signatureUrl) => {
+  const waiver = await Waiver.findOne({ where: { gcId } });
+
+  if (!waiver) {
+    throw new ServiceError(`No waiver found against gcId ${gcId}`, 404);
   }
 
   return Signed_Waiver.create({
