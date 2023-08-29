@@ -80,6 +80,8 @@ exports.verifySession = async ({ phone, session_id }) => {
 
 // deletes invalid otp
 exports.checkExpiry = async (otp, otpCreationTimeMs = null) => {
+  if (!otp) throw new ServiceError("Invalid OTP", 400);
+
   const otpExpirationTimeMs =
     config.auth.mobileAuth.otpExpirationInSeconds * 1000;
   const currentTimeMs = otpCreationTimeMs || new Date(Date.now()).getTime();
