@@ -4,6 +4,8 @@ const ServiceError = require("../../utils/serviceError");
 
 const tileService = require("./../../services/kiosk/tiles");
 const helper = require("../../common/helper");
+const formidable = require("formidable");
+const { upload_file } = require("../../common/upload");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -29,53 +31,64 @@ exports.create = async (req, res) => {
    *       - auth: []
    *     description: Create a new Tile.
    *     tags: [Tiles]
-   *     consumes:
-   *       - application/json
+   *     consumes: multipart/form-data
    *     parameters:
-   *        - in: body
-   *          name: body
-   *          description: >
-   *            * `name`: Name of the tile.
+   *       - in: formData
+   *         name: name
+   *         description: The name of the custom tile
+   *         required: true
+   *         type: string
    *
-   *            * `isPublished`: Published status of a tile.
+   *       - in: formData
+   *         name: bgImage
+   *         description: The background image for the tile
+   *         required: false
+   *         type: file
    *
-   *            * `isSuperTile`: Make this tile a big tile?
+   *       - in: formData
+   *         name: isPublished
+   *         description: Published status of tile, set it to true to publish it right away
+   *         required: false
+   *         type: string
    *
-   *            * `order`: Position of the tile in the tiles list.
+   *       - in: formData
+   *         name: isSuperTile
+   *         description: Make this tile a big tile on kiosk?
+   *         required: false
+   *         type: string
    *
-   *            * `gcId`: Id  of the golf course, to create a tile for.
+   *       - in: formData
+   *         name: order
+   *         description: The order of the tile in tiles list
+   *         required: false
+   *         type: string
    *
-   *            * `layoutNumber`: Which layout to show when user clicks on the tile?
-   *              * `0` for default layout
-   *              * `1` for first custom layout
-   *              * `2` for second custom layout
-   *              * `3` for third custom layout
-   *          schema:
-   *             type: object
-   *             required:
-   *                - name
-   *                - gcId
-   *             properties:
-   *                name:
-   *                   type: string
-   *                   default: "Test Tile"
+   *       - in: formData
+   *         name: layoutNumber
+   *         description: The layout number to use for this tile
+   *         required: false
+   *         type: string
    *
-   *                isPublished:
-   *                   type: boolean
+   *       - in: formData
+   *         name: gcId
+   *         description: The id of the golf course
+   *         required: true
+   *         type: integer
    *
-   *                isSuperTile:
-   *                   type: boolean
-   *                   default: false
+   *       - in: formData
+   *         name: layoutData
+   *         description: The content of the layout in JSON form
+   *         required: false
+   *         type: string
    *
-   *                layoutNumber:
-   *                   type: number
-   *                   enum: [0, 1, 2, 3]
-   *                   default: 0
-   *                   description: >
+   *       - in: formData
+   *         name: layoutImages
+   *         description: The array of image of used in layout
+   *         required: false
+   *         type: array
+   *         items:
+   *            type: file
    *
-   *                gcId:
-   *                   type: number
-   *                   default: 1
    *     produces:
    *       - application/json
    *     responses:
@@ -90,22 +103,91 @@ exports.create = async (req, res) => {
    */
 
   try {
-    const validation = new Validator(req.body, {
+    const form = new formidable.IncomingForm({
+      maxFileSize: 1 * 1024 * 1024,
+      multiples: true,
+    });
+
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) {
+          let errMsg = err.message;
+          if (err.message.includes("maxFileSize exceeded")) {
+            errMsg = "The size of signature image can not exceed 1MB";
+          }
+          reject(new ServiceError(errMsg, 400));
+        }
+
+        resolve({ fields, files });
+      });
+    });
+
+    const validation = new Validator(fields, {
       name: "required|string",
       gcId: "required|integer",
+      bgImage: "string",
       isSuperTile: "boolean",
       isPublished: "boolean",
       layoutNumber: "integer",
+      layoutData: "string",
+      layoutImages: "string",
     });
 
     if (validation.fails()) {
       throw new ServiceError(validation.firstError(), 400);
     }
 
-    const tile = await tileService.create(req.body);
+    try {
+      if (fields.layoutData) JSON.parse(fields.layoutData);
+    } catch (error) {
+      throw new ServiceError("Got invalid JSON string for layoutData", 400);
+    }
+
+    try {
+      if (fields.layoutImages) {
+        const json = JSON.parse(fields.layoutImages);
+        if (!Array.isArray(json)) {
+          throw new ServiceError("The layoutImages must be a JSON array");
+        }
+      }
+    } catch (err) {
+      const msg = err.message || "Got invalid JSON string for layoutImages";
+      throw new ServiceError(msg, 400);
+    }
+
+    const { bgImage, layoutImages } = files;
+    const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+
+    if (bgImage) {
+      fields.bgImage = await upload_file(
+        bgImage,
+        `uploads/tiles/`,
+        allowedTypes,
+      );
+    }
+
+    if (layoutImages) {
+      if (Array.isArray(layoutImages)) {
+        const promises = [];
+
+        for (const image of layoutImages) {
+          promises.push(upload_file(image, `uploads/tiles/`, allowedTypes));
+        }
+
+        fields.layoutImages = JSON.stringify(await Promise.all(promises));
+      } else {
+        fields.layoutImages = await upload_file(
+          layoutImages,
+          `uploads/tiles/`,
+          allowedTypes,
+        );
+      }
+    }
+
+    const tile = await tileService.create(fields);
 
     helper.mqtt_publish_message(
-      `ta/${req.body.gcId}/created`,
+      `ta/${fields.gcId}/created`,
       { tileId: tile.id },
       false,
     );
@@ -700,6 +782,72 @@ exports.deleteCourseTile = async (req, res) => {
     );
 
     return apiResponse.success(res, req, null, 200);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
+exports.createTileLayout = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /tile/layout:
+   *   post:
+   *     security:
+   *       - auth: []
+   *     description: Create new tile and layout
+   *     tags: [Tile]
+   *     consumes:
+   *       - application/json
+   *     parameters:
+   *       - in: formData
+   *         name: name
+   *         description: The name of the custom tile
+   *         required: true
+   *         type: string
+   *
+   *       - in: formData
+   *         name: bgImage
+   *         description: The background image for the tile
+   *         required: false
+   *         type: string
+   *
+   *       - in: formData
+   *         name: gcId
+   *         description: The id of the golf course
+   *         required: true
+   *         type: integer
+   *
+   *       - in: formData
+   *         name: layoutData
+   *         description: The content of the layout in JSON form
+   *         required: true
+   *         type: string
+   *
+   *       - in: formData
+   *         name: layoutImages
+   *         description: The array of image of used in layout
+   *         required: false
+   *         items:
+   *            type: file
+   *
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   */
+
+  try {
+    const validation = new Validator(req.params, {
+      id: "required|integer",
+    });
+
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
+
+    return apiResponse.success(res, req, {});
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

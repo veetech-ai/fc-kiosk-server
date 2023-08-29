@@ -208,6 +208,9 @@ exports.create = async (data) => {
       isPublished = true,
       isSuperTile = false,
       layoutNumber = 0,
+      bgImage = null,
+      layoutData = null,
+      layoutImages = null,
     } = validateObject(data, allowedFields);
 
     // 0. check if layout number is valid
@@ -244,8 +247,16 @@ exports.create = async (data) => {
       );
     }
 
+    // 4.a check if layoutImage not provided without layoutData
+    if (layoutImages && !layoutData) {
+      throw new ServiceError(
+        "Can not set layoutImages without layoutData",
+        400,
+      );
+    }
+
     // 5. create new tile with max order
-    const tile = await Tile.create({ name });
+    const tile = await Tile.create({ name, bgImage });
     const courseTile = await Course_Tile.create({
       tileId: tile.id,
       gcId,
@@ -253,6 +264,8 @@ exports.create = async (data) => {
       isSuperTile,
       orderNumber: validMaxOrderNumber + 1,
       layoutNumber,
+      layoutData,
+      layoutImages,
     });
 
     await transact.commit();

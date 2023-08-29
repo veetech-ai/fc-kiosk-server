@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
     "Tile",
     {
       name: DataTypes.STRING,
+      bgImage: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       builtIn: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

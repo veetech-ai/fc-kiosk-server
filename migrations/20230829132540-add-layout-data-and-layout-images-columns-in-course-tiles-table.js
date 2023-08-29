@@ -12,18 +12,11 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: true,
     });
-
-    await queryInterface.addColumn("Course_Tiles", "bgImage", {
-      type: Sequelize.STRING,
-      allowNull: true,
-    });
   },
 
   async down(queryInterface) {
     await queryInterface.removeColumn("Course_Tiles", "layoutData");
 
     await queryInterface.removeColumn("Course_Tiles", "layoutImages");
-
-    await queryInterface.removeColumn("Course_Tiles", "bgImage");
   },
 };
