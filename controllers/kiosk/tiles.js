@@ -468,29 +468,57 @@ exports.updateTile = async (req, res) => {
    *       - auth: []
    *     description: Update tile information.
    *     tags: [Tiles]
-   *     consumes:
-   *       - application/json
+   *     consumes: multipart/form-data
    *     parameters:
-   *        - in: path
-   *          name: id
-   *          description: id of the tile to update
+   *       - in: path
+   *         name: id
+   *         description: The id of the custom tile
+   *         required: true
+   *         type: string
    *
-   *        - in: body
-   *          name: body
-   *          description: >
-   *            * `name`: New name for the tile
+   *       - in: formData
+   *         name: name
+   *         description: The name of the custom tile
+   *         required: true
+   *         type: string
    *
-   *            * `layoutNumber`: New layoutNumber for the tile
+   *       - in: formData
+   *         name: bgImage
+   *         description: The background image for the tile
+   *         required: false
+   *         type: file
    *
-   *          schema:
-   *             type: object
-   *             properties:
-   *                name:
-   *                   type: string
+   *       - in: formData
+   *         name: isPublished
+   *         description: Published status of tile, set it to true to publish it right away
+   *         required: false
+   *         type: string
    *
-   *                layoutNumber:
-   *                   type: number
-   *                   default: 0
+   *       - in: formData
+   *         name: layoutNumber
+   *         description: The layout number to use for this tile
+   *         required: false
+   *         type: string
+   *
+   *       - in: formData
+   *         name: gcId
+   *         description: The id of the golf course
+   *         required: true
+   *         type: integer
+   *
+   *       - in: formData
+   *         name: layoutData
+   *         description: The content of the layout in JSON form
+   *         required: false
+   *         type: string
+   *
+   *       - in: formData
+   *         name: layoutImages
+   *         description: The array of image of used in layout
+   *         required: false
+   *         type: array
+   *         items:
+   *            type: file
    *
    *     produces:
    *       - application/json
@@ -506,28 +534,108 @@ exports.updateTile = async (req, res) => {
    */
 
   try {
-    const paramValidation = new Validator(req.params, {
-      id: "required|integer",
+    const form = new formidable.IncomingForm({
+      maxFileSize: 1 * 1024 * 1024,
+      multiples: true,
     });
 
-    const bodyValidation = new Validator(req.body, {
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) {
+          let errMsg = err.message;
+          if (err.message.includes("maxFileSize exceeded")) {
+            errMsg = "The size of signature image can not exceed 1MB";
+          }
+          reject(new ServiceError(errMsg, 400));
+        }
+
+        resolve({ fields, files });
+      });
+    });
+
+    const validation = new Validator(fields, {
       name: "required|string",
+      gcId: "required|integer",
+      bgImage: "string",
+      isPublished: "boolean",
       layoutNumber: "integer",
+      layoutData: "string",
+      layoutImages: "string",
+    });
+
+    if (validation.fails()) {
+      throw new ServiceError(validation.firstError(), 400);
+    }
+
+    if (fields.name && !fields.name.trim().length) {
+      throw new ServiceError("Invalid tile name provided.", 400);
+    }
+
+    const paramValidation = new Validator(req.params, {
+      id: "required|integer",
     });
 
     if (paramValidation.fails()) {
       throw new ServiceError(paramValidation.firstError(), 400);
     }
 
-    if (bodyValidation.fails()) {
-      throw new ServiceError(bodyValidation.firstError(), 400);
+    try {
+      if (fields.layoutData) {
+        const json = JSON.parse(fields.layoutData);
+        if (Object.keys(json) < 1) {
+          throw new ServiceError(
+            "The layouData object must have atleast one key",
+            400,
+          );
+        }
+      }
+    } catch (err) {
+      const msg = err.message || "GotGot invalid JSON string for layoutData";
+      throw new ServiceError(msg, 400);
     }
 
-    if (req.body.name && !req.body.name.trim().length) {
-      throw new ServiceError("Invalid tile name provided.", 400);
+    try {
+      if (fields.layoutImages) {
+        const json = JSON.parse(fields.layoutImages);
+        if (!Array.isArray(json)) {
+          throw new ServiceError("The layoutImages must be a JSON array");
+        }
+      }
+    } catch (err) {
+      const msg = err.message || "Got invalid JSON string for layoutImages";
+      throw new ServiceError(msg, 400);
     }
 
-    const tile = await tileService.updateTile(req.params.id, req.body);
+    const { bgImage, layoutImages } = files;
+    const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+
+    if (bgImage) {
+      fields.bgImage = await upload_file(
+        bgImage,
+        `uploads/tiles`,
+        allowedTypes,
+      );
+    }
+
+    if (layoutImages) {
+      if (Array.isArray(layoutImages)) {
+        const promises = [];
+
+        for (const image of layoutImages) {
+          promises.push(upload_file(image, `uploads/tiles`, allowedTypes));
+        }
+
+        fields.layoutImages = JSON.stringify(await Promise.all(promises));
+      } else {
+        fields.layoutImages = await upload_file(
+          layoutImages,
+          `uploads/tiles`,
+          allowedTypes,
+        );
+      }
+    }
+
+    const tile = await tileService.updateTile(req.params.id, fields);
 
     helper.mqtt_publish_message(
       `ta/${req.body.gcId}/updated`,

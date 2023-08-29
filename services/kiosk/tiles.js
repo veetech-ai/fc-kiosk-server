@@ -301,29 +301,76 @@ exports.delete = async (id) => {
 };
 
 exports.updateTile = async (id, data) => {
-  const tileToUpdate = await this.getOne({ id });
-  if (!tileToUpdate) {
-    throw new ServiceError("Tile Not Found.", 404);
+  const transact = await models.sequelize.transaction();
+  try {
+    const tileToUpdate = await this.getOne({ id });
+    if (!tileToUpdate) {
+      throw new ServiceError("Tile Not Found.", 404);
+    }
+
+    if (tileToUpdate.builtIn) {
+      throw new ServiceError("Can not update a built in tile.", 400);
+    }
+
+    const {
+      name,
+      bgImage,
+      isPublished,
+      gcId,
+      layoutNumber,
+      layoutData,
+      layoutImages,
+    } = data;
+
+    if (layoutNumber) {
+      validateLayoutNumber(layoutNumber);
+    }
+
+    // check if layoutImage not provided without layoutData
+    if (layoutImages && !layoutData) {
+      throw new ServiceError(
+        "Can not set layoutImages without layoutData",
+        400,
+      );
+    }
+
+    // The layoutNumber must not be zero if layoutData is provided
+    if (layoutData && layoutNumber == 0) {
+      throw new ServiceError(
+        "The tile with custom layout can not have layoutNumber '0', use 1, 2 or 3 instead",
+        400,
+      );
+    }
+
+    if (!bgImage) data.bgImage = null;
+    if (!layoutImages) data.layoutImages = null;
+
+    await Tile.update(
+      { name, bgImage: data.bgImage },
+      {
+        where: { id },
+      },
+    );
+
+    await Course_Tile.update(
+      {
+        isPublished,
+        layoutNumber,
+        layoutData,
+        layoutImages: data.layoutImages,
+      },
+      {
+        where: { tileId: id },
+      },
+    );
+
+    await transact.commit();
+
+    return { tileId: id, data };
+  } catch (err) {
+    await transact.rollback();
+    throw err;
   }
-
-  if (tileToUpdate.builtIn) {
-    throw new ServiceError("Can not update a built in tile.", 400);
-  }
-
-  if (data.layoutNumber) {
-    validateLayoutNumber(data.layoutNumber);
-  }
-
-  const [updatedRows] = await Tile.update(
-    validateObject(data, ["name", "layoutNumber"]),
-    {
-      where: { id },
-    },
-  );
-
-  if (!updatedRows) return "No change in db";
-
-  return { tileId: id, data };
 };
 
 exports.assignDefaultTiles = async (gcId) => {
