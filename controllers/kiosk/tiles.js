@@ -341,6 +341,12 @@ exports.getAll = async (req, res) => {
       paginationOptions,
     });
 
+    if (data.tiles) {
+      data.tiles.forEach((tile) => {
+        if (tile.bgImage) tile.bgImage = getFileURL(tile.bgImage);
+      });
+    }
+
     return apiResponse.success(
       res,
       req,
@@ -441,6 +447,10 @@ exports.getCourseTiles = async (req, res) => {
       throw new ServiceError(paramValidation.firstError(), 400);
     }
     const tile = await tileService.getCourseTiles(req.params.id);
+
+    tile.forEach((tile) => {
+      if (tile.Tile.bgImage) tile.Tile.bgImage = getFileURL(tile.Tile.bgImage);
+    });
 
     return apiResponse.success(res, req, tile, 200);
   } catch (error) {

@@ -42,7 +42,7 @@ exports.getCourseTiles = async (gcId) => {
       "gcId",
     ],
     order: [["orderNumber", "ASC"]],
-    include: { model: Tile, attributes: ["id", "name", "builtIn"] },
+    include: { model: Tile, attributes: ["id", "name", "builtIn", "bgImage"] },
   });
 };
 
