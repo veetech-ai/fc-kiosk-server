@@ -395,10 +395,30 @@ exports.deleteCourseTile = async (tileId, gcId) => {
     const tile = await this.getOne({ id: tileId });
     await CousreService.getCourseById(gcId);
 
-    await Course_Tile.destroy({ where: { tileId, gcId } });
+    const tileToDel = await Course_Tile.findOne({
+      where: { tileId, gcId },
+      attributes: ["orderNumber"],
+    });
+
+    await tileToDel.destroy();
 
     // destroy corresponding Tile entry too, if its created by user
     await Tile.destroy({ where: { id: tileId, builtIn: false } });
+
+    // update the order of tiles in Course_Tiles
+    await Course_Tile.update(
+      { orderNumber: models.sequelize.literal("orderNumber - 1") },
+      {
+        where: {
+          gcId,
+          [Op.and]: {
+            orderNumber: {
+              [Op.gt]: tileToDel.orderNumber,
+            },
+          },
+        },
+      },
+    );
 
     transact.commit();
     return tile;
