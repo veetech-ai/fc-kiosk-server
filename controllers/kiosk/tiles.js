@@ -6,6 +6,7 @@ const tileService = require("./../../services/kiosk/tiles");
 const helper = require("../../common/helper");
 const formidable = require("formidable");
 const { upload_file, getFileURL } = require("../../common/upload");
+const config = require("../../config/config");
 
 Validator.prototype.firstError = function () {
   const fields = Object.keys(this.rules);
@@ -104,7 +105,7 @@ exports.create = async (req, res) => {
 
   try {
     const form = new formidable.IncomingForm({
-      maxFileSize: 1 * 1024 * 1024,
+      maxFileSize: 1 * 1024 * 1024, // 1MB
       multiples: true,
     });
 
@@ -130,7 +131,6 @@ exports.create = async (req, res) => {
       isPublished: "boolean",
       layoutNumber: "integer",
       layoutData: "string",
-      layoutImages: "string",
     });
 
     if (validation.fails()) {
@@ -148,19 +148,7 @@ exports.create = async (req, res) => {
         }
       }
     } catch (err) {
-      const msg = err.message || "GotGot invalid JSON string for layoutData";
-      throw new ServiceError(msg, 400);
-    }
-
-    try {
-      if (fields.layoutImages) {
-        const json = JSON.parse(fields.layoutImages);
-        if (!Array.isArray(json)) {
-          throw new ServiceError("The layoutImages must be a JSON array");
-        }
-      }
-    } catch (err) {
-      const msg = err.message || "Got invalid JSON string for layoutImages";
+      const msg = err.message || "Got invalid JSON string for layoutData";
       throw new ServiceError(msg, 400);
     }
 
@@ -183,14 +171,16 @@ exports.create = async (req, res) => {
           promises.push(upload_file(image, `uploads/tiles`, allowedTypes));
         }
 
-        fields.layoutImages = JSON.stringify(await Promise.all(promises));
+        fields.layoutImages = await Promise.all(promises);
       } else {
-        fields.layoutImages = await upload_file(
-          layoutImages,
-          `uploads/tiles`,
-          allowedTypes,
-        );
+        fields.layoutImages = [
+          await upload_file(layoutImages, `uploads/tiles`, allowedTypes),
+        ];
       }
+    }
+
+    if (Array.isArray(fields.layoutImages)) {
+      fields.layoutImages = JSON.stringify(fields.layoutImages);
     }
 
     const tile = await tileService.create(fields);
@@ -514,11 +504,17 @@ exports.updateTile = async (req, res) => {
    *
    *       - in: formData
    *         name: layoutImages
-   *         description: The array of image of used in layout
+   *         description: The JSON array of new images for this layout
    *         required: false
    *         type: array
    *         items:
    *            type: file
+   *
+   *       - in: formData
+   *         name: layoutImagesUrls
+   *         description: The JSON array of urls of existing images, provide urls of the images here, that need to be kept while updating the layout
+   *         required: false
+   *         type: string
    *
    *     produces:
    *       - application/json
@@ -535,7 +531,7 @@ exports.updateTile = async (req, res) => {
 
   try {
     const form = new formidable.IncomingForm({
-      maxFileSize: 1 * 1024 * 1024,
+      maxFileSize: 1 * 1024 * 1024, //1MB
       multiples: true,
     });
 
@@ -560,7 +556,7 @@ exports.updateTile = async (req, res) => {
       isPublished: "boolean",
       layoutNumber: "integer",
       layoutData: "string",
-      layoutImages: "string",
+      layoutImagesUrls: "string",
     });
 
     if (validation.fails()) {
@@ -590,20 +586,49 @@ exports.updateTile = async (req, res) => {
         }
       }
     } catch (err) {
-      const msg = err.message || "GotGot invalid JSON string for layoutData";
+      const msg = err.message || "Got invalid JSON string for layoutData";
       throw new ServiceError(msg, 400);
     }
 
-    try {
-      if (fields.layoutImages) {
-        const json = JSON.parse(fields.layoutImages);
-        if (!Array.isArray(json)) {
-          throw new ServiceError("The layoutImages must be a JSON array");
+    if (fields.layoutImagesUrls) {
+      try {
+        fields.layoutImagesUrls = JSON.parse(fields.layoutImagesUrls);
+        if (!Array.isArray(fields.layoutImagesUrls)) {
+          throw new ServiceError("The layoutImagesUrls must be a JSON array");
         }
+
+        // throw error if every item in the array is not valid url
+        fields.layoutImagesUrls.forEach((url) => new URL(url));
+      } catch (err) {
+        const msg =
+          err.message || "Got invalid JSON array for layoutImagesUrls";
+        throw new ServiceError(msg, 400);
       }
-    } catch (err) {
-      const msg = err.message || "Got invalid JSON string for layoutImages";
-      throw new ServiceError(msg, 400);
+
+      try {
+        let uuids = [];
+
+        if (config.aws.upload) {
+          uuids = fields.layoutImagesUrls.map(
+            (url) => url.split(".com/")[1].split("?")[0],
+          );
+        } else if (config.azure.upload) {
+          throw new Error("Not implemented");
+        } else {
+          uuids = fields.layoutImagesUrls.map(
+            (url) => "/files" + url.split("/files")[1],
+          );
+        }
+
+        fields.layoutImages = [];
+        // .concat doesn't work here for some reason
+        fields.layoutImages.push(...uuids);
+      } catch (err) {
+        throw new ServiceError(
+          "Unable to update existing urls for layout images",
+          400,
+        );
+      }
     }
 
     const { bgImage, layoutImages } = files;
@@ -618,6 +643,8 @@ exports.updateTile = async (req, res) => {
     }
 
     if (layoutImages) {
+      if (!Array.isArray(fields.layoutImages)) fields.layoutImages = [];
+
       if (Array.isArray(layoutImages)) {
         const promises = [];
 
@@ -625,14 +652,16 @@ exports.updateTile = async (req, res) => {
           promises.push(upload_file(image, `uploads/tiles`, allowedTypes));
         }
 
-        fields.layoutImages = JSON.stringify(await Promise.all(promises));
+        fields.layoutImages.push(...(await Promise.all(promises)));
       } else {
-        fields.layoutImages = await upload_file(
-          layoutImages,
-          `uploads/tiles`,
-          allowedTypes,
+        fields.layoutImages.push(
+          await upload_file(layoutImages, `uploads/tiles`, allowedTypes),
         );
       }
+    }
+
+    if (Array.isArray(fields.layoutImages)) {
+      fields.layoutImages = JSON.stringify(fields.layoutImages);
     }
 
     const tile = await tileService.updateTile(req.params.id, fields);
