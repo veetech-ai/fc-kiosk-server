@@ -953,7 +953,7 @@ exports.deleteCourseTile = async (req, res) => {
       false,
     );
 
-    return apiResponse.success(res, req, null, 200);
+    return apiResponse.success(res, req, null, 204);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

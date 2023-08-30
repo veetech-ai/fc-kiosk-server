@@ -244,7 +244,15 @@ exports.create = async (data) => {
     });
 
     // 4. check if current course already has a same tile with name
-    const duplicateTile = await Tile.findOne({ where: { name } });
+    const courseTiles = await Course_Tile.findAll({ where: { gcId } });
+    const duplicateTile = await Tile.findOne({
+      where: {
+        [Op.and]: {
+          name,
+          id: { [Op.in]: courseTiles.map((ct) => ct.tileId) },
+        },
+      },
+    });
 
     if (duplicateTile) {
       throw new ServiceError(
@@ -390,7 +398,7 @@ exports.assignDefaultTiles = async (gcId) => {
 };
 
 exports.deleteCourseTile = async (tileId, gcId) => {
-  const transact = await models.sequelize.transation();
+  const transact = await models.sequelize.transaction();
   try {
     const tile = await this.getOne({ id: tileId });
     await CousreService.getCourseById(gcId);
@@ -400,7 +408,7 @@ exports.deleteCourseTile = async (tileId, gcId) => {
       attributes: ["orderNumber"],
     });
 
-    await tileToDel.destroy();
+    await Course_Tile.destroy({ where: { tileId, gcId } });
 
     // destroy corresponding Tile entry too, if its created by user
     await Tile.destroy({ where: { id: tileId, builtIn: false } });
@@ -410,8 +418,8 @@ exports.deleteCourseTile = async (tileId, gcId) => {
       { orderNumber: models.sequelize.literal("orderNumber - 1") },
       {
         where: {
-          gcId,
           [Op.and]: {
+            gcId,
             orderNumber: {
               [Op.gt]: tileToDel.orderNumber,
             },
