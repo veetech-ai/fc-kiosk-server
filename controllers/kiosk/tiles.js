@@ -140,7 +140,7 @@ exports.create = async (req, res) => {
     try {
       if (fields.layoutData) {
         const json = JSON.parse(fields.layoutData);
-        if (Object.keys(json) < 1) {
+        if (Object.keys(json).length < 1) {
           throw new ServiceError(
             "The layouData object must have atleast one key",
             400,
