@@ -4,7 +4,7 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const CousreService = require("./course");
 
-const { Tile, Course_Tile } = models;
+const { Tile, Course_Tile, Course } = models;
 
 const _SKIP_KEYS = ["id", "tileId", "TileId", "createdAt", "updatedAt"];
 
@@ -42,14 +42,20 @@ exports.getCourseTiles = async (gcId) => {
       "gcId",
     ],
     order: [["orderNumber", "ASC"]],
-    include: { model: Tile, attributes: ["id", "name", "builtIn"] },
+    include: { model: Tile, attributes: ["id", "name", "builtIn", "bgImage"] },
   });
 };
 
 exports.getOne = async (where) => {
-  const tile = Tile.findOne({ where, include: Course_Tile });
+  const tile = await Tile.findOne({ where });
   if (!tile) throw new ServiceError("Tile Not Found", 404);
-  return tile;
+
+  if (!tile.builtIn) {
+    const tileData = await Course_Tile.findOne({ where: { tileId: tile.id } });
+    return { tile, tileData };
+  }
+
+  return { tile };
 };
 
 exports.changeSuperTile = async (tileId, gcId, status = false) => {
@@ -208,6 +214,9 @@ exports.create = async (data) => {
       isPublished = true,
       isSuperTile = false,
       layoutNumber = 0,
+      bgImage = null,
+      layoutData = null,
+      layoutImages = null,
     } = validateObject(data, allowedFields);
 
     // 0. check if layout number is valid
@@ -235,7 +244,15 @@ exports.create = async (data) => {
     });
 
     // 4. check if current course already has a same tile with name
-    const duplicateTile = await Tile.findOne({ where: { name } });
+    const courseTiles = await Course_Tile.findAll({ where: { gcId } });
+    const duplicateTile = await Tile.findOne({
+      where: {
+        [Op.and]: {
+          name,
+          id: { [Op.in]: courseTiles.map((ct) => ct.tileId) },
+        },
+      },
+    });
 
     if (duplicateTile) {
       throw new ServiceError(
@@ -244,8 +261,24 @@ exports.create = async (data) => {
       );
     }
 
+    // 4.a check if layoutImage not provided without layoutData
+    if (layoutImages && !layoutData) {
+      throw new ServiceError(
+        "Can not set layoutImages without layoutData",
+        400,
+      );
+    }
+
+    // 4.b The layoutNumber must not be zero if layoutData is provided
+    if (layoutData && layoutNumber == 0) {
+      throw new ServiceError(
+        "The tile with custom layout can not have layoutNumber '0', use 1, 2 or 3 instead",
+        400,
+      );
+    }
+
     // 5. create new tile with max order
-    const tile = await Tile.create({ name });
+    const tile = await Tile.create({ name, bgImage });
     const courseTile = await Course_Tile.create({
       tileId: tile.id,
       gcId,
@@ -253,6 +286,8 @@ exports.create = async (data) => {
       isSuperTile,
       orderNumber: validMaxOrderNumber + 1,
       layoutNumber,
+      layoutData,
+      layoutImages,
     });
 
     await transact.commit();
@@ -266,37 +301,138 @@ exports.create = async (data) => {
 };
 
 exports.delete = async (id) => {
-  const tile = await this.getOne({ id });
+  const transact = await models.sequelize.transaction();
+  try {
+    const { tile } = await this.getOne({ id });
 
-  await Tile.destroy({ where: { id } });
+    // update the order of the rest of the built in tiles for all courses
+    if (tile.builtIn) {
+      const uniqueGcIds = await Course_Tile.findAll({
+        attributes: ["gcId"],
+        group: ["gcId"],
+      });
 
-  return tile;
+      const promises = [];
+
+      for (const gc of uniqueGcIds) {
+        const courseTile = await Course_Tile.findOne({
+          where: { gcId: gc.gcId, tileId: tile.id },
+        });
+
+        if (!courseTile) continue;
+
+        const pr = Course_Tile.update(
+          { orderNumber: models.sequelize.literal("orderNumber - 1") },
+          {
+            where: {
+              [Op.and]: {
+                gcId: gc.gcId,
+                orderNumber: {
+                  [Op.gt]: courseTile.orderNumber,
+                },
+              },
+            },
+          },
+        );
+
+        promises.push(pr);
+      }
+
+      await Promise.all(promises);
+    } else {
+      // else update the order of custom tile
+      const tileToDel = await Course_Tile.findOne({
+        where: { tileId: tile.id },
+      });
+      await Course_Tile.update(
+        { orderNumber: models.sequelize.literal("orderNumber - 1") },
+        {
+          where: {
+            [Op.and]: {
+              gcId: tileToDel.gcId,
+              orderNumber: {
+                [Op.gt]: tileToDel.orderNumber,
+              },
+            },
+          },
+        },
+      );
+    }
+
+    // Finally delete the tile
+    await Tile.destroy({ where: { id } });
+
+    await transact.commit();
+
+    return tile;
+  } catch (error) {
+    await transact.rollback();
+    throw error;
+  }
 };
 
 exports.updateTile = async (id, data) => {
-  const tileToUpdate = await this.getOne({ id });
-  if (!tileToUpdate) {
-    throw new ServiceError("Tile Not Found.", 404);
+  const transact = await models.sequelize.transaction();
+  try {
+    const tileToUpdate = await this.getOne({ id });
+    if (!tileToUpdate) {
+      throw new ServiceError("Tile Not Found.", 404);
+    }
+
+    if (tileToUpdate.builtIn) {
+      throw new ServiceError("Can not update a built in tile.", 400);
+    }
+
+    const { name, isPublished, layoutNumber, layoutData, layoutImages } = data;
+
+    if (layoutNumber) {
+      validateLayoutNumber(layoutNumber);
+    }
+
+    // check if layoutImage not provided without layoutData
+    if (layoutImages && !layoutData) {
+      throw new ServiceError(
+        "Can not set layoutImages without layoutData",
+        400,
+      );
+    }
+
+    // The layoutNumber must not be zero if layoutData is provided
+    if (layoutData && layoutNumber == 0) {
+      throw new ServiceError(
+        "The tile with custom layout can not have layoutNumber '0', use 1, 2 or 3 instead",
+        400,
+      );
+    }
+
+    if (!layoutImages) data.layoutImages = null;
+
+    await Tile.update(
+      { name, bgImage: data.bgImage },
+      {
+        where: { id },
+      },
+    );
+
+    await Course_Tile.update(
+      {
+        isPublished,
+        layoutNumber,
+        layoutData,
+        layoutImages: data.layoutImages,
+      },
+      {
+        where: { tileId: id },
+      },
+    );
+
+    await transact.commit();
+
+    return { tileId: id, data };
+  } catch (err) {
+    await transact.rollback();
+    throw err;
   }
-
-  if (tileToUpdate.builtIn) {
-    throw new ServiceError("Can not update a built in tile.", 400);
-  }
-
-  if (data.layoutNumber) {
-    validateLayoutNumber(data.layoutNumber);
-  }
-
-  const [updatedRows] = await Tile.update(
-    validateObject(data, ["name", "layoutNumber"]),
-    {
-      where: { id },
-    },
-  );
-
-  if (!updatedRows) return "No change in db";
-
-  return { tileId: id, data };
 };
 
 exports.assignDefaultTiles = async (gcId) => {
@@ -316,15 +452,35 @@ exports.assignDefaultTiles = async (gcId) => {
 };
 
 exports.deleteCourseTile = async (tileId, gcId) => {
-  const transact = await models.sequelize.transation();
+  const transact = await models.sequelize.transaction();
   try {
     const tile = await this.getOne({ id: tileId });
     await CousreService.getCourseById(gcId);
+
+    const tileToDel = await Course_Tile.findOne({
+      where: { tileId, gcId },
+      attributes: ["orderNumber"],
+    });
 
     await Course_Tile.destroy({ where: { tileId, gcId } });
 
     // destroy corresponding Tile entry too, if its created by user
     await Tile.destroy({ where: { id: tileId, builtIn: false } });
+
+    // update the order of tiles in Course_Tiles
+    await Course_Tile.update(
+      { orderNumber: models.sequelize.literal("orderNumber - 1") },
+      {
+        where: {
+          [Op.and]: {
+            gcId,
+            orderNumber: {
+              [Op.gt]: tileToDel.orderNumber,
+            },
+          },
+        },
+      },
+    );
 
     transact.commit();
     return tile;

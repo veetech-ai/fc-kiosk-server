@@ -52,7 +52,7 @@ exports.routesConfig = function (app, router) {
   router.delete(tiles + `/:id/course/:gcId`, [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),
-    TilesController.deleteTile,
+    TilesController.deleteCourseTile,
   ]);
 
   router.delete(tiles + `/:id`, [
