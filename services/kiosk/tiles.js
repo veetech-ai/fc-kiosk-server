@@ -4,7 +4,7 @@ const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const CousreService = require("./course");
 
-const { Tile, Course_Tile } = models;
+const { Tile, Course_Tile, Course } = models;
 
 const _SKIP_KEYS = ["id", "tileId", "TileId", "createdAt", "updatedAt"];
 
@@ -301,11 +301,74 @@ exports.create = async (data) => {
 };
 
 exports.delete = async (id) => {
-  const tile = await this.getOne({ id });
+  const transact = await models.sequelize.transaction();
+  try {
+    const { tile } = await this.getOne({ id });
 
-  await Tile.destroy({ where: { id } });
+    // update the order of the rest of the built in tiles for all courses
+    if (tile.builtIn) {
+      const uniqueGcIds = await Course_Tile.findAll({
+        attributes: ["gcId"],
+        group: ["gcId"],
+      });
 
-  return tile;
+      const promises = [];
+
+      for (const gc of uniqueGcIds) {
+        const courseTile = await Course_Tile.findOne({
+          where: { gcId: gc.gcId, tileId: tile.id },
+        });
+
+        if (!courseTile) continue;
+
+        const pr = Course_Tile.update(
+          { orderNumber: models.sequelize.literal("orderNumber - 1") },
+          {
+            where: {
+              [Op.and]: {
+                gcId: gc.gcId,
+                orderNumber: {
+                  [Op.gt]: courseTile.orderNumber,
+                },
+              },
+            },
+          },
+        );
+
+        promises.push(pr);
+      }
+
+      await Promise.all(promises);
+    } else {
+      // else update the order of custom tile
+      const tileToDel = await Course_Tile.findOne({
+        where: { tileId: tile.id },
+      });
+      await Course_Tile.update(
+        { orderNumber: models.sequelize.literal("orderNumber - 1") },
+        {
+          where: {
+            [Op.and]: {
+              gcId: tileToDel.gcId,
+              orderNumber: {
+                [Op.gt]: tileToDel.orderNumber,
+              },
+            },
+          },
+        },
+      );
+    }
+
+    // Finally delete the tile
+    await Tile.destroy({ where: { id } });
+
+    await transact.commit();
+
+    return tile;
+  } catch (error) {
+    await transact.rollback();
+    throw error;
+  }
 };
 
 exports.updateTile = async (id, data) => {
@@ -320,15 +383,7 @@ exports.updateTile = async (id, data) => {
       throw new ServiceError("Can not update a built in tile.", 400);
     }
 
-    const {
-      name,
-      bgImage,
-      isPublished,
-      gcId,
-      layoutNumber,
-      layoutData,
-      layoutImages,
-    } = data;
+    const { name, isPublished, layoutNumber, layoutData, layoutImages } = data;
 
     if (layoutNumber) {
       validateLayoutNumber(layoutNumber);
@@ -350,7 +405,6 @@ exports.updateTile = async (id, data) => {
       );
     }
 
-    if (!bgImage) data.bgImage = null;
     if (!layoutImages) data.layoutImages = null;
 
     await Tile.update(
