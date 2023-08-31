@@ -227,13 +227,13 @@ exports.create = async (data) => {
 
     // 2. if isSuperTile is true, then make sure its the only super tile
     const existingSuperTile = await Course_Tile.findOne({
-      where: { gcId, isSuperTile: true },
-      attributes: ["id"],
+      where: { [Op.and]: { gcId, isSuperTile: true } },
+      attributes: ["id", "tileId"],
     });
 
     if (existingSuperTile) {
       throw new ServiceError(
-        "A super tile already exists for this course.",
+        `A super tile already exists for this course. With id ${existingSuperTile.tileId}`,
         400,
       );
     }
