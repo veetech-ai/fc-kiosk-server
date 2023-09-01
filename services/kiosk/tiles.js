@@ -263,7 +263,7 @@ exports.create = async (data) => {
       );
     }
 
-    // 4.a check if layoutImage not provided without layoutData
+    // 4.a check if layoutImage provided without layoutData
     if (layoutImages && !layoutData) {
       throw new ServiceError(
         "Can not set layoutImages without layoutData",
