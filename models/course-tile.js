@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
           "Which layout to show for the particular tile, 0 for default, and 1,2, and 3 for custom layouts",
       },
       layoutData: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT("medium"),
         allowNull: true,
         description: "The content of the layout in form of JSON",
       },
