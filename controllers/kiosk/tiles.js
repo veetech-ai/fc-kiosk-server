@@ -672,10 +672,9 @@ exports.updateTile = async (req, res) => {
     }
 
     const tile = await tileService.updateTile(req.params.id, fields);
-
     helper.mqtt_publish_message(
-      `ta/${req.body.gcId}/updated`,
-      { tileId: tile.id },
+      `ta/${tile.data.gcId}/updated`,
+      { tileId: tile.tileId },
       false,
     );
 
@@ -945,8 +944,8 @@ exports.deleteCourseTile = async (req, res) => {
     );
 
     helper.mqtt_publish_message(
-      `ta/${tile.gcId}/deleted`,
-      { tileId: tile.id },
+      `ta/${tile.tileData.gcId}/deleted`,
+      { tileId: tile.tileData.tileId },
       false,
     );
 
