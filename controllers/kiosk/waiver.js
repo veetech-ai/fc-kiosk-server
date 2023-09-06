@@ -582,3 +582,27 @@ exports.sendOTP = async (req, res) => {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
+
+/**
+ * @swagger
+ *
+ * /waiver/course/{id}/device:
+ *   get:
+ *     security:
+ *       - auth: []
+ *     description: Get the waiver content of a particular golf course.
+ *     tags: [Waiver]
+ *
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: The id of the golf course
+ *         required: true
+ *         type: integer
+ *
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: success
+ */

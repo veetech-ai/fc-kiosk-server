@@ -40,4 +40,9 @@ exports.routesConfig = function (app, router) {
     validation_middleware.hasAccess(["super", "admin", "getCourses"]),
     WaiverController.getWaiverContent,
   ]);
+  router.get(waiver + "/course/:id/device", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.onlyDeviceAccess,
+    WaiverController.getWaiverContent,
+  ]);
 };
