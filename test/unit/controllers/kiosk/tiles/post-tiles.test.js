@@ -29,7 +29,6 @@ jest.mock("formidable", () => {
 awsS3.uploadFile = jest.fn(() => Promise.resolve(uuid()));
 serverUpload.uploadv1 = jest.fn(() => Promise.resolve(uuid()));
 
-
 describe("POST /tiles", () => {
   let testCourse;
   let adminToken;
@@ -196,32 +195,257 @@ describe("POST /tiles", () => {
       expect(Date.parse(response.body.data.updatedAt)).not.toBeNaN();
       expect(response.statusCode).toEqual(201);
     });
-
-    it("should increment the order of existing tile if its given", async () => {});
   });
-  // describe("failure", () => {
-  //   it("should throw error if name is not given", async () => {});
+  describe("failure", () => {
+    it("should throw error if name is not given", async () => {
+      const fields = {
+        layoutNumber: 2,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
 
-  //   it("should throw error if name is not valid string", async () => {});
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
 
-  //   it("should throw error if gcId is not given", async () => {});
+      expect(response.body.data).toBe("The name field is required.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
 
-  //   it("should throw error if gcId is not valid number", async () => {});
+    it("should throw error if name is not a  valid string", async () => {
+      const fields = {
+        name: 2,
+        layoutNumber: 2,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
 
-  //   it("should throw error if course with gcId doesn't exist", async () => {});
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
 
-  //   it("should throw error if isSuperTile is not boolean", async () => {});
+      expect(response.body.data).toBe("The name must be a string.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
 
-  //   it("should throw error if isPublished is not boolean", async () => {});
+    it("should throw error if gcId is not given", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        layoutNumber: 2,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
 
-  //   it("should throw error if order is not valid number", async () => {});
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
 
-  //   it("should throw error if layoutNumber is not valid number", async () => {});
+      expect(response.body.data).toBe("The gcId field is required.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
 
-  //   it("should throw error if super tile is true, and duplicate super tile also exist for that course", async () => {});
+    it("should throw error if course with gcId doesn't exist", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        layoutNumber: 2,
+        gcId: 5,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
 
-  //   it("should throw error if order is not in valid range", async () => {});
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
 
-  //   it("should throw error if order is not in valid range", async () => {});
-  // });
+      expect(response.body.data).toBe("Course not found");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(404);
+    });
+
+    it("should throw error if layoutData is not given", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        layoutNumber: 2,
+        gcId: 5,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toBe("The layoutData field is required.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("should throw error if layoutNumber is not given", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        gcId: 1,
+
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toBe("The layoutNumber field is required.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("should throw error if layoutNumber is greater than 3 or less than 1", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        gcId: 1,
+        layoutNumber: 4,
+
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toBe(
+        "The layoutNumber must one of 1, 2 or 3.",
+      );
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("should throw error if layoutNumber is equal to 0", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        gcId: 1,
+        layoutNumber: 0,
+
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toBe(
+        "The tile with custom layout can not have layoutNumber '0', use 1, 2 or 3 instead",
+      );
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+    it("should throw error if bgImage is not given", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        gcId: 1,
+        layoutNumber: 2,
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toBe("The bgImage field is required.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("should throw error if isSuperTile is not boolean", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        layoutNumber: 2,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        isSuperTile: "2",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toBe("The isSuperTile attribute has errors.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("should throw error if isPublished is not boolean", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        layoutNumber: 2,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        isPublished: "2",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toBe("The isPublished attribute has errors.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it("should throw error if isPublished is not boolean", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        layoutNumber: 2,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        isPublished: "2",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toBe("The isPublished attribute has errors.");
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+
+    //   it("should throw error if layoutNumber is not valid number", async () => {});
+
+    //   it("should throw error if super tile is true, and duplicate super tile also exist for that course", async () => {});
+
+    //   it("should throw error if order is not in valid range", async () => {});
+
+    //   it("should throw error if order is not in valid range", async () => {});
+  });
 });
