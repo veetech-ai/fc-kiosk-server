@@ -126,11 +126,11 @@ exports.create = async (req, res) => {
     const validation = new Validator(fields, {
       name: "required|string",
       gcId: "required|integer",
-      bgImage: "string",
+      bgImage: "required|string",
       isSuperTile: "boolean",
       isPublished: "boolean",
-      layoutNumber: "integer",
-      layoutData: "string",
+      layoutNumber: "required|integer",
+      layoutData: "required|string",
     });
 
     if (validation.fails()) {
