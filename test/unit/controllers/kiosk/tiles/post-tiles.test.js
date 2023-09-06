@@ -6,7 +6,7 @@ const awsS3 = require("../../../../../common/external_services/aws-s3");
 
 const serverUpload = require("../../../../../common/server_upload");
 
-const { Course, Tile, Course_Tile } = models;
+const { Course } = models;
 
 let mockFields,
   mockFiles,
@@ -95,7 +95,7 @@ describe("POST /tiles", () => {
     return helper.post_request_with_authorization({
       endpoint: "tiles",
       token: adminToken,
-      params: tilePayload,
+      params: mockFields,
       fileupload: true,
     });
   };
@@ -113,6 +113,7 @@ describe("POST /tiles", () => {
 
     tilePayload.gcId = testCourse.id;
   });
+
   afterAll(async () => {
     await Course.destroy({ where: { id: tilePayload.gcId } });
   });
@@ -216,7 +217,7 @@ describe("POST /tiles", () => {
       expect(response.statusCode).toEqual(400);
     });
 
-    it("should throw error if name is not a  valid string", async () => {
+    it("should throw error if name is not a valid string", async () => {
       const fields = {
         name: 2,
         layoutNumber: 2,
@@ -419,13 +420,26 @@ describe("POST /tiles", () => {
       expect(response.statusCode).toEqual(400);
     });
 
-    it("should throw error if isPublished is not boolean", async () => {
-      const fields = {
-        name: "Demo tile 2",
+    it("should throw error if super tile is true, and duplicate super tile also exist for that course", async () => {
+      let fields = {
+        name: "Demo testing tile 1",
         layoutNumber: 2,
         gcId: 1,
         bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
-        isPublished: "2",
+        isSuperTile: true,
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+      await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+      fields = {
+        name: "Demo testing tile 2",
+        layoutNumber: 2,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        isSuperTile: true,
         layoutData:
           '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
       };
@@ -435,17 +449,45 @@ describe("POST /tiles", () => {
         filesDataWithoutLayoutImages,
       });
 
-      expect(response.body.data).toBe("The isPublished attribute has errors.");
+      expect(response.body.data).toMatch(
+        /A super tile already exists for this course. With id \d+/,
+      );
       expect(response.body.success).toBe(false);
       expect(response.statusCode).toEqual(400);
     });
 
-    //   it("should throw error if layoutNumber is not valid number", async () => {});
+    it("should throw error if a tile with same name already exists for the course", async () => {
+      let fields = {
+        name: "Demo testing tile",
+        layoutNumber: 2,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
+      await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+      fields = {
+        name: "Demo testing tile",
+        layoutNumber: 2,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
+      };
 
-    //   it("should throw error if super tile is true, and duplicate super tile also exist for that course", async () => {});
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
 
-    //   it("should throw error if order is not in valid range", async () => {});
-
-    //   it("should throw error if order is not in valid range", async () => {});
+      expect(response.body.data).toBe(
+        "A tile with same name already exist for this course",
+      );
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
   });
 });
