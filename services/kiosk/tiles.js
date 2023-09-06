@@ -18,7 +18,7 @@ const allowedFields = Object.keys(Tile.rawAttributes)
 
 const validateLayoutNumber = (number) => {
   if (number < 0 || number > 3) {
-    throw new ServiceError("The layoutNumber must one of 0, 1, 2 or 4.", 400);
+    throw new ServiceError("The layoutNumber must one of 1, 2 or 3.", 400);
   }
 };
 
