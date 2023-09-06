@@ -6,7 +6,7 @@ const awsS3 = require("../../../../../common/external_services/aws-s3");
 
 const serverUpload = require("../../../../../common/server_upload");
 
-const { Course } = models;
+const { Course, Tile, Course_Tile } = models;
 
 let mockFields,
   mockFiles,
@@ -29,19 +29,21 @@ jest.mock("formidable", () => {
 awsS3.uploadFile = jest.fn(() => Promise.resolve(uuid()));
 serverUpload.uploadv1 = jest.fn(() => Promise.resolve(uuid()));
 
-const { Tile, Course_Tile } = models;
 
 describe("POST /tiles", () => {
   let testCourse;
   let adminToken;
-  let courseId;
-  let invalidCourseId = -1;
-  let orgId;
-  let customerToken;
-  let testOperatorToken;
-  let differentOrganizationCustomerToken;
 
-  const filesData = {
+  const filesDataWithoutLayoutImages = {
+    bgImage: {
+      name: "mock-logo.png",
+      type: "image/png",
+      size: 5000, // bytes
+      path: "/mock/path/to/logo.png",
+    },
+  };
+
+  const filesDataWithLayoutImages = {
     bgImage: {
       name: "mock-logo.png",
       type: "image/png",
@@ -86,7 +88,8 @@ describe("POST /tiles", () => {
    * @returns {Promise<Response>}
    */
   const makePostTileRequest = (options = {}) => {
-    const { fields = tilePayload, files = filesData } = options;
+    const { fields = tilePayload, files = filesDataWithoutLayoutImages } =
+      options;
     mockFields = fields;
     mockFiles = files;
 
@@ -116,37 +119,35 @@ describe("POST /tiles", () => {
   });
 
   describe("success", () => {
-    // it("should create a new tile with defaults", async () => {
-    //   const res = await makePostTileRequest();
-    //   expect(res.statusCode).toEqual(201);
-    //   expect(res.body.success).toEqual(true);
-    //   expect(res.body.data.id).toEqual(expect.any(Number));
-    //   expect(res.body.data.gcId).toEqual(testCourse.id);
-    //   expect(res.body.data.isPublished).toEqual(tilePayload.isPublished);
-    //   expect(res.body.data.isSuperTile).toEqual(tilePayload.isSuperTile);
-    //   expect(res.body.data.orderNumber).toEqual(13);
-    //   expect(res.body.data.layoutNumber).toEqual(expect.any(Number));
-    //   // Make sure relevant tables have been updated
-    //   const tile = await Tile.findOne({
-    //     where: { id: res.body.data.id },
-    //   });
-    //   expect(tile).not.toBe(null);
-    //   expect(tile.name).toBe(tilePayload.name);
-    //   const courseTile = await Course_Tile.findOne({
-    //     where: { gcId: testCourse.id, tileId: tile.id },
-    //   });
-    //   expect(courseTile).not.toBe(null);
-    //   expect(courseTile.isPublished).toBe(tilePayload.isPublished);
-    //   expect(courseTile.isSuperTile).toBe(tilePayload.isSuperTile);
-    //   expect(courseTile.orderNumber).toBe(13);
-    //   expect(courseTile.layoutNumber).toBe(tilePayload.layoutNumber);
-    //   // clean up
-    //   await Tile.destroy({ where: { id: tile.id } });
-    // });
-    it("should create a new tile with layout 2 having valid input with admin or super admin token", async () => {
-      console.log("Creating a new");
+    it("should create a new tile with layout 1 having valid input with admin or super admin token", async () => {
       const fields = {
-        name: "Test tile",
+        name: "Test tile Layout 1",
+        layoutNumber: 1,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"courseInfo":{"description":"<p>fsdf</p>"},"layout":{"title":"sfd","subtitle":"sfd"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithLayoutImages,
+      });
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.id).toEqual(expect.any(Number));
+      expect(response.body.data.name).toBe(fields.name);
+      expect(response.body.data.gcId).toBe(fields.gcId);
+      expect(response.body.data.layoutNumber).toBe(fields.layoutNumber);
+      expect(response.body.data.layoutData).toBe(fields.layoutData);
+      expect(Date.parse(response.body.data.createdAt)).not.toBeNaN();
+      expect(Date.parse(response.body.data.updatedAt)).not.toBeNaN();
+      expect(response.statusCode).toEqual(201);
+    });
+
+    it("should create a new tile with layout 2 having valid input with admin or super admin token", async () => {
+      const fields = {
+        name: "Test tile Layout 2",
         layoutNumber: 2,
         gcId: 1,
         bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
@@ -154,21 +155,46 @@ describe("POST /tiles", () => {
           '{"questionAnswers":[{"question":"dasd","answer":"<p>dsad</p>","isOpen":false},{"question":"dsad","answer":"<p>dsad</p>","isOpen":false}],"layout":{"title":"dasd","subtitle":"dsad"}}',
       };
 
-      const files = {
-        bgImage: {
-          name: "mock-logo.png",
-          type: "image/png",
-          size: 5000, // bytes
-          path: "/mock/path/to/logo.png",
-        },
-      };
-      console.log("Creating a new 2");
-
-      const response = await makePostTileRequest(fields, files);
-      console.log("Creating a new 3");
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
 
       expect(response.body.success).toBe(true);
-      console.log("Creating a new 4");
+      expect(response.body.data.id).toEqual(expect.any(Number));
+      expect(response.body.data.name).toBe(fields.name);
+      expect(response.body.data.gcId).toBe(fields.gcId);
+      expect(response.body.data.layoutNumber).toBe(fields.layoutNumber);
+      expect(response.body.data.layoutData).toBe(fields.layoutData);
+      expect(Date.parse(response.body.data.createdAt)).not.toBeNaN();
+      expect(Date.parse(response.body.data.updatedAt)).not.toBeNaN();
+      expect(response.statusCode).toEqual(201);
+    });
+
+    it("should create a new tile with layout 3 having valid input with admin or super admin token", async () => {
+      const fields = {
+        name: "Test tile Layout 3",
+        layoutNumber: 3,
+        gcId: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"sections":[{"title":"dsad","subtitle":"dsad","description":"<p>dsad</p>"},{"title":"sdaas","subtitle":"d3123","description":"<p>3213</p>"}],"layout":{"title":"dasdsad","subtitle":"dsad"}}',
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithLayoutImages,
+      });
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.id).toEqual(expect.any(Number));
+      expect(response.body.data.name).toBe(fields.name);
+      expect(response.body.data.gcId).toBe(fields.gcId);
+      expect(response.body.data.layoutNumber).toBe(fields.layoutNumber);
+      expect(response.body.data.layoutData).toBe(fields.layoutData);
+      expect(Date.parse(response.body.data.createdAt)).not.toBeNaN();
+      expect(Date.parse(response.body.data.updatedAt)).not.toBeNaN();
+      expect(response.statusCode).toEqual(201);
     });
 
     it("should increment the order of existing tile if its given", async () => {});
