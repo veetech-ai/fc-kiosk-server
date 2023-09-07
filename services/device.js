@@ -964,6 +964,8 @@ exports.reset = (device_id) => {
               remote_id: null,
               gcId: null,
               owner_id: organization.id,
+              transfer: null,
+              transfer_token: null,
             },
             {
               where: {
