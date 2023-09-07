@@ -511,7 +511,7 @@ describe("POST /tiles", () => {
       expect(response.body.success).toBe(false);
       expect(response.statusCode).toEqual(400);
     });
-    it("should throw error if bgImage extension is not of allowed", async () => {
+    it("should throw error if bgImage extension is not allowed", async () => {
       const fields = {
         name: "Demo New tile",
         gcId: 1,
@@ -547,7 +547,7 @@ describe("POST /tiles", () => {
       expect(response.body.success).toBe(false);
       expect(response.statusCode).toEqual(500);
     });
-    it("should throw error if LayoutImage extension is not of allowed", async () => {
+    it("should throw error if LayoutImage extension is not allowed", async () => {
       const fields = {
         name: "Demo New tile",
         gcId: 1,
