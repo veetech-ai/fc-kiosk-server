@@ -95,7 +95,7 @@ describe("POST /tiles", () => {
     return helper.post_request_with_authorization({
       endpoint: "tiles",
       token: adminToken,
-      params: mockFields,
+      params: fields,
       fileupload: true,
     });
   };
@@ -359,6 +359,28 @@ describe("POST /tiles", () => {
       expect(response.body.success).toBe(false);
       expect(response.statusCode).toEqual(400);
     });
+    it("should throw error if layoutData is not a JSON", async () => {
+      const fields = {
+        name: "Demo tile 2",
+        gcId: 1,
+        layoutNumber: 2,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData: "question1",
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        filesDataWithoutLayoutImages,
+      });
+
+      expect(response.body.data).toMatch(
+        /Unexpected token .+ in JSON at position \d+/,
+      );
+
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(400);
+    });
+
     it("should throw error if bgImage is not given", async () => {
       const fields = {
         name: "Demo tile 2",
@@ -488,6 +510,78 @@ describe("POST /tiles", () => {
       );
       expect(response.body.success).toBe(false);
       expect(response.statusCode).toEqual(400);
+    });
+    it("should throw error if bgImage extension is not of allowed", async () => {
+      const fields = {
+        name: "Demo New tile",
+        gcId: 1,
+        layoutNumber: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"courseInfo":{"description":"<p>fsdf</p>"},"layout":{"title":"sfd","subtitle":"sfd"}}',
+      };
+
+      const files = {
+        bgImage: {
+          name: "mock-logo.gif",
+          type: "image/gif",
+          size: 5000, // bytes
+          path: "/mock/path/to/logo.gif",
+        },
+        layoutImages: {
+          name: "mock-logo.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/logo.png",
+        },
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        files,
+      });
+
+      expect(response.body.data).toBe(
+        "Only jpg, jpeg, png, webp files are allowed",
+      );
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(500);
+    });
+    it("should throw error if LayoutImage extension is not of allowed", async () => {
+      const fields = {
+        name: "Demo New tile",
+        gcId: 1,
+        layoutNumber: 1,
+        bgImage: "b1766403-c3d3-4ce3-96e6-e213aab70957",
+        layoutData:
+          '{"courseInfo":{"description":"<p>fsdf</p>"},"layout":{"title":"sfd","subtitle":"sfd"}}',
+      };
+
+      const files = {
+        bgImage: {
+          name: "mock-logo.png",
+          type: "image/png",
+          size: 5000, // bytes
+          path: "/mock/path/to/logo.png",
+        },
+        layoutImages: {
+          name: "mock-logo.gif",
+          type: "image/gif",
+          size: 5000, // bytes
+          path: "/mock/path/to/logo.gif",
+        },
+      };
+
+      const response = await makePostTileRequest({
+        fields,
+        files,
+      });
+
+      expect(response.body.data).toBe(
+        "Only jpg, jpeg, png, webp files are allowed",
+      );
+      expect(response.body.success).toBe(false);
+      expect(response.statusCode).toEqual(500);
     });
   });
 });
