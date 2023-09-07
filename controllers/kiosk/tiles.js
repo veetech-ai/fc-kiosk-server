@@ -537,10 +537,14 @@ exports.updateTile = async (req, res) => {
    */
 
   try {
+    console.log("HI");
+    console.log("HI2");
+
     const form = new formidable.IncomingForm({
       maxFileSize: 1 * 1024 * 1024, //1MB
       multiples: true,
     });
+    console.log("HI3");
 
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
@@ -555,7 +559,7 @@ exports.updateTile = async (req, res) => {
         resolve({ fields, files });
       });
     });
-
+    console.log("HI4");
     const validation = new Validator(fields, {
       name: "required|string",
       gcId: "required|integer",
@@ -569,18 +573,22 @@ exports.updateTile = async (req, res) => {
     if (validation.fails()) {
       throw new ServiceError(validation.firstError(), 400);
     }
+    console.log("HI5");
 
     if (fields.name && !fields.name.trim().length) {
       throw new ServiceError("Invalid tile name provided.", 400);
     }
+    console.log("HI6");
 
     const paramValidation = new Validator(req.params, {
       id: "required|integer",
     });
+    console.log("HI7");
 
     if (paramValidation.fails()) {
       throw new ServiceError(paramValidation.firstError(), 400);
     }
+    console.log("HI8");
 
     try {
       if (fields.layoutData) {
@@ -596,6 +604,7 @@ exports.updateTile = async (req, res) => {
       const msg = err.message || "Got invalid JSON string for layoutData";
       throw new ServiceError(msg, 400);
     }
+    console.log("HI9");
 
     if (fields.layoutImagesUrls) {
       try {
@@ -603,6 +612,7 @@ exports.updateTile = async (req, res) => {
         if (!Array.isArray(fields.layoutImagesUrls)) {
           throw new ServiceError("The layoutImagesUrls must be a JSON array");
         }
+        console.log("HI10");
 
         // throw error if every item in the array is not valid url
         fields.layoutImagesUrls.forEach((url) => new URL(url));
