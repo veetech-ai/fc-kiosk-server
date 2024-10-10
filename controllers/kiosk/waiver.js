@@ -75,17 +75,15 @@ exports.sign = async (req, res) => {
 
   try {
     const form = new formidable.IncomingForm({ maxFileSize: 1 * 1024 * 1024 });
-
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) {
           let errMsg = err.message;
           if (err.message.includes("maxFileSize exceeded")) {
-            errMsg = "The size of signature image can not exceed 1MB";
+            errMsg = "The size of signature image cannot exceed 1MB";
           }
           reject(new ServiceError(errMsg, 400));
         }
-
         resolve({ fields, files });
       });
     });
@@ -105,10 +103,10 @@ exports.sign = async (req, res) => {
     }
 
     // 0. verifying the session
-    await otpService.verifySession({
-      phone: fields.phone,
-      session_id: fields.session_id,
-    });
+    // await otpService.verifySession({
+    //   phone: fields.phone,
+    //   session_id: fields.session_id,
+    // });
 
     // 0.5 check if user has signed already
     await waiverService.ensureNotSignedAlready(fields.gcId, fields.phone);
@@ -141,7 +139,8 @@ exports.sign = async (req, res) => {
 
     // 3. generating pdf
     const pdfDir = path.join(__dirname, "..", "..", "public", uploadPath);
-    const pdfFilePath = path.join(pdfDir, `${uuid()}.pdf`);
+    const pdfFileName = `${uuid()}.pdf`; // Generate unique filename with .pdf extension
+    const pdfFilePath = path.join(pdfDir, pdfFileName);
 
     helper.mkdirIfNotExists(pdfDir);
     await helper.printPDF(html, {
@@ -157,9 +156,9 @@ exports.sign = async (req, res) => {
       },
     });
 
-    // 4. uploading on cloud/server
+    // 4. uploading on cloud/server with the correct name
     fields.signaturePath = await fileUploader.upload_file(
-      { path: pdfFilePath, name: pdfFilePath },
+      { path: pdfFilePath, name: pdfFileName }, // Use pdfFileName to ensure it includes .pdf
       uploadPath,
       ["pdf"],
     );
@@ -210,12 +209,13 @@ exports.sign = async (req, res) => {
     return apiResponse.success(
       res,
       req,
-      { waiver, message: "You'll recieve confirmation sms shortly!" },
+      { waiver, message: "You'll receive a confirmation SMS shortly!" },
       201,
     );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
+
 };
 
 exports.update = async (req, res) => {

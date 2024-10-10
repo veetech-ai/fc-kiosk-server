@@ -121,11 +121,11 @@ exports.upload_file = async (
 
     switch (defaultUploadOn) {
       case 1:
-        return await server_upload.uploadv1(file, newpath);
+        return await server_upload.uploadv1(file, fileName);
       // case 2:
       //   return await azureUpload.upload(file, `${path}/${fileName}`);
       case 3:
-        return await awsS3.uploadFile(file.path, uuid());
+        return await awsS3.uploadFile(file.path, fileName);
       default:
         throw {
           message:
