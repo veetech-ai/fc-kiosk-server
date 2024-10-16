@@ -85,7 +85,7 @@ describe("Product Tracker", () => {
         const response = await helper.post_request_with_authorization(data);
         expect(response.status).toBe(400);
         expect(response.body.data.errors.subscription[0]).toBe(
-          "The subscription must be JSON string",
+          "The subscription must be a JSON string.",
         );
       });
     });

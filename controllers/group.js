@@ -705,19 +705,6 @@ exports.attach_bulk_firmware = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       id: "required",
       groups: "required|json",
@@ -917,19 +904,6 @@ exports.set_history = (req, res) => {
    */
 
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       set: "required|json",
       group_id: "required",

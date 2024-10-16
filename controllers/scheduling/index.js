@@ -136,19 +136,6 @@ exports.create = (req, res) => {
    *         description: success
    */
 
-  Validator.register(
-    "json",
-    function (value, requirement, attribute) {
-      try {
-        JSON.parse(value);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    },
-    "The :attribute must be JSON string",
-  );
-
   const validation = new Validator(req.body, {
     schedule: "required|json",
     name: "required",
@@ -255,19 +242,6 @@ exports.update = (req, res) => {
    *       200:
    *         description: success
    */
-
-  Validator.register(
-    "json",
-    function (value, requirement, attribute) {
-      try {
-        JSON.parse(value);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    },
-    "The :attribute must be JSON string",
-  );
 
   const validation = new Validator(req.body, {
     schedule: "required|json",

@@ -1029,18 +1029,6 @@ exports.set_device_schedule_old = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
     const validation = new Validator(req.body, {
       schedule: "required|json",
       device_serial: "required",
@@ -1163,18 +1151,6 @@ exports.set_device_schedule = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
     const validation = new Validator(req.body, {
       schedule: "required|json",
       device_serial: "required",
@@ -1311,19 +1287,6 @@ exports.set_device_setting = (req, res) => {
    *          description: Offset settings can not contain any other settings
    */
   try {
-    Validator.register(
-      "json",
-      function (value) {
-        try {
-          JSON.parse(value);
-          return true;
-        } catch (e) {
-          return false;
-        }
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       settings: "required|json",
       deviceId: "required",
@@ -1452,19 +1415,6 @@ exports.set_device_offset_setting = (req, res) => {
    *          description: Offset settings can not contain any other settings
    */
   try {
-    Validator.register(
-      "json",
-      function (value) {
-        try {
-          JSON.parse(value);
-          return true;
-        } catch (e) {
-          return false;
-        }
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       settings: "required|json",
       deviceId: "required",
@@ -1627,19 +1577,6 @@ exports.set_device_setting_config = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       settings_config: "required|json",
       deviceId: "required",
@@ -2439,19 +2376,6 @@ exports.set_device_history = (req, res) => {
    */
 
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       set: "required|json",
       device_serial: "required",
@@ -3082,19 +3006,6 @@ exports.attach_bulk_firmware = (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      function (value, requirement, attribute) {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
-
     const validation = new Validator(req.body, {
       id: "required",
       devices: "required|json",
@@ -3688,18 +3599,6 @@ exports.setDeviceConfig = async (req, res) => {
    *         description: success
    */
   try {
-    Validator.register(
-      "json",
-      (value) => {
-        try {
-          JSON.parse(value);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      },
-      "The :attribute must be JSON string",
-    );
     const body = {
       config: req.body.config,
       deviceId: req.params.id,
@@ -3862,6 +3761,54 @@ exports.link_device_to_course = async (req, res) => {
     helper.mqtt_publish_message(`d/${deviceId}/gc`, mqttPayload);
 
     return apiResponse.success(res, req, response);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+exports.disableKioskMode = async (req, res) => {
+  /**
+   * @swagger
+   *
+   * /device/{id}/disable-kiosk-mode:
+   *   get:
+   *     security:
+   *       - auth: []
+   *     description: disable kiosk mode.
+   *     tags: [Device]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: id
+   *         description: Device ID
+   *         in: path
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: Success
+   */
+
+  try {
+    const deviceId = Number(req.params.id);
+    if (!deviceId) {
+      return apiResponse.fail(res, "Device id must be a valid integer");
+    }
+    const device = await DeviceModel.findById(deviceId);
+    if (!device) {
+      return apiResponse.fail(res, "Device not found", 404);
+    }
+
+    const mqttPayload = {
+      status: true,
+    };
+
+    helper.mqtt_publish_message(`d/${deviceId}/reset`, mqttPayload);
+
+    return apiResponse.success(
+      res,
+      req,
+      "Payload: Disable kiosk mode has been sent successfully",
+    );
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }

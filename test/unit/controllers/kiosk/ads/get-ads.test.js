@@ -1,10 +1,11 @@
 const helper = require("../../../../helper");
 const upload_file = require("../../../../../common/upload");
+const courseService = require("../../../../../services/kiosk/course");
+const screensService = require("../../../../../services/screenConfig/screens");
 const ServiceError = require("../../../../../utils/serviceError");
 
 let mockFields;
 let mockFiles;
-const errorMessage = "Something went wroong";
 jest.mock("formidable", () => {
   return {
     IncomingForm: jest.fn().mockImplementation(() => {
@@ -41,13 +42,14 @@ const mockFormidable = (fields, files) => {
 describe("GET /api/v1/ads", () => {
   let adminToken;
   let courseId;
-  let invalidCourseId = -1;
-  let orgId;
   let customerToken;
   let testOperatorToken;
   let testOrganizationId = 1;
   let differentOrganizationCustomerToken;
-
+  let createdAd;
+  let linkedCourse;
+  let screensData;
+  let linkedScreens;
   beforeAll(async () => {
     // Create some courses for the test organization
     const courses = {
@@ -69,7 +71,6 @@ describe("GET /api/v1/ads", () => {
       params: courses,
     });
     courseId = course.body.data.id;
-    orgId = course.body.data.orgId;
     const makeAdApi = async (fields, files) => {
       fields.gcId = courseId;
       mockFormidable(fields, files);
@@ -79,9 +80,18 @@ describe("GET /api/v1/ads", () => {
         params: fields,
       });
     };
-    await makeAdApi(fields, files);
+    createdAd = await makeAdApi(fields, files);
+    linkedCourse = await courseService.getOne({ id: createdAd.body.data.gcId });
+    screensData = await screensService.getScreensByCourses(
+      createdAd.body.data.gcId,
+    );
+    const { id, gcId, orgId, createdAt, updatedAt, ...restFields } =
+      screensData.dataValues;
+    linkedScreens = Object.keys(restFields).filter(
+      (key) => restFields[key] === true,
+    );
   });
-  const makeAdApiRequest = async (token = adminToken) => {
+  const makegetApiRequest = async (token = adminToken) => {
     return await helper.get_request_with_authorization({
       endpoint: `ads`,
       token: token,
@@ -89,30 +99,37 @@ describe("GET /api/v1/ads", () => {
   };
 
   it("should lists ads with admin or super admin token", async () => {
-    const response = await makeAdApiRequest();
+    const expectedObject = {
+      gcId: createdAd.body.data.gcId,
+      state: createdAd.body.data.state,
+      title: createdAd.body.data.title,
+      smallImage: expect.any(String),
+      Course: {
+        name: linkedCourse.name,
+      },
+      screens: linkedScreens,
+    };
+    const response = await makegetApiRequest();
     expect(response.body.success).toBe(true);
-    expect(response.body.data[0].gcId).toEqual(fields.gcId);
-    expect(response.body.data[0].state).toEqual(fields.state);
-    expect(response.body.data[0].title).toEqual(fields.title);
-    expect(
-      response.body.data[0].smallImage.includes(
-        `${files.adImage.name.split(".")[0]}`,
-      ),
-    ).toBeTruthy();
+    expect(response.body.data).toEqual(
+      expect.arrayContaining([expect.objectContaining(expectedObject)]),
+    );
   });
   it("should return error with the customer token who is the part of same organization", async () => {
-    const response = await makeAdApiRequest(customerToken);
-    expect(response.body.success).toBe(false);
+    const response = await makegetApiRequest(customerToken);
     expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.success).toBe(false);
   });
   it("should return an error if user belongs to same organization but not having sufficient rights", async () => {
-    const response = await makeAdApiRequest(testOperatorToken);
-    expect(response.body.success).toBe(false);
+    const response = await makegetApiRequest(testOperatorToken);
     expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.success).toBe(false);
   });
   it("should return an error if user belongs to different organization", async () => {
-    const response = await makeAdApiRequest(differentOrganizationCustomerToken);
-    expect(response.body.success).toBe(false);
+    const response = await makegetApiRequest(
+      differentOrganizationCustomerToken,
+    );
     expect(response.body.data).toEqual("You are not allowed");
+    expect(response.body.success).toBe(false);
   });
 });

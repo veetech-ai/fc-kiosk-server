@@ -317,19 +317,6 @@ exports.send_realtime_notification = (req, res) => {
    *         description: Success
    */
 
-  Validator.register(
-    "json",
-    function (value, requirement, attribute) {
-      try {
-        JSON.parse(value);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    },
-    "The :attribute must be JSON string",
-  );
-
   const validation = new Validator(req.body, {
     misc: "json",
     user_id: "required",

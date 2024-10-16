@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const randtoken = require("rand-token");
 const axios = require("axios");
 const moment = require("moment");
+const sanitizeHtml = require("sanitize-html");
 
 const Ajv = require("ajv");
 const { cloneDeep, pickBy, pick } = require("lodash");
@@ -53,6 +54,9 @@ const alertsCategories = require("./../df-commons/data/alerts-categories.json");
 const definitionsValidations = require("./../df-commons/definitions/validations.json");
 const { globalMQTT } = require("./mqtt-init");
 const ServiceError = require("../utils/serviceError");
+const puppeteer = require("puppeteer");
+const { uuid } = require("uuidv4");
+const fs = require("node:fs");
 
 // Setting Up Ajv
 const ajv = new Ajv({ allErrors: true, useDefaults: true }); // options can be passed, e.g. {allErrors: true}
@@ -69,10 +73,13 @@ const filterRegexString = `^(${date})$|^today$|^yesterday$|^[0-9]{1,2}d$|^[0-9]{
 const dateTimeRange = `^${date}${time}\\|${date}${time}$`;
 const dateRegexString = `^${date}$`;
 
+exports.emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
+
 exports.filterRegex = new RegExp(filterRegexString);
 exports.productIdRegex = new RegExp(/((\w{1,})[\s-]?)+(\|[\w-?\s?]+)*$/);
 exports.dateTimeRangeRegex = new RegExp(dateTimeRange);
 exports.dateRegex = new RegExp(dateRegexString);
+exports.hour24timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]/;
 
 // eslint-disable-next-line no-useless-escape
 const phone = "^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$";
@@ -1537,13 +1544,31 @@ exports.validateObject = (objectToBeValidated, allowedFields) => {
   return pick(cloneObject, allowedFields);
 };
 
+// exports.validateExpiryDate = (keyName, date) => {
+//   const dateToBeValidated = moment(date);
+//   if (!dateToBeValidated.isValid()) {
+//     throw new ServiceError(`The ${keyName} must be a valid date`, 400);
+//   }
+//   const currentDate = moment();
+//   if (dateToBeValidated.isBefore(currentDate)) {
+//     throw new ServiceError(
+//       `The ${keyName} must be greater than the current date`,
+//       400,
+//     );
+//   }
+
+//   return true;
+// };
 exports.validateExpiryDate = (keyName, date) => {
-  const dateToBeValidated = moment(date);
-  if (!dateToBeValidated.isValid()) {
+  const dateToBeValidated = new Date(date);
+
+  if (isNaN(dateToBeValidated)) {
     throw new ServiceError(`The ${keyName} must be a valid date`, 400);
   }
-  const currentDate = moment();
-  if (dateToBeValidated.isBefore(currentDate)) {
+
+  const currentDate = new Date();
+
+  if (dateToBeValidated < currentDate) {
     throw new ServiceError(
       `The ${keyName} must be greater than the current date`,
       400,
@@ -1566,4 +1591,103 @@ exports.mqttPayloads = {
   onCareerContactUpdate: ["career-contact"],
   onMembershipContactUpdate: ["membership-contact"],
   onLessonContactUpdate: ["lesson-contact"],
+};
+
+/**
+ * Validates an object based on provided validations and returns a filtered object.
+ * @param {object} inputObject - The raw object to be validated.
+ * @param {object} [validations={}] - Validation options for the given object.
+ * @param {string[]} [validations.allowedKeys] - An array of keys to retain in the filtered object.
+ * @param {boolean} [validations.allowedKeysOnly=false] - Set to true to ensure that all the keys in `inputObject` are a subset of `allowedKeys`.
+ * @param {boolean} [validations.exactMatch=false] - Set to true to enforce an exact match of keys in `inputObject` with `allowedKeys`. Setting this to `true` will overwrite `allowedKeysOnly` option.
+ * @returns {object} The filtered object containing only the allowed keys.
+ */
+exports.validateObjectV2 = (inputObject, validations = {}) => {
+  const {
+    allowedKeys = [],
+    allowedKeysOnly = false,
+    exactMatch = false,
+  } = validations;
+
+  const objectClone = { ...inputObject };
+  const inputKeys = Object.keys(objectClone);
+
+  const inValidFields = inputKeys.filter((f) => !allowedKeys.includes(f));
+
+  if (
+    exactMatch &&
+    inValidFields.length &&
+    inputKeys.length != allowedKeys.length
+  ) {
+    throw new ServiceError(
+      `Payload should exactly contain: ${allowedKeys.join(", ")}`,
+      400,
+    );
+  }
+
+  if (allowedKeysOnly && inValidFields.length) {
+    throw new ServiceError("Invalid keys in the payload", 400);
+  }
+
+  if (inValidFields.length == inputKeys.length) {
+    throw new ServiceError("Payload is invalid", 400);
+  }
+
+  return pick(objectClone, allowedKeys);
+};
+
+exports.sanitizeHtmlInput = (dirtyHTML, options = {}) => {
+  return sanitizeHtml(dirtyHTML, {
+    allowedTags: sanitizeHtml.defaults.allowedTags,
+    disallowedTagsMode: "discard",
+    allowedAttributes: sanitizeHtml.defaults.allowedAttributes,
+    allowedIframeHostnames: [],
+    ...options,
+  });
+};
+
+/**
+ * Converts the html to pdf
+ * @param {String} html A valid html string
+ * @param {object} [options= {}] Options to configure to your needs
+ * @param {puppeteer.PDFOptions} [options.pdf]
+ * @param {puppeteer.PuppeteerLaunchOptions} [options.launch]
+ * @returns {Promise<{path: string, pdf:Buffer}>} pdf buffer
+ */
+exports.printPDF = async (html, options = { launch: {}, pdf: {} }) => {
+  const path = options.pdf?.path || `./public/uploads/${uuid()}.pdf`;
+
+  const browser = await puppeteer.launch({
+    headless: "new",
+    executablePath: "/usr/bin/google-chrome",
+    args: ["--no-sandbox"],
+    ...options.launch,
+  });
+  const page = await browser.newPage();
+
+  await page.setContent(html);
+
+  const pdf = await page.pdf({ path, format: "A4", ...options.pdf });
+
+  await browser.close();
+  return { path, pdf };
+};
+
+/**
+ * Checks if a timestamp is expired based on a given expiry time.
+ * @param {number} timestampMs - The timestamp in milliseconds to check against.
+ * @param {number} [expiryMs] - The expiry time in milliseconds. Defaults to the OTP expiry time from the config.
+ * @returns {boolean} True if the timestamp is expired, false otherwise.
+ */
+exports.isExpired = (
+  timestampMs,
+  expiryMs = config.auth.mobileAuth.otpExpirationInSeconds * 1000,
+) => {
+  const currentTimeMs = new Date().getTime();
+
+  return currentTimeMs >= timestampMs + expiryMs;
+};
+
+exports.mkdirIfNotExists = (dir) => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 };

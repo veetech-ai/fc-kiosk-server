@@ -22,7 +22,7 @@ if (config.isCloudUpload) {
 exports.upload_path = uploadPath;
 exports.public_path = publicPath;
 
-const validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
+exports.validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
   const fileExtension = this.get_file_extension(file.name)
     .toLowerCase()
     .substring(1);
@@ -44,6 +44,8 @@ const validateFile = (file, allowedExtension = [], maxSizeInMb = 5) => {
 
   return true;
 };
+
+const validateFile = this.validateFile;
 exports.uploadProfileImage = async (
   imageFile,
   userId,
@@ -119,7 +121,7 @@ exports.upload_file = async (
 
     switch (defaultUploadOn) {
       case 1:
-        return await server_upload.upload(file, `${newpath}/${fileName}`);
+        return await server_upload.uploadv1(file, newpath);
       // case 2:
       //   return await azureUpload.upload(file, `${path}/${fileName}`);
       case 3:
@@ -151,6 +153,9 @@ exports.getHost = () => {
     return config.app.backendURL;
   }
 };
+
+exports.getServerUrl = (path) =>
+  `${config.app.backendURL}${path}`.replace("./public/", "files/");
 
 exports.getFileURL = (key) => {
   const imagesWithCompleteUrl = [];
@@ -296,7 +301,7 @@ exports.uploadImageForCourse = async (
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
     validateFile(
       imageFile,
-      ["jpg", "jpeg", "png"],
+      ["jpg", "jpeg", "png", "webp"],
       settings.get("profile_image_max_size"),
     );
 

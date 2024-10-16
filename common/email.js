@@ -6,6 +6,7 @@ const helper = require("../common/helper");
 const config = require("../config/config");
 
 const { logger } = require("../logger");
+const ServiceError = require("../utils/serviceError");
 
 let transporter = null;
 let mailGun = null;
@@ -237,7 +238,7 @@ exports.forget_password = (user, token) => {
       user_name: user.name,
       email: user.email,
       acctivation_url: config.app.frontendURL + "reset-password?token=" + token,
-      icon_url: config.app.frontendURL + "/img/icons/mstile-310x150.png",
+      icon_url: new URL("img/icons/mstile-310x150.png", config.app.frontendURL),
     });
 
     this.send({
@@ -254,6 +255,52 @@ exports.forget_password = (user, token) => {
         });
       });
   });
+};
+
+exports.wedding_event = (event_name, contact_info, users) => {
+  try {
+    return new Promise((resolve, reject) => {
+      const template = fs.readFileSync("./views/emails/wedding_event.html", {
+        encoding: "utf-8",
+      });
+
+      const promises = [];
+
+      for (const user of users) {
+        const html = ejs.render(template, {
+          event_name: event_name,
+          show_phone_number: !contact_info.contactMedium,
+          phone_number: contact_info.userPhone,
+          email: contact_info.userEmail,
+          contact_medium: contact_info.contactMedium,
+          receiver_name: user.name,
+          icon_url: new URL(
+            "img/icons/mstile-310x150.png",
+            config.app.frontendURL,
+          ),
+        });
+        promises.push(
+          this.send({
+            to: user.email,
+            subject: "Wedding Event Applciation",
+            message: html,
+          }),
+        );
+      }
+
+      Promise.all(promises)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject({
+            message: err,
+          });
+        });
+    });
+  } catch (e) {
+    throw new ServiceError("Error occured", 500);
+  }
 };
 
 exports.send_tranfer_device_verification = (to_user, from_user, token) => {
