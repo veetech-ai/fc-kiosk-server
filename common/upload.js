@@ -129,7 +129,7 @@ exports.upload_file = async (
       default:
         throw {
           message:
-            "The defaultUploadOn parameter is not correct please correct it in env params ",
+            "The defaultUploadOn parameter is not correct please correct it in env params",
         };
     }
   } catch (err) {
