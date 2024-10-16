@@ -1659,8 +1659,8 @@ exports.printPDF = async (html, options = { launch: {}, pdf: {} }) => {
 
   const browser = await puppeteer.launch({
     headless: "new",
-    // executablePath: "/usr/bin/google-chrome",
-    executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    executablePath: "/usr/bin/google-chrome",
+    // executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
 
     args: ["--no-sandbox"],
     ...options.launch,
