@@ -98,7 +98,7 @@ module.exports = {
     accessSecret: process.env.AWS_SECRET_ACCESS_KEY,
     bucketName: process.env.BUCKET_NAME || "mdm-file-store",
     region: process.env.AWS_REGION || "us-east-1",
-    urlExpiryInMinutes: process.env.AWS_URL_EXPIRY_IN_MINUTES || 120,
+    urlExpiryInMinutes: process.env.AWS_URL_EXPIRY_IN_MINUTES || 10080,
     apiVersion: process.env.API_VERSION,
   },
   jwt: {
