@@ -215,7 +215,6 @@ exports.sign = async (req, res) => {
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
-
 };
 
 exports.update = async (req, res) => {
