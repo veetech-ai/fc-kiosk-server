@@ -1646,6 +1646,8 @@ exports.sanitizeHtmlInput = (dirtyHTML, options = {}) => {
   });
 };
 
+const os = require("os");
+
 /**
  * Converts the html to pdf
  * @param {String} html A valid html string
@@ -1657,14 +1659,31 @@ exports.sanitizeHtmlInput = (dirtyHTML, options = {}) => {
 exports.printPDF = async (html, options = { launch: {}, pdf: {} }) => {
   const path = options.pdf?.path || `./public/uploads/${uuid()}.pdf`;
 
+  // Detect the OS and set Chrome executable path
+  let chromeExecutablePath;
+  switch (os.platform()) {
+    case "win32":
+      chromeExecutablePath =
+        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"; // Windows path
+      break;
+    case "linux":
+      chromeExecutablePath = "/usr/bin/google-chrome"; // Linux path
+      break;
+    case "darwin":
+      chromeExecutablePath =
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"; // macOS path
+      break;
+    default:
+      throw new Error(`Unsupported platform: ${os.platform()}`);
+  }
+
   const browser = await puppeteer.launch({
     headless: "new",
-    executablePath: "/usr/bin/google-chrome",
-    // executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-
+    executablePath: chromeExecutablePath,
     args: ["--no-sandbox"],
     ...options.launch,
   });
+
   const page = await browser.newPage();
 
   await page.setContent(html);
