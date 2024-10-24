@@ -103,10 +103,10 @@ exports.sign = async (req, res) => {
     }
 
     // 0. verifying the session
-    // await otpService.verifySession({
-    //   phone: fields.phone,
-    //   session_id: fields.session_id,
-    // });
+    await otpService.verifySession({
+      phone: fields.phone,
+      session_id: fields.session_id,
+    });
 
     // 0.5 check if user has signed already
     await waiverService.ensureNotSignedAlready(fields.gcId, fields.phone);
@@ -213,6 +213,7 @@ exports.sign = async (req, res) => {
       201,
     );
   } catch (error) {
+    console.log(error);
     return apiResponse.fail(res, error.message, error.statusCode || 500);
   }
 };
