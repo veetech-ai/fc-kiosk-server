@@ -3,7 +3,7 @@ const wifi = require("./helper");
 const Validator = require("validatorjs");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: Wifi
  *   description: Wifi management (Not in use)
@@ -11,7 +11,7 @@ const Validator = require("validatorjs");
 
 exports.wifi_pin = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /wifi/pin:
    *   post:
@@ -53,7 +53,7 @@ exports.wifi_pin = (req, res) => {
 
 exports.wifi_list = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /wifi/list:
    *   get:
@@ -80,7 +80,7 @@ exports.wifi_list = async (req, res) => {
 
 exports.connect_wifi = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /wifi/connect-wifi:
    *   post:
@@ -131,7 +131,7 @@ exports.connect_wifi = (req, res) => {
 
 exports.wifi_list = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /wifi/wifi-list:
    *   get:
@@ -159,7 +159,7 @@ exports.wifi_list = async (req, res) => {
 
 exports.wifi_password = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /wifi/wifi-password:
    *   post:

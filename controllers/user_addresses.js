@@ -3,7 +3,7 @@ const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: User Addresses
  *   description: User Addresses Management
@@ -11,7 +11,7 @@ const Validator = require("validatorjs");
 
 exports.list = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /user-addresses:
    *   get:
@@ -38,7 +38,7 @@ exports.list = async (req, res) => {
 
 exports.get_by_id = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /user-addresses/get/{addressId}:
    *   get:
@@ -76,7 +76,7 @@ exports.get_by_id = async (req, res) => {
 
 exports.add_new = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /user-addresses/new:
    *   post:
@@ -134,7 +134,7 @@ exports.add_new = (req, res) => {
 
 exports.update = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /user-addresses/update/{addressId}:
    *   put:
@@ -191,7 +191,7 @@ exports.update = (req, res) => {
 
 exports.delete_by_id = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /user-addresses/delete/{addressId}:
    *   delete:
@@ -229,7 +229,7 @@ exports.delete_by_id = async (req, res) => {
 
 exports.get_default_address = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /user-addresses/get-default:
    *   get:
@@ -261,7 +261,7 @@ exports.get_default_address = async (req, res) => {
 
 exports.make_default = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /user-addresses/make-default/{addressId}:
    *   post:

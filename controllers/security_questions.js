@@ -6,7 +6,7 @@ const apiResponse = require("../common/api.response");
 const Validator = require("validatorjs");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: Security Questions
  *   description: Security Questions Management
@@ -14,7 +14,7 @@ const Validator = require("validatorjs");
 
 exports.list = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /security-questions:
    *   get:
@@ -41,7 +41,7 @@ exports.list = async (req, res) => {
 
 exports.user_questions_answers = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /security-questions/user/with-answer:
    *   get:
@@ -74,7 +74,7 @@ exports.user_questions_answers = async (req, res) => {
 
 exports.user_questions = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /security-questions/user:
    *   get:
@@ -126,7 +126,7 @@ exports.user_questions = (req, res) => {
 
 exports.save_user_answer = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /security-questions/user/answer:
    *   post:
@@ -183,7 +183,7 @@ exports.save_user_answer = (req, res) => {
 
 exports.validate_user_answer = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /security-questions/user/validate/answer:
    *   post:

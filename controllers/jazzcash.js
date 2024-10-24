@@ -12,7 +12,7 @@ const OrderModel = require("../services/order");
 const config = require("../config/config");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: JazzCash
  *   description: JazzCash APIs.
@@ -20,7 +20,7 @@ const config = require("../config/config");
 
 exports.pay_with_mobile_account = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /jazzcash/pay/mobile-account:
    *   post:
@@ -108,7 +108,7 @@ exports.pay_with_mobile_account = (req, res) => {
 
 exports.redirect_endpoint = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /jazzcash/redirect-endpoint:
    *   post:

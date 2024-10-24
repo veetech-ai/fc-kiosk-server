@@ -13,7 +13,7 @@ const moment = require("moment");
 const { logger } = require("../logger");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: Billing
  *   description: Device Bill management
@@ -196,7 +196,7 @@ exports.send_billing_notifications = async () => {
 
 exports.get_all_pending = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /bill/all/pending:
    *   get:
@@ -225,7 +225,7 @@ exports.get_all_pending = async (req, res) => {
 
 exports.get_all_user_invoices = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /bill/user/invoices:
    *   get:
@@ -256,7 +256,7 @@ exports.get_all_user_invoices = async (req, res) => {
 
 exports.get_all_user_invoice_items = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /bill/user/invoice/{invoiceId}/items:
    *   get:
@@ -291,7 +291,7 @@ exports.get_all_user_invoice_items = async (req, res) => {
 
 exports.user_device_bill_invoice_item = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /bill/invoice-item/user/{userId}/device/{deviceId}:
    *   get:
@@ -320,7 +320,7 @@ exports.user_device_bill_invoice_item = async (req, res) => {
    */
 
   /**
-   * @swagger
+   * //@swagger
    *
    * /bill/invoice-item/user/device/{deviceId}:
    *   get:
@@ -359,7 +359,7 @@ exports.user_device_bill_invoice_item = async (req, res) => {
 
 exports.pay_bill_individual = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /bill/pay/individual:
    *   post:
@@ -435,7 +435,7 @@ exports.pay_bill_individual = async (req, res) => {
 
 exports.pay_bill_multiple = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /bill/pay/multiple:
    *   post:

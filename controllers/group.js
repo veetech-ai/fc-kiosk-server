@@ -18,7 +18,7 @@ const helper = require("../common/helper");
 const { logger } = require("../logger");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: Group
  *   description: Device Group management
@@ -26,7 +26,7 @@ const { logger } = require("../logger");
 
 exports.get_all = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/all:
    *   get:
@@ -67,7 +67,7 @@ exports.get_all = async (req, res) => {
 
 exports.get_by_id = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/get/{id}:
    *   get:
@@ -100,7 +100,7 @@ exports.get_by_id = async (req, res) => {
 
 exports.get_ungrouped_user_devices = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/ungrouped-user-devices:
    *   get:
@@ -141,7 +141,7 @@ exports.get_ungrouped_user_devices = async (req, res) => {
 
 exports.create = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/create:
    *   post:
@@ -230,7 +230,7 @@ exports.create = async (req, res) => {
 
 exports.update = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/update/{id}:
    *   put:
@@ -314,7 +314,7 @@ exports.update = (req, res) => {
 
 exports.delete = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/delete/{id}:
    *   delete:
@@ -378,7 +378,7 @@ exports.delete = async (req, res) => {
 
 exports.attach_devices = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/attach-devices:
    *   post:
@@ -448,7 +448,7 @@ exports.attach_devices = (req, res) => {
 
 exports.unlink_device = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/unlink-device:
    *   put:
@@ -536,7 +536,7 @@ exports.unlink_device = (req, res) => {
 
 exports.update_group_name = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/{id}/update-name:
    *   put:
@@ -597,7 +597,7 @@ exports.update_group_name = (req, res) => {
 
 exports.attach_firmware = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/attach-firmware:
    *   post:
@@ -677,7 +677,7 @@ exports.attach_firmware = (req, res) => {
 
 exports.attach_bulk_firmware = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/attach-bulk-firmware:
    *   post:
@@ -756,7 +756,7 @@ exports.attach_bulk_firmware = (req, res) => {
 
 exports.get_history_all = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/history/all:
    *   get:
@@ -796,7 +796,7 @@ exports.get_history_all = async (req, res) => {
 
 exports.get_recent_history = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/history/recent:
    *   get:
@@ -836,7 +836,7 @@ exports.get_recent_history = async (req, res) => {
 
 exports.get_history = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/history:
    *   get:
@@ -876,7 +876,7 @@ exports.get_history = async (req, res) => {
 
 exports.set_history = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /group/history:
    *   post:

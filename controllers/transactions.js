@@ -18,7 +18,7 @@ const config = require("../config/config");
 const { logger } = require("../logger");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: Transactions
  *   description: Transactions management
@@ -26,7 +26,7 @@ const { logger } = require("../logger");
 
 exports.get = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /transactions:
    *   get:
@@ -125,7 +125,7 @@ exports.get = (req, res) => {
 
 exports.getTransactionById = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /transactions/{id}:
    *   get:
@@ -171,7 +171,7 @@ exports.getTransactionById = (req, res) => {
 
 exports.changeTransactionStatus = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /transactions/{id}/status:
    *   post:
@@ -248,7 +248,7 @@ exports.changeTransactionStatus = (req, res) => {
 
 exports.transactionAttachment = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /transactions/{session_id}/attachment:
    *   post:
@@ -336,7 +336,7 @@ exports.transactionAttachment = (req, res) => {
 
 exports.getTransactionAttachments = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /transactions/{session_id}/attachments:
    *   get:

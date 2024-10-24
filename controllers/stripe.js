@@ -20,7 +20,7 @@ const { logger } = require("../logger");
  */
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: Stripe
  *   description: Stripe APIs.
@@ -28,7 +28,7 @@ const { logger } = require("../logger");
 
 exports.stripeAddNewProduct = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /stripe/new-product:
    *   post:
@@ -74,7 +74,7 @@ exports.stripeAddNewProduct = (req, res) => {
 
 exports.stripeGetAllProducts = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /stripe/get-all-products:
    *   get:
@@ -100,7 +100,7 @@ exports.stripeGetAllProducts = async (req, res) => {
 
 exports.stripeGetProduct = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /stripe/get-product/{id}:
    *   get:
@@ -133,7 +133,7 @@ exports.stripeGetProduct = async (req, res) => {
 
 exports.stripeUpdateProduct = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /stripe/update-product/{id}:
    *   put:
@@ -186,7 +186,7 @@ exports.stripeUpdateProduct = (req, res) => {
 
 exports.stripeDeleteProduct = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /stripe/delete-product/{id}:
    *   delete:
@@ -222,7 +222,7 @@ exports.stripeDeleteProduct = async (req, res) => {
 
 exports.stripeCharge = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /stripe/charge:
    *   post:

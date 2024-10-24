@@ -13,7 +13,7 @@ const DeviceNetworksModel = require("../services/device_networks");
 const { logger } = require("../logger");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: Networks
  *   description: Networks management
@@ -21,7 +21,7 @@ const { logger } = require("../logger");
 
 exports.get_user_networks = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /network/user:
    *   get:
@@ -60,7 +60,7 @@ exports.get_user_networks = async (req, res) => {
 
 exports.get_device_networks = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /network/device/{deviceId}:
    *   get:
@@ -109,7 +109,7 @@ exports.get_device_networks = async (req, res) => {
 
 exports.create_user_network = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /network/create/user:
    *   post:
@@ -166,7 +166,7 @@ exports.create_user_network = (req, res) => {
 
 exports.create_device_network = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /network/create/device:
    *   post:
@@ -265,7 +265,7 @@ exports.create_device_network = (req, res) => {
 
 exports.delete_user_network = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /network/delete/user:
    *   delete:
@@ -308,7 +308,7 @@ exports.delete_user_network = async (req, res) => {
 
 exports.delete_device_network = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /network/delete/device:
    *   delete:

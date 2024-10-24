@@ -10,7 +10,7 @@ const upload_file = require("../common/upload");
 const PaymentOptionsModel = require("../services/payment_options");
 
 /**
- * @swagger
+ * //@swagger
  * tags:
  *   name: Payment Options
  *   description: Payment Options management
@@ -18,7 +18,7 @@ const PaymentOptionsModel = require("../services/payment_options");
 
 exports.get_all_available = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /payment-option/all/available:
    *   get:
@@ -55,7 +55,7 @@ exports.get_all_available = async (req, res) => {
 
 exports.get_all = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /payment-option/all:
    *   get:
@@ -93,7 +93,7 @@ exports.get_all = async (req, res) => {
 
 exports.get_by_id = async (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /payment-option/get/{id}:
    *   get:
@@ -124,7 +124,7 @@ exports.get_by_id = async (req, res) => {
 
 exports.update = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /payment-option/update/{paymentOptionId}:
    *   put:
@@ -202,7 +202,7 @@ exports.update = (req, res) => {
 
 exports.update_status = (req, res) => {
   /**
-   * @swagger
+   * //@swagger
    *
    * /payment-option/status/{paymentOptionId}:
    *   put:
