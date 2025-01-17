@@ -24,13 +24,21 @@ const getOrganizationStats = async (organizations) => {
   return organizationStats;
 };
 
-exports.list = async (pp = false) => {
+exports.list = async (
+  pp = false,
+  { sortBy = "desc", sortOrder = "updatedAt" } = {},
+) => {
   const self = this;
   const query = {};
   if (pp) {
     query.limit = pp.limit;
     query.offset = pp.offset;
   }
+
+  if (sortBy && sortOrder) {
+    query.order = [[sortOrder, sortBy]];
+  }
+
   const organizations = await Organization.findAll(query);
   const organizationStats = await getOrganizationStats(organizations);
   const responseData = organizations.map((org, index) => {
