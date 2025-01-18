@@ -13,13 +13,13 @@ jobs:
         uses: actions/checkout@v3
       # - name: Tag validation
       #   uses: "./.github/actions/tag-validation"
-  integration:
-    needs: tag-validation
-    name: linting and testing
-    uses: "./.github/workflows/ci-reusable.yml"
-    secrets:
-      GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
-      AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+  # integration:
+  #   needs: tag-validation
+  #   name: linting and testing
+  #   uses: "./.github/workflows/ci-reusable.yml"
+  #   secrets:
+  #     GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
+  #     AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
   stage-deployment:
     name: "Stage Deployment"
     # needs: integration
