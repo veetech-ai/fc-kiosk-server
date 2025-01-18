@@ -2,8 +2,8 @@ name: "CI/CD Staging"
 
 "on":
   push:
-    tags:
-      - "*"
+    branches:
+      - "fix/aws-task-deployment-issue"
 
 jobs:
   tag-validation:
