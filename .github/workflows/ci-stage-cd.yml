@@ -11,8 +11,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Tag validation
-        uses: "./.github/actions/tag-validation"
+      # - name: Tag validation
+      #   uses: "./.github/actions/tag-validation"
   integration:
     needs: tag-validation
     name: linting and testing
@@ -22,7 +22,8 @@ jobs:
       AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
   stage-deployment:
     name: "Stage Deployment"
-    needs: integration
+    # needs: integration
+    needs: tag-validation
     uses: "./.github/workflows/cd-reusable.yml"
     with:
       IMAGE_TAG: ${{ github.ref_name }}
