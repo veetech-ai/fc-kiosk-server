@@ -56,20 +56,20 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      # - name: Build, tag, and push image to Amazon ECR
-      #   id: build-image
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-      #     IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
-      #     DOCKER_FILE: ${{ inputs.DOCKER_FILE }}
-      #     GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
-      #     APP_VERSION: ${{ (inputs.IMAGE_TAG != 'latest' && inputs.IMAGE_TAG) || '' }}
-      #   run: |
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
+          DOCKER_FILE: ${{ inputs.DOCKER_FILE }}
+          GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
+          APP_VERSION: ${{ (inputs.IMAGE_TAG != 'latest' && inputs.IMAGE_TAG) || '' }}
+        run: |
 
-      #     docker build --build-arg GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN --build-arg APP_VERSION=$APP_VERSION -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKER_FILE .
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      #     echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build --build-arg GITLAB_AUTH_TOKEN=$GITLAB_AUTH_TOKEN --build-arg APP_VERSION=$APP_VERSION -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKER_FILE .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Download task definition
         env:
           ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION }}
@@ -82,7 +82,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: ${{ secrets.ECS_CONTAINER_NAME }}
-          image: "633575353518.dkr.ecr.us-east-1.amazonaws.com/digital-fairways:v1.3.8"
+          image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
