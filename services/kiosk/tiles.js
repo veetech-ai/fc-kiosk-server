@@ -381,9 +381,10 @@ exports.updateTile = async (id, data) => {
       throw new ServiceError("Tile Not Found.", 404);
     }
 
-    if (tileToUpdate.builtIn) {
-      throw new ServiceError("Can not update a built in tile.", 400);
-    }
+    // if (tileToUpdate.builtIn) {
+    // enabling this - now can update builtIn tiles
+    //   throw new ServiceError("Can not update a built in tile.", 400);
+    // }
 
     const { name, isPublished, layoutNumber, layoutData, layoutImages } = data;
 
