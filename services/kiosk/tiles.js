@@ -50,12 +50,12 @@ exports.getOne = async (where) => {
   const tile = await Tile.findOne({ where });
   if (!tile) throw new ServiceError("Tile Not Found", 404);
 
-  if (!tile.builtIn) {
-    const tileData = await Course_Tile.findOne({ where: { tileId: tile.id } });
-    return { tile, tileData };
-  }
+  // if (!tile.builtIn) {
+  const tileData = await Course_Tile.findOne({ where: { tileId: tile.id } });
+  return { tile, tileData };
+  // }
 
-  return { tile };
+  // return { tile };
 };
 
 exports.changeSuperTile = async (tileId, gcId, status = false) => {

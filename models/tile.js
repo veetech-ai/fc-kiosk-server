@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     "Tile",
     {
       name: DataTypes.STRING,
+      type: DataTypes.STRING,
       bgImage: {
         type: DataTypes.STRING,
         allowNull: true,
