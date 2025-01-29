@@ -4,10 +4,10 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    // await queryInterface.addColumn("Tiles", "type", {
-    //   type: Sequelize.STRING,
-    //   allowNull: true,
-    // });
+    await queryInterface.addColumn("Tiles", "type", {
+      type: Sequelize.STRING,
+      allowNull: true,
+    });
 
     // Populate the type column with the same value as the name column
     await queryInterface.sequelize.query(`
