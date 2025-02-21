@@ -3,30 +3,30 @@
 const { Op } = require("sequelize");
 
 const builtInTiles = [
-  { name: "Course Info", builtIn: true },
-  { name: "Coupons", builtIn: true },
-  { name: "Lessons", builtIn: true },
-  { name: "Memberships", builtIn: true },
-  { name: "Feedback", builtIn: true },
-  { name: "Careers", builtIn: true },
-  { name: "Shop", builtIn: true },
-  { name: "Statistics", builtIn: true },
-  { name: "Rent A Cart", builtIn: true },
-  { name: "Ghin App", builtIn: true },
-  { name: "Wedding Event", builtIn: true },
-  { name: "FAQs", builtIn: true },
+  { type: "Course Info", builtIn: true },
+  { type: "Coupons", builtIn: true },
+  { type: "Lessons", builtIn: true },
+  { type: "Memberships", builtIn: true },
+  { type: "Feedback", builtIn: true },
+  { type: "Careers", builtIn: true },
+  { type: "Shop", builtIn: true },
+  { type: "Statistics", builtIn: true },
+  { type: "Rent A Cart", builtIn: true },
+  { type: "Ghin App", builtIn: true },
+  { type: "Wedding Event", builtIn: true },
+  { type: "FAQs", builtIn: true },
 ];
-const tileNames = builtInTiles.map((tile) => tile.name);
+const tileTypes = builtInTiles.map((tile) => tile.type);
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface) {
     const existingTiles = await queryInterface.select(null, "Tiles", {
-      where: { name: { [Op.in]: tileNames } },
+      where: { type: { [Op.in]: tileTypes } },
     });
 
     for (const tile of builtInTiles) {
-      const exists = existingTiles.find((_tile) => _tile.name == tile.name);
+      const exists = existingTiles.find((_tile) => _tile.type == tile.type);
 
       if (exists) continue;
 
@@ -36,7 +36,7 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.bulkDelete("Tiles", {
-      where: { name: { [Op.in]: tileNames } },
+      where: { type: { [Op.in]: tileTypes } },
     });
   },
 };

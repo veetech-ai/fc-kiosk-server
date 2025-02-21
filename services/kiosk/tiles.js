@@ -42,7 +42,10 @@ exports.getCourseTiles = async (gcId) => {
       "gcId",
     ],
     order: [["orderNumber", "ASC"]],
-    include: { model: Tile, attributes: ["id", "name", "builtIn", "bgImage"] },
+    include: {
+      model: Tile,
+      attributes: ["id", "name", "type", "builtIn", "bgImage"],
+    },
   });
 };
 
@@ -50,12 +53,12 @@ exports.getOne = async (where) => {
   const tile = await Tile.findOne({ where });
   if (!tile) throw new ServiceError("Tile Not Found", 404);
 
-  if (!tile.builtIn) {
-    const tileData = await Course_Tile.findOne({ where: { tileId: tile.id } });
-    return { tile, tileData };
-  }
+  // if (!tile.builtIn) {
+  const tileData = await Course_Tile.findOne({ where: { tileId: tile.id } });
+  return { tile, tileData };
+  // }
 
-  return { tile };
+  // return { tile };
 };
 
 exports.changeSuperTile = async (tileId, gcId, status = false) => {
@@ -381,9 +384,10 @@ exports.updateTile = async (id, data) => {
       throw new ServiceError("Tile Not Found.", 404);
     }
 
-    if (tileToUpdate.builtIn) {
-      throw new ServiceError("Can not update a built in tile.", 400);
-    }
+    // if (tileToUpdate.builtIn) {
+    // enabling this - now can update builtIn tiles
+    //   throw new ServiceError("Can not update a built in tile.", 400);
+    // }
 
     const { name, isPublished, layoutNumber, layoutData, layoutImages } = data;
 
