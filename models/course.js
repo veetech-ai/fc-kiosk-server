@@ -1,4 +1,9 @@
 "use strict";
+
+const path = require("path");
+const fs = require("fs");
+const { upload_file } = require("../common/upload");
+
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
     "Course", // to be used for kiosk
@@ -57,7 +62,129 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {},
+    {
+      hooks: {
+        afterCreate: async (course) => {
+          // TODO: Move this to a service - Refactoring chore
+          const builtInTiles = [
+            {
+              type: "Course Info",
+              name: "Course Info",
+              builtIn: true,
+              fileName: "course_info.png",
+            },
+            {
+              type: "Coupons",
+              name: "Coupons",
+              builtIn: true,
+              fileName: "coupons.png",
+            },
+            {
+              type: "Lessons",
+              name: "Lessons",
+              builtIn: true,
+              fileName: "training.png",
+            },
+            {
+              type: "Memberships",
+              name: "Memberships",
+              builtIn: true,
+              fileName: "membership.png",
+            },
+            {
+              type: "Feedback",
+              name: "Feedback",
+              builtIn: true,
+              fileName: "feedback.png",
+            },
+            {
+              type: "Careers",
+              name: "Careers",
+              builtIn: true,
+              fileName: "careers.png",
+            },
+            {
+              type: "Shop",
+              name: "Shop",
+              builtIn: true,
+              fileName: "shop1.png",
+            },
+            {
+              type: "Statistics",
+              name: "Statistics",
+              builtIn: true,
+              fileName: "stats.png",
+            },
+            {
+              type: "Rent A Cart",
+              name: "Rent A Cart",
+              builtIn: true,
+              fileName: "rent_a_cart.png",
+            },
+            {
+              type: "Ghin App",
+              name: "Ghin App",
+              builtIn: true,
+              fileName: "GHIN.png",
+            },
+            {
+              type: "Wedding Event",
+              name: "Wedding Event",
+              builtIn: true,
+              fileName: "wedding_icon.png",
+            },
+            { type: "FAQs", name: "FAQs", builtIn: true, fileName: "faq.png" },
+          ];
+
+          const courseTilesData = [];
+
+          for (const tile of builtInTiles) {
+            const filePath = path.join(__dirname, "../assets", tile.fileName);
+            if (fs.existsSync(filePath)) {
+              try {
+                const createFormidableFileObject = (filePath) => {
+                  const stats = fs.statSync(filePath);
+                  return {
+                    filepath: filePath, // Where the file is stored (matches formidable)
+                    originalFilename: path.basename(filePath), // Original filename
+                    size: stats.size, // File size in bytes
+                    // Add these to work with your existing upload logic:
+                    path: filePath, // Alias for `filepath` (for AWS S3 case)
+                    name: path.basename(filePath), // Alias for `originalFilename`
+                  };
+                };
+                const file = createFormidableFileObject(filePath);
+                const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+                tile.bgImage = await upload_file(
+                  file,
+                  "uploads/tiles",
+                  allowedTypes,
+                );
+              } catch (error) {
+                console.error(`Error uploading file ${filePath}:`, error);
+                throw error;
+              }
+            }
+            const createdTile = await sequelize.models.Tile.create(tile);
+
+            const courseTile = {
+              tileId: createdTile.id,
+              gcId: course.id,
+              layoutNumber: 0,
+              isPublished: true,
+              isSuperTile: false,
+              orderNumber: createdTile.id,
+            };
+
+            courseTilesData.push(courseTile);
+          }
+
+          if (courseTilesData.length) {
+            await sequelize.models.Course_Tile.bulkCreate(courseTilesData);
+          }
+        },
+      },
+    },
   );
   Course.associate = function (models) {
     // associations can be defined here
