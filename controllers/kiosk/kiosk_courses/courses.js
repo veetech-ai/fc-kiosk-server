@@ -97,7 +97,7 @@ exports.create_courses = async (req, res) => {
 
     // using one service inside another, and other way round as well causes circluar dependency issue
     // so multi service stuff should be handled inside controller
-    const tiles = await tileService.assignDefaultTiles(course.id);
+    const tiles = await tileService.getCourseTiles(course.id);
     await transact.commit();
 
     return apiResponse.success(res, req, { ...course.dataValues, tiles });
