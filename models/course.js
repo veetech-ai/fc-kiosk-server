@@ -3,6 +3,7 @@
 const path = require("path");
 const fs = require("fs");
 const { upload_file } = require("../common/upload");
+const config = require("../config/config");
 
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
@@ -156,7 +157,7 @@ module.exports = (sequelize, DataTypes) => {
                 const file = createFormidableFileObject(filePath);
                 const allowedTypes = ["jpg", "jpeg", "png", "webp"];
                 // do not upload images in test environment
-                if (!process.env.NODE_ENV === "test") {
+                if (!config.env === "test") {
                   tile.bgImage = await upload_file(
                     file,
                     "uploads/tiles",
