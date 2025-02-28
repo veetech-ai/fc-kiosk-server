@@ -2,7 +2,7 @@
 
 const path = require("path");
 const fs = require("fs");
-const { upload_file } = require("../common/upload");
+// const { upload_file } = require("../common/upload");
 
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
@@ -155,11 +155,11 @@ module.exports = (sequelize, DataTypes) => {
                 };
                 const file = createFormidableFileObject(filePath);
                 const allowedTypes = ["jpg", "jpeg", "png", "webp"];
-                tile.bgImage = await upload_file(
-                  file,
-                  "uploads/tiles",
-                  allowedTypes,
-                );
+                // tile.bgImage = await upload_file(
+                //   file,
+                //   "uploads/tiles",
+                //   allowedTypes,
+                // );
               } catch (error) {
                 console.error(`Error uploading file ${filePath}:`, error);
                 throw error;
