@@ -41,6 +41,13 @@ exports.create = async (req, res) => {
    *         type: string
    *
    *       - in: formData
+   *         name: type
+   *         description: The type of the custom tile
+   *         required: false
+   *         type: string
+   *         enum: [Course Info, Coupons, Lessons, Memberships, Feedback, Careers, Shop, Statistics, Rent A Cart, webApp, Wedding Event, FAQs]
+   *
+   *       - in: formData
    *         name: bgImage
    *         description: The background image for the tile
    *         required: false
@@ -131,6 +138,7 @@ exports.create = async (req, res) => {
       isPublished: "boolean",
       layoutNumber: "integer",
       layoutData: "string",
+      type: "string",
     });
 
     if (validation.fails()) {

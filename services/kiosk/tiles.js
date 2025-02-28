@@ -213,6 +213,7 @@ exports.create = async (data) => {
   try {
     const {
       name,
+      type,
       gcId,
       isPublished = true,
       isSuperTile = false,
@@ -254,6 +255,7 @@ exports.create = async (data) => {
       where: {
         [Op.and]: {
           name,
+          ...(type && { type }),
           id: { [Op.in]: courseTiles.map((ct) => ct.tileId) },
         },
       },
@@ -283,7 +285,7 @@ exports.create = async (data) => {
     }
 
     // 5. create new tile with max order
-    const tile = await Tile.create({ name, bgImage });
+    const tile = await Tile.create({ name, type, bgImage });
     const courseTile = await Course_Tile.create({
       tileId: tile.id,
       gcId,
