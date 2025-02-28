@@ -157,7 +157,7 @@ module.exports = (sequelize, DataTypes) => {
                 const file = createFormidableFileObject(filePath);
                 const allowedTypes = ["jpg", "jpeg", "png", "webp"];
                 // do not upload images in test environment
-                if (!config.env === "test") {
+                if (config.env !== "test") {
                   tile.bgImage = await upload_file(
                     file,
                     "uploads/tiles",
