@@ -27,24 +27,24 @@ module.exports = {
   async up(queryInterface) {
     // Deprecated seeder, no operation performed.
     return;
-    const existingTiles = await queryInterface.select(null, "Tiles", {
-      where: { type: { [Op.in]: tileTypes } },
-    });
+    // const existingTiles = await queryInterface.select(null, "Tiles", {
+    //   where: { type: { [Op.in]: tileTypes } },
+    // });
 
-    for (const tile of builtInTiles) {
-      const exists = existingTiles.find((_tile) => _tile.type == tile.type);
+    // for (const tile of builtInTiles) {
+    //   const exists = existingTiles.find((_tile) => _tile.type == tile.type);
 
-      if (exists) continue;
+    //   if (exists) continue;
 
-      await queryInterface.insert(null, "Tiles", tile);
-    }
+    //   await queryInterface.insert(null, "Tiles", tile);
+    // }
   },
 
   async down(queryInterface) {
     // Deprecated seeder, no operation performed.
     return;
-    await queryInterface.bulkDelete("Tiles", {
-      where: { type: { [Op.in]: tileTypes } },
-    });
+    // await queryInterface.bulkDelete("Tiles", {
+    //   where: { type: { [Op.in]: tileTypes } },
+    // });
   },
 };
