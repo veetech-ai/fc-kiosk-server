@@ -122,7 +122,7 @@ module.exports = (sequelize, DataTypes) => {
               fileName: "rent_a_cart.png",
             },
             {
-              type: "Ghin App",
+              type: "webApp",
               name: "Ghin App",
               builtIn: true,
               fileName: "GHIN.png",
