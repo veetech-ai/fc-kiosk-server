@@ -11,6 +11,12 @@ exports.routesConfig = function (app, router) {
     TilesController.create,
   ]);
 
+  router.patch(tiles + "/script/process-specific-tiles-for-courses", [
+    validation_middleware.validJWTNeeded,
+    validation_middleware.hasAccess(["super", "admin"]),
+    TilesController.scriptToProcessSpecificTilesForCourses,
+  ]);
+
   router.patch(tiles + "/:id/order", [
     validation_middleware.validJWTNeeded,
     validation_middleware.hasAccess(["super", "admin", "manageCourses"]),

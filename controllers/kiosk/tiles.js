@@ -693,6 +693,35 @@ exports.updateTile = async (req, res) => {
   }
 };
 
+exports.scriptToProcessSpecificTilesForCourses = async (req, res) => {
+  /**
+   * @swagger
+   * /tiles/script/process-specific-tiles-for-courses:
+   *   patch:
+   *     security:
+   *       - auth: []
+   *     description: Process specific tiles for courses. (This is a script to process specific tiles for courses - run this script only once)
+   *     tags: [Tiles]
+   *     consumes:
+   *       - application/json
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: success
+   *       500:
+   *         description: Something went wrong on server side
+   */
+
+  try {
+    const data = await tileService.scriptToProcessSpecificTilesForCourses();
+
+    return apiResponse.success(res, req, data, 200);
+  } catch (error) {
+    return apiResponse.fail(res, error.message, error.statusCode || 500);
+  }
+};
+
 exports.updateSuperTile = async (req, res) => {
   /**
    * @swagger
