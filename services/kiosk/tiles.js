@@ -213,6 +213,7 @@ exports.create = async (data) => {
   try {
     const {
       name,
+      type,
       gcId,
       isPublished = true,
       isSuperTile = false,
@@ -254,6 +255,7 @@ exports.create = async (data) => {
       where: {
         [Op.and]: {
           name,
+          ...(type && { type }),
           id: { [Op.in]: courseTiles.map((ct) => ct.tileId) },
         },
       },
@@ -283,7 +285,7 @@ exports.create = async (data) => {
     }
 
     // 5. create new tile with max order
-    const tile = await Tile.create({ name, bgImage });
+    const tile = await Tile.create({ name, type, bgImage });
     const courseTile = await Course_Tile.create({
       tileId: tile.id,
       gcId,
@@ -373,6 +375,60 @@ exports.delete = async (id) => {
   } catch (error) {
     await transact.rollback();
     throw error;
+  }
+};
+
+exports.scriptToProcessSpecificTilesForCourses = async () => {
+  const transact = await models.sequelize.transaction();
+  try {
+    const courseTiles = await Course_Tile.findAll({
+      where: { tileId: { [Op.between]: [1, 12] } }, //get seeded tiles (builtIn)
+      include: {
+        model: Tile,
+        where: { builtIn: true },
+        required: true,
+      },
+    });
+
+    // now we have to create tiles data to be created & then update course tiles to link with these newly created tiles
+    const tilesToCreate = courseTiles.map((ct) => ({
+      name: ct.Tile.name,
+      type: ct.Tile.type,
+      bgImage: ct.Tile.bgImage,
+      builtIn: ct.Tile.builtIn,
+    }));
+
+    const createdTiles = await Tile.bulkCreate(tilesToCreate);
+
+    const updatedCourseTiles = await Promise.all(
+      courseTiles.map(async (ct) => {
+        const tileIndex = createdTiles.findIndex(
+          (t) => t.name === ct.Tile.name && t.type === ct.Tile.type,
+        );
+        const tile = createdTiles[tileIndex];
+
+        // Remove this tile from createdTiles
+        if (tileIndex > -1) {
+          createdTiles.splice(tileIndex, 1);
+        }
+
+        return await Course_Tile.update(
+          { tileId: tile.id },
+          { where: { id: ct.id } },
+        );
+      }),
+    );
+
+    await transact.commit();
+
+    return {
+      message: "Course Tiles processed successfully",
+      courseTiles,
+      updatedCourseTiles,
+    };
+  } catch (err) {
+    await transact.rollback();
+    throw err;
   }
 };
 
