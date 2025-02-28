@@ -155,11 +155,14 @@ module.exports = (sequelize, DataTypes) => {
                 };
                 const file = createFormidableFileObject(filePath);
                 const allowedTypes = ["jpg", "jpeg", "png", "webp"];
-                // tile.bgImage = await upload_file(
-                //   file,
-                //   "uploads/tiles",
-                //   allowedTypes,
-                // );
+                // do not upload images in test environment
+                if (!process.env.NODE_ENV === "test") {
+                  tile.bgImage = await upload_file(
+                    file,
+                    "uploads/tiles",
+                    allowedTypes,
+                  );
+                }
               } catch (error) {
                 console.error(`Error uploading file ${filePath}:`, error);
                 throw error;
