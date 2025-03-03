@@ -125,6 +125,7 @@ module.exports = (sequelize, DataTypes) => {
             {
               type: "webApp",
               name: "Ghin App",
+              url: course.ghin_url,
               builtIn: true,
               fileName: "GHIN.png",
             },
