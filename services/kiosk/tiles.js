@@ -44,7 +44,7 @@ exports.getCourseTiles = async (gcId) => {
     order: [["orderNumber", "ASC"]],
     include: {
       model: Tile,
-      attributes: ["id", "name", "type", "builtIn", "bgImage"],
+      attributes: ["id", "name", "type", "builtIn", "bgImage", "url"],
     },
   });
 };
@@ -215,6 +215,7 @@ exports.create = async (data) => {
       name,
       type,
       gcId,
+      url,
       isPublished = true,
       isSuperTile = false,
       layoutNumber = 0,
@@ -285,7 +286,12 @@ exports.create = async (data) => {
     }
 
     // 5. create new tile with max order
-    const tile = await Tile.create({ name, type, bgImage });
+    const tile = await Tile.create({
+      name,
+      bgImage,
+      ...(type && { type }),
+      ...(url && { url }),
+    });
     const courseTile = await Course_Tile.create({
       tileId: tile.id,
       gcId,
@@ -383,20 +389,32 @@ exports.scriptToProcessSpecificTilesForCourses = async () => {
   try {
     const courseTiles = await Course_Tile.findAll({
       where: { tileId: { [Op.between]: [1, 12] } }, //get seeded tiles (builtIn)
-      include: {
-        model: Tile,
-        where: { builtIn: true },
-        required: true,
-      },
+      include: [
+        {
+          model: Tile,
+          where: { builtIn: true },
+          required: true,
+        },
+        {
+          model: Course,
+          required: true,
+        },
+      ],
     });
-
     // now we have to create tiles data to be created & then update course tiles to link with these newly created tiles
-    const tilesToCreate = courseTiles.map((ct) => ({
-      name: ct.Tile.name,
-      type: ct.Tile.type,
-      bgImage: ct.Tile.bgImage,
-      builtIn: ct.Tile.builtIn,
-    }));
+    const tilesToCreate = courseTiles.map((ct) => {
+      return {
+        name: ct.Tile.name,
+        type: ct.Tile.type,
+        bgImage: ct.Tile.bgImage,
+        builtIn: ct.Tile.builtIn,
+        url:
+          ct.Tile.type === "Ghin App" ||
+          (ct.Tile.type === "webApp" && ct.Tile.name === "Ghin App")
+            ? ct.Course.ghin_url
+            : ct.Tile.url,
+      };
+    });
 
     const createdTiles = await Tile.bulkCreate(tilesToCreate);
 
@@ -470,7 +488,7 @@ exports.updateTile = async (id, data) => {
     if (!layoutImages) data.layoutImages = null;
 
     await Tile.update(
-      { name, bgImage: data.bgImage },
+      { name, bgImage: data.bgImage, ...(data.url && { url: data.url }) },
       {
         where: { id },
       },
