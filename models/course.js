@@ -177,7 +177,7 @@ module.exports = (sequelize, DataTypes) => {
               layoutNumber: 0,
               isPublished: true,
               isSuperTile: false,
-              orderNumber: createdTile.id,
+              orderNumber: builtInTiles.indexOf(tile) + 1,
             };
 
             courseTilesData.push(courseTile);
