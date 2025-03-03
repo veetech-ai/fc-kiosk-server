@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       type: DataTypes.STRING,
+      url: DataTypes.STRING,
       bgImage: {
         type: DataTypes.STRING,
         allowNull: true,

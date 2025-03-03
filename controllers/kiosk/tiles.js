@@ -84,6 +84,12 @@ exports.create = async (req, res) => {
    *         type: integer
    *
    *       - in: formData
+   *         name: url
+   *         description: The url of the tile, if it is a webApp type tile
+   *         required: false
+   *         type: string
+   *
+   *       - in: formData
    *         name: layoutData
    *         description: The content of the layout in JSON form
    *         required: false
@@ -139,6 +145,7 @@ exports.create = async (req, res) => {
       layoutNumber: "integer",
       layoutData: "string",
       type: "string",
+      url: fields.type === "webApp" ? "required|string" : "string",
     });
 
     if (validation.fails()) {
@@ -489,6 +496,12 @@ exports.updateTile = async (req, res) => {
    *         type: string
    *
    *       - in: formData
+   *         name: url
+   *         description: The url of the tile, if it is a webApp type tile
+   *         required: false
+   *         type: string
+   *
+   *       - in: formData
    *         name: bgImage
    *         description: The background image for the tile
    *         required: false
@@ -569,6 +582,7 @@ exports.updateTile = async (req, res) => {
       name: "required|string",
       gcId: "required|integer",
       bgImage: "string",
+      url: "string",
       isPublished: "boolean",
       layoutNumber: "integer",
       layoutData: "string",
