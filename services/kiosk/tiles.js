@@ -44,7 +44,15 @@ exports.getCourseTiles = async (gcId) => {
     order: [["orderNumber", "ASC"]],
     include: {
       model: Tile,
-      attributes: ["id", "name", "type", "builtIn", "bgImage", "url"],
+      attributes: [
+        "id",
+        "name",
+        "type",
+        "builtIn",
+        "bgImage",
+        "superTileImage",
+        "url",
+      ],
     },
   });
 };
@@ -220,6 +228,7 @@ exports.create = async (data) => {
       isSuperTile = false,
       layoutNumber = 0,
       bgImage = null,
+      superTileImage = null,
       layoutData = null,
       layoutImages = null,
     } = validateObject(data, allowedFields);
@@ -289,6 +298,7 @@ exports.create = async (data) => {
     const tile = await Tile.create({
       name,
       bgImage,
+      superTileImage,
       ...(type && { type }),
       ...(url && { url }),
     });
@@ -407,6 +417,7 @@ exports.scriptToProcessSpecificTilesForCourses = async () => {
         name: ct.Tile.name,
         type: ct.Tile.type,
         bgImage: ct.Tile.bgImage,
+        superTileImage: ct.Tile.superTileImage,
         builtIn: ct.Tile.builtIn,
         url:
           ct.Tile.type === "Ghin App" ||
@@ -488,7 +499,12 @@ exports.updateTile = async (id, data) => {
     if (!layoutImages) data.layoutImages = null;
 
     await Tile.update(
-      { name, bgImage: data.bgImage, ...(data.url && { url: data.url }) },
+      {
+        name,
+        bgImage: data.bgImage,
+        ...(data.superTileImage && { superTileImage: data.superTileImage }),
+        ...(data.url && { url: data.url }),
+      },
       {
         where: { id },
       },
