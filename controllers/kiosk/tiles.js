@@ -54,6 +54,12 @@ exports.create = async (req, res) => {
    *         type: file
    *
    *       - in: formData
+   *         name: superTileImage
+   *         description: The super tile image for the tile
+   *         required: false
+   *         type: file
+   *
+   *       - in: formData
    *         name: isPublished
    *         description: Published status of tile, set it to true to publish it right away
    *         required: false
@@ -140,6 +146,7 @@ exports.create = async (req, res) => {
       name: "required|string",
       gcId: "required|integer",
       bgImage: "string",
+      superTileImage: "string",
       isSuperTile: "boolean",
       isPublished: "boolean",
       layoutNumber: "integer",
@@ -167,12 +174,20 @@ exports.create = async (req, res) => {
       throw new ServiceError(msg, 400);
     }
 
-    const { bgImage, layoutImages } = files;
+    const { bgImage, superTileImage, layoutImages } = files;
     const allowedTypes = ["jpg", "jpeg", "png", "webp"];
 
     if (bgImage) {
       fields.bgImage = await upload_file(
         bgImage,
+        `uploads/tiles`,
+        allowedTypes,
+      );
+    }
+
+    if (superTileImage) {
+      fields.superTileImage = await upload_file(
+        superTileImage,
         `uploads/tiles`,
         allowedTypes,
       );
@@ -359,6 +374,9 @@ exports.getAll = async (req, res) => {
     if (data.tiles) {
       data.tiles.forEach((tile) => {
         if (tile.bgImage) tile.bgImage = getFileURL(tile.bgImage);
+
+        if (tile.superTileImage)
+          tile.superTileImage = getFileURL(tile.superTileImage);
       });
     }
 
@@ -410,9 +428,12 @@ exports.getOne = async (req, res) => {
     // if (!data.tile.builtIn) {
     // can get the images for builtIn tiles as well
     const tileImage = data.tile.bgImage;
+    const superTileImage = data.tile.superTileImage;
     const layoutImages = data.tileData.layoutImages;
 
     if (tileImage) data.tile.bgImage = getFileURL(tileImage);
+
+    if (superTileImage) data.tile.superTileImage = getFileURL(superTileImage);
 
     if (layoutImages) {
       data.tileData.layoutImages = JSON.parse(layoutImages).map((url) =>
@@ -463,6 +484,9 @@ exports.getCourseTiles = async (req, res) => {
 
     tile.forEach((tile) => {
       if (tile.Tile.bgImage) tile.Tile.bgImage = getFileURL(tile.Tile.bgImage);
+
+      if (tile.Tile.superTileImage)
+        tile.Tile.superTileImage = getFileURL(tile.Tile.superTileImage);
     });
 
     return apiResponse.success(res, req, tile, 200);
@@ -504,6 +528,12 @@ exports.updateTile = async (req, res) => {
    *       - in: formData
    *         name: bgImage
    *         description: The background image for the tile
+   *         required: false
+   *         type: file
+   *
+   *       - in: formData
+   *         name: superTileImage
+   *         description: The super tile image for the tile
    *         required: false
    *         type: file
    *
@@ -582,6 +612,7 @@ exports.updateTile = async (req, res) => {
       name: "required|string",
       gcId: "required|integer",
       bgImage: "string",
+      superTileImage: "string",
       url: "string",
       isPublished: "boolean",
       layoutNumber: "integer",
@@ -661,12 +692,20 @@ exports.updateTile = async (req, res) => {
       }
     }
 
-    const { bgImage, layoutImages } = files;
+    const { bgImage, superTileImage, layoutImages } = files;
     const allowedTypes = ["jpg", "jpeg", "png", "webp"];
 
     if (bgImage) {
       fields.bgImage = await upload_file(
         bgImage,
+        `uploads/tiles`,
+        allowedTypes,
+      );
+    }
+
+    if (superTileImage) {
+      fields.superTileImage = await upload_file(
+        superTileImage,
         `uploads/tiles`,
         allowedTypes,
       );
