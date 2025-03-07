@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const { upload_file } = require("../common/upload");
 const config = require("../config/config");
+const { createFormidableFileObject } = require("../services/kiosk/tiles");
 
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
@@ -41,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
       season: DataTypes.STRING,
       email: DataTypes.STRING,
       ghin_url: DataTypes.STRING,
+      defaultSuperTileImage: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       orgId: {
         field: "org_id",
         type: DataTypes.INTEGER,
@@ -66,18 +71,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       hooks: {
         afterCreate: async (course) => {
-          const createFormidableFileObject = (filePath) => {
-            const stats = fs.statSync(filePath);
-            return {
-              filepath: filePath, // Where the file is stored (matches formidable)
-              originalFilename: path.basename(filePath), // Original filename
-              size: stats.size, // File size in bytes
-              // Add these to work with your existing upload logic:
-              path: filePath, // Alias for `filepath` (for AWS S3 case)
-              name: path.basename(filePath), // Alias for `originalFilename`
-            };
-          };
-
           // TODO: Move this to a service - Refactoring chore
           const builtInTiles = [
             {
