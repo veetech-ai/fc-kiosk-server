@@ -3,7 +3,6 @@
 const path = require("path");
 const fs = require("fs");
 const config = require("../config/config");
-const { createFormidableFileObject } = require("../common/helper");
 const { upload_file } = require("../common/upload");
 
 module.exports = (sequelize, DataTypes) => {
@@ -161,6 +160,8 @@ module.exports = (sequelize, DataTypes) => {
           ];
 
           const courseTilesData = [];
+
+          const { createFormidableFileObject } = require("../common/helper");
 
           for (const tile of builtInTiles) {
             const filePath = path.join(__dirname, "../assets", tile.fileName);
