@@ -3,8 +3,8 @@
 const path = require("path");
 const fs = require("fs");
 const { upload_file } = require("../common/upload");
-const { createFormidableFileObject } = require("../services/kiosk/tiles");
 const { Course } = require("../models");
+const { createFormidableFileObject } = require("../common/helper");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
 
     const superTileFilePath = path.join(
       __dirname,
-      "../assets/default_super_tile.png",
+      "../assets/defaultsupertileimage.jpeg",
     );
 
     try {
