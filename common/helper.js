@@ -10,6 +10,8 @@ const sanitizeHtml = require("sanitize-html");
 
 const Ajv = require("ajv");
 const { cloneDeep, pickBy, pick } = require("lodash");
+const path = require("path");
+const fs = require("fs");
 
 // Logger Imports
 const { logger } = require("../logger");
@@ -56,7 +58,6 @@ const { globalMQTT } = require("./mqtt-init");
 const ServiceError = require("../utils/serviceError");
 const puppeteer = require("puppeteer");
 const { uuid } = require("uuidv4");
-const fs = require("node:fs");
 
 // Setting Up Ajv
 const ajv = new Ajv({ allErrors: true, useDefaults: true }); // options can be passed, e.g. {allErrors: true}
@@ -152,6 +153,18 @@ exports.get_device_type_id_by_type = (type) => {
     vent: 8,
   };
   return devices[type];
+};
+
+exports.createFormidableFileObject = (filePath) => {
+  const stats = fs.statSync(filePath);
+  return {
+    filepath: filePath, // Where the file is stored (matches formidable)
+    originalFilename: path.basename(filePath), // Original filename
+    size: stats.size, // File size in bytes
+    // Add these to work with your existing upload logic:
+    path: filePath, // Alias for `filepath` (for AWS S3 case)
+    name: path.basename(filePath), // Alias for `originalFilename`
+  };
 };
 
 exports.setPassword = (password) => {
