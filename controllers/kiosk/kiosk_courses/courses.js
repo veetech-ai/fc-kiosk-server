@@ -104,7 +104,7 @@ exports.create_courses = async (req, res) => {
     });
 
     if (validation.fails()) {
-      throw new ServiceError(validation.firstError(), 400);
+      return apiResponse.fail(res, validation.errors);
     }
 
     const { defaultSuperTileImage: defaultSuperTileImageFile } = files;
@@ -115,12 +115,12 @@ exports.create_courses = async (req, res) => {
     // }
 
     const allowedTypes = ["jpg", "jpeg", "png", "webp"];
-
-    fields.defaultSuperTileImage = await upload_file.upload_file(
-      defaultSuperTileImageFile,
-      `uploads/tiles`,
-      allowedTypes,
-    );
+    if (defaultSuperTileImageFile)
+      fields.defaultSuperTileImage = await upload_file.upload_file(
+        defaultSuperTileImageFile,
+        `uploads/tiles`,
+        allowedTypes,
+      );
 
     const { name, state, city, zip, phone, orgId, defaultSuperTileImage } =
       fields;
@@ -205,6 +205,11 @@ exports.create_course_info = async (req, res) => {
    *         description: name of course
    *         required: false
    *         type: string
+   *       - in: formData
+   *         name: defaultSuperTileImage
+   *         description: Default super tile image to be used for tiles, when their superTileImage is not uploaded
+   *         required: false
+   *         type: file
    *       - in: formData
    *         name: holes
    *         description: Holes of the golf course
@@ -351,6 +356,7 @@ exports.create_course_info = async (req, res) => {
     });
     const validationRules = {
       name: "string",
+      defaultSuperTileImage: "string",
       holes: "integer",
       par: "par",
       slope: "slope",
@@ -383,6 +389,7 @@ exports.create_course_info = async (req, res) => {
     const uploadedImages = [];
     const uploadedImageFiles = [];
     const logoImage = files?.logo;
+    const defaultSuperTileImageFile = files?.defaultSuperTileImage;
     let courseImages = files?.course_images;
     let parsedRemovedUuidList;
 
@@ -435,6 +442,16 @@ exports.create_course_info = async (req, res) => {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
+
+    const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+    if (defaultSuperTileImageFile) {
+      fields.defaultSuperTileImage = await upload_file.upload_file(
+        defaultSuperTileImageFile,
+        `uploads/tiles`,
+        allowedTypes,
+      );
+    }
+
     reqBody = { ...reqBody, ...fields };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
