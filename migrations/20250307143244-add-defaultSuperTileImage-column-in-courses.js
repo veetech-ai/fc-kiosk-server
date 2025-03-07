@@ -1,22 +1,56 @@
-'use strict';
+"use strict";
+
+const path = require("path");
+const fs = require("fs");
+const { upload_file } = require("../common/upload");
+const { createFormidableFileObject } = require("../services/kiosk/tiles");
+const { Course } = require("../models");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.addColumn("Courses", "defaultSuperTileImage", {
+      type: Sequelize.STRING,
+      allowNull: true,
+    });
+
+    const superTileFilePath = path.join(
+      __dirname,
+      "../assets/default_super_tile.png",
+    );
+
+    try {
+      if (fs.existsSync(superTileFilePath)) {
+        const superTileFile = createFormidableFileObject(superTileFilePath);
+        let defaultSuperTileImage = null;
+        const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+
+        if (superTileFile)
+          defaultSuperTileImage = await upload_file(
+            superTileFile,
+            "uploads/tiles",
+            allowedTypes,
+          );
+        console.log(defaultSuperTileImage);
+        // update courses
+        await Course.update(
+          {
+            defaultSuperTileImage,
+          },
+          {
+            where: {
+              defaultSuperTileImage: null,
+            },
+          },
+        );
+      }
+    } catch (error) {
+      console.error(`Error uploading file:`, error);
+      throw error;
+    }
   },
 
-  async down (queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
-  }
+  down: async (queryInterface) => {
+    await queryInterface.removeColumn("Courses", "defaultSuperTileImage");
+  },
 };
