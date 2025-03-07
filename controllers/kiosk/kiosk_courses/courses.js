@@ -11,6 +11,7 @@ const models = require("../../../models");
 const courseService = require("../../../services/kiosk/course");
 const tileService = require("../../../services/kiosk/tiles");
 const awsS3 = require("../../../common/external_services/aws-s3");
+const ServiceError = require("../../../utils/serviceError");
 
 /**
  * @swagger
@@ -61,6 +62,11 @@ exports.create_courses = async (req, res) => {
    *         in: formData
    *         required: true
    *         type: integer
+   *       - in: formData
+   *         name: defaultSuperTileImage
+   *         description: Default super tile image to be used for tiles, when their superTileImage is not uploaded
+   *         required: true
+   *         type: file
    *     produces:
    *       - application/json
    *     responses:
@@ -69,26 +75,62 @@ exports.create_courses = async (req, res) => {
    */
   const transact = await models.sequelize.transaction();
   try {
-    const validation = new Validator(req.body, {
+    const form = new formidable.IncomingForm({
+      maxFileSize: 1 * 1024 * 1024, // 1MB
+    });
+
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) {
+          let errMsg = err.message;
+          if (err.message.includes("maxFileSize exceeded")) {
+            errMsg = "The size of signature image can not exceed 1MB";
+          }
+          reject(new ServiceError(errMsg, 400));
+        }
+
+        resolve({ fields, files });
+      });
+    });
+
+    const validation = new Validator(fields, {
       name: "required|string",
       state: "required|string",
       city: "required|string",
+      defaultSuperTileImage: "string",
       zip: "string",
       phone: "string",
       orgId: "required|integer",
     });
 
     if (validation.fails()) {
-      return apiResponse.fail(res, validation.errors);
+      throw new ServiceError(validation.firstError(), 400);
     }
 
-    const { name, state, city, zip, phone, orgId } = req.body;
+    const { defaultSuperTileImage: defaultSuperTileImageFile } = files;
+
+    // for backward compatibility, commenting following code
+    // if (!defaultSuperTileImageFile) {
+    //   throw new ServiceError("Default super tile image is required", 400);
+    // }
+
+    const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+
+    fields.defaultSuperTileImage = await upload_file.upload_file(
+      defaultSuperTileImageFile,
+      `uploads/tiles`,
+      allowedTypes,
+    );
+
+    const { name, state, city, zip, phone, orgId, defaultSuperTileImage } =
+      fields;
     const reqBody = {
       name,
       state,
       city,
       zip,
       phone,
+      defaultSuperTileImage,
     };
 
     reqBody.ghin_url = "https://www.ghin.com/login";
