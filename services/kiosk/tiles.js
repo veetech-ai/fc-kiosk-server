@@ -1,5 +1,8 @@
 const { Op } = require("sequelize");
-const { validateObject } = require("../../common/helper");
+const {
+  validateObject,
+  createFormidableFileObject,
+} = require("../../common/helper");
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const CousreService = require("./course");
@@ -397,18 +400,6 @@ exports.delete = async (id) => {
   }
 };
 
-exports.createFormidableFileObject = (filePath) => {
-  const stats = fs.statSync(filePath);
-  return {
-    filepath: filePath, // Where the file is stored (matches formidable)
-    originalFilename: path.basename(filePath), // Original filename
-    size: stats.size, // File size in bytes
-    // Add these to work with your existing upload logic:
-    path: filePath, // Alias for `filepath` (for AWS S3 case)
-    name: path.basename(filePath), // Alias for `originalFilename`
-  };
-};
-
 exports.scriptToProcessSpecificTilesForCourses = async () => {
   const transact = await models.sequelize.transaction();
   try {
@@ -520,8 +511,7 @@ exports.scriptToProcessSpecificTilesForCourses = async () => {
 
         try {
           if (fs.existsSync(superTileFilePath)) {
-            const superTileFile =
-              this.createFormidableFileObject(superTileFilePath);
+            const superTileFile = createFormidableFileObject(superTileFilePath);
             const allowedTypes = ["jpg", "jpeg", "png", "webp"];
 
             if (superTileFile)

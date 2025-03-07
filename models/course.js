@@ -2,9 +2,9 @@
 
 const path = require("path");
 const fs = require("fs");
-const { upload_file } = require("../common/upload");
 const config = require("../config/config");
-const { createFormidableFileObject } = require("../services/kiosk/tiles");
+const { createFormidableFileObject } = require("../common/helper");
+const { upload_file } = require("../common/upload");
 
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
