@@ -397,6 +397,18 @@ exports.delete = async (id) => {
   }
 };
 
+exports.createFormidableFileObject = (filePath) => {
+  const stats = fs.statSync(filePath);
+  return {
+    filepath: filePath, // Where the file is stored (matches formidable)
+    originalFilename: path.basename(filePath), // Original filename
+    size: stats.size, // File size in bytes
+    // Add these to work with your existing upload logic:
+    path: filePath, // Alias for `filepath` (for AWS S3 case)
+    name: path.basename(filePath), // Alias for `originalFilename`
+  };
+};
+
 exports.scriptToProcessSpecificTilesForCourses = async () => {
   const transact = await models.sequelize.transaction();
   try {
@@ -412,17 +424,6 @@ exports.scriptToProcessSpecificTilesForCourses = async () => {
     // if null then needs to upload images for these tiles
     if (checkIfSuperTileImageNull) {
       // upload all files
-      const createFormidableFileObject = (filePath) => {
-        const stats = fs.statSync(filePath);
-        return {
-          filepath: filePath, // Where the file is stored (matches formidable)
-          originalFilename: path.basename(filePath), // Original filename
-          size: stats.size, // File size in bytes
-          // Add these to work with your existing upload logic:
-          path: filePath, // Alias for `filepath` (for AWS S3 case)
-          name: path.basename(filePath), // Alias for `originalFilename`
-        };
-      };
 
       const builtInTiles = [
         {
@@ -519,9 +520,9 @@ exports.scriptToProcessSpecificTilesForCourses = async () => {
 
         try {
           if (fs.existsSync(superTileFilePath)) {
-            const superTileFile = createFormidableFileObject(superTileFilePath);
+            const superTileFile =
+              this.createFormidableFileObject(superTileFilePath);
             const allowedTypes = ["jpg", "jpeg", "png", "webp"];
-            // do not upload images in test environment
 
             if (superTileFile)
               tile.superTileImage = await upload_file(
