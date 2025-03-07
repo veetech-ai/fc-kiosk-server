@@ -5,6 +5,7 @@ const fs = require("fs");
 const { upload_file } = require("../common/upload");
 const { Course } = require("../models");
 const { createFormidableFileObject } = require("../common/helper");
+const config = require("../config/config");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -20,7 +21,7 @@ module.exports = {
     );
 
     try {
-      if (fs.existsSync(superTileFilePath)) {
+      if (fs.existsSync(superTileFilePath) && config.env !== "test") {
         const superTileFile = createFormidableFileObject(superTileFilePath);
         let defaultSuperTileImage = null;
         const allowedTypes = ["jpg", "jpeg", "png", "webp"];
@@ -31,7 +32,7 @@ module.exports = {
             "uploads/tiles",
             allowedTypes,
           );
-        console.log(defaultSuperTileImage);
+
         // update courses
         await Course.update(
           {
