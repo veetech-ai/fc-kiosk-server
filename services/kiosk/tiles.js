@@ -10,7 +10,7 @@ const CousreService = require("./course");
 const { Tile, Course_Tile, Course } = models;
 const path = require("path");
 const fs = require("fs");
-const { upload_file } = require("../../common/upload");
+const { upload_file, getFileURL } = require("../../common/upload");
 
 const _SKIP_KEYS = ["id", "tileId", "TileId", "createdAt", "updatedAt"];
 
@@ -36,8 +36,12 @@ exports.get = async ({ where = {}, paginationOptions }) => {
 };
 
 exports.getCourseTiles = async (gcId) => {
-  await CousreService.getCourseById(gcId);
-  return Course_Tile.findAll({
+  const course = await CousreService.getCourseById(gcId);
+
+  if (course.defaultSuperTileImage) {
+    course.defaultSuperTileImage = getFileURL(course.defaultSuperTileImage);
+  }
+  const courseTiles = await Course_Tile.findAll({
     where: { gcId },
     attributes: [
       ["id", "courseTileId"],
@@ -61,6 +65,14 @@ exports.getCourseTiles = async (gcId) => {
       ],
     },
   });
+
+  courseTiles.map((ct) => {
+    ct.Tile.setDataValue("defaultSuperTileImage", course.defaultSuperTileImage);
+
+    return ct;
+  });
+
+  return courseTiles;
 };
 
 exports.getOne = async (where) => {
