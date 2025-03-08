@@ -93,7 +93,14 @@ exports.create_courses = async (req, res) => {
       });
     });
 
-    const validation = new Validator(fields, {
+    let bodyToBeValidated = {};
+    if (fields && Object.keys(fields).length) {
+      bodyToBeValidated = fields;
+    } else {
+      bodyToBeValidated = req.body;
+    }
+
+    const validation = new Validator(bodyToBeValidated, {
       name: "required|string",
       state: "required|string",
       city: "required|string",
@@ -107,7 +114,7 @@ exports.create_courses = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const { defaultSuperTileImage: defaultSuperTileImageFile } = files;
+    const defaultSuperTileImageFile = files?.defaultSuperTileImage;
 
     // for backward compatibility, commenting following code
     // if (!defaultSuperTileImageFile) {
@@ -123,7 +130,7 @@ exports.create_courses = async (req, res) => {
       );
 
     const { name, state, city, zip, phone, orgId, defaultSuperTileImage } =
-      fields;
+      bodyToBeValidated;
     const reqBody = {
       name,
       state,
