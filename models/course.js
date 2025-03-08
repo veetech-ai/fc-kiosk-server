@@ -160,10 +160,9 @@ module.exports = (sequelize, DataTypes) => {
           ];
 
           const courseTilesData = [];
-
           const { createFormidableFileObject } = require("../common/helper");
 
-          for (const tile of builtInTiles) {
+          const uploadPromises = builtInTiles.map(async (tile) => {
             const filePath = path.join(__dirname, "../assets", tile.fileName);
             const superTileFilePath = path.join(
               __dirname,
@@ -211,7 +210,9 @@ module.exports = (sequelize, DataTypes) => {
             };
 
             courseTilesData.push(courseTile);
-          }
+          });
+
+          await Promise.all(uploadPromises);
 
           if (courseTilesData.length) {
             await sequelize.models.Course_Tile.bulkCreate(courseTilesData);
@@ -220,6 +221,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
   );
+
   Course.associate = function (models) {
     // associations can be defined here
     Course.belongsTo(models.Organization, { foreignKey: "org_id" });
