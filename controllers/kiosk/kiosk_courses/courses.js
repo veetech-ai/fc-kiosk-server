@@ -79,28 +79,27 @@ exports.create_courses = async (req, res) => {
       maxFileSize: 1 * 1024 * 1024, // 1MB
     });
 
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) {
-          let errMsg = err.message;
-          if (err.message.includes("maxFileSize exceeded")) {
-            errMsg = "The size of signature image can not exceed 1MB";
+    let fields, files;
+    if (req.is("multipart/form-data")) {
+      ({ fields, files } = await new Promise((resolve, reject) => {
+        form.parse(req, (err, fields, files) => {
+          if (err) {
+            let errMsg = err.message;
+            if (err.message.includes("maxFileSize exceeded")) {
+              errMsg = "The size of signature image can not exceed 1MB";
+            }
+            reject(new ServiceError(errMsg, 400));
           }
-          reject(new ServiceError(errMsg, 400));
-        }
 
-        resolve({ fields, files });
-      });
-    });
-
-    let bodyToBeValidated = {};
-    if (fields && Object.keys(fields).length) {
-      bodyToBeValidated = fields;
+          resolve({ fields, files });
+        });
+      }));
     } else {
-      bodyToBeValidated = req.body;
+      fields = req.body;
+      files = {};
     }
 
-    const validation = new Validator(bodyToBeValidated, {
+    const validation = new Validator(fields, {
       name: "required|string",
       state: "required|string",
       city: "required|string",
@@ -114,7 +113,7 @@ exports.create_courses = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const defaultSuperTileImageFile = files?.defaultSuperTileImage;
+    const { defaultSuperTileImage: defaultSuperTileImageFile } = files;
 
     // for backward compatibility, commenting following code
     // if (!defaultSuperTileImageFile) {
@@ -130,7 +129,7 @@ exports.create_courses = async (req, res) => {
       );
 
     const { name, state, city, zip, phone, orgId, defaultSuperTileImage } =
-      bodyToBeValidated;
+      fields;
     const reqBody = {
       name,
       state,
