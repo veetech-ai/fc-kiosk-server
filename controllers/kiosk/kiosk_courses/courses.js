@@ -1,6 +1,8 @@
 // External Module Imports
 const Validator = require("validatorjs");
 const formidable = require("formidable");
+const path = require("path");
+const fs = require("fs");
 
 // Common Imports
 const apiResponse = require("../../../common/api.response");
@@ -12,6 +14,7 @@ const courseService = require("../../../services/kiosk/course");
 const tileService = require("../../../services/kiosk/tiles");
 const awsS3 = require("../../../common/external_services/aws-s3");
 const ServiceError = require("../../../utils/serviceError");
+const config = require("../../../config/config");
 
 /**
  * @swagger
@@ -113,12 +116,22 @@ exports.create_courses = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const { defaultSuperTileImage: defaultSuperTileImageFile } = files;
+    let { defaultSuperTileImage: defaultSuperTileImageFile } = files;
 
-    // for backward compatibility, commenting following code
-    // if (!defaultSuperTileImageFile) {
-    //   throw new ServiceError("Default super tile image is required", 400);
-    // }
+    if (!defaultSuperTileImageFile) {
+      const defaultSuperTileFilePath = path.join(
+        __dirname,
+        "../../../assets/defaultsupertileimage.jpeg",
+      );
+
+      if (fs.existsSync(defaultSuperTileFilePath) && config.env !== "test") {
+        const superTileFile = helper.createFormidableFileObject(
+          defaultSuperTileFilePath,
+        );
+
+        if (superTileFile) defaultSuperTileImageFile = superTileFile;
+      }
+    }
 
     const allowedTypes = ["jpg", "jpeg", "png", "webp"];
     if (defaultSuperTileImageFile)
