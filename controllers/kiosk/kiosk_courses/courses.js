@@ -517,6 +517,14 @@ exports.getCourseInfo = async (req, res) => {
       const images = upload_file.getFileURL(course.images);
       course.setDataValue("images", images);
     }
+
+    if (course.defaultSuperTileImage) {
+      const defaultSuperTileImage = upload_file.getFileURL(
+        course.defaultSuperTileImage,
+      );
+      course.setDataValue("defaultSuperTileImage", defaultSuperTileImage);
+    }
+
     return apiResponse.success(res, req, course);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);
