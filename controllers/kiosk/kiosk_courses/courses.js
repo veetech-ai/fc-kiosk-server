@@ -107,6 +107,7 @@ exports.create_courses = async (req, res) => {
       state: "required|string",
       city: "required|string",
       defaultSuperTileImage: "string",
+      street: "string",
       zip: "string",
       phone: "string",
       orgId: "required|integer",
@@ -141,12 +142,21 @@ exports.create_courses = async (req, res) => {
         allowedTypes,
       );
 
-    const { name, state, city, zip, phone, orgId, defaultSuperTileImage } =
-      fields;
+    const {
+      name,
+      state,
+      city,
+      street,
+      zip,
+      phone,
+      orgId,
+      defaultSuperTileImage,
+    } = fields;
     const reqBody = {
       name,
       state,
       city,
+      street,
       zip,
       phone,
       defaultSuperTileImage,
