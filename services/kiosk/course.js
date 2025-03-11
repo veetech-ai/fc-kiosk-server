@@ -69,6 +69,13 @@ async function getCoursesByOrganization(orgId) {
         course.setDataValue("logo", logo);
       }
 
+      if (course.defaultSuperTileImage) {
+        const defaultSuperTileImage = upload_file.getFileURL(
+          course.defaultSuperTileImage,
+        );
+        course.setDataValue("defaultSuperTileImage", defaultSuperTileImage);
+      }
+
       if (course.images && course.images.length) {
         const images = upload_file.getFileURL(course.images);
         course.setDataValue("images", images);

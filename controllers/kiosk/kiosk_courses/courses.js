@@ -166,6 +166,12 @@ exports.create_courses = async (req, res) => {
 
     const course = await courseService.createCourse(reqBody, orgId);
 
+    if (course.defaultSuperTileImage) {
+      course.defaultSuperTileImage = upload_file.getFileURL(
+        course.defaultSuperTileImage,
+      );
+    }
+
     // using one service inside another, and other way round as well causes circluar dependency issue
     // so multi service stuff should be handled inside controller
     const tiles = await tileService.getCourseTiles(course.id);
