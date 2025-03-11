@@ -124,18 +124,13 @@ exports.create = async (req, res) => {
 
   try {
     const form = new formidable.IncomingForm({
-      maxFileSize: 1 * 1024 * 1024, // 1MB
       multiples: true,
     });
 
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) {
-          let errMsg = err.message;
-          if (err.message.includes("maxFileSize exceeded")) {
-            errMsg = "The size of signature image can not exceed 1MB";
-          }
-          reject(new ServiceError(errMsg, 400));
+          reject(new ServiceError(err.message, 400));
         }
 
         resolve({ fields, files });
@@ -590,18 +585,13 @@ exports.updateTile = async (req, res) => {
 
   try {
     const form = new formidable.IncomingForm({
-      maxFileSize: 1 * 1024 * 1024, //1MB
       multiples: true,
     });
 
     const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) {
-          let errMsg = err.message;
-          if (err.message.includes("maxFileSize exceeded")) {
-            errMsg = "The size of signature image can not exceed 1MB";
-          }
-          reject(new ServiceError(errMsg, 400));
+          reject(new ServiceError(err.message, 400));
         }
 
         resolve({ fields, files });

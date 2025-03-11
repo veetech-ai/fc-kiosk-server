@@ -217,7 +217,7 @@ exports.uploadCourseImage = async (
     if (!fs.existsSync(newpath)) fs.mkdirSync(newpath, { recursive: true });
     validateFile(
       imageFile,
-      ["jpg", "jpeg", "png"],
+      ["jpg", "jpeg", "png", "webp"],
       settings.get("profile_image_max_size"),
     );
 
