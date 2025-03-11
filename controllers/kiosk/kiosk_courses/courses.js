@@ -78,20 +78,14 @@ exports.create_courses = async (req, res) => {
    */
   const transact = await models.sequelize.transaction();
   try {
-    const form = new formidable.IncomingForm({
-      maxFileSize: 1 * 1024 * 1024, // 1MB
-    });
+    const form = new formidable.IncomingForm();
 
     let fields, files;
     if (req.is("multipart/form-data")) {
       ({ fields, files } = await new Promise((resolve, reject) => {
         form.parse(req, (err, fields, files) => {
           if (err) {
-            let errMsg = err.message;
-            if (err.message.includes("maxFileSize exceeded")) {
-              errMsg = "The size of signature image can not exceed 1MB";
-            }
-            reject(new ServiceError(errMsg, 400));
+            reject(new ServiceError(err.message, 400));
           }
 
           resolve({ fields, files });
