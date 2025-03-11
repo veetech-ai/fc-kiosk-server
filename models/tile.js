@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      superTileImage: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       builtIn: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

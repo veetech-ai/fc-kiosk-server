@@ -1,10 +1,16 @@
 const { Op } = require("sequelize");
-const { validateObject } = require("../../common/helper");
+const {
+  validateObject,
+  createFormidableFileObject,
+} = require("../../common/helper");
 const models = require("../../models/index");
 const ServiceError = require("../../utils/serviceError");
 const CousreService = require("./course");
 
 const { Tile, Course_Tile, Course } = models;
+const path = require("path");
+const fs = require("fs");
+const { upload_file, getFileURL } = require("../../common/upload");
 
 const _SKIP_KEYS = ["id", "tileId", "TileId", "createdAt", "updatedAt"];
 
@@ -30,8 +36,12 @@ exports.get = async ({ where = {}, paginationOptions }) => {
 };
 
 exports.getCourseTiles = async (gcId) => {
-  await CousreService.getCourseById(gcId);
-  return Course_Tile.findAll({
+  const course = await CousreService.getCourseById(gcId);
+
+  if (course.defaultSuperTileImage) {
+    course.defaultSuperTileImage = getFileURL(course.defaultSuperTileImage);
+  }
+  const courseTiles = await Course_Tile.findAll({
     where: { gcId },
     attributes: [
       ["id", "courseTileId"],
@@ -44,9 +54,25 @@ exports.getCourseTiles = async (gcId) => {
     order: [["orderNumber", "ASC"]],
     include: {
       model: Tile,
-      attributes: ["id", "name", "type", "builtIn", "bgImage", "url"],
+      attributes: [
+        "id",
+        "name",
+        "type",
+        "builtIn",
+        "bgImage",
+        "superTileImage",
+        "url",
+      ],
     },
   });
+
+  courseTiles.map((ct) => {
+    ct.Tile.setDataValue("defaultSuperTileImage", course.defaultSuperTileImage);
+
+    return ct;
+  });
+
+  return courseTiles;
 };
 
 exports.getOne = async (where) => {
@@ -220,6 +246,7 @@ exports.create = async (data) => {
       isSuperTile = false,
       layoutNumber = 0,
       bgImage = null,
+      superTileImage = null,
       layoutData = null,
       layoutImages = null,
     } = validateObject(data, allowedFields);
@@ -289,6 +316,7 @@ exports.create = async (data) => {
     const tile = await Tile.create({
       name,
       bgImage,
+      superTileImage,
       ...(type && { type }),
       ...(url && { url }),
     });
@@ -387,6 +415,158 @@ exports.delete = async (id) => {
 exports.scriptToProcessSpecificTilesForCourses = async () => {
   const transact = await models.sequelize.transaction();
   try {
+    // check if there are tiles (1 - 12), builtIn & their superTileImage is null
+    const checkIfSuperTileImageNull = await Tile.findOne({
+      where: {
+        id: { [Op.between]: [1, 12] },
+        superTileImage: null,
+        builtIn: true,
+      },
+    });
+
+    // if null then needs to upload images for these tiles
+    if (checkIfSuperTileImageNull) {
+      // upload all files
+
+      const builtInTiles = [
+        {
+          type: "Course Info",
+          name: "Course Info",
+          builtIn: true,
+          fileName: "course_info.png",
+          superTileImageName: "course-info-supertile.jpeg",
+        },
+        {
+          type: "Coupons",
+          name: "Coupons",
+          builtIn: true,
+          fileName: "coupons.png",
+          superTileImageName: "coupons-supertile.webp",
+        },
+        {
+          type: "Lessons",
+          name: "Lessons",
+          builtIn: true,
+          fileName: "training.png",
+          superTileImageName: "lessons-supertile.webp",
+        },
+        {
+          type: "Memberships",
+          name: "Memberships",
+          builtIn: true,
+          fileName: "membership.png",
+          superTileImageName: "memberships-supertile.jpeg",
+        },
+        {
+          type: "Feedback",
+          name: "Feedback",
+          builtIn: true,
+          fileName: "feedback.png",
+          superTileImageName: "feedback-supertile.jpeg",
+        },
+        {
+          type: "Careers",
+          name: "Careers",
+          builtIn: true,
+          fileName: "careers.png",
+          superTileImageName: "careers-supertile.jpeg",
+        },
+        {
+          type: "Shop",
+          name: "Shop",
+          builtIn: true,
+          fileName: "shop1.png",
+          superTileImageName: "shop-supertile.jpeg",
+        },
+        {
+          type: "Statistics",
+          name: "Statistics",
+          builtIn: true,
+          fileName: "stats.png",
+          superTileImageName: "stats-supertile.jpeg",
+        },
+        {
+          type: "Rent A Cart",
+          name: "Rent A Cart",
+          builtIn: true,
+          fileName: "rent_a_cart.png",
+          superTileImageName: "rent-a-cart-supertile.jpg",
+        },
+        {
+          type: "webApp",
+          name: "Ghin App",
+          builtIn: true,
+          fileName: "GHIN.png",
+          superTileImageName: "GHIN.png",
+        },
+        {
+          type: "Wedding Event",
+          name: "Wedding Event",
+          builtIn: true,
+          fileName: "wedding_icon.png",
+          superTileImageName: "wedding-event-supertile.jpeg",
+        },
+        {
+          type: "FAQs",
+          name: "FAQs",
+          builtIn: true,
+          fileName: "faq.png",
+          superTileImageName: "faqs-supertile.jpeg",
+        },
+      ];
+      for (const tile of builtInTiles) {
+        const superTileFilePath = path.join(
+          __dirname,
+          "../../assets",
+          tile.superTileImageName,
+        );
+
+        try {
+          if (fs.existsSync(superTileFilePath)) {
+            const superTileFile = createFormidableFileObject(superTileFilePath);
+            const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+
+            if (superTileFile)
+              tile.superTileImage = await upload_file(
+                superTileFile,
+                "uploads/tiles",
+                allowedTypes,
+              );
+
+            let tilesWhere = {
+              type: tile.type,
+              builtIn: true,
+              superTileImage: null,
+            };
+
+            if (tile.type === "webApp") {
+              tilesWhere = {
+                [Op.or]: [
+                  { type: "Ghin App" },
+                  { type: "webApp", name: "Ghin App" },
+                ],
+                builtIn: true,
+                superTileImage: null,
+              };
+            }
+
+            // update tile
+            await Tile.update(
+              {
+                superTileImage: tile.superTileImage,
+              },
+              {
+                where: tilesWhere,
+              },
+            );
+          }
+        } catch (error) {
+          console.error(`Error uploading file:`, error);
+          throw error;
+        }
+      }
+    }
+
     const courseTiles = await Course_Tile.findAll({
       where: { tileId: { [Op.between]: [1, 12] } }, //get seeded tiles (builtIn)
       include: [
@@ -407,6 +587,7 @@ exports.scriptToProcessSpecificTilesForCourses = async () => {
         name: ct.Tile.name,
         type: ct.Tile.type,
         bgImage: ct.Tile.bgImage,
+        superTileImage: ct.Tile.superTileImage,
         builtIn: ct.Tile.builtIn,
         url:
           ct.Tile.type === "Ghin App" ||
@@ -488,7 +669,12 @@ exports.updateTile = async (id, data) => {
     if (!layoutImages) data.layoutImages = null;
 
     await Tile.update(
-      { name, bgImage: data.bgImage, ...(data.url && { url: data.url }) },
+      {
+        name,
+        bgImage: data.bgImage,
+        ...(data.superTileImage && { superTileImage: data.superTileImage }),
+        ...(data.url && { url: data.url }),
+      },
       {
         where: { id },
       },

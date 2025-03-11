@@ -1,6 +1,8 @@
 // External Module Imports
 const Validator = require("validatorjs");
 const formidable = require("formidable");
+const path = require("path");
+const fs = require("fs");
 
 // Common Imports
 const apiResponse = require("../../../common/api.response");
@@ -11,6 +13,8 @@ const models = require("../../../models");
 const courseService = require("../../../services/kiosk/course");
 const tileService = require("../../../services/kiosk/tiles");
 const awsS3 = require("../../../common/external_services/aws-s3");
+const ServiceError = require("../../../utils/serviceError");
+const config = require("../../../config/config");
 
 /**
  * @swagger
@@ -61,6 +65,11 @@ exports.create_courses = async (req, res) => {
    *         in: formData
    *         required: true
    *         type: integer
+   *       - in: formData
+   *         name: defaultSuperTileImage
+   *         description: Default super tile image to be used for tiles, when their superTileImage is not uploaded
+   *         required: true
+   *         type: file
    *     produces:
    *       - application/json
    *     responses:
@@ -69,10 +78,36 @@ exports.create_courses = async (req, res) => {
    */
   const transact = await models.sequelize.transaction();
   try {
-    const validation = new Validator(req.body, {
+    const form = new formidable.IncomingForm({
+      maxFileSize: 1 * 1024 * 1024, // 1MB
+    });
+
+    let fields, files;
+    if (req.is("multipart/form-data")) {
+      ({ fields, files } = await new Promise((resolve, reject) => {
+        form.parse(req, (err, fields, files) => {
+          if (err) {
+            let errMsg = err.message;
+            if (err.message.includes("maxFileSize exceeded")) {
+              errMsg = "The size of signature image can not exceed 1MB";
+            }
+            reject(new ServiceError(errMsg, 400));
+          }
+
+          resolve({ fields, files });
+        });
+      }));
+    } else {
+      fields = req.body;
+      files = {};
+    }
+
+    const validation = new Validator(fields, {
       name: "required|string",
       state: "required|string",
       city: "required|string",
+      defaultSuperTileImage: "string",
+      street: "string",
       zip: "string",
       phone: "string",
       orgId: "required|integer",
@@ -82,18 +117,60 @@ exports.create_courses = async (req, res) => {
       return apiResponse.fail(res, validation.errors);
     }
 
-    const { name, state, city, zip, phone, orgId } = req.body;
+    let { defaultSuperTileImage: defaultSuperTileImageFile } = files;
+
+    if (!defaultSuperTileImageFile) {
+      const defaultSuperTileFilePath = path.join(
+        __dirname,
+        "../../../assets/defaultsupertileimage.jpeg",
+      );
+
+      if (fs.existsSync(defaultSuperTileFilePath) && config.env !== "test") {
+        const superTileFile = helper.createFormidableFileObject(
+          defaultSuperTileFilePath,
+        );
+
+        if (superTileFile) defaultSuperTileImageFile = superTileFile;
+      }
+    }
+
+    const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+    if (defaultSuperTileImageFile)
+      fields.defaultSuperTileImage = await upload_file.upload_file(
+        defaultSuperTileImageFile,
+        `uploads/tiles`,
+        allowedTypes,
+      );
+
+    const {
+      name,
+      state,
+      city,
+      street,
+      zip,
+      phone,
+      orgId,
+      defaultSuperTileImage,
+    } = fields;
     const reqBody = {
       name,
       state,
       city,
+      street,
       zip,
       phone,
+      defaultSuperTileImage,
     };
 
     reqBody.ghin_url = "https://www.ghin.com/login";
 
     const course = await courseService.createCourse(reqBody, orgId);
+
+    if (course.defaultSuperTileImage) {
+      course.defaultSuperTileImage = upload_file.getFileURL(
+        course.defaultSuperTileImage,
+      );
+    }
 
     // using one service inside another, and other way round as well causes circluar dependency issue
     // so multi service stuff should be handled inside controller
@@ -163,6 +240,11 @@ exports.create_course_info = async (req, res) => {
    *         description: name of course
    *         required: false
    *         type: string
+   *       - in: formData
+   *         name: defaultSuperTileImage
+   *         description: Default super tile image to be used for tiles, when their superTileImage is not uploaded
+   *         required: false
+   *         type: file
    *       - in: formData
    *         name: holes
    *         description: Holes of the golf course
@@ -309,6 +391,7 @@ exports.create_course_info = async (req, res) => {
     });
     const validationRules = {
       name: "string",
+      defaultSuperTileImage: "string",
       holes: "integer",
       par: "par",
       slope: "slope",
@@ -341,6 +424,7 @@ exports.create_course_info = async (req, res) => {
     const uploadedImages = [];
     const uploadedImageFiles = [];
     const logoImage = files?.logo;
+    const defaultSuperTileImageFile = files?.defaultSuperTileImage;
     let courseImages = files?.course_images;
     let parsedRemovedUuidList;
 
@@ -393,6 +477,16 @@ exports.create_course_info = async (req, res) => {
       const logo = await upload_file.uploadCourseImage(logoImage, courseId);
       reqBody.logo = logo;
     }
+
+    const allowedTypes = ["jpg", "jpeg", "png", "webp"];
+    if (defaultSuperTileImageFile) {
+      fields.defaultSuperTileImage = await upload_file.upload_file(
+        defaultSuperTileImageFile,
+        `uploads/tiles`,
+        allowedTypes,
+      );
+    }
+
     reqBody = { ...reqBody, ...fields };
     const updatedCourse = await courseService.createCourseInfo(
       reqBody,
@@ -452,6 +546,14 @@ exports.getCourseInfo = async (req, res) => {
       const images = upload_file.getFileURL(course.images);
       course.setDataValue("images", images);
     }
+
+    if (course.defaultSuperTileImage) {
+      const defaultSuperTileImage = upload_file.getFileURL(
+        course.defaultSuperTileImage,
+      );
+      course.setDataValue("defaultSuperTileImage", defaultSuperTileImage);
+    }
+
     return apiResponse.success(res, req, course);
   } catch (error) {
     return apiResponse.fail(res, error.message, error.statusCode || 500);

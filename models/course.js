@@ -2,8 +2,8 @@
 
 const path = require("path");
 const fs = require("fs");
-const { upload_file } = require("../common/upload");
 const config = require("../config/config");
+const { upload_file } = require("../common/upload");
 
 module.exports = (sequelize, DataTypes) => {
   const Course = sequelize.define(
@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
       season: DataTypes.STRING,
       email: DataTypes.STRING,
       ghin_url: DataTypes.STRING,
+      defaultSuperTileImage: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       orgId: {
         field: "org_id",
         type: DataTypes.INTEGER,
@@ -73,54 +77,63 @@ module.exports = (sequelize, DataTypes) => {
               name: "Course Info",
               builtIn: true,
               fileName: "course_info.png",
+              superTileImageName: "course-info-supertile.jpeg",
             },
             {
               type: "Coupons",
               name: "Coupons",
               builtIn: true,
               fileName: "coupons.png",
+              superTileImageName: "coupons-supertile.webp",
             },
             {
               type: "Lessons",
               name: "Lessons",
               builtIn: true,
               fileName: "training.png",
+              superTileImageName: "lessons-supertile.webp",
             },
             {
               type: "Memberships",
               name: "Memberships",
               builtIn: true,
               fileName: "membership.png",
+              superTileImageName: "memberships-supertile.jpeg",
             },
             {
               type: "Feedback",
               name: "Feedback",
               builtIn: true,
               fileName: "feedback.png",
+              superTileImageName: "feedback-supertile.jpeg",
             },
             {
               type: "Careers",
               name: "Careers",
               builtIn: true,
               fileName: "careers.png",
+              superTileImageName: "careers-supertile.jpeg",
             },
             {
               type: "Shop",
               name: "Shop",
               builtIn: true,
               fileName: "shop1.png",
+              superTileImageName: "shop-supertile.jpeg",
             },
             {
               type: "Statistics",
               name: "Statistics",
               builtIn: true,
               fileName: "stats.png",
+              superTileImageName: "stats-supertile.jpeg",
             },
             {
               type: "Rent A Cart",
               name: "Rent A Cart",
               builtIn: true,
               fileName: "rent_a_cart.png",
+              superTileImageName: "rent-a-cart-supertile.jpg",
             },
             {
               type: "webApp",
@@ -128,48 +141,63 @@ module.exports = (sequelize, DataTypes) => {
               url: course.ghin_url,
               builtIn: true,
               fileName: "GHIN.png",
+              superTileImageName: "GHIN.png",
             },
             {
               type: "Wedding Event",
               name: "Wedding Event",
               builtIn: true,
               fileName: "wedding_icon.png",
+              superTileImageName: "wedding-event-supertile.jpeg",
             },
-            { type: "FAQs", name: "FAQs", builtIn: true, fileName: "faq.png" },
+            {
+              type: "FAQs",
+              name: "FAQs",
+              builtIn: true,
+              fileName: "faq.png",
+              superTileImageName: "faqs-supertile.jpeg",
+            },
           ];
 
           const courseTilesData = [];
+          const { createFormidableFileObject } = require("../common/helper");
 
-          for (const tile of builtInTiles) {
+          const uploadPromises = builtInTiles.map(async (tile) => {
             const filePath = path.join(__dirname, "../assets", tile.fileName);
-            if (fs.existsSync(filePath)) {
-              try {
-                const createFormidableFileObject = (filePath) => {
-                  const stats = fs.statSync(filePath);
-                  return {
-                    filepath: filePath, // Where the file is stored (matches formidable)
-                    originalFilename: path.basename(filePath), // Original filename
-                    size: stats.size, // File size in bytes
-                    // Add these to work with your existing upload logic:
-                    path: filePath, // Alias for `filepath` (for AWS S3 case)
-                    name: path.basename(filePath), // Alias for `originalFilename`
-                  };
-                };
+            const superTileFilePath = path.join(
+              __dirname,
+              "../assets",
+              tile.superTileImageName,
+            );
+
+            try {
+              if (fs.existsSync(filePath) || fs.existsSync(superTileFilePath)) {
                 const file = createFormidableFileObject(filePath);
+                const superTileFile =
+                  createFormidableFileObject(superTileFilePath);
                 const allowedTypes = ["jpg", "jpeg", "png", "webp"];
                 // do not upload images in test environment
                 if (config.env !== "test") {
-                  tile.bgImage = await upload_file(
-                    file,
-                    "uploads/tiles",
-                    allowedTypes,
-                  );
+                  if (file)
+                    tile.bgImage = await upload_file(
+                      file,
+                      "uploads/tiles",
+                      allowedTypes,
+                    );
+
+                  if (superTileFile)
+                    tile.superTileImage = await upload_file(
+                      superTileFile,
+                      "uploads/tiles",
+                      allowedTypes,
+                    );
                 }
-              } catch (error) {
-                console.error(`Error uploading file ${filePath}:`, error);
-                throw error;
               }
+            } catch (error) {
+              console.error(`Error uploading file:`, error);
+              throw error;
             }
+
             const createdTile = await sequelize.models.Tile.create(tile);
 
             const courseTile = {
@@ -182,7 +210,9 @@ module.exports = (sequelize, DataTypes) => {
             };
 
             courseTilesData.push(courseTile);
-          }
+          });
+
+          await Promise.all(uploadPromises);
 
           if (courseTilesData.length) {
             await sequelize.models.Course_Tile.bulkCreate(courseTilesData);
@@ -191,6 +221,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
   );
+
   Course.associate = function (models) {
     // associations can be defined here
     Course.belongsTo(models.Organization, { foreignKey: "org_id" });
