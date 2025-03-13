@@ -655,14 +655,15 @@ exports.updateTile = async (req, res) => {
           err.message || "Got invalid JSON array for layoutImagesUrls";
         throw new ServiceError(msg, 400);
       }
-
       try {
         let uuids = [];
 
         if (config.aws.upload) {
-          uuids = fields.layoutImagesUrls.map(
-            (url) => url.split(".com/")[1].split("?")[0],
-          );
+          uuids = fields.layoutImagesUrls.map((url) => {
+            const decodedUrl = decodeURIComponent(url);
+            const key = decodedUrl.split(".com/")[1].split("?")[0];
+            return key;
+          });
         } else if (config.azure.upload) {
           throw new Error("Not implemented");
         } else {
