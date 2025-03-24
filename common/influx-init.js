@@ -1,6 +1,6 @@
 const { influx: influxConfig } = require("../config/config.js");
 const { logger } = require("../logger");
-// const { Influx } = require("@cowlar/iotcore-common");
+// const { Influx } = require("@veetech-ai/iotcore-common");
 class InfluxGlobal {
   static #instance = null;
 

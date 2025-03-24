@@ -10,5 +10,5 @@ jobs:
     name: "Continuous Integration"
     uses: "./.github/workflows/ci-reusable.yml"
     secrets:
-      GITLAB_AUTH_TOKEN: ${{ secrets.GITLAB_AUTH_TOKEN }}
+      VEETECH_GITHUB_AUTH_TOKEN: ${{ secrets.VEETECH_GITHUB_AUTH_TOKEN }}
       AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
