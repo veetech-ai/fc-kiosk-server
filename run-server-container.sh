@@ -20,7 +20,7 @@ cntr_port=5001
 host_port=${2:-5001}
 
 # Get the auth token from environment variables
-auth_token="GITHUB_AUTH_TOKEN=$GITHUB_AUTH_TOKEN"
+auth_token="VEETECH_GITHUB_AUTH_TOKEN=$VEETECH_GITHUB_AUTH_TOKEN"
 
 # Remove image and containers with name if exists
 sudo docker image rm "$img_name" -f &&

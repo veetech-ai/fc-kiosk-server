@@ -18,7 +18,7 @@ jobs:
     name: linting and testing
     uses: "./.github/workflows/ci-reusable.yml"
     secrets:
-      GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+      VEETECH_GITHUB_AUTH_TOKEN: ${{ secrets.VEETECH_GITHUB_AUTH_TOKEN }}
       AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
   stage-deployment:
     name: "Stage Deployment"
@@ -36,5 +36,5 @@ jobs:
       ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
       ECS_TASK_DEFINITION: ${{  secrets.ECS_TASK_DEFINITION_STAGING }}
       ECS_CONTAINER_NAME: ${{ secrets.ECS_CONTAINER_NAME_STAGING  }}
-      GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+      VEETECH_GITHUB_AUTH_TOKEN: ${{ secrets.VEETECH_GITHUB_AUTH_TOKEN }}
       AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}

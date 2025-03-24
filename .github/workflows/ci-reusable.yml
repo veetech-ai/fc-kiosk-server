@@ -2,12 +2,12 @@ name: linting and testing - reusable
 on:
   workflow_call:
     secrets:
-      GITHUB_AUTH_TOKEN:
+      VEETECH_GITHUB_AUTH_TOKEN:
         required: true
       AUTH_TOKEN:
         required: true
 env:
-  GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+  VEETECH_GITHUB_AUTH_TOKEN: ${{ secrets.VEETECH_GITHUB_AUTH_TOKEN }}
 
 jobs:
   linting:

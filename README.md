@@ -38,9 +38,9 @@ Make sure to have the npm versions 8+
 ```
 
 ## packages
-The project also requires the `GITHUB_AUTH_TOKEN` to install some of our custom npm packages. Use the following command to add the variable into your environment. Get your token from GitHub with [this](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) help.
+The project also requires the `VEETECH_GITHUB_AUTH_TOKEN` to install some of our custom npm packages. Use the following command to add the variable into your environment. Get your token from GitHub with [this](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) help.
 ```
-export GITHUB_AUTH_TOKEN=ghp_<Enter ACCESS TOKEN>
+export VEETECH_GITHUB_AUTH_TOKEN=ghp_<Enter ACCESS TOKEN>
 ```
 
 `npm install`  or `npm ci`
@@ -73,7 +73,7 @@ Or get .env file from respective person, who is doing your onboarding.
 # Docker 
 We make a docker image of our nodeJS code with the following command.
 ```
-docker build -t backend-node:latest GITHUB_AUTH_TOKEN=$GITHUB_AUTH_TOKEN 
+docker build -t backend-node:latest VEETECH_GITHUB_AUTH_TOKEN=$VEETECH_GITHUB_AUTH_TOKEN 
 ```
 # API Token from influx 
 Go to localhost:8086 and log in to Influx Db.
