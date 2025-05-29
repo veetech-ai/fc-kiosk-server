@@ -62,6 +62,7 @@ exports.getCourseTiles = async (gcId) => {
         "bgImage",
         "superTileImage",
         "url",
+        "isTitle",
       ],
     },
   });
@@ -249,6 +250,7 @@ exports.create = async (data) => {
       superTileImage = null,
       layoutData = null,
       layoutImages = null,
+      isTitle = false,
     } = validateObject(data, allowedFields);
 
     // 0. check if layout number is valid
@@ -319,6 +321,7 @@ exports.create = async (data) => {
       superTileImage,
       ...(type && { type }),
       ...(url && { url }),
+      ...(typeof isTitle !== 'undefined' && { isTitle }),
     });
     const courseTile = await Course_Tile.create({
       tileId: tile.id,
@@ -644,7 +647,7 @@ exports.updateTile = async (id, data) => {
     //   throw new ServiceError("Can not update a built in tile.", 400);
     // }
 
-    const { name, isPublished, layoutNumber, layoutData, layoutImages } = data;
+    const { name, isPublished, layoutNumber, layoutData, layoutImages, isTitle } = data;
 
     if (layoutNumber) {
       validateLayoutNumber(layoutNumber);
@@ -674,6 +677,7 @@ exports.updateTile = async (id, data) => {
         bgImage: data.bgImage,
         ...(data.superTileImage && { superTileImage: data.superTileImage }),
         ...(data.url && { url: data.url }),
+        ...(typeof isTitle !== 'undefined' && { isTitle }),
       },
       {
         where: { id },
