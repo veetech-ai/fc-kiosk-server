@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+      isTitle: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

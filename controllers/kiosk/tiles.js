@@ -109,6 +109,12 @@ exports.create = async (req, res) => {
    *         items:
    *            type: file
    *
+   *       - in: formData
+   *         name: isTitle
+   *         description: Boolean flag to control the Preview label of tile and Super tile image title
+   *         required: false
+   *         type: string
+   *
    *     produces:
    *       - application/json
    *     responses:
@@ -148,6 +154,7 @@ exports.create = async (req, res) => {
       layoutData: "string",
       type: "string",
       url: fields.type === "webApp" ? "required|string" : "string",
+      isTitle: "boolean",
     });
 
     if (validation.fails()) {
@@ -570,6 +577,12 @@ exports.updateTile = async (req, res) => {
    *         required: false
    *         type: string
    *
+   *       - in: formData
+   *         name: isTitle
+   *         description: Boolean flag to control the Preview label of tile and Super tile image title
+   *         required: false
+   *         type: string
+   *
    *     produces:
    *       - application/json
    *     responses:
@@ -608,6 +621,7 @@ exports.updateTile = async (req, res) => {
       layoutNumber: "integer",
       layoutData: "string",
       layoutImagesUrls: "string",
+      isTitle: "boolean",
     });
 
     if (validation.fails()) {
